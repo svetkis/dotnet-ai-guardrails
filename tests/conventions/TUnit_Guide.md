@@ -1,0 +1,87 @@
+# TUnit Guide — Почему `dotnet run`, а не `dotnet test`
+
+## Проблема (Ловушка)
+
+На .NET 10 с TUnit + Microsoft Testing Platform (`MTP`) команда `dotnet test` **молча пропускает тесты** при определённых конфигурациях. Exit code 0, CI зелёный, а проверок не было.
+
+Агент, не зная этого, может:
+- Поменять `csproj` тестового проекта
+- Обновить TUnit версию
+- Добавить новый test project без правильного `<TestingPlatformDotnetTestSupport>`
+
+Результат: **код мержится две недели без проверок.**
+
+## Решение
+
+Всегда запускать через `dotnet run --project`:
+
+```bash
+# ✅ Правильно — тесты реально бегут
+dotnet run --project tests/MyProject.Tests/MyProject.Tests.csproj
+
+# ❌ Опасно — может показать 0 tests ran
+dotnet test tests/MyProject.Tests/MyProject.Tests.csproj
+```
+
+## Настройка CI
+
+```yaml
+- name: Run Tests
+  run: |
+    dotnet run --project tests/ArchitectureTests/ArchitectureTests.csproj
+    dotnet run --project tests/UnitTests/UnitTests.csproj
+    dotnet run --project tests/IntegrationTests/IntegrationTests.csproj
+```
+
+## Настройка .csproj
+
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="TUnit" Version="0.*" />
+  </ItemGroup>
+</Project>
+```
+
+## Основные атрибуты TUnit
+
+```csharp
+[Test]
+public async Task MyTest()
+{
+    await Assert.That(value).IsEqualTo(expected);
+}
+
+[Test]
+[Arguments(1, 2, 3)]
+[Arguments(2, 3, 5)]
+public async Task Addition_ShouldWork(int a, int b, int expected)
+{
+    await Assert.That(a + b).IsEqualTo(expected);
+}
+
+[Before(Test)]
+public async Task Setup() { }
+
+[After(Test)]
+public async Task Teardown() { }
+```
+
+## Параллелизм
+
+TUnit запускает тесты параллельно по умолчанию. Если нужна изоляция — используй:
+
+```csharp
+[NotInParallel]
+public class MyIsolatedTests { }
+```
+
+## Правило
+
+> **В этом репозитории и во всех проектах, использующих эти guardrails, `dotnet test` ЗАПРЕЩЁН. Только `dotnet run --project`.**

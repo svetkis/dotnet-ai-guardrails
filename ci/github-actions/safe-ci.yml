@@ -1,0 +1,87 @@
+name: Safe CI — Agent Guardrails
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore
+        run: dotnet restore
+
+      # GUARDRAIL: Сборка должна проходить без warning'ов
+      - name: Build
+        run: dotnet build --no-restore --configuration Release /p:TreatWarningsAsErrors=true
+
+  tests:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      # GUARDRAIL: dotnet test опасен — используем dotnet run --project
+      # Каждый проект запускаем отдельно, чтобы точно знать, что он реально бежал
+      - name: Architecture Tests
+        run: dotnet run --project tests/ArchitectureTests/ArchitectureTests.csproj --configuration Release
+
+      - name: Unit Tests
+        run: dotnet run --project tests/UnitTests/UnitTests.csproj --configuration Release
+
+      - name: Integration Tests
+        run: dotnet run --project tests/IntegrationTests/IntegrationTests.csproj --configuration Release
+
+      # GUARDRAIL: Проверяем, что тесты реально запустились (не 0 ran)
+      - name: Verify Tests Ran
+        run: |
+          # Этот скрипт парсит вывод и проверяет, что count > 0
+          # Если агент сломал TUnit настройки — этот шаг упадёт
+          ./ci/scripts/verify-tests.sh
+
+  load-tests:
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      # GUARDRAIL: NBomber на PR — проверяем, что нет деградации
+      - name: Run Load Tests
+        run: dotnet run --project tests/LoadTests/LoadTests.csproj --configuration Release
+
+  snapshot-check:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      # GUARDRAIL: OpenAPI snapshot не должен расходиться
+      - name: Verify OpenAPI Snapshot
+        run: |
+          dotnet run --project tests/IntegrationTests/IntegrationTests.csproj --filter "FullyQualifiedName~OpenApi"
+          git diff --exit-code tests/IntegrationTests/Snapshots/ || (echo "OpenAPI snapshot changed! Update it intentionally." && exit 1)
