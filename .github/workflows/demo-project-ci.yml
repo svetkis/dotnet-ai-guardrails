@@ -1,0 +1,48 @@
+name: DemoProject CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore
+        run: dotnet restore examples/DemoProject/DemoProject.sln
+
+      # GUARDRAIL: Сборка должна проходить без warning'ов как ошибки
+      - name: Build
+        run: dotnet build examples/DemoProject/DemoProject.sln --no-restore --configuration Release /p:TreatWarningsAsErrors=true
+
+      # GUARDRAIL: dotnet test опасен — используем dotnet run --project
+      # Каждый проект запускаем отдельно, чтобы точно знать, что он реально бежал
+      - name: Run DemoProject Tests
+        run: dotnet run --project examples/DemoProject/tests/DemoProject.Tests/DemoProject.Tests.csproj --configuration Release
+
+      # GUARDRAIL: Проверяем, что тесты реально запустились (не 0 ran)
+      - name: Verify Tests Ran
+        run: |
+          TEST_OUTPUT=$(dotnet run --project examples/DemoProject/tests/DemoProject.Tests/DemoProject.Tests.csproj --configuration Release 2>&1)
+          echo "$TEST_OUTPUT"
+
+          if echo "$TEST_OUTPUT" | grep -qi "0 tests ran\|no tests found\|discovered: 0"; then
+              echo "ERROR: Tests did not run! Output shows 0 tests."
+              exit 1
+          fi
+
+          if ! echo "$TEST_OUTPUT" | grep -qi "passed\|failed\|skipped"; then
+              echo "ERROR: Cannot determine test results. TUnit may be misconfigured."
+              exit 1
+          fi
+
+          echo "OK: Tests were executed and results detected."
