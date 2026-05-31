@@ -10,8 +10,9 @@
 | Я — ... | С чего начать |
 |---------|---------------|
 | **Новичок** в агентной разработке | [GLOSSARY.md](../GLOSSARY.md) → [PYRAMID.md](../PYRAMID.md) → `examples/DemoProject/` |
-| **Tech Lead**, внедряю guardrails | [skills/skeptical-ai-bootstrap/SKILL.md](../skills/skeptical-ai-bootstrap/SKILL.md) → [ADAPTATION.md](../skills/ADAPTATION.md) → раздел «Внешний цикл» ниже |
+| **Tech Lead**, внедряю guardrails | [ONBOARDING.md](ONBOARDING.md) → [skills/skeptical-ai-bootstrap/SKILL.md](../skills/skeptical-ai-bootstrap/SKILL.md) → [ADAPTATION.md](../skills/ADAPTATION.md) → раздел «Внешний цикл» ниже |
 | **Разработчик**, ищу паттерн теста | [tests/patterns/](#тестовые-паттерны) → копируй в проект |
+| **Внедряю SAE с нуля** | [ONBOARDING.md](ONBOARDING.md) → пошаговый план с контрольными точками |
 | **Аудитор**, готовлюсь к аудиту | [skills/](#скиллы-аудиты) → бери CHECKLIST.md → [human-audit-bridge.md](solutions/human-audit-bridge.md) для ручного прохода |
 | **Контрибьютор** | [CONTRIBUTING.md](../CONTRIBUTING.md) → раздел «Что можно добавлять» |
 
@@ -44,6 +45,7 @@
 | **PiiGuardTest** | `[SensitiveData]` + redaction guard | [tests/patterns/PiiGuardTest.cs](../tests/patterns/PiiGuardTest.cs) | — |
 | **VersionAuditTest** | Аудит версий SDK/NuGet и frontend-зависимостей | [tests/patterns/VersionAuditTest.cs](../tests/patterns/VersionAuditTest.cs) | — |
 | **DuplicationGuardTest** | Бизнес-логика не дублируется между сервисами | [tests/patterns/DuplicationGuardTest.cs](../tests/patterns/DuplicationGuardTest.cs) | `examples/DemoProject/tests/DemoProject.Tests/DuplicationGuardTest.cs` |
+| **DependencyDriftTest** | Циклические зависимости между проектами и дрейф слоёв | [tests/patterns/DependencyDriftTest.cs](../tests/patterns/DependencyDriftTest.cs) | `examples/DemoProject/tests/DemoProject.Tests/DependencyDriftTest.cs` |
 | **BUG_TEMPLATE** | Формат regression-теста | [tests/conventions/BUG_TEMPLATE.cs](../tests/conventions/BUG_TEMPLATE.cs) | — |
 | **TUnit_Guide** | Соглашения по тестам | [tests/conventions/TUnit_Guide.md](../tests/conventions/TUnit_Guide.md) | — |
 
@@ -95,6 +97,7 @@
 | [stale-stack](traps/stale-stack.md) | Агент использует устаревший стек из-за training cutoff | [VersionAuditTest.cs](../tests/patterns/VersionAuditTest.cs) |
 | [log-leak](traps/log-leak.md) | PII утекает в логи | [PiiGuardTest.cs](../tests/patterns/PiiGuardTest.cs) |
 | [code-duplication](traps/code-duplication.md) | Агент дублирует бизнес-логику вместо реюза | [DuplicationGuardTest.cs](../tests/patterns/DuplicationGuardTest.cs) |
+| [dependency-drift](traps/dependency-drift.md) | +1 using/#include замыкает цикл в графе зависимостей | [DependencyDriftTest.cs](../tests/patterns/DependencyDriftTest.cs) |
 
 ---
 

@@ -12,8 +12,9 @@
 | I am a ... | Where to start |
 |------------|----------------|
 | **Newcomer** to agentic development | [GLOSSARY.md](../GLOSSARY.md) → [PYRAMID.md](../PYRAMID.md) → `examples/DemoProject/` |
-| **Tech Lead** implementing guardrails | [skills/skeptical-ai-bootstrap/SKILL.md](../skills/skeptical-ai-bootstrap/SKILL.md) → [ADAPTATION.md](../skills/ADAPTATION.md) → "Outer Loop" section below |
+| **Tech Lead** implementing guardrails | [ONBOARDING.md](ONBOARDING.md) → [skills/skeptical-ai-bootstrap/SKILL.md](../skills/skeptical-ai-bootstrap/SKILL.md) → [ADAPTATION.md](../skills/ADAPTATION.md) → "Outer Loop" section below |
 | **Developer** looking for a test pattern | [tests/patterns/](#test-patterns) → copy into your project |
+| **Implementing SAE from scratch** | [ONBOARDING.md](ONBOARDING.md) → step-by-step guide with checkpoints |
 | **Auditor** preparing for an audit | [skills/](#skills-audits) → take CHECKLIST.md |
 | **Contributor** | [CONTRIBUTING.md](../CONTRIBUTING.md) → "What can be added" section |
 

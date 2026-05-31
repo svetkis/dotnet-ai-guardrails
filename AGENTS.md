@@ -35,15 +35,21 @@
 
 Этот репозиторий — **набор защитных артефактов**, а не NuGet-пакет. Чтобы натянуть его на свой .NET-проект:
 
+**Полный гайд:** [`docs/ONBOARDING.md`](docs/ONBOARDING.md) — пошаговый план внедрения с контрольными точками и антипаттернами.
+
+Краткая сводка:
+
 | Шаг | Что делать | Куда идти |
 |-----|-----------|-----------|
-| 1. Оценить зрелость | Запустить onboarding-скилл в своём проекте | [`skills/skeptical-ai-bootstrap/SKILL.md`](skills/skeptical-ai-bootstrap/SKILL.md) |
+| 0. Зафиксировать архитектуру | Заполнить инвентарь сборок и критичных путей | [`skills/skeptical-ai-bootstrap/ARCHITECTURE-INVENTORY.md`](skills/skeptical-ai-bootstrap/ARCHITECTURE-INVENTORY.md) |
+| 1. Оценить зрелость | Запустить onboarding-скилл или ручную оценку | [`skills/skeptical-ai-bootstrap/SKILL.md`](skills/skeptical-ai-bootstrap/SKILL.md) |
 | 2. Адаптировать | Вычеркнуть неприменимые проверки под свой стек | [`skills/ADAPTATION.md`](skills/ADAPTATION.md) |
 | 3. Конституция | Скопировать `rules/AGENTS.md` в корень проекта и отредактировать под свой стек | [`rules/AGENTS.md`](rules/AGENTS.md) |
 | 4. Пирамида | Внедрить слои 1→5 по бэклогу из onboarding | [`PYRAMID.md`](PYRAMID.md) |
 | 5. Агент | Настроить свой AI-агент (Kimi / Claude / Cursor / Codex) | [`docs/agents/`](docs/agents/) |
+| 6. Аудиты | Внедрить внешний цикл (ручной или AI) | [`docs/solutions/human-audit-bridge.md`](docs/solutions/human-audit-bridge.md) |
 
-> **Принцип:** не копируй всё подряд — адаптируй или создавай новое. См. антипаттерны в `skills/skeptical-ai-bootstrap/SKILL.md` §«Антипаттерны онбординга».
+> **Принцип:** не копируй всё подряд — адаптируй или создавай новое. См. антипаттерны в [`docs/ONBOARDING.md`](docs/ONBOARDING.md) §«Антипаттерны внедрения».
 
 ---
 
