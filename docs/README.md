@@ -46,6 +46,7 @@
 | **VersionAuditTest** | Аудит версий SDK/NuGet и frontend-зависимостей | [tests/patterns/VersionAuditTest.cs](../tests/patterns/VersionAuditTest.cs) | — |
 | **DuplicationGuardTest** | Бизнес-логика не дублируется между сервисами | [tests/patterns/DuplicationGuardTest.cs](../tests/patterns/DuplicationGuardTest.cs) | `examples/DemoProject/tests/DemoProject.Tests/DuplicationGuardTest.cs` |
 | **DependencyDriftTest** | Циклические зависимости между проектами и дрейф слоёв | [tests/patterns/DependencyDriftTest.cs](../tests/patterns/DependencyDriftTest.cs) | `examples/DemoProject/tests/DemoProject.Tests/DependencyDriftTest.cs` |
+| **EntityLeakTest** | Application-интерфейсы не возвращают Domain Entity (ratchet) | [tests/patterns/EntityLeakTest.cs](../tests/patterns/EntityLeakTest.cs) | `examples/DemoProject/tests/DemoProject.Tests/EntityLeakTest.cs` |
 | **BUG_TEMPLATE** | Формат regression-теста | [tests/conventions/BUG_TEMPLATE.cs](../tests/conventions/BUG_TEMPLATE.cs) | — |
 | **TUnit_Guide** | Соглашения по тестам | [tests/conventions/TUnit_Guide.md](../tests/conventions/TUnit_Guide.md) | — |
 
@@ -68,6 +69,7 @@
 | [version-audit](../skills/version-audit/SKILL.md) | Раз в спринт |
 | [tech-debt-audit](../skills/tech-debt-audit/SKILL.md) | Раз в спринт / перед квартальным планированием |
 | [test-audit](../skills/test-audit/SKILL.md) | После 3-5 фич / перед релизом |
+| [simplicity-audit](../skills/simplicity-audit/SKILL.md) | Раз в спринт / когда код трудно объяснить |
 | [ux-audit](../skills/ux-audit/SKILL.md) | При переработке UI / перед бетой |
 | [skeptical-ai-bootstrap](../skills/skeptical-ai-bootstrap/SKILL.md) | Однократно при старте |
 | [adaptation-guide](../skills/ADAPTATION.md) | Перед первым запуском скиллов |
@@ -98,6 +100,7 @@
 | [log-leak](traps/log-leak.md) | PII утекает в логи | [PiiGuardTest.cs](../tests/patterns/PiiGuardTest.cs) |
 | [code-duplication](traps/code-duplication.md) | Агент дублирует бизнес-логику вместо реюза | [DuplicationGuardTest.cs](../tests/patterns/DuplicationGuardTest.cs) |
 | [dependency-drift](traps/dependency-drift.md) | +1 using/#include замыкает цикл в графе зависимостей | [DependencyDriftTest.cs](../tests/patterns/DependencyDriftTest.cs) |
+| [over-engineering](traps/over-engineering.md) | Агент строит архитектурный собор вместо простого решения | [simplicity-audit](../skills/simplicity-audit/SKILL.md) |
 
 ---
 
@@ -141,6 +144,7 @@
 |------|------------|
 | [rules/AGENTS.md](../rules/AGENTS.md) | Конституция для AI-агентов: EF, тесты, даты, кэш, коммиты |
 | [rules/CONVENTIONS.md](../rules/CONVENTIONS.md) | Именование тестов, workflow, CI guardrails |
+| [BannedSymbols.txt](../examples/DemoProject/BannedSymbols.txt) | Compile-time guard: запрещённые API (BannedApiAnalyzers RS0030) |
 
 ---
 

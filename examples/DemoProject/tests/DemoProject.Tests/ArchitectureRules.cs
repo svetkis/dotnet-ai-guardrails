@@ -63,6 +63,8 @@ public class ArchitectureRules
 
     // TRAP: Агент использует FindAsync в read-path, нарушает слоистую архитектуру.
     // GUARDRAIL: Regex-сканирование исходников ловит антипаттерны, которые рефлексия не видит.
+    // NOTE: Также ловится compile-time через BannedApiAnalyzers (RS0030) в BannedSymbols.txt.
+    //       Regex тут — fallback / double-check для случаев, когда analyzer не подхватился.
     [Test]
     public async Task SourceCode_ShouldNotUse_FindAsync_InQueryServices()
     {

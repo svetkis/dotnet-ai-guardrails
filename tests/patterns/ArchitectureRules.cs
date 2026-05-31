@@ -12,6 +12,8 @@ public class ArchitectureRules
 {
     // TRAP: Агент добавил FindAsync в query-handler, "потому что так короче".
     // GUARDRAIL: FindAsync допустим только в Command-handlers (write-path).
+    // NOTE: Также ловится compile-time через BannedApiAnalyzers (RS0030) в BannedSymbols.txt.
+    //       NetArchTest тут — fallback / double-check.
     [Test]
     public void FindAsync_ShouldNotBeUsedInReadPath()
     {

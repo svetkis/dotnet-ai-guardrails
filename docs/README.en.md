@@ -66,6 +66,7 @@ Each skill = an agent role. Contains `SKILL.md` (instructions) + `CHECKLIST.md` 
 | [bot-audit](../skills/bot-audit/SKILL.md) | Once per sprint |
 | [i18n-audit](../skills/i18n-audit/SKILL.md) | Once per sprint |
 | [version-audit](../skills/version-audit/SKILL.md) | Once per sprint |
+| [simplicity-audit](../skills/simplicity-audit/SKILL.md) | Once per sprint / when code is hard to explain |
 | [skeptical-ai-bootstrap](../skills/skeptical-ai-bootstrap/SKILL.md) | Once at project start |
 | [adaptation-guide](../skills/ADAPTATION.md) | Before first skill run |
 
@@ -93,6 +94,7 @@ Read before implementation — each trap explains **why** a guardrail exists.
 | [agent-circles](traps/agent-circles.md) | Agents loop on one problem | [task-compliance](../skills/task-compliance/SKILL.md) |
 | [stale-stack](traps/stale-stack.md) | Agent uses outdated stack due to training cutoff | [VersionAuditTest.cs](../tests/patterns/VersionAuditTest.cs) |
 | [log-leak](traps/log-leak.md) | PII leaks into logs | [PiiGuardTest.cs](../tests/patterns/PiiGuardTest.cs) |
+| [over-engineering](traps/over-engineering.md) | Agent builds an architectural cathedral instead of a simple solution | [simplicity-audit](../skills/simplicity-audit/SKILL.md) |
 
 ---
 

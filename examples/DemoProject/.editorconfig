@@ -1,0 +1,3 @@
+[*.cs]
+# BannedApiAnalyzers: banned symbol usage must fail the build
+dotnet_diagnostic.RS0030.severity = error

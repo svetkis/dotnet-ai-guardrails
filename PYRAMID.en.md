@@ -306,6 +306,14 @@ April:     + NBomber (read+write mix) → + ratchet tests
 
 Every new layer is a reaction to a bug class that previous layers missed.
 
+### Principle: Guardrails are born from pain
+
+> Do not add a guardrail for a problem that has not yet occurred.
+
+Every test, regex, architecture check, or linter rule must answer: **"What specific bug does this catch?"**
+
+A dead guardrail (0 triggers in 3 sprints) is not protection — it is tech debt. It creates a false sense of security, wastes CI time, and dilutes team attention. Delete it without regret.
+
 ## 4 rules for Monday
 
 1. **Every bug-fix = `BUG###_` test.** No test — no fix.

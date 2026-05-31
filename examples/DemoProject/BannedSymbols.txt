@@ -1,0 +1,2 @@
+P:System.DateTime.Now;Use DateTime.UtcNow or TimeProvider instead. AGENT-GUARD: DateTime.Now causes timezone bugs.
+M:Microsoft.EntityFrameworkCore.DbSet`1.FindAsync(System.Object[]);Use read-optimized queries (Query().Where().Select()). AGENT-GUARD: FindAsync is banned in read-path per ARCH-002.
