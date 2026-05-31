@@ -29,7 +29,7 @@ This skill implements two concepts from [Augmented Coding Patterns](https://gith
 ## Severity Levels
 - **BLOCKER**: Security vulnerability, data loss risk, compilation error, test breakage
 - **CRITICAL**: EF Core write-path with `AsNoTracking`, missing `CancellationToken`, `async void`, race condition, hexagonal violation
-- **MAJOR**: Missing test, exception swallowing, N+1 query, unhandled nullable, DTO mismatch
+- **MAJOR**: Missing test, exception swallowing, N+1 query, unhandled nullable, DTO mismatch, business logic duplication
 - **MINOR**: Naming inconsistency, missing XML doc, magic number
 - **NIT**: Formatting, trailing whitespace, unused using
 
@@ -45,6 +45,9 @@ This skill implements two concepts from [Augmented Coding Patterns](https://gith
 - **Exception Handling**: No empty `catch { }`. At minimum log + rethrow or throw custom exception
 - **Nullability**: Respect nullable reference types. `string?` vs `string` — flag mismatches
 - **BUG Pattern**: Every bug fix MUST have `BUG###_DescriptiveName` test
+- **Duplication (Literal)**: If validation/calculation/status check is added, verify it does not already exist in another service. Business rules belong in Domain, not copy-pasted into Application/API.
+  - Automated guard: `DuplicationGuardTest.cs` catches literal copy-paste via regex.
+  - Human guard: CHECKLIST.md "Semantic Duplication" catches `IsConfirmed()` vs `Status == Confirmed` — same rule, different code.
 
 ## ANTI-HALLUCINATION Protocol
 Every finding MUST include:

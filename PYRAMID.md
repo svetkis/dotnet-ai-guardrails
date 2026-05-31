@@ -47,7 +47,7 @@
 |-----------|--------|--------|
 | Слои (Clean Architecture) | 10 | Domain не зависит от Infrastructure |
 | Именование | 3 | Job-классы заканчиваются на `Job` |
-| Структура и антипаттерны | 11 | Запрет `.FindAsync()` и `.Include()` в read-path |
+| Структура и антипаттерны | 12 | Запрет `.FindAsync()` и `.Include()` в read-path; запрет дублирования бизнес-логики |
 | Performance | 1 | Количество публичных типов и тестов не уменьшается |
 | Тестовый инвентарь | 1 | Количество тестов не уменьшается (страховка от "0 tests ran") |
 
@@ -58,6 +58,9 @@
 ```csharp
 // Ищем FindAsync() в сервисах (запрещено в read-path)
 var violations = ScanServicesForPattern(@"\.FindAsync\(", "*.cs", whitelist);
+
+// Ищем дублирование критичной бизнес-логики в разных файлах
+var dupes = ScanForDuplicatedPattern(@"Status\s*==\s*OrderStatus\.Confirmed", "*.cs");
 ```
 
 ### Whitelist со staleness check
@@ -174,6 +177,9 @@ Whitelist для исключений (write-path) сам проверяется
 | Performance | `skills/performance-audit/` |
 | i18n | `skills/i18n-audit/` |
 | API Design | `skills/api-design-audit/` |
+| Tech Debt | `skills/tech-debt-audit/` |
+| Test Coverage | `skills/test-audit/` |
+| UX Flow | `skills/ux-audit/` |
 | Version | `skills/version-audit/` |
 
 **График:** раз в спринт или точечно, когда чуете опасность.

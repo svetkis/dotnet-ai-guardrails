@@ -71,6 +71,18 @@ description: >
 2. Нет расхождений в описании pipeline между `docs/agents/CLAUDE-CODE.md` и `docs/agents/OPENCODE.md`?
 3. Все агенты описывают один и тот же стек/версии?
 
+### Phase 3a: Fact Check (Documentation vs Code)
+
+// TRAP: Агент написал отчёт с цифрами, которые не соответствуют коду. "450 fix-коммитов" вместо 377, строка 325 в файле из 299 строк.
+// GUARDRAIL: Сверка фактов из docs/audits/, docs/meetup/, docs/talks/ с реальным кодом.
+
+1. Все числовые утверждения (количество тестов, строк, коммитов, endpoints) верифицированы через `git log` / `wc` / `grep` / `find`
+2. Все даты коммитов/релизов соответствуют `git log`
+3. Все имена файлов и номера строк из примеров существуют в текущей кодовой базе
+4. Все ссылки на Numbered Decisions (`PERF-###`, `DB-###`, `BR-###`) ведут на существующий код
+5. Все ссылки на скиллы/тесты существуют в `skills/`, `tests/`, `examples/`
+6. Все `case study` / `incident report` содержат корректные хеши коммитов (`git show --stat`)
+
 ### Phase 4: README & CHANGELOG
 1. `README.md` содержит актуальные команды сборки?
 2. `CHANGELOG.md` покрывает последний релиз?
@@ -105,6 +117,11 @@ description: >
 
 ### Cross-Agent
 - [ ] `docs/agents/KIMI.md` ссылается на удалённый `skills/legacy-audit/`
+
+### Fact Check
+- [ ] В отчёте `AGENT_FIX_STATS.md` 450 fix-коммитов, факт — 377 (`git log --grep='fix:' | wc -l`)
+- [ ] Строка 325 в `MasterBotApiClient.cs`, файл имеет 299 строк
+- [ ] Хеш `f18681ee` из case study не существует (`git show f18681ee` → fatal)
 
 ### README
 - [ ] Команда сборки устарела: `dotnet test` вместо `dotnet run --project`

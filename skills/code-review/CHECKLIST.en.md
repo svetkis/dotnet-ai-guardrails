@@ -33,6 +33,12 @@
 - [ ] DateTime in UTC (`DateTime.UtcNow`, `DateTimeKind.Utc`)
 - [ ] PostgreSQL columns: `snake_case`
 
+## Business Logic Duplication (Semantic)
+> Automated tests catch only literal copying. This block is for humans.
+- [ ] New validation/status calculation — does similar logic exist in other services?
+- [ ] Can the rule be extracted into a Domain Service / Value Object / `BR-###`?
+- [ ] No divergence: in one place `>= 100`, in another `> 100`
+
 ## Report Format
 
 ```markdown

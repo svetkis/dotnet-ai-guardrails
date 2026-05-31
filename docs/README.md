@@ -12,7 +12,7 @@
 | **Новичок** в агентной разработке | [GLOSSARY.md](../GLOSSARY.md) → [PYRAMID.md](../PYRAMID.md) → `examples/DemoProject/` |
 | **Tech Lead**, внедряю guardrails | [skills/skeptical-ai-bootstrap/SKILL.md](../skills/skeptical-ai-bootstrap/SKILL.md) → [ADAPTATION.md](../skills/ADAPTATION.md) → раздел «Внешний цикл» ниже |
 | **Разработчик**, ищу паттерн теста | [tests/patterns/](#тестовые-паттерны) → копируй в проект |
-| **Аудитор**, готовлюсь к аудиту | [skills/](#скиллы-аудиты) → бери CHECKLIST.md |
+| **Аудитор**, готовлюсь к аудиту | [skills/](#скиллы-аудиты) → бери CHECKLIST.md → [human-audit-bridge.md](solutions/human-audit-bridge.md) для ручного прохода |
 | **Контрибьютор** | [CONTRIBUTING.md](../CONTRIBUTING.md) → раздел «Что можно добавлять» |
 
 ---
@@ -43,6 +43,7 @@
 | **LoadTest** | Silent breakdown под нагрузкой: read-оптимизации, которые ломают write | [tests/patterns/LoadTest.cs](../tests/patterns/LoadTest.cs) | `examples/DemoProject/tests/DemoProject.Tests/LoadTests.cs` |
 | **PiiGuardTest** | `[SensitiveData]` + redaction guard | [tests/patterns/PiiGuardTest.cs](../tests/patterns/PiiGuardTest.cs) | — |
 | **VersionAuditTest** | Аудит версий SDK/NuGet и frontend-зависимостей | [tests/patterns/VersionAuditTest.cs](../tests/patterns/VersionAuditTest.cs) | — |
+| **DuplicationGuardTest** | Бизнес-логика не дублируется между сервисами | [tests/patterns/DuplicationGuardTest.cs](../tests/patterns/DuplicationGuardTest.cs) | `examples/DemoProject/tests/DemoProject.Tests/DuplicationGuardTest.cs` |
 | **BUG_TEMPLATE** | Формат regression-теста | [tests/conventions/BUG_TEMPLATE.cs](../tests/conventions/BUG_TEMPLATE.cs) | — |
 | **TUnit_Guide** | Соглашения по тестам | [tests/conventions/TUnit_Guide.md](../tests/conventions/TUnit_Guide.md) | — |
 
@@ -63,6 +64,9 @@
 | [bot-audit](../skills/bot-audit/SKILL.md) | Раз в спринт |
 | [i18n-audit](../skills/i18n-audit/SKILL.md) | Раз в спринт |
 | [version-audit](../skills/version-audit/SKILL.md) | Раз в спринт |
+| [tech-debt-audit](../skills/tech-debt-audit/SKILL.md) | Раз в спринт / перед квартальным планированием |
+| [test-audit](../skills/test-audit/SKILL.md) | После 3-5 фич / перед релизом |
+| [ux-audit](../skills/ux-audit/SKILL.md) | При переработке UI / перед бетой |
 | [skeptical-ai-bootstrap](../skills/skeptical-ai-bootstrap/SKILL.md) | Однократно при старте |
 | [adaptation-guide](../skills/ADAPTATION.md) | Перед первым запуском скиллов |
 
@@ -90,6 +94,7 @@
 | [agent-circles](traps/agent-circles.md) | Агенты зацикливаются на одной проблеме | [task-compliance](../skills/task-compliance/SKILL.md) |
 | [stale-stack](traps/stale-stack.md) | Агент использует устаревший стек из-за training cutoff | [VersionAuditTest.cs](../tests/patterns/VersionAuditTest.cs) |
 | [log-leak](traps/log-leak.md) | PII утекает в логи | [PiiGuardTest.cs](../tests/patterns/PiiGuardTest.cs) |
+| [code-duplication](traps/code-duplication.md) | Агент дублирует бизнес-логику вместо реюза | [DuplicationGuardTest.cs](../tests/patterns/DuplicationGuardTest.cs) |
 
 ---
 
@@ -99,6 +104,8 @@
 |----------|------------|
 | [architecture-tests.md](solutions/architecture-tests.md) | Подробный гайд по NetArchTest + regex-сканированию |
 | [ai-patterns.md](solutions/ai-patterns.md) | 9 проверенных паттернов AI-driven разработки |
+| [human-audit-bridge.md](solutions/human-audit-bridge.md) | Как использовать AI-чеклисты для ручного аудита человеком |
+| [ARCHITECTURE-INVENTORY.md](../skills/skeptical-ai-bootstrap/ARCHITECTURE-INVENTORY.md) | Шаблон фиксации текущей архитектуры перед внедрением guardrails |
 
 ---
 

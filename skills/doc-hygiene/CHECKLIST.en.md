@@ -24,6 +24,13 @@
 - [ ] Pipeline descriptions are identical for all agents (format differs, substance does not)
 - [ ] No links to deleted skills/modules
 
+## Fact Check (Documentation vs Code)
+- [ ] All numbers in reports/docs verified via `git log` / `wc` / `grep`
+- [ ] All commit dates match `git log`
+- [ ] All file names and line numbers from examples exist
+- [ ] All `PERF-###` / `DB-###` / `BR-###` point to existing code
+- [ ] All commit hashes in case studies are correct (`git show --stat`)
+
 ## README & Changelog
 - [ ] Build commands are current
 - [ ] CHANGELOG covers latest release
