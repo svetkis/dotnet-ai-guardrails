@@ -163,6 +163,10 @@ Narrow skill-personas run in batches — cross-pollination of findings between s
 | Performance | `skills/performance-audit/` |
 | i18n | `skills/i18n-audit/` |
 | API Design | `skills/api-design-audit/` |
+| Tech Debt | `skills/tech-debt-audit/` |
+| Test Coverage | `skills/test-audit/` |
+| UX Flow | `skills/ux-audit/` |
+| Simplicity | `skills/simplicity-audit/` |
 | Version | `skills/version-audit/` |
 
 **Schedule:** once per sprint or ad-hoc when you smell danger.

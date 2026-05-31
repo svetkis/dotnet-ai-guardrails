@@ -126,6 +126,14 @@ Stack markers when multiple contexts are active: `🍀 🔍` = base rules + revi
 - Agent optimizes read, human verifies write is not broken
 - Load test scenario must pass before deploy (if applicable)
 
+## Guardrails: Born from Pain
+
+> Any guardrail (test, regex scan, arch-test, linter rule) must answer: **"What specific bug does this catch?"**
+
+- ❌ Guardrail for a problem that has never occurred — **FORBIDDEN** (dead guardrail = over-engineering)
+- ✅ Guardrail created **after** a real bug was caught and fixed — **MANDATORY**
+- ✅ Deleting a guardrail with zero triggers after 3 sprints — **MANDATORY**
+
 ## Hard Prohibitions
 
 - ❌ Commit without `dotnet build` + tests

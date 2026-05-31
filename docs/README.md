@@ -112,6 +112,7 @@
 | [ai-patterns.md](solutions/ai-patterns.md) | 9 проверенных паттернов AI-driven разработки |
 | [human-audit-bridge.md](solutions/human-audit-bridge.md) | Как использовать AI-чеклисты для ручного аудита человеком |
 | [ARCHITECTURE-INVENTORY.md](../skills/skeptical-ai-bootstrap/ARCHITECTURE-INVENTORY.md) | Шаблон фиксации текущей архитектуры перед внедрением guardrails |
+| [NUMBERED-DECISIONS.md](../skills/skeptical-ai-bootstrap/NUMBERED-DECISIONS.md) | Шаблон реестра осознанных отклонений (`PERF-###`, `DB-###`, `AUD-###`) |
 
 ---
 

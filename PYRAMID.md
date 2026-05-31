@@ -184,6 +184,7 @@ Whitelist для исключений (write-path) сам проверяется
 | Tech Debt | `skills/tech-debt-audit/` |
 | Test Coverage | `skills/test-audit/` |
 | UX Flow | `skills/ux-audit/` |
+| Simplicity | `skills/simplicity-audit/` |
 | Version | `skills/version-audit/` |
 
 **График:** раз в спринт или точечно, когда чуете опасность.
