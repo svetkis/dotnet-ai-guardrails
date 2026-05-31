@@ -68,6 +68,8 @@ var violations = ScanServicesForPattern(@"\.FindAsync\(", "*.cs", whitelist);
 
 ### Отслеживание решений
 
+> Registry template: [`NUMBERED-DECISIONS.md`](../../skills/skeptical-ai-bootstrap/NUMBERED-DECISIONS.md)
+
 | Тест | Правило |
 |------|---------|
 | `PerfAndDbDecisions_ShouldHaveUniqueIds` | ID оптимизаций (`PERF-###`, `DB-###`) уникальны по всей кодбазе |

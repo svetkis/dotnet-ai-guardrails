@@ -39,22 +39,25 @@ description: >
 1. Найти `.sln`, все `.csproj`, `Directory.Build.props`
 2. Проверить, есть ли `ARCHITECTURE-INVENTORY.md` в проекте. Если есть — использовать его как ground truth вместо угадывания.
    Если нет — предложить создать по шаблону [`ARCHITECTURE-INVENTORY.md`](ARCHITECTURE-INVENTORY.md).
-3. Определить **тип AI-агента**, используемого в проекте:
+3. Проверить, есть ли `NUMBERED-DECISIONS.md` (или аналогичный реестр `PERF-###` / `DB-###`).
+   Если есть — использовать его, чтобы не предлагать «исправления» зафиксированных архитектурных компромиссов.
+   Если нет — предложить создать по шаблону [`NUMBERED-DECISIONS.md`](NUMBERED-DECISIONS.md) при наличии осознанных отклонений.
+4. Определить **тип AI-агента**, используемого в проекте:
    - **Kimi Code CLI** → `.kimi/skills/` существует?
    - **Claude Code** → `.claude/CLAUDE.md` существует?
    - **Codex (OpenAI)** → `.codex/instructions.md` существует?
    - **OpenCode** → `.opencode/` существует?
    - **Несколько агентов** → нужна универсальная конфигурация
    - **Неизвестно** → спросить или предложить универсальный формат `AGENTS.md`
-4. Определить стек:
+5. Определить стек:
    - .NET version (Framework 4.8 / .NET 6 / .NET 8 / .NET 10)
    - Тип приложения (Web API / Razor Pages / Worker / Desktop / MAUI / Lib / Game / ML)
    - ORM / доступ к данным (EF Core / Dapper / ADO.NET / Mongo)
    - Test framework (TUnit / xUnit / NUnit / MSTest / нет)
    - CI/CD (GitHub Actions / GitLab / Azure DevOps / TeamCity / нет)
    - Архитектура (Clean / Vertical Slice / Onion / Modular / None / Big Ball of Mud)
-5. Найти существующие тесты, CI, conventions
-6. Найти или понять: есть ли правила для агентов
+6. Найти существующие тесты, CI, conventions
+7. Найти или понять: есть ли правила для агентов
 
 ### Phase 2: Оценка по фактам
 

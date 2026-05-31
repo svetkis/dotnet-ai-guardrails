@@ -108,6 +108,7 @@ Stack markers when multiple contexts are active: `🍀 🔍` = base rules + revi
 - Intentional deviation from standard must be documented with ID: `PERF-###`, `DB-###`, `AUD-###`
 - IDs must be unique — checked by architectural test
 - Example: `// PERF-022: QueryFilter removed — JOIN added 3ms to every query`
+- Full registry template: [`NUMBERED-DECISIONS.md`](../../skills/skeptical-ai-bootstrap/NUMBERED-DECISIONS.md)
 
 ## Caching
 
