@@ -29,6 +29,7 @@
 - **BannedApiAnalyzers (RS0030)** — запрещённые API (`DateTime.Now`, `FindAsync`) ловятся при сборке, а не в тестах
 - Агент не может вернуть `null` без проверки
 - **Strongly Typed IDs** — `BookingId` вместо `Guid`, `CustomerId` вместо `string`. Компилятор ловит подстановку чужого ID до запуска тестов. См. `examples/DemoProject/src/DemoProject.Domain/BookingId.cs`
+- **Кастомный Roslyn-анализатор** — ловит `Guid Id` в Domain-сущностях (SAE001) и `Guid somethingId` в параметрах (SAE002) прямо в IDE, ещё до `dotnet build`. Быстрее regex-архитектурных тестов (Слой 2). См. `examples/DemoProject/src/DemoProject.Analyzers/`
 
 ### Frontend
 - `tsc --noEmit` (strict mode) + `noUnusedLocals`

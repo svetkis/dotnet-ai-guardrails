@@ -109,6 +109,26 @@ var violations = ScanServicesForPattern(@"\.FindAsync\(", "*.cs", whitelist);
 
 ---
 
+## 6. Roslyn-анализаторы как замена regex
+
+**Файл:** `DemoProject.Analyzers/StronglyTypedIdAnalyzer.cs`
+
+Всё, что ловится regex-сканированием исходников, можно усилить кастомным Roslyn-анализатором. Разница во времени обратной связи:
+
+| Подход | Время обратной связи | Когда срабатывает |
+|--------|---------------------|-------------------|
+| Regex-сканирование | ~10 секунд | `dotnet test` (Слой 2) |
+| Roslyn-анализатор | ~0.5 секунды | Ввод кода в IDE / `dotnet build` (Слой 1) |
+
+**Пример:** `SAE001` ловит `public Guid Id { get; init; }` в Domain-сущностях ещё до компиляции — IDE показывает красное подчёркивание. `SAE002` ловит `void DoSomething(Guid orderId)` — сырой Guid в параметре.
+
+**Когда использовать:** Если правило однозначно (нет gray area) и должно быть Error — делайте Roslyn-анализатор. Если правило требует исключений (whitelist) или проверяет архитектурные зависимости между проектами — оставьте regex / NetArchTest.
+
+**Рабочий пример:** `examples/DemoProject/src/DemoProject.Analyzers/`
+
+
+---
+
 ## Whitelist со staleness check
 
 Whitelist для исключений (write-path) сам проверяется: если файл из whitelist больше не содержит паттерн — тест падает. Агент не может "почистить" код и оставить мёртвую запись.

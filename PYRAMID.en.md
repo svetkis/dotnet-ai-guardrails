@@ -29,6 +29,7 @@ This is not a "feedback layer" — it's the **ground rules**. Everything else is
 - **BannedApiAnalyzers (RS0030)** — forbidden APIs (`DateTime.Now`, `FindAsync`) caught at build time, not in tests
 - Agent cannot return `null` unchecked
 - **Strongly Typed IDs** — `BookingId` instead of `Guid`, `CustomerId` instead of `string`. The compiler catches wrong-ID substitution before tests run. See `examples/DemoProject/src/DemoProject.Domain/BookingId.cs`
+- **Custom Roslyn analyzer** — catches `Guid Id` in Domain entities (SAE001) and `Guid somethingId` in parameters (SAE002) right in the IDE, before `dotnet build`. Faster than regex architecture tests (Layer 2). See `examples/DemoProject/src/DemoProject.Analyzers/`
 
 ### Frontend
 - `tsc --noEmit` (strict mode) + `noUnusedLocals`

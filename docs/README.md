@@ -23,7 +23,7 @@
 | Слой | Что это | Главный документ | Артефакты |
 |------|---------|------------------|-----------|
 | **0. Инструкции** | Правила для агента перед кодом | [PYRAMID.md §Слой 0](../PYRAMID.md#layer-0) | `rules/AGENTS_TEMPLATE.md` + Numbered Decisions |
-| 1. Компилятор | Быстрая обратная связь от типов | [PYRAMID.md §Слой 1](../PYRAMID.md#layer-1-compiler) | `.editorconfig`, `Directory.Build.props` |
+| 1. Компилятор | Быстрая обратная связь от типов | [PYRAMID.md §Слой 1](../PYRAMID.md#layer-1-compiler) | `.editorconfig`, `Directory.Build.props`, `DemoProject.Analyzers` (кастомный Roslyn-анализатор) |
 | 2. Архитектура | Авто-проверка слоёв и антипаттернов | [PYRAMID.md §Слой 2](../PYRAMID.md#layer-2-architecture) | [tests/patterns/ArchitectureRules.cs](../tests/patterns/ArchitectureRules.cs), [RatchetTest.cs](../tests/patterns/RatchetTest.cs) |
 | 3. Тесты | Silent breakdown, PII leaks, vibe-refactoring, контракты API | [PYRAMID.md §Слой 3](../PYRAMID.md#layer-3-tests) | [tests/patterns/](#тестовые-паттерны) |
 | 4. Code Review | Агент проверяет агента | [PYRAMID.md §Слой 4](../PYRAMID.md#layer-4-code-review) | [skills/code-review/SKILL.md](../skills/code-review/SKILL.md) |
