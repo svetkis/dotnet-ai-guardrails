@@ -18,7 +18,8 @@ public class SnapshotTests
     {
         var booking = new Booking
         {
-            Id = Guid.Parse("11111111-1111-1111-1111-111111111111"),
+            Id = new BookingId(Guid.Parse("11111111-1111-1111-1111-111111111111")),
+            CustomerId = new CustomerId(Guid.Parse("22222222-2222-2222-2222-222222222222")),
             CustomerName = "Demo Customer",
             ScheduledAt = new DateTime(2026, 5, 30, 10, 0, 0, DateTimeKind.Utc),
             Status = BookingStatus.Confirmed
@@ -43,7 +44,7 @@ public class SnapshotTests
     {
         var dto = new Booking
         {
-            Id = Guid.NewGuid(),
+            Id = BookingId.New(),
             ScheduledAt = DateTime.UtcNow,
             Status = BookingStatus.Pending
         };

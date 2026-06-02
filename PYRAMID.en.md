@@ -26,7 +26,9 @@ This is not a "feedback layer" — it's the **ground rules**. Everything else is
 
 ### Backend
 - `dotnet build` — Nullable reference types, record-based DTO immutability
+- **BannedApiAnalyzers (RS0030)** — forbidden APIs (`DateTime.Now`, `FindAsync`) caught at build time, not in tests
 - Agent cannot return `null` unchecked
+- **Strongly Typed IDs** — `BookingId` instead of `Guid`, `CustomerId` instead of `string`. The compiler catches wrong-ID substitution before tests run. See `examples/DemoProject/src/DemoProject.Domain/BookingId.cs`
 
 ### Frontend
 - `tsc --noEmit` (strict mode) + `noUnusedLocals`
@@ -47,7 +49,7 @@ This is not a "feedback layer" — it's the **ground rules**. Everything else is
 |----------|--------|
 | Layers (Clean Architecture) | 10 |
 | Naming | 3 |
-| Structure and anti-patterns | 11 |
+| Structure and anti-patterns | 12 |
 | Performance | 1 |
 | Test inventory | 1 |
 
@@ -55,7 +57,7 @@ This is not a "feedback layer" — it's the **ground rules**. Everything else is
 
 Whitelist for exceptions (write-path) self-validates: if a file from the whitelist no longer contains the pattern — the test fails.
 
-**Pattern:** `tests/patterns/ArchitectureRules.cs`, `tests/patterns/RatchetTest.cs`
+**Pattern:** `tests/patterns/ArchitectureRules.cs`, `tests/patterns/RatchetTest.cs`, `tests/patterns/DependencyDriftTest.cs`, `tests/patterns/EntityLeakTest.cs`, `tests/patterns/StronglyTypedIds.cs`
 
 ---
 

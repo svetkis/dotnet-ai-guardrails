@@ -7,12 +7,13 @@ public sealed class BookingService : IBookingService
     // TRAP: Агент может добавить using DemoProject.Infrastructure и сломать слои.
     // GUARDRAIL: ArchitectureRules.Api_ShouldNotReferenceInfrastructureDirectly
 
-    public Task<Booking?> GetByIdAsync(Guid id, CancellationToken ct = default)
+    public Task<Booking?> GetByIdAsync(BookingId id, CancellationToken ct = default)
     {
         // In real app: read from DB via Select() + AsNoTracking()
         var booking = new Booking
         {
             Id = id,
+            CustomerId = CustomerId.New(),
             CustomerName = "Demo",
             ScheduledAt = DateTime.UtcNow,
             Status = BookingStatus.Pending
@@ -25,7 +26,7 @@ public sealed class BookingService : IBookingService
         return Task.FromResult<IReadOnlyList<Booking>>(Array.Empty<Booking>());
     }
 
-    public Task ConfirmAsync(Guid id, CancellationToken ct = default)
+    public Task ConfirmAsync(BookingId id, CancellationToken ct = default)
     {
         // In real app: load entity with tracking, modify, save
         return Task.CompletedTask;

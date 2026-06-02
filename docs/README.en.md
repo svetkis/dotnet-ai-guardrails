@@ -46,6 +46,7 @@ All templates are `copy-paste friendly`. Each contains comments `// TRAP:` and `
 | **LoadTest** | Silent breakdown under load: read optimizations that break write path | [tests/patterns/LoadTest.cs](../tests/patterns/LoadTest.cs) | `examples/DemoProject/tests/DemoProject.Tests/LoadTests.cs` |
 | **PiiGuardTest** | `[SensitiveData]` + redaction guard | [tests/patterns/PiiGuardTest.cs](../tests/patterns/PiiGuardTest.cs) | — |
 | **VersionAuditTest** | Regex scanning of SDK/NuGet versions | [tests/patterns/VersionAuditTest.cs](../tests/patterns/VersionAuditTest.cs) | — |
+| **StronglyTypedIds** | Domain entities must use strongly typed IDs, not raw Guid/string/int | [tests/patterns/StronglyTypedIds.cs](../tests/patterns/StronglyTypedIds.cs) | `examples/DemoProject/tests/DemoProject.Tests/StronglyTypedIds.cs` |
 | **BUG_TEMPLATE** | Regression test format | [tests/conventions/BUG_TEMPLATE.cs](../tests/conventions/BUG_TEMPLATE.cs) | — |
 | **TUnit_Guide** | Test conventions | [tests/conventions/TUnit_Guide.md](../tests/conventions/TUnit_Guide.md) | — |
 
@@ -67,6 +68,7 @@ Each skill = an agent role. Contains `SKILL.md` (instructions) + `CHECKLIST.md` 
 | [i18n-audit](../skills/i18n-audit/SKILL.md) | Once per sprint |
 | [version-audit](../skills/version-audit/SKILL.md) | Once per sprint |
 | [simplicity-audit](../skills/simplicity-audit/SKILL.md) | Once per sprint / when code is hard to explain |
+| [type-safety](../skills/type-safety/SKILL.md) | On PR with Domain/DTO / when refactoring identifiers |
 | [skeptical-ai-bootstrap](../skills/skeptical-ai-bootstrap/SKILL.md) | Once at project start |
 | [adaptation-guide](../skills/ADAPTATION.md) | Before first skill run |
 

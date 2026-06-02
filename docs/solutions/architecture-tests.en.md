@@ -87,6 +87,26 @@ var violations = ScanServicesForPattern(@"\.FindAsync\(", "*.cs", whitelist);
 
 ---
 
+## 5. Strongly Typed Identifiers
+
+**File:** `StronglyTypedIds.cs`
+
+| Test | Rule |
+|------|------|
+| `DomainEntities_ShouldNotUseRawPrimitivesForIds` | Properties `*Id` in Domain entities cannot have type `Guid`, `string`, `int`, `long`. Only types ending in `Id` (e.g. `BookingId`) are allowed |
+| `StronglyTypedIdUsage_ShouldNotDecrease` | Ratchet: number of strongly typed IDs in Domain >= baseline |
+
+**Why:** By habit the agent uses `Guid` for all identifiers. This opens the door to substituting `ClientId` into a method expecting `AgentId`. The architecture test forces creating a separate type for each entity — the compiler does the rest.
+
+**Talk use-case:**
+- **Layer 1 (Compiler):** show the "magic" — the IDE underlines `GetAgent(clientId)` in red because type `ClientId` does not convert to `AgentId`.
+- **Layer 2 (Architecture tests):** show the "policy" — a failed pipeline with `DomainEntities_ShouldNotUseRawPrimitivesForIds` forces the developer (and agent) to create `BookingId` instead of `Guid`.
+
+**Template:** [tests/patterns/StronglyTypedIds.cs](../../tests/patterns/StronglyTypedIds.cs)  
+**Working example:** `examples/DemoProject/tests/DemoProject.Tests/StronglyTypedIds.cs`
+
+---
+
 ## Whitelist with Staleness Check
 
 Whitelist for exceptions (write-path) is itself checked: if a file from the whitelist no longer contains the pattern — the test fails. The agent cannot "clean up" code and leave a dead entry.

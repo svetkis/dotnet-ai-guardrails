@@ -1,4 +1,5 @@
 using DemoProject.Application;
+using DemoProject.Domain;
 using TUnit;
 
 namespace DemoProject.Tests;
@@ -9,7 +10,7 @@ public class BookingServiceTests
     public async Task GetByIdAsync_ShouldReturnBooking()
     {
         var svc = new BookingService();
-        var result = await svc.GetByIdAsync(Guid.NewGuid());
+        var result = await svc.GetByIdAsync(BookingId.New());
 
         await Assert.That(result).IsNotNull();
     }

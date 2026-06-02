@@ -2,6 +2,7 @@
 // Этот файл — рабочая адаптация шаблона из tests/patterns/LoadTest.cs
 // Для демонстрации используем in-memory нагрузку без внешних HTTP-зависимостей.
 
+using DemoProject.Domain;
 using NBomber.Contracts;
 using NBomber.CSharp;
 using TUnit;
@@ -25,7 +26,7 @@ public class LoadTests
         var writeScenario = Scenario.Create("confirm_booking", async context =>
         {
             var svc = new DemoProject.Application.BookingService();
-            await svc.ConfirmAsync(Guid.NewGuid());
+            await svc.ConfirmAsync(BookingId.New());
             return Response.Ok();
         })
         .WithoutWarmUp()

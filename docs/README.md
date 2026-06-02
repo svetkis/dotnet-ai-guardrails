@@ -47,6 +47,7 @@
 | **DuplicationGuardTest** | Бизнес-логика не дублируется между сервисами | [tests/patterns/DuplicationGuardTest.cs](../tests/patterns/DuplicationGuardTest.cs) | `examples/DemoProject/tests/DemoProject.Tests/DuplicationGuardTest.cs` |
 | **DependencyDriftTest** | Циклические зависимости между проектами и дрейф слоёв | [tests/patterns/DependencyDriftTest.cs](../tests/patterns/DependencyDriftTest.cs) | `examples/DemoProject/tests/DemoProject.Tests/DependencyDriftTest.cs` |
 | **EntityLeakTest** | Application-интерфейсы не возвращают Domain Entity (ratchet) | [tests/patterns/EntityLeakTest.cs](../tests/patterns/EntityLeakTest.cs) | `examples/DemoProject/tests/DemoProject.Tests/EntityLeakTest.cs` |
+| **StronglyTypedIds** | Domain-сущности используют strongly typed IDs, а не голые Guid/string/int | [tests/patterns/StronglyTypedIds.cs](../tests/patterns/StronglyTypedIds.cs) | `examples/DemoProject/tests/DemoProject.Tests/StronglyTypedIds.cs` |
 | **BUG_TEMPLATE** | Формат regression-теста | [tests/conventions/BUG_TEMPLATE.cs](../tests/conventions/BUG_TEMPLATE.cs) | — |
 | **TUnit_Guide** | Соглашения по тестам | [tests/conventions/TUnit_Guide.md](../tests/conventions/TUnit_Guide.md) | — |
 
@@ -71,6 +72,7 @@
 | [test-audit](../skills/test-audit/SKILL.md) | После 3-5 фич / перед релизом |
 | [simplicity-audit](../skills/simplicity-audit/SKILL.md) | Раз в спринт / когда код трудно объяснить |
 | [ux-audit](../skills/ux-audit/SKILL.md) | При переработке UI / перед бетой |
+| [type-safety](../skills/type-safety/SKILL.md) | На PR с Domain/DTO / при рефакторинге идентификаторов |
 | [skeptical-ai-bootstrap](../skills/skeptical-ai-bootstrap/SKILL.md) | Однократно при старте |
 | [adaptation-guide](../skills/ADAPTATION.md) | Перед первым запуском скиллов |
 

@@ -28,6 +28,7 @@
 - `dotnet build` — Nullable reference types, record-based DTO immutability
 - **BannedApiAnalyzers (RS0030)** — запрещённые API (`DateTime.Now`, `FindAsync`) ловятся при сборке, а не в тестах
 - Агент не может вернуть `null` без проверки
+- **Strongly Typed IDs** — `BookingId` вместо `Guid`, `CustomerId` вместо `string`. Компилятор ловит подстановку чужого ID до запуска тестов. См. `examples/DemoProject/src/DemoProject.Domain/BookingId.cs`
 
 ### Frontend
 - `tsc --noEmit` (strict mode) + `noUnusedLocals`
@@ -48,7 +49,7 @@
 |-----------|--------|--------|
 | Слои (Clean Architecture) | 10 | Domain не зависит от Infrastructure |
 | Именование | 3 | Job-классы заканчиваются на `Job` |
-| Структура и антипаттерны | 12 | Запрет `.FindAsync()` и `.Include()` в read-path; запрет дублирования бизнес-логики; запрет циклических зависимостей; Entity leak guard |
+| Структура и антипаттерны | 12 | Запрет `.FindAsync()` и `.Include()` в read-path; запрет дублирования бизнес-логики; запрет циклических зависимостей; Entity leak guard; запрет голых Guid/string/int для идентификаторов в Domain |
 | Performance | 1 | Количество публичных типов и тестов не уменьшается |
 | Тестовый инвентарь | 1 | Количество тестов не уменьшается (страховка от "0 tests ran") |
 
@@ -71,7 +72,7 @@ var cycles = FindCyclesInProjectReferenceGraph("*.csproj");
 
 Whitelist для исключений (write-path) сам проверяется: если файл из whitelist больше не содержит паттерн — тест падает.
 
-**Паттерн:** `tests/patterns/ArchitectureRules.cs`, `tests/patterns/RatchetTest.cs`, `tests/patterns/DependencyDriftTest.cs`, `tests/patterns/EntityLeakTest.cs`
+**Паттерн:** `tests/patterns/ArchitectureRules.cs`, `tests/patterns/RatchetTest.cs`, `tests/patterns/DependencyDriftTest.cs`, `tests/patterns/EntityLeakTest.cs`, `tests/patterns/StronglyTypedIds.cs`
 
 ---
 

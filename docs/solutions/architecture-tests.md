@@ -89,6 +89,26 @@ var violations = ScanServicesForPattern(@"\.FindAsync\(", "*.cs", whitelist);
 
 ---
 
+## 5. Строгая типизация идентификаторов
+
+**Файл:** `StronglyTypedIds.cs`
+
+| Тест | Правило |
+|------|---------|
+| `DomainEntities_ShouldNotUseRawPrimitivesForIds` | Свойства `*Id` в Domain-сущностях не могут иметь тип `Guid`, `string`, `int`, `long`. Допустимы только типы, оканчивающиеся на `Id` (например, `BookingId`) |
+| `StronglyTypedIdUsage_ShouldNotDecrease` | Ratchet: количество strongly typed ID в Domain >= baseline |
+
+**Зачем:** Агент по привычке использует `Guid` для всех идентификаторов. Это открывает дверь для подстановки `ClientId` в метод, ожидающий `AgentId`. Архитектурный тест заставляет создавать отдельный тип для каждой сущности — компилятор делает остальное.
+
+**Юзкейс для доклада:**
+- **Слой 1 (Компилятор):** показываем "магию" — IDE подчёркивает красным `GetAgent(clientId)`, потому что тип `ClientId` не приводится к `AgentId`.
+- **Слой 2 (Архитектурные тесты):** показываем "полицию" — упавший пайплайн с ошибкой `DomainEntities_ShouldNotUseRawPrimitivesForIds` заставляет разработчика (и агента) создать `BookingId` вместо `Guid`.
+
+**Шаблон:** [tests/patterns/StronglyTypedIds.cs](../../tests/patterns/StronglyTypedIds.cs)  
+**Рабочий пример:** `examples/DemoProject/tests/DemoProject.Tests/StronglyTypedIds.cs`
+
+---
+
 ## Whitelist со staleness check
 
 Whitelist для исключений (write-path) сам проверяется: если файл из whitelist больше не содержит паттерн — тест падает. Агент не может "почистить" код и оставить мёртвую запись.
