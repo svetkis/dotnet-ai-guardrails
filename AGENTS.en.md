@@ -40,7 +40,7 @@ This repository is a **collection of defensive artifacts**, not a NuGet package.
 |------|-----------|-------------|
 | 1. Assess maturity | Run the onboarding skill in your project | [`skills/skeptical-ai-bootstrap/SKILL.md`](skills/skeptical-ai-bootstrap/SKILL.md) |
 | 2. Adapt | Cross out inapplicable checks for your stack | [`skills/ADAPTATION.md`](skills/ADAPTATION.md) |
-| 3. Constitution | Copy `rules/AGENTS.md` to your project root and adapt to your stack | [`rules/AGENTS.md`](rules/AGENTS.md) |
+| 3. Constitution | Copy `rules/AGENTS_TEMPLATE.md` to your project root and adapt to your stack | [`rules/AGENTS_TEMPLATE.md`](rules/AGENTS_TEMPLATE.md) |
 | 4. Pyramid | Implement layers 1→5 from the onboarding backlog | [`PYRAMID.md`](PYRAMID.md) |
 | 5. Agent | Configure your AI agent (Kimi / Claude / Cursor / Codex) | [`docs/agents/`](docs/agents/) |
 
@@ -55,7 +55,7 @@ This repository is a **collection of defensive artifacts**, not a NuGet package.
 
 | What you need | Where to go |
 |-----------|-----------|
-| Rules for the agent | `rules/AGENTS.md` |
+| Rules for the agent | `rules/AGENTS_TEMPLATE.md` |
 | Security audit | `skills/security-audit/` |
 | DBA audit | `skills/dba-audit/` |
 | Performance audit | `skills/performance-audit/` |

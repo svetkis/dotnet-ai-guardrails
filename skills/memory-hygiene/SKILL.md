@@ -50,7 +50,7 @@ description: >
 
 - Keyword-clustering по intent (не string fuzzy-match)
 - Группировка: «используем `.Select()`» и «проекции обязательны» — один intent
-- Флаг: «Эта заметка дублирует `rules/AGENTS.md` §3.2 — рекомендуется удалить»
+- Флаг: «Эта заметка дублирует `rules/AGENTS_TEMPLATE.md` §3.2 — рекомендуется удалить»
 
 ### Phase 3: Hierarchical Drift Detection
 - Сравнить Auto Memory с ближайшим `AGENTS.md` для каждого модуля

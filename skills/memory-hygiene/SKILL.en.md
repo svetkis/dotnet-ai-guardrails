@@ -51,7 +51,7 @@ with hierarchical guardrails.
 
 - Keyword-clustering by intent (not string fuzzy-match)
 - Grouping: "use `.Select()`" and "projections are mandatory" — same intent
-- Flag: "This note duplicates `rules/AGENTS.md` §3.2 — recommend deletion"
+- Flag: "This note duplicates `rules/AGENTS_TEMPLATE.md` §3.2 — recommend deletion"
 
 ### Phase 3: Hierarchical Drift Detection
 - Compare Auto Memory with nearest `AGENTS.md` for each module

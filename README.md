@@ -18,7 +18,7 @@
 
 | Слой | Скорость | Инструмент |
 |------|----------|-----------|
-| 0. Инструкции | — | `rules/AGENTS.md` + Numbered Decisions |
+| 0. Инструкции | — | `rules/AGENTS_TEMPLATE.md` + Numbered Decisions |
 | 1. Компилятор | ~сек | `dotnet build`, `tsc --noEmit` |
 | 2. Архитектура | ~10 сек | NetArchTest |
 | 3. Тесты | ~30 сек | TUnit + `dotnet run` |
@@ -64,7 +64,7 @@ dotnet run --project tests/DemoProject.Tests
 # См. skills/ADAPTATION.md — вычеркни неприменимые проверки.
 
 # 5. Скопируй нужные артефакты
-cp rules/AGENTS.md /your/project/
+cp rules/AGENTS_TEMPLATE.md /your/project/
 cp -r skills/code-review /your/project/.kimi/skills/
 cp tests/patterns/*.cs /your/project/tests/
 ```
@@ -127,7 +127,7 @@ dotnet run --project tests/DemoProject.Tests
 
 | Что нужно | Куда идти |
 |-----------|-----------|
-| Правила для агента | `rules/AGENTS.md` |
+| Правила для агента | `rules/AGENTS_TEMPLATE.md` |
 | Аудит безопасности | `skills/security-audit/` |
 | Аудит БД | `skills/dba-audit/` |
 | Аудит производительности | `skills/performance-audit/` |

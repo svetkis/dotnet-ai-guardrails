@@ -169,6 +169,6 @@ _logger.LogInformation("User {UserId} logged in", user.Id);
 | **Numbered optimization decisions** | `PERF-022`, `DB-013` в комментариях кода | [`skills/skeptical-ai-bootstrap/NUMBERED-DECISIONS.md`](../../skills/skeptical-ai-bootstrap/NUMBERED-DECISIONS.md) |
 | **Serialization contract tests** | Тесты на формат JSON, не на бизнес-логику | `tests/patterns/SnapshotTest.cs` |
 | **Shared state contract tests** | Тест на ordering-dependent failures в shared cache | `tests/patterns/ArchitectureRules.cs` |
-| **Hierarchical agent instructions** | AGENTS.md per directory, не один на проект | `rules/AGENTS.md` |
+| **Hierarchical agent instructions** | AGENTS.md per directory, не один на проект | `rules/AGENTS_TEMPLATE.md` |
 | **Concurrency with real DB** | Race condition тесты на Testcontainers | `tests/patterns/` |
 | **PII redaction guard** | `[SensitiveData]` + compile-time + runtime redaction | `tests/patterns/PiiGuardTest.cs` |

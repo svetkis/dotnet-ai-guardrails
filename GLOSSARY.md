@@ -11,7 +11,7 @@
 | **5 слоёв пирамиды** | Внутренний цикл обратной связи: Компилятор → Архитектура → Тесты → Code Review → E2E/MCP. Бегут на каждом изменении, от секунд до минут. | [PYRAMID.md](PYRAMID.md) |
 | **Внешний цикл (Outer loop)** | Глубинные проверки по расписанию или триггеру: аудиты, нагрузка, ручное тестирование. Не часть ежедневного feedback loop. | [PYRAMID.md §Внешний цикл](PYRAMID.md#outer-loop) |
 | **Слой 0** | Инструкции для агента: `AGENTS.md` + нумерованные решения. Агент читает перед кодом. | [PYRAMID.md §Слой 0](PYRAMID.md#layer-0) |
-| **AGENTS.md** | Файл с правилами для AI-агентов. Читается агентом перед каждой задачей. Может быть иерархическим (корневой + per-module). | [rules/AGENTS.md](rules/AGENTS.md) |
+| **AGENTS.md** | Файл с правилами для AI-агентов. Читается агентом перед каждой задачей. Может быть иерархическим (корневой + per-module). | [rules/AGENTS_TEMPLATE.md](rules/AGENTS_TEMPLATE.md) |
 
 ## Тестовые паттерны
 
@@ -27,10 +27,10 @@
 
 | Термин | Определение | Где используется |
 |--------|-------------|------------------|
-| **Read-path** | Путь чтения данных: запросы только на чтение. **Обязательны** `.Select()` + `.AsNoTracking()`. Запрещены `.Include()`, `.FindAsync()`. | [rules/AGENTS.md](rules/AGENTS.md) |
-| **Write-path** | Путь записи данных: команды, изменяющие состояние. Требуется change tracking, запрещён `.AsNoTracking()`. | [rules/AGENTS.md](rules/AGENTS.md) |
-| **Numbered Decision** | Осознанное отклонение от стандарта, задокументированное ID в комментарии: `PERF-###`, `DB-###`, `AUD-###`. Проверяется архитектурным тестом на уникальность. | [rules/AGENTS.md](rules/AGENTS.md), [tests/patterns/ArchitectureRules.cs](tests/patterns/ArchitectureRules.cs) |
-| **Semantic Anchors** | Установленные термины вместо описаний. Каждый термин активирует конкретную методологию (например, "read-path" = `.Select()` + `.AsNoTracking()`). | [rules/AGENTS.md](rules/AGENTS.md) |
+| **Read-path** | Путь чтения данных: запросы только на чтение. **Обязательны** `.Select()` + `.AsNoTracking()`. Запрещены `.Include()`, `.FindAsync()`. | [rules/AGENTS_TEMPLATE.md](rules/AGENTS_TEMPLATE.md) |
+| **Write-path** | Путь записи данных: команды, изменяющие состояние. Требуется change tracking, запрещён `.AsNoTracking()`. | [rules/AGENTS_TEMPLATE.md](rules/AGENTS_TEMPLATE.md) |
+| **Numbered Decision** | Осознанное отклонение от стандарта, задокументированное ID в комментарии: `PERF-###`, `DB-###`, `AUD-###`. Проверяется архитектурным тестом на уникальность. | [rules/AGENTS_TEMPLATE.md](rules/AGENTS_TEMPLATE.md), [tests/patterns/ArchitectureRules.cs](tests/patterns/ArchitectureRules.cs) |
+| **Semantic Anchors** | Установленные термины вместо описаний. Каждый термин активирует конкретную методологию (например, "read-path" = `.Select()` + `.AsNoTracking()`). | [rules/AGENTS_TEMPLATE.md](rules/AGENTS_TEMPLATE.md) |
 
 ## Агенты и инструменты
 
@@ -39,7 +39,7 @@
 | **MCP (Model Context Protocol)** | Протокол для подключения внешних инструментов к AI-агенту. Позволяет агенту "тыкать" Telegram, браузер, API. | [PYRAMID.md §Слой 5](PYRAMID.md#layer-5-e2e) |
 | **Code Review агент** | Отдельный экземпляр AI-агента, который ревьюит diff **до** коммита. Не тот, что писал код. | [skills/code-review/SKILL.md](skills/code-review/SKILL.md) |
 | **Skill** | Роль агента: инструкция + чеклист для конкретной задачи (аудит, ревью, онбординг). Устанавливается в `.kimi/skills/` или аналог. | `skills/` |
-| **Context Marker** | Эмодзи-маркер в начале ответа агента, показывающий активный контекст: 🍀 (ground rules), 🔍 (review), ✅ (commit). | [rules/AGENTS.md](rules/AGENTS.md) |
+| **Context Marker** | Эмодзи-маркер в начале ответа агента, показывающий активный контекст: 🍀 (ground rules), 🔍 (review), ✅ (commit). | [rules/AGENTS_TEMPLATE.md](rules/AGENTS_TEMPLATE.md) |
 | **Focused Agent** | Принцип: один агент — одна задача. Review-агент не пишет код, code-агент не ревьюит. | [skills/code-review/SKILL.md](skills/code-review/SKILL.md) |
 
 ## Процессы и метрики
@@ -50,7 +50,7 @@
 | **Cross-pollination** | Обмен находками между аудитами. Например, security-аудит находит лог-утечку, UX-аудит находит тот же endpoint как dead-end. | [PYRAMID.md §Внешний цикл](PYRAMID.md#outer-loop) |
 | **P50 / P95 / Max** | Персентили latency: медиана, 95-й перцентиль, максимум. Агенты часто оптимизируют P50, забывая про tail latency (Max). | [docs/traps/p50-vs-max.md](docs/traps/p50-vs-max.md) |
 | **Scope creep** | Расползание задачи: агент добавляет в PR изменения, выходящие за рамки исходного запроса. | [skills/task-compliance/SKILL.md](skills/task-compliance/SKILL.md) |
-| **Silent misalignment** | Молчаливая ошибка: агент не задал уточняющих вопросов, хотя инструкции были неясны или противоречивы. | [rules/AGENTS.md](rules/AGENTS.md) |
+| **Silent misalignment** | Молчаливая ошибка: агент не задал уточняющих вопросов, хотя инструкции были неясны или противоречивы. | [rules/AGENTS_TEMPLATE.md](rules/AGENTS_TEMPLATE.md) |
 
 ## Технологии
 

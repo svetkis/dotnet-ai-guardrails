@@ -24,7 +24,7 @@
 
 | Layer | What it is | Main document | Artifacts |
 |-------|------------|---------------|-----------|
-| **0. Instructions** | Rules the agent reads before code | [PYRAMID.md §Layer 0](../PYRAMID.md#layer-0) | `rules/AGENTS.md` + Numbered Decisions |
+| **0. Instructions** | Rules the agent reads before code | [PYRAMID.md §Layer 0](../PYRAMID.md#layer-0) | `rules/AGENTS_TEMPLATE.md` + Numbered Decisions |
 | 1. Compiler | Fast feedback from types | [PYRAMID.md §Layer 1](../PYRAMID.md#layer-1-compiler) | `.editorconfig`, `Directory.Build.props` |
 | 2. Architecture | Auto-check of layers and anti-patterns | [PYRAMID.md §Layer 2](../PYRAMID.md#layer-2-architecture) | [tests/patterns/ArchitectureRules.cs](../tests/patterns/ArchitectureRules.cs), [RatchetTest.cs](../tests/patterns/RatchetTest.cs) |
 | 3. Tests | Silent breakdown, PII leaks, vibe-refactoring, API contracts | [PYRAMID.md §Layer 3](../PYRAMID.md#layer-3-tests) | [tests/patterns/](#test-patterns) |
@@ -88,7 +88,7 @@ Read before implementation — each trap explains **why** a guardrail exists.
 |------|---------|------------------|
 | [silent-breakdown](traps/silent-breakdown.md) | `AsNoTracking` in write-path → silent breakdown | [LoadTest.cs](../tests/patterns/LoadTest.cs) |
 | [vibe-refactoring](traps/vibe-refactoring.md) | Agent removes "unnecessary" — breaks hot paths | [RatchetTest.cs](../tests/patterns/RatchetTest.cs) |
-| [context-blindness](traps/context-blindness.md) | Agent does not see business context | [AGENTS.md](../rules/AGENTS.md) |
+| [context-blindness](traps/context-blindness.md) | Agent does not see business context | [AGENTS.md](../rules/AGENTS_TEMPLATE.md) |
 | [false-safety](traps/false-safety.md) | Green CI ≠ working code | [verify-tests.sh](../ci/scripts/verify-tests.sh) |
 | [p50-vs-max](traps/p50-vs-max.md) | Average latency is good, tail is terrible | [LoadTest.cs](../tests/patterns/LoadTest.cs) |
 | [agent-circles](traps/agent-circles.md) | Agents loop on one problem | [task-compliance](../skills/task-compliance/SKILL.md) |
@@ -135,7 +135,7 @@ Read before implementation — each trap explains **why** a guardrail exists.
 
 | File | What's inside |
 |------|---------------|
-| [rules/AGENTS.md](../rules/AGENTS.md) | Constitution for AI agents: EF, tests, dates, cache, commits |
+| [rules/AGENTS_TEMPLATE.md](../rules/AGENTS_TEMPLATE.md) | Constitution for AI agents: EF, tests, dates, cache, commits |
 | [rules/CONVENTIONS.md](../rules/CONVENTIONS.md) | Test naming, workflow, CI guardrails |
 
 ---

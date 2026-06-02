@@ -23,7 +23,7 @@
 | 3. Тесты | TUnit + `dotnet run` | `tests/*.cs` | ✅ Внедрено |
 | 4. Code Review | Агент по diff | `.kimi/skills/code-review/` | ✅ Адаптировано |
 | 5. E2E / MCP | OpenAPI snapshot | `tests/SnapshotTests.cs` | ❌ Не применимо |
-| 0. Инструкции | AGENTS.md | `rules/AGENTS.md` | ✅ Внедрено |
+| 0. Инструкции | AGENTS.md | `rules/AGENTS_TEMPLATE.md` | ✅ Внедрено |
 | Внешний цикл | Аудиты пачками | `.kimi/skills/security-audit/` | 🚧 В бэклоге |
 
 **Легенда:** ✅ Внедрено / 🚧 В бэклоге / ❌ Не применимо
@@ -95,7 +95,7 @@
 ## 6. Бэклог внедрения
 
 ### Sprint 0 — Слой 0 + Компилятор (1 день)
-- [ ] **Внедрить** `rules/AGENTS.md` → адаптировать под стек
+- [ ] **Внедрить** `rules/AGENTS_TEMPLATE.md` → адаптировать под стек
 - [ ] **Внедрить** `rules/CONVENTIONS.md`
 - [ ] **Адаптировать** `Directory.Build.props`
 

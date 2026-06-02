@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `tests/patterns/VersionAuditTest.cs` — тест-паттерн: regex-сканирование `global.json`, `*.csproj`, `package.json` на preview-флаги и рассогласование версий.
 - `tests/patterns/PiiGuardTest.cs` — тест-паттерн: `[SensitiveData]` attribute + ratchet + regex-сканирование Log* вызовов на PII.
 - `docs/solutions/ai-patterns.md` — паттерн #9: Attribute-driven PII redaction (compile-time + runtime).
-- `rules/AGENTS.md` — перевод на английский, добавлены Semantic Anchors, Permission to Push Back, Context Markers.
+- `rules/AGENTS_TEMPLATE.md` — перевод на английский, добавлены Semantic Anchors, Permission to Push Back, Context Markers.
 - `docs/TRANSLATION_PLAN.md` — план перевода документации на два языка.
 - `LICENSE` — MIT license.
 - `.gitignore` — standard .NET + JetBrains Rider + Serena ignore rules.
@@ -48,7 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial release of defensive artifacts for .NET agentic engineering.
 - 5-layer inner-loop pyramid documented in `PYRAMID.md`.
-- `rules/AGENTS.md` — EF Core, PostgreSQL, API/DTO, caching, and commit conventions.
+- `rules/AGENTS_TEMPLATE.md` — EF Core, PostgreSQL, API/DTO, caching, and commit conventions.
 - `rules/CONVENTIONS.md` — naming, workflow, and CI guardrails.
 - `skills/` — 8 agent roles: code-review, task-compliance, security-audit, dba-audit, ux-audit, performance-audit, i18n-audit, skeptical-ai-bootstrap.
 - `tests/patterns/` — template tests: ArchitectureRules, RatchetTest, SnapshotTest, LoadTest.

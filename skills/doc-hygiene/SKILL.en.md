@@ -37,7 +37,7 @@ guardrails do not contradict each other and match the code.
 ## Process
 
 ### Phase 1: Hierarchy Consistency
-1. Root `AGENTS.md` → `rules/AGENTS.md` — no conflicts?
+1. Root `AGENTS.md` → `rules/AGENTS_TEMPLATE.md` — no conflicts?
 2. `src/{Module}/AGENTS.md` — do not contradict root?
 3. Deep overrides: does deeper AGENTS.md override shallower one?
    Check that override is intentional and documented.
@@ -95,7 +95,7 @@ guardrails do not contradict each other and match the code.
 - [ ] `src/Payment/AGENTS.md` overrides "Dapper" to "EF Core" — documented?
 
 ### Internal Contradictions
-- [ ] `rules/AGENTS.md` §3.1 requires interfaces, §5.4 — static classes (Minimal API)
+- [ ] `rules/AGENTS_TEMPLATE.md` §3.1 requires interfaces, §5.4 — static classes (Minimal API)
 
 ### Code Drift
 - [ ] `AGENTS.md` §4.2 requires `[SensitiveData]`, but `PiiGuardTest.cs` not found

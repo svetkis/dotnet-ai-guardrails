@@ -37,7 +37,7 @@ description: >
 ## Process
 
 ### Phase 1: Hierarchy Consistency
-1. Корневой `AGENTS.md` → `rules/AGENTS.md` — нет конфликтов?
+1. Корневой `AGENTS.md` → `rules/AGENTS_TEMPLATE.md` — нет конфликтов?
 2. `src/{Module}/AGENTS.md` — не противоречат корню?
 3. Deep overrides: более глубокий AGENTS.md отменяет поверхностный?
    Проверить, что override осознан и задокументирован.
@@ -107,7 +107,7 @@ description: >
 - [ ] `src/Payment/AGENTS.md` override «Dapper» на «EF Core» — задокументировано?
 
 ### Internal Contradictions
-- [ ] `rules/AGENTS.md` §3.1 требует интерфейсы, §5.4 — static classes (Minimal API)
+- [ ] `rules/AGENTS_TEMPLATE.md` §3.1 требует интерфейсы, §5.4 — static classes (Minimal API)
 
 ### Code Drift
 - [ ] `AGENTS.md` §4.2 требует `[SensitiveData]`, но `PiiGuardTest.cs` не найден

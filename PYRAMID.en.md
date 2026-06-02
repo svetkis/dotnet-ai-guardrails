@@ -11,7 +11,7 @@
 
 This is not a "feedback layer" — it's the **ground rules**. Everything else is just enforcement.
 
-- `rules/AGENTS.md` — hierarchical instructions: root + per-module
+- `rules/AGENTS_TEMPLATE.md` — hierarchical instructions: root + per-module
 - `PERF-###` / `DB-###` / `AUD-###` — numbered decisions in code the agent must not "clean up"
 - Architecture test checks uniqueness of decision IDs
 

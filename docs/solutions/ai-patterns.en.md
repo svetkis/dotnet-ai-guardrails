@@ -169,6 +169,6 @@ _logger.LogInformation("User {UserId} logged in", user.Id);
 | **Numbered optimization decisions** | `PERF-022`, `DB-013` in code comments | [`skills/skeptical-ai-bootstrap/NUMBERED-DECISIONS.md`](../../skills/skeptical-ai-bootstrap/NUMBERED-DECISIONS.md) |
 | **Serialization contract tests** | Tests for JSON format, not business logic | `tests/patterns/SnapshotTest.cs` |
 | **Shared state contract tests** | Test for ordering-dependent failures in shared cache | `tests/patterns/ArchitectureRules.cs` |
-| **Hierarchical agent instructions** | AGENTS.md per directory, not one per project | `rules/AGENTS.md` |
+| **Hierarchical agent instructions** | AGENTS.md per directory, not one per project | `rules/AGENTS_TEMPLATE.md` |
 | **Concurrency with real DB** | Race condition tests on Testcontainers | `tests/patterns/` |
 | **PII redaction guard** | `[SensitiveData]` + compile-time + runtime redaction | `tests/patterns/PiiGuardTest.cs` |

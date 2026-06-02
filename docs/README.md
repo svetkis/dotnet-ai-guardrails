@@ -22,7 +22,7 @@
 
 | Слой | Что это | Главный документ | Артефакты |
 |------|---------|------------------|-----------|
-| **0. Инструкции** | Правила для агента перед кодом | [PYRAMID.md §Слой 0](../PYRAMID.md#layer-0) | `rules/AGENTS.md` + Numbered Decisions |
+| **0. Инструкции** | Правила для агента перед кодом | [PYRAMID.md §Слой 0](../PYRAMID.md#layer-0) | `rules/AGENTS_TEMPLATE.md` + Numbered Decisions |
 | 1. Компилятор | Быстрая обратная связь от типов | [PYRAMID.md §Слой 1](../PYRAMID.md#layer-1-compiler) | `.editorconfig`, `Directory.Build.props` |
 | 2. Архитектура | Авто-проверка слоёв и антипаттернов | [PYRAMID.md §Слой 2](../PYRAMID.md#layer-2-architecture) | [tests/patterns/ArchitectureRules.cs](../tests/patterns/ArchitectureRules.cs), [RatchetTest.cs](../tests/patterns/RatchetTest.cs) |
 | 3. Тесты | Silent breakdown, PII leaks, vibe-refactoring, контракты API | [PYRAMID.md §Слой 3](../PYRAMID.md#layer-3-tests) | [tests/patterns/](#тестовые-паттерны) |
@@ -92,7 +92,7 @@
 |---------|------|-----------------|
 | [silent-breakdown](traps/silent-breakdown.md) | `AsNoTracking` в write-path → молчаливая поломка | [LoadTest.cs](../tests/patterns/LoadTest.cs) |
 | [vibe-refactoring](traps/vibe-refactoring.md) | Агент удаляет "лишнее" — ломает hot paths | [RatchetTest.cs](../tests/patterns/RatchetTest.cs) |
-| [context-blindness](traps/context-blindness.md) | Агент не видит бизнес-контекста | [AGENTS.md](../rules/AGENTS.md) |
+| [context-blindness](traps/context-blindness.md) | Агент не видит бизнес-контекста | [AGENTS.md](../rules/AGENTS_TEMPLATE.md) |
 | [false-safety](traps/false-safety.md) | Зелёный CI ≠ рабочий код | [verify-tests.sh](../ci/scripts/verify-tests.sh) |
 | [p50-vs-max](traps/p50-vs-max.md) | Средняя latency хороша, tail — ужасен | [LoadTest.cs](../tests/patterns/LoadTest.cs) |
 | [agent-circles](traps/agent-circles.md) | Агенты зацикливаются на одной проблеме | [task-compliance](../skills/task-compliance/SKILL.md) |
@@ -143,7 +143,7 @@
 
 | Файл | Что внутри |
 |------|------------|
-| [rules/AGENTS.md](../rules/AGENTS.md) | Конституция для AI-агентов: EF, тесты, даты, кэш, коммиты |
+| [rules/AGENTS_TEMPLATE.md](../rules/AGENTS_TEMPLATE.md) | Конституция для AI-агентов: EF, тесты, даты, кэш, коммиты |
 | [rules/CONVENTIONS.md](../rules/CONVENTIONS.md) | Именование тестов, workflow, CI guardrails |
 | [BannedSymbols.txt](../examples/DemoProject/BannedSymbols.txt) | Compile-time guard: запрещённые API (BannedApiAnalyzers RS0030) |
 

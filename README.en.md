@@ -18,7 +18,7 @@ Three verification loops: inner (on every change), outer (on schedule or before 
 
 | Layer | Speed | Tool |
 |-------|-------|------|
-| 0. Instructions | — | `rules/AGENTS.md` + Numbered Decisions |
+| 0. Instructions | — | `rules/AGENTS_TEMPLATE.md` + Numbered Decisions |
 | 1. Compiler | ~sec | `dotnet build`, `tsc --noEmit` |
 | 2. Architecture | ~10 sec | NetArchTest |
 | 3. Tests | ~30 sec | TUnit + `dotnet run` |
@@ -64,7 +64,7 @@ dotnet run --project tests/DemoProject.Tests
 # See skills/ADAPTATION.md — cross out irrelevant checks.
 
 # 5. Copy needed artifacts
-cp rules/AGENTS.md /your/project/
+cp rules/AGENTS_TEMPLATE.md /your/project/
 cp -r skills/code-review /your/project/.kimi/skills/
 cp tests/patterns/*.cs /your/project/tests/
 ```
@@ -127,7 +127,7 @@ Lost? Start with [docs/README.md](docs/README.md).
 
 | What you need | Where to go |
 |---------------|-------------|
-| Agent rules | `rules/AGENTS.md` |
+| Agent rules | `rules/AGENTS_TEMPLATE.md` |
 | Security audit | `skills/security-audit/` |
 | DBA audit | `skills/dba-audit/` |
 | Performance audit | `skills/performance-audit/` |

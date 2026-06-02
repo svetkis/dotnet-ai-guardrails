@@ -63,7 +63,7 @@ kimi run skeptical-ai-bootstrap
 
 | Артефакт | Откуда взять |
 |----------|--------------|
-| `rules/AGENTS.md` | `dotnet-skeptical-ai/rules/AGENTS.md` |
+| `rules/AGENTS_TEMPLATE.md` | `dotnet-skeptical-ai/rules/AGENTS_TEMPLATE.md` |
 | `rules/CONVENTIONS.md` | `dotnet-skeptical-ai/rules/CONVENTIONS.md` |
 | Архитектурные тесты | `dotnet-skeptical-ai/tests/patterns/ArchitectureRules.cs` |
 | Ratchet тесты | `dotnet-skeptical-ai/tests/patterns/RatchetTest.cs` |

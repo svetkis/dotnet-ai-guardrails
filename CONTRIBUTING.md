@@ -44,7 +44,7 @@
 
 ## Чеклист перед PR
 
-- [ ] Я прочитал `AGENTS.md` и `rules/AGENTS.md`
+- [ ] Я прочитал `AGENTS.md` и `rules/AGENTS_TEMPLATE.md`
 - [ ] Если добавлял скилл — есть `SKILL.md` + `CHECKLIST.md`
 - [ ] Если добавлял паттерн — есть комментарии `// TRAP:` и `// GUARDRAIL:`
 - [ ] Если менял пирамиду — обновил `PYRAMID.md`
@@ -114,7 +114,7 @@ Thank you for your interest! This repository contains defensive artifacts for .N
 
 ## Pre-PR Checklist
 
-- [ ] I have read `AGENTS.md` and `rules/AGENTS.md`
+- [ ] I have read `AGENTS.md` and `rules/AGENTS_TEMPLATE.md`
 - [ ] If adding a skill — `SKILL.md` + `CHECKLIST.md` are present
 - [ ] If adding a pattern — comments `// TRAP:` and `// GUARDRAIL:` are present
 - [ ] If changing the pyramid — `PYRAMID.md` is updated

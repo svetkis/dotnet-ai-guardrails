@@ -1,0 +1,14 @@
+# Build outputs
+bin/
+obj/
+
+# Test results
+TestResults/
+
+# IDE
+.vs/
+.idea/
+*.user
+
+# NuGet
+*.nupkg

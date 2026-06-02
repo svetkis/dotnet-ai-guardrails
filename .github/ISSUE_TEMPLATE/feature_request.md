@@ -14,5 +14,5 @@ labels: enhancement
 <!-- What else have you considered? -->
 
 ## Checklist / Чеклист
-- [ ] I have read `AGENTS.md` and `rules/AGENTS.md`
+- [ ] I have read `AGENTS.md` and `rules/AGENTS_TEMPLATE.md`
 - [ ] This aligns with the Skeptical AI Engineering methodology
