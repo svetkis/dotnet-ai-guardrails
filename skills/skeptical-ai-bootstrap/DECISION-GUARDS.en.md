@@ -1,4 +1,4 @@
-# Numbered Decisions — Conscious Deviation Registry Template
+# Decision Guards — Conscious Deviation Registry Template
 
 > **Purpose:** Document every conscious deviation from the "standard" with a number and rationale, so the agent doesn't try to "fix" it.  
 > **Consumer:** Human (Tech Lead) writes, agent reads comments in code.  
@@ -9,7 +9,7 @@
 ## Why This Is a Separate File
 
 `ARCHITECTURE-INVENTORY.md` is the "terrain map" (C4, assemblies, stack).  
-And `NUMBERED-DECISIONS.md` is the **compromise journal**: why there is no index here, why `QueryFilter` was removed, why `SELECT *` is justified in this place.
+And `DECISION-GUARDS.md` is the **compromise journal**: why there is no index here, why `QueryFilter` was removed, why `SELECT *` is justified in this place.
 
 Without such a journal, the agent will see "strange" code in 3 months and roll back the optimization.
 
@@ -44,7 +44,7 @@ Without such a journal, the agent will see "strange" code in 3 months and roll b
 In code, a brief comment is left next to the decision:
 
 ```csharp
-// PERF-022: QueryFilter removed — JOIN added 3ms to every query, see docs/NUMBERED-DECISIONS.md
+// PERF-022: QueryFilter removed — JOIN added 3ms to every query, see docs/DECISION-GUARDS.md
 builder.HasQueryFilter(s => !s.IsDeleted); // REMOVED — see PERF-022
 ```
 
@@ -72,7 +72,7 @@ Save this file next to `AGENTS.md` and `ARCHITECTURE-INVENTORY.md`:
 docs/
   AGENTS.md
   ARCHITECTURE-INVENTORY.md
-  NUMBERED-DECISIONS.md   ← here
+  DECISION-GUARDS.md   ← here
 ```
 
 If there are many decisions — they can be split by domain: `docs/decisions/PERF.md`, `docs/decisions/DB.md`.

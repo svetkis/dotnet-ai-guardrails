@@ -55,7 +55,7 @@ guardrails do not contradict each other and match the code.
 1. `AGENTS.md` forbids `.FindAsync()` in read-path → is there a regex test?
 2. `AGENTS.md` requires `BUG###_` tests → is there a convention in `tests/`?
 3. Do mentioned modules/skills exist in `skills/`, `tests/`?
-4. Are Numbered Decisions (`PERF-###`) from AGENTS.md present in code?
+4. Are Decision Guards (`PERF-###`) from AGENTS.md present in code?
 
 ### Phase 2a: Rule Vitality
 

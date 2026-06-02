@@ -117,7 +117,7 @@ public class ArchitectureRules
         var duplicates = ids.GroupBy(x => x).Where(g => g.Count() > 1).Select(g => g.Key);
 
         await Assert.That(duplicates).IsEmpty()
-            .Because("Numbered decisions must be unique to prevent collision in documentation.");
+            .Because("Decision guards must be unique to prevent collision in documentation.");
     }
 
     private static string FormatFailingTypes(NetArchTest.Rules.TestResult result)

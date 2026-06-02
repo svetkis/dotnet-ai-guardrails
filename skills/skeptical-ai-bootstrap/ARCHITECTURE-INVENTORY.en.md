@@ -96,11 +96,11 @@ Fill in once — use when adapting all skills (`ADAPTATION.md`).
 
 ---
 
-## 5. Numbered Decisions — Documented Architectural Decisions
+## 5. Decision Guards — Documented Architectural Decisions
 
 Every conscious deviation from the "standard" — with a number and rationale. Agents see the number and don't "fix" the code.
 
-> **Detailed template and examples:** see separate file [`NUMBERED-DECISIONS.md`](NUMBERED-DECISIONS.md).
+> **Detailed template and examples:** see separate file [`DECISION-GUARDS.md`](DECISION-GUARDS.md).
 
 **Summary:**
 
@@ -131,7 +131,7 @@ Before handing the inventory to the agent for guardrail generation, check:
 ## 7. Next Steps — What to Do with the Inventory
 
 1. **Save** this file to `docs/ARCHITECTURE-INVENTORY.md` of the target project (next to `AGENTS.md`)
-2. **If there are conscious deviations** — save [`NUMBERED-DECISIONS.md`](NUMBERED-DECISIONS.md) to `docs/NUMBERED-DECISIONS.md` and fill in the template.
+2. **If there are conscious deviations** — save [`DECISION-GUARDS.md`](DECISION-GUARDS.md) to `docs/DECISION-GUARDS.md` and fill in the template.
 3. **Configure `ArchitectureRules.cs`** — copy the assembly table into a comment in the test
 4. **Check `ADAPTATION.md`** — cross out non-applicable checks based on Technology Inventory
 5. **Run bootstrap** — the agent uses this file as ground truth for guardrail generation

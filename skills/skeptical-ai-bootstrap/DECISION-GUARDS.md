@@ -1,4 +1,4 @@
-# Numbered Decisions — шаблон реестра осознанных отклонений
+# Decision Guards — шаблон реестра осознанных отклонений
 
 > **Назначение:** Зафиксировать каждое осознанное отклонение от «стандарта» с номером и обоснованием, чтобы агент не пытался его «исправить».  
 > **Потребитель:** Человек (Tech Lead) пишет, агент читает комментарии в коде.  
@@ -9,7 +9,7 @@
 ## Зачем это отдельный файл
 
 `ARCHITECTURE-INVENTORY.md` — это «карта местности» (C4, сборки, стек).  
-А `NUMBERED-DECISIONS.md` — это **журнал компромиссов**: почему здесь нет индекса, почему убрали `QueryFilter`, почему `SELECT *` в этом месте оправдан.
+А `DECISION-GUARDS.md` — это **журнал компромиссов**: почему здесь нет индекса, почему убрали `QueryFilter`, почему `SELECT *` в этом месте оправдан.
 
 Без такого журнала агент через 3 месяца увидит «странный» код и откатит оптимизацию.
 
@@ -44,7 +44,7 @@
 В коде рядом с решением оставляют краткий комментарий:
 
 ```csharp
-// PERF-022: QueryFilter removed — JOIN added 3ms to every query, see docs/NUMBERED-DECISIONS.md
+// PERF-022: QueryFilter removed — JOIN added 3ms to every query, see docs/DECISION-GUARDS.md
 builder.HasQueryFilter(s => !s.IsDeleted); // REMOVED — see PERF-022
 ```
 
@@ -72,7 +72,7 @@ builder.HasQueryFilter(s => !s.IsDeleted); // REMOVED — see PERF-022
 docs/
   AGENTS.md
   ARCHITECTURE-INVENTORY.md
-  NUMBERED-DECISIONS.md   ← здесь
+  DECISION-GUARDS.md   ← здесь
 ```
 
 Если решений много — можно разбить по доменам: `docs/decisions/PERF.md`, `docs/decisions/DB.md`.

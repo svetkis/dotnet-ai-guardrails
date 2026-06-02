@@ -55,7 +55,7 @@ description: >
 1. `AGENTS.md` запрещает `.FindAsync()` в read-path → есть ли regex-тест?
 2. `AGENTS.md` требует `BUG###_` тесты → есть ли convention в `tests/`?
 3. Упомянутые модули/скиллы существуют в `skills/`, `tests/`?
-4. Numbered Decisions (`PERF-###`) из `AGENTS.md` реально есть в коде?
+4. Decision Guards (`PERF-###`) из `AGENTS.md` реально есть в коде?
 
 ### Phase 2a: Rule Vitality
 
@@ -79,7 +79,7 @@ description: >
 1. Все числовые утверждения (количество тестов, строк, коммитов, endpoints) верифицированы через `git log` / `wc` / `grep` / `find`
 2. Все даты коммитов/релизов соответствуют `git log`
 3. Все имена файлов и номера строк из примеров существуют в текущей кодовой базе
-4. Все ссылки на Numbered Decisions (`PERF-###`, `DB-###`, `BR-###`) ведут на существующий код
+4. Все ссылки на Decision Guards (`PERF-###`, `DB-###`, `BR-###`) ведут на существующий код
 5. Все ссылки на скиллы/тесты существуют в `skills/`, `tests/`, `examples/`
 6. Все `case study` / `incident report` содержат корректные хеши коммитов (`git show --stat`)
 

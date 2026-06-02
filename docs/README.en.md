@@ -24,7 +24,7 @@
 
 | Layer | What it is | Main document | Artifacts |
 |-------|------------|---------------|-----------|
-| **0. Instructions** | Rules the agent reads before code | [PYRAMID.md §Layer 0](../PYRAMID.md#layer-0) | `rules/AGENTS_TEMPLATE.md` + Numbered Decisions |
+| **0. Instructions** | Rules the agent reads before code | [PYRAMID.md §Layer 0](../PYRAMID.md#layer-0) | `rules/AGENTS_TEMPLATE.md` + Decision Guards |
 | 1. Compiler | Fast feedback from types | [PYRAMID.md §Layer 1](../PYRAMID.md#layer-1-compiler) | `.editorconfig`, `Directory.Build.props`, `DemoProject.Analyzers` (custom Roslyn analyzer) |
 | 2. Architecture | Auto-check of layers and anti-patterns | [PYRAMID.md §Layer 2](../PYRAMID.md#layer-2-architecture) | [tests/patterns/ArchitectureRules.cs](../tests/patterns/ArchitectureRules.cs), [RatchetTest.cs](../tests/patterns/RatchetTest.cs) |
 | 3. Tests | Silent breakdown, PII leaks, vibe-refactoring, API contracts | [PYRAMID.md §Layer 3](../PYRAMID.md#layer-3-tests) | [tests/patterns/](#test-patterns) |
@@ -107,7 +107,7 @@ Read before implementation — each trap explains **why** a guardrail exists.
 |----------|---------------|
 | [architecture-tests.md](solutions/architecture-tests.md) | Detailed guide to NetArchTest.eNhancedEdition + regex scanning |
 | [ai-patterns.md](solutions/ai-patterns.md) | 9 proven AI-driven development patterns |
-| [NUMBERED-DECISIONS.md](../skills/skeptical-ai-bootstrap/NUMBERED-DECISIONS.md) | Template for intentional deviation registry (`PERF-###`, `DB-###`, `AUD-###`) |
+| [DECISION-GUARDS.md](../skills/skeptical-ai-bootstrap/DECISION-GUARDS.md) | Template for intentional deviation registry (`PERF-###`, `DB-###`, `AUD-###`) |
 
 ---
 

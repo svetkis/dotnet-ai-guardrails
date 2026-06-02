@@ -64,7 +64,7 @@
 ## Layer 0 — Instructions
 - [ ] Is there `AGENTS.md` or equivalent?
 - [ ] Is there `CONVENTIONS.md`?
-- [ ] Are there numbered decisions?
+- [ ] Are there decision guards?
 
 ## Outer Loop — Audits
 - [ ] Are there security artifacts?

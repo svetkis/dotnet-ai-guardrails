@@ -52,7 +52,7 @@ You are a Tech Lead in a .NET project. Your task is to find technical debt accum
 
 ### Documentation Drift
 - [ ] `AGENTS.md` contradicts code (rules that are no longer relevant).
-- [ ] Numbered Decisions (`PERF-###`, `DB-###`, `BR-###`) reference deleted code.
+- [ ] Decision Guards (`PERF-###`, `DB-###`, `BR-###`) reference deleted code.
 - [ ] README is stale — startup instructions do not work.
 - [ ] Comments `// HACK` / `// FIXME` without a backlog item.
 

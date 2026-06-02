@@ -166,7 +166,7 @@ _logger.LogInformation("User {UserId} logged in", user.Id);
 | **Namespace/Type inventory ratchet** | Count public types in layer + tests | `tests/patterns/RatchetTest.cs` |
 | **Source-level anti-pattern gates** | Regex code scanning in CI, not reflection | `tests/patterns/ArchitectureRules.cs` |
 | **Bug-as-fixture** | One file = one bug = all code paths | `tests/conventions/BUG_TEMPLATE.cs` |
-| **Numbered optimization decisions** | `PERF-022`, `DB-013` in code comments | [`skills/skeptical-ai-bootstrap/NUMBERED-DECISIONS.md`](../../skills/skeptical-ai-bootstrap/NUMBERED-DECISIONS.md) |
+| **Numbered optimization decisions** | `PERF-022`, `DB-013` in code comments | [`skills/skeptical-ai-bootstrap/DECISION-GUARDS.md`](../../skills/skeptical-ai-bootstrap/DECISION-GUARDS.md) |
 | **Serialization contract tests** | Tests for JSON format, not business logic | `tests/patterns/SnapshotTest.cs` |
 | **Shared state contract tests** | Test for ordering-dependent failures in shared cache | `tests/patterns/ArchitectureRules.cs` |
 | **Hierarchical agent instructions** | AGENTS.md per directory, not one per project | `rules/AGENTS_TEMPLATE.md` |

@@ -40,7 +40,7 @@
    - Выдели 3–5 Critical Paths
    - Заполни Technology Inventory
 2. Сохрани файл в `docs/ARCHITECTURE-INVENTORY.md` своего проекта.
-3. Если есть осознанные отклонения от стандартов — зафиксируй их как `PERF-###` / `DB-###` / `ARCH-###` по шаблону [`NUMBERED-DECISIONS.md`](../skills/skeptical-ai-bootstrap/NUMBERED-DECISIONS.md).
+3. Если есть осознанные отклонения от стандартов — зафиксируй их как `PERF-###` / `DB-###` / `ARCH-###` по шаблону [`DECISION-GUARDS.md`](../skills/skeptical-ai-bootstrap/DECISION-GUARDS.md).
 
 **Выход:** ground truth для всех последующих guardrails.
 

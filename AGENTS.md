@@ -41,7 +41,7 @@
 
 | Шаг | Что делать | Куда идти |
 |-----|-----------|-----------|
-| 0. Зафиксировать архитектуру | Заполнить инвентарь сборок, критичных путей и осознанных отклонений | [`skills/skeptical-ai-bootstrap/ARCHITECTURE-INVENTORY.md`](skills/skeptical-ai-bootstrap/ARCHITECTURE-INVENTORY.md) + [`NUMBERED-DECISIONS.md`](skills/skeptical-ai-bootstrap/NUMBERED-DECISIONS.md) |
+| 0. Зафиксировать архитектуру | Заполнить инвентарь сборок, критичных путей и осознанных отклонений | [`skills/skeptical-ai-bootstrap/ARCHITECTURE-INVENTORY.md`](skills/skeptical-ai-bootstrap/ARCHITECTURE-INVENTORY.md) + [`DECISION-GUARDS.md`](skills/skeptical-ai-bootstrap/DECISION-GUARDS.md) |
 | 1. Оценить зрелость | Запустить onboarding-скилл или ручную оценку | [`skills/skeptical-ai-bootstrap/SKILL.md`](skills/skeptical-ai-bootstrap/SKILL.md) |
 | 2. Адаптировать | Вычеркнуть неприменимые проверки под свой стек | [`skills/ADAPTATION.md`](skills/ADAPTATION.md) |
 | 3. Конституция | Скопировать `rules/AGENTS_TEMPLATE.md` в корень проекта и отредактировать под свой стек | [`rules/AGENTS_TEMPLATE.md`](rules/AGENTS_TEMPLATE.md) |
@@ -76,7 +76,7 @@
 | Описание ловушки | `docs/traps/` |
 | Архитектурные тесты | `docs/solutions/architecture-tests.md` |
 | Паттерны AI-разработки | `docs/solutions/ai-patterns.md` |
-| Осознанные отклонения (Numbered Decisions) | `skills/skeptical-ai-bootstrap/NUMBERED-DECISIONS.md` |
+| Осознанные отклонения (Decision Guards) | `skills/skeptical-ai-bootstrap/DECISION-GUARDS.md` |
 | Онбординг проекта | `skills/skeptical-ai-bootstrap/` |
 | Интеграция с Kimi | `docs/agents/KIMI.md` |
 | Интеграция с Claude Code | `docs/agents/CLAUDE-CODE.md` |

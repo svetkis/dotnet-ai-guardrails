@@ -39,9 +39,9 @@ The 5 layers of the pyramid are **feedback principles**, not specific tools:
 1. Find `.sln`, all `.csproj`, `Directory.Build.props`
 2. Check if `ARCHITECTURE-INVENTORY.md` exists in the project. If yes — use it as ground truth instead of guessing.
    If not — propose creating one from the template [`ARCHITECTURE-INVENTORY.md`](ARCHITECTURE-INVENTORY.md).
-3. Check if `NUMBERED-DECISIONS.md` exists (or a similar `PERF-###` / `DB-###` registry).
+3. Check if `DECISION-GUARDS.md` exists (or a similar `PERF-###` / `DB-###` registry).
    If yes — use it to avoid proposing "fixes" for documented architectural compromises.
-   If not — propose creating one from the template [`NUMBERED-DECISIONS.md`](NUMBERED-DECISIONS.md) if conscious deviations exist.
+   If not — propose creating one from the template [`DECISION-GUARDS.md`](DECISION-GUARDS.md) if conscious deviations exist.
 4. Determine the **type of AI agent** used in the project:
    - **Kimi Code CLI** → does `.kimi/skills/` exist?
    - **Claude Code** → does `.claude/CLAUDE.md` exist?

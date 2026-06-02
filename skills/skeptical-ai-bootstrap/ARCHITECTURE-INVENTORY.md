@@ -96,11 +96,11 @@ graph LR
 
 ---
 
-## 5. Numbered Decisions — зафиксированные архитектурные решения
+## 5. Decision Guards — зафиксированные архитектурные решения
 
 Каждое осознанное отклонение от «стандарта» — с номером и обоснованием. Агенты видят номер и не «чинят» код.
 
-> **Подробный шаблон и примеры:** см. отдельный файл [`NUMBERED-DECISIONS.md`](NUMBERED-DECISIONS.md).
+> **Подробный шаблон и примеры:** см. отдельный файл [`DECISION-GUARDS.md`](DECISION-GUARDS.md).
 
 **Краткая сводка:**
 
@@ -131,7 +131,7 @@ graph LR
 ## 7. Next Steps — что делать с инвентарём
 
 1. **Сохрани** этот файл в `docs/ARCHITECTURE-INVENTORY.md` целевого проекта (рядом с `AGENTS.md`)
-2. **Если есть осознанные отклонения** — сохрани [`NUMBERED-DECISIONS.md`](NUMBERED-DECISIONS.md) в `docs/NUMBERED-DECISIONS.md` и заполни шаблон.
+2. **Если есть осознанные отклонения** — сохрани [`DECISION-GUARDS.md`](DECISION-GUARDS.md) в `docs/DECISION-GUARDS.md` и заполни шаблон.
 3. **Настрой `ArchitectureRules.cs`** — скопируй таблицу сборок в комментарий к тесту
 4. **Проверь `ADAPTATION.md`** — вычеркни неприменимые проверки на основе Technology Inventory
 5. **Запусти bootstrap** — агент использует этот файл как ground truth для генерации guardrails

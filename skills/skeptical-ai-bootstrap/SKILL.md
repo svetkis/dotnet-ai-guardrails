@@ -39,9 +39,9 @@ description: >
 1. Найти `.sln`, все `.csproj`, `Directory.Build.props`
 2. Проверить, есть ли `ARCHITECTURE-INVENTORY.md` в проекте. Если есть — использовать его как ground truth вместо угадывания.
    Если нет — предложить создать по шаблону [`ARCHITECTURE-INVENTORY.md`](ARCHITECTURE-INVENTORY.md).
-3. Проверить, есть ли `NUMBERED-DECISIONS.md` (или аналогичный реестр `PERF-###` / `DB-###`).
+3. Проверить, есть ли `DECISION-GUARDS.md` (или аналогичный реестр `PERF-###` / `DB-###`).
    Если есть — использовать его, чтобы не предлагать «исправления» зафиксированных архитектурных компромиссов.
-   Если нет — предложить создать по шаблону [`NUMBERED-DECISIONS.md`](NUMBERED-DECISIONS.md) при наличии осознанных отклонений.
+   Если нет — предложить создать по шаблону [`DECISION-GUARDS.md`](DECISION-GUARDS.md) при наличии осознанных отклонений.
 4. Определить **тип AI-агента**, используемого в проекте:
    - **Kimi Code CLI** → `.kimi/skills/` существует?
    - **Claude Code** → `.claude/CLAUDE.md` существует?

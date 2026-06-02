@@ -103,12 +103,12 @@ Stack markers when multiple contexts are active: `🍀 🔍` = base rules + revi
 - When reviewing a commit with `fix:` — check that a regression test file exists (new or modified)
 - Without a regression test, the fix is not considered complete
 
-## Numbered Decisions in Code
+## Decision Guards in Code
 
 - Intentional deviation from standard must be documented with ID: `PERF-###`, `DB-###`, `AUD-###`
 - IDs must be unique — checked by architectural test
 - Example: `// PERF-022: QueryFilter removed — JOIN added 3ms to every query`
-- Full registry template: [`NUMBERED-DECISIONS.md`](../../skills/skeptical-ai-bootstrap/NUMBERED-DECISIONS.md)
+- Full registry template: [`DECISION-GUARDS.md`](../../skills/skeptical-ai-bootstrap/DECISION-GUARDS.md)
 
 ## Caching
 

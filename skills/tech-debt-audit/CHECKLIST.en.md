@@ -31,5 +31,5 @@
 
 ## Documentation Drift
 - [ ] `AGENTS.md` contradicts code
-- [ ] Numbered Decisions reference deleted code
+- [ ] Decision Guards reference deleted code
 - [ ] `TODO` / `FIXME` without backlog item

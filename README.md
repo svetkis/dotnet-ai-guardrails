@@ -18,7 +18,7 @@
 
 | Слой | Скорость | Инструмент |
 |------|----------|-----------|
-| 0. Инструкции | — | `rules/AGENTS_TEMPLATE.md` + Numbered Decisions |
+| 0. Инструкции | — | `rules/AGENTS_TEMPLATE.md` + Decision Guards |
 | 1. Компилятор | ~сек | `dotnet build`, `tsc --noEmit` |
 | 2. Архитектура | ~10 сек | NetArchTest |
 | 3. Тесты | ~30 сек | TUnit + `dotnet run` |

@@ -12,7 +12,7 @@
 ## Code Drift
 - [ ] Каждое правило AGENTS.md имеет guardrail в коде или CI
 - [ ] Упомянутые скиллы/тесты существуют в `skills/`, `tests/`
-- [ ] Numbered Decisions из AGENTS.md найдены в коде
+- [ ] Decision Guards из AGENTS.md найдены в коде
 
 ## Dead Rules
 - [ ] Каждое MUST/FORBIDDEN имеет enforcement (тест, компилятор, linter, CI)

@@ -7,12 +7,12 @@
 ---
 
 <a name="layer-0"></a>
-## Layer 0. Agent Instructions (AGENTS.md + Numbered Decisions)
+## Layer 0. Agent Instructions (AGENTS.md + Decision Guards)
 
 This is not a "feedback layer" — it's the **ground rules**. Everything else is just enforcement.
 
 - `rules/AGENTS_TEMPLATE.md` — hierarchical instructions: root + per-module
-- `PERF-###` / `DB-###` / `AUD-###` — numbered decisions in code the agent must not "clean up"
+- `PERF-###` / `DB-###` / `AUD-###` — decision guards in code the agent must not "clean up"
 - Architecture test checks uniqueness of decision IDs
 
 ---
@@ -135,7 +135,7 @@ From practice: 8 review commits with findings:
           │   + Snapshot        │
           ├─────────────────────┤
           │   AGENTS.md         │  ← Layer 0: Instructions before code
-          │  + Numbered Decisions│
+          │  + Decision Guards│
           └─────────────────────┘
 ```
 

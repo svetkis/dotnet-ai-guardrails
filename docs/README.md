@@ -22,7 +22,7 @@
 
 | Слой | Что это | Главный документ | Артефакты |
 |------|---------|------------------|-----------|
-| **0. Инструкции** | Правила для агента перед кодом | [PYRAMID.md §Слой 0](../PYRAMID.md#layer-0) | `rules/AGENTS_TEMPLATE.md` + Numbered Decisions |
+| **0. Инструкции** | Правила для агента перед кодом | [PYRAMID.md §Слой 0](../PYRAMID.md#layer-0) | `rules/AGENTS_TEMPLATE.md` + Decision Guards |
 | 1. Компилятор | Быстрая обратная связь от типов | [PYRAMID.md §Слой 1](../PYRAMID.md#layer-1-compiler) | `.editorconfig`, `Directory.Build.props`, `DemoProject.Analyzers` (кастомный Roslyn-анализатор) |
 | 2. Архитектура | Авто-проверка слоёв и антипаттернов | [PYRAMID.md §Слой 2](../PYRAMID.md#layer-2-architecture) | [tests/patterns/ArchitectureRules.cs](../tests/patterns/ArchitectureRules.cs), [RatchetTest.cs](../tests/patterns/RatchetTest.cs) |
 | 3. Тесты | Silent breakdown, PII leaks, vibe-refactoring, контракты API | [PYRAMID.md §Слой 3](../PYRAMID.md#layer-3-tests) | [tests/patterns/](#тестовые-паттерны) |
@@ -115,7 +115,7 @@
 | [ai-patterns.md](solutions/ai-patterns.md) | 9 проверенных паттернов AI-driven разработки |
 | [human-audit-bridge.md](solutions/human-audit-bridge.md) | Как использовать AI-чеклисты для ручного аудита человеком |
 | [ARCHITECTURE-INVENTORY.md](../skills/skeptical-ai-bootstrap/ARCHITECTURE-INVENTORY.md) | Шаблон фиксации текущей архитектуры перед внедрением guardrails |
-| [NUMBERED-DECISIONS.md](../skills/skeptical-ai-bootstrap/NUMBERED-DECISIONS.md) | Шаблон реестра осознанных отклонений (`PERF-###`, `DB-###`, `AUD-###`) |
+| [DECISION-GUARDS.md](../skills/skeptical-ai-bootstrap/DECISION-GUARDS.md) | Шаблон реестра осознанных отклонений (`PERF-###`, `DB-###`, `AUD-###`) |
 
 ---
 

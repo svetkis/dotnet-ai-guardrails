@@ -7,7 +7,7 @@
 ---
 
 <a name="layer-0"></a>
-## Слой 0. Инструкции для агента (AGENTS.md + Numbered Decisions)
+## Слой 0. Инструкции для агента (AGENTS.md + Decision Guards)
 
 Агент читает перед кодом. Это не слой проверки — это слой разработки.
 
@@ -152,7 +152,7 @@ Whitelist для исключений (write-path) сам проверяется
           │   + Snapshot        │
           ├─────────────────────┤
           │   AGENTS.md         │  ← Слой 0: Инструкции перед кодом
-          │  + Numbered Decisions│
+          │  + Decision Guards│
           └─────────────────────┘
 ```
 

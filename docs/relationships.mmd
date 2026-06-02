@@ -28,7 +28,7 @@ graph LR
     P1[Attribute-driven Inventory]
     P2[Source-level Anti-pattern Gates]
     P3[Bug-as-Fixture]
-    P4[Numbered Decisions]
+    P4[Decision Guards]
     P5[Serialization Contract Tests]
     P6[Hierarchical Agent Instructions]
     P7[Concurrency with Real DB]
@@ -178,7 +178,7 @@ graph LR
 | Relation | Meaning | Example |
 |----------|---------|---------|
 | `-->|enables|` | Guardrail даёт контекст другому guardrail | `Hierarchical AGENTS.md` enables `Code Review Agent` |
-| `-->|supports|` | Guardrail усиливает другой guardrail | `Numbered Decisions` supports `Source-level Gates` |
+| `-->|supports|` | Guardrail усиливает другой guardrail | `Decision Guards` supports `Source-level Gates` |
 | `-->|feeds into|` | Выход одного guardrail входит в другой | `Code Review` feeds into `Task Compliance` |
 
 > **Note:** Pattern numbering P1–P9 in this graph is independent of paragraph numbering in `ai-patterns.md` (e.g., P6=§7, P7=§8, P8=§9, P9=§6). Graph IDs are stable references — do not renumber when `ai-patterns.md` changes.
@@ -202,7 +202,7 @@ graph LR
 - `P1` — Attribute-driven Inventory — `docs/solutions/ai-patterns.md` §1
 - `P2` — Source-level Anti-pattern Gates — `docs/solutions/ai-patterns.md` §2
 - `P3` — Bug-as-Fixture — `docs/solutions/ai-patterns.md` §3
-- `P4` — Numbered Decisions — `docs/solutions/ai-patterns.md` §4
+- `P4` — Decision Guards — `docs/solutions/ai-patterns.md` §4
 - `P5` — Serialization Contract Tests — `docs/solutions/ai-patterns.md` §5
 - `P6` — Hierarchical Agent Instructions — `docs/solutions/ai-patterns.md` §7
 - `P7` — Concurrency with Real DB — `docs/solutions/ai-patterns.md` §8
