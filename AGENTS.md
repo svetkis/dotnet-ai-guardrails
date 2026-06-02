@@ -71,6 +71,7 @@
 | Проверка scope | `skills/task-compliance/` |
 | Паттерн теста | `tests/patterns/` |
 | Рабочий пример | `examples/DemoProject/` |
+| Failing demo (guardrails) | `examples/DemoProject.Traps/` |
 | CI безопасность | `ci/github-actions/safe-ci.yml` |
 | Описание ловушки | `docs/traps/` |
 | Архитектурные тесты | `docs/solutions/architecture-tests.md` |

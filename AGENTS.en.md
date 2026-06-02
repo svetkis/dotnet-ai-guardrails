@@ -66,6 +66,7 @@ This repository is a **collection of defensive artifacts**, not a NuGet package.
 | Scope compliance check | `skills/task-compliance/` |
 | Test pattern | `tests/patterns/` |
 | Working example | `examples/DemoProject/` |
+| Failing demo (guardrails) | `examples/DemoProject.Traps/` |
 | CI security | `ci/github-actions/safe-ci.yml` |
 | Trap description | `docs/traps/` |
 | Architecture tests | `docs/solutions/architecture-tests.md` |

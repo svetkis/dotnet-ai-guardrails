@@ -126,6 +126,7 @@
 5. **Modular Monolith / Vertical Slice:** используй `Slice().ByNamespacePrefix(...).Should().NotHaveDependenciesBetweenSlices()` для проверки межмодульных зависимостей
 6. Если нужно — добавь regex-сканирование исходников (см. [`architecture-tests.md`](solutions/architecture-tests.md))
 7. Запусти: `dotnet run --project tests/YourProject.Tests` — тесты проходят?
+8. Посмотри живой failing demo: [`examples/DemoProject.Traps/`](../examples/DemoProject.Traps/) — 4 intentionally broken guardrails с `IType.Explanation`
 
 **Критерий готовности:** Новый `using Infrastructure` в Application = красный CI.
 
