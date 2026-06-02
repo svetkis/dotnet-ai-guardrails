@@ -119,12 +119,13 @@
 
 **Цель:** Автоматическая проверка слоёв и антипаттернов.
 
-1. Установи `NetArchTest` в тестовый проект
+1. Установи `NetArchTest.eNhancedEdition` в тестовый проект (форк с исправленными багами и новыми фичами: Slices, Immutable-правила, проверка пути файла)
 2. Скопируй [`tests/patterns/ArchitectureRules.cs`](../tests/patterns/ArchitectureRules.cs)
 3. Адаптируй namespace и имена сборок под свой проект (используй таблицу из Шага 0)
 4. Добавь `RatchetTest.cs` — baseline публичных типов и тестов
-5. Если нужно — добавь regex-сканирование исходников (см. [`architecture-tests.md`](solutions/architecture-tests.md))
-6. Запусти: `dotnet run --project tests/YourProject.Tests` — тесты проходят?
+5. **Modular Monolith / Vertical Slice:** используй `Slice().ByNamespacePrefix(...).Should().NotHaveDependenciesBetweenSlices()` для проверки межмодульных зависимостей
+6. Если нужно — добавь regex-сканирование исходников (см. [`architecture-tests.md`](solutions/architecture-tests.md))
+7. Запусти: `dotnet run --project tests/YourProject.Tests` — тесты проходят?
 
 **Критерий готовности:** Новый `using Infrastructure` в Application = красный CI.
 

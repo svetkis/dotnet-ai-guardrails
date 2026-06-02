@@ -107,7 +107,92 @@ var violations = ScanServicesForPattern(@"\.FindAsync\(", "*.cs", whitelist);
 
 ---
 
-## 6. Roslyn Analyzers as Regex Replacement
+## 6. Domain Type Immutability (eNhancedEdition)
+
+**File:** `ArchitectureRules.cs`
+
+| Test | Rule |
+|------|------|
+| `DomainTypes_ShouldBeImmutableExternally` | Types in Domain with public access modifier must not have mutable state (public fields/setters). Enums are excluded. |
+
+**Why:** The agent adds `public string Status { get; set; }` to a value object "because it's easier to update". This breaks Domain invariants.
+
+**Limitation:** In eNhancedEdition 1.4.5 `BeImmutableExternally` catches **public fields**, but auto-properties (`{ get; set; }`) may not be detected. For precise mutable property checking — use Roslyn analyzers.
+
+**Working example:** `examples/DemoProject/tests/DemoProject.Tests/ArchitectureRules.cs` (file name)  
+**NOTE:** `HaveSourceFilePathMatchingNamespace` in eNhancedEdition 1.4.5 may behave inconsistently depending on project structure. Use `HaveSourceFileNameMatchingName` when needed.
+
+---
+
+## 7. File and Namespace Conventions (eNhancedEdition)
+
+**File:** `ArchitectureRules.cs`
+
+| Test | Rule |
+|------|------|
+| `Types_ShouldHaveSourceFileNameMatchingName` | The `.cs` file name must match the type name (except nested types) |
+| `Types_ShouldResideInMatchingFilePath` | The file path must correspond to the namespace |
+
+**Why:** During refactoring the agent renames a class but forgets to rename the file. File search breaks, namespace drifts from folder.
+
+**Working example:** `examples/DemoProject/tests/DemoProject.Tests/ArchitectureRules.cs`
+
+---
+
+## 8. Slices — Cross-Module Dependencies (eNhancedEdition)
+
+**File:** `ArchitectureTests.Slices.cs`
+
+| Test | Rule |
+|------|------|
+| `Features_ShouldNotDependOn_EachOther` | Modules (slices) must not directly depend on each other |
+
+```csharp
+var result = Types.InAssembly(typeof(Program).Assembly)
+    .Slice()
+    .ByNamespacePrefix("MyApp.Features")
+    .Should()
+    .NotHaveDependenciesBetweenSlices()
+    .GetResult();
+```
+
+**Why:** In a modular monolith the agent adds `using Features.Orders` to `Features.Payments` "for a single DTO". The slice test catches this instantly.
+
+**Working example:** see [`docs/ONBOARDING.md`](../../docs/ONBOARDING.md) §"Step 5. Slices"
+
+---
+
+## 9. IType.Explanation — Failure Diagnostics (eNhancedEdition)
+
+Unlike original NetArchTest 1.3.2, eNhancedEdition provides a **reason** for each failing type:
+
+```csharp
+private static string FormatFailingTypes(NetArchTest.Rules.TestResult result)
+{
+    if (result.IsSuccessful)
+        return string.Empty;
+
+    var lines = result.FailingTypes
+        .Select(t => $"- {t.FullName}: {t.Explanation}")
+        .ToList();
+
+    return "Failing types:\n" + string.Join("\n", lines);
+}
+```
+
+Use in Assert:
+```csharp
+await Assert.That(result.IsSuccessful).IsTrue()
+    .Because(FormatFailingTypes(result));
+```
+
+**Why:** When a test fails with "IsSuccessful = False", it's unclear who is at fault. With `IType.Explanation` you see: `MyService depends on Infrastructure`.
+
+**Working example:** `examples/DemoProject/tests/DemoProject.Tests/ArchitectureRules.cs`
+
+---
+
+## 10. Roslyn Analyzers as Regex Replacement
 
 **File:** `DemoProject.Analyzers/StronglyTypedIdAnalyzer.cs`
 
@@ -123,6 +208,10 @@ Everything caught by regex source scanning can be upgraded with a custom Roslyn 
 **When to use:** If the rule is unambiguous (no gray area) and should be an Error — make it a Roslyn analyzer. If the rule requires exceptions (whitelist) or checks cross-project architectural dependencies — keep it as regex / NetArchTest.
 
 **Working example:** `examples/DemoProject/src/DemoProject.Analyzers/`
+
+**Example 2 — Performance:** `SAE003` catches `new` in `[HotPath]` methods, `SAE004` catches `async` state machines, `SAE005` catches boxing (explicit cast struct → interface/reference). The `[HotPath]` attribute is applied consciously by the developer; the analyzer prevents forgetting about allocations.
+
+**Working example:** `examples/DemoProject/src/DemoProject.Analyzers/HotPathAnalyzer.cs`
 
 
 ---

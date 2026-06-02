@@ -20,10 +20,11 @@ public class ArchitectureRules
     {
         var result = Types.InAssembly(DomainAssembly)
             .ShouldNot()
-            .HaveDependencyOn(ApplicationAssembly.GetName().Name!)
+            .HaveDependencyOnAny(ApplicationAssembly.GetName().Name!)
             .GetResult();
 
-        await Assert.That(result.IsSuccessful).IsTrue();
+        await Assert.That(result.IsSuccessful).IsTrue()
+            .Because(FormatFailingTypes(result));
     }
 
     [Test]
@@ -31,10 +32,11 @@ public class ArchitectureRules
     {
         var result = Types.InAssembly(DomainAssembly)
             .ShouldNot()
-            .HaveDependencyOn(InfrastructureAssembly.GetName().Name!)
+            .HaveDependencyOnAny(InfrastructureAssembly.GetName().Name!)
             .GetResult();
 
-        await Assert.That(result.IsSuccessful).IsTrue();
+        await Assert.That(result.IsSuccessful).IsTrue()
+            .Because(FormatFailingTypes(result));
     }
 
     [Test]
@@ -42,10 +44,11 @@ public class ArchitectureRules
     {
         var result = Types.InAssembly(ApplicationAssembly)
             .ShouldNot()
-            .HaveDependencyOn(InfrastructureAssembly.GetName().Name!)
+            .HaveDependencyOnAny(InfrastructureAssembly.GetName().Name!)
             .GetResult();
 
-        await Assert.That(result.IsSuccessful).IsTrue();
+        await Assert.That(result.IsSuccessful).IsTrue()
+            .Because(FormatFailingTypes(result));
     }
 
     [Test]
@@ -58,7 +61,25 @@ public class ArchitectureRules
             .ImplementInterface(typeof(IBookingService))
             .GetResult();
 
-        await Assert.That(result.IsSuccessful).IsTrue();
+        await Assert.That(result.IsSuccessful).IsTrue()
+            .Because(FormatFailingTypes(result));
+    }
+
+    // TRAP: Агент добавил public set в доменный тип, нарушая иммутабельность value object.
+    // GUARDRAIL: AreImmutableExternally ловит mutable public API в Domain-слое.
+    // NOTE: Для чистой иммутабельности используй BeImmutable(); здесь — external surface.
+    [Test]
+    public async Task DomainTypes_ShouldBeImmutableExternally()
+    {
+        var result = Types.InAssembly(DomainAssembly)
+            .That().ResideInNamespace("DemoProject.Domain")
+            .And().AreNotEnums()
+            .Should()
+            .BeImmutableExternally()
+            .GetResult();
+
+        await Assert.That(result.IsSuccessful).IsTrue()
+            .Because(FormatFailingTypes(result));
     }
 
     // TRAP: Агент использует FindAsync в read-path, нарушает слоистую архитектуру.
@@ -97,6 +118,18 @@ public class ArchitectureRules
 
         await Assert.That(duplicates).IsEmpty()
             .Because("Numbered decisions must be unique to prevent collision in documentation.");
+    }
+
+    private static string FormatFailingTypes(NetArchTest.Rules.TestResult result)
+    {
+        if (result.IsSuccessful)
+            return string.Empty;
+
+        var lines = result.FailingTypes
+            .Select(t => $"- {t.FullName}: {t.Explanation}")
+            .ToList();
+
+        return "Failing types:\n" + string.Join("\n", lines);
     }
 
     private static IEnumerable<string> ScanSourceFiles(string pattern, string fileGlob, string[] whitelist)

@@ -30,6 +30,7 @@ This is not a "feedback layer" — it's the **ground rules**. Everything else is
 - Agent cannot return `null` unchecked
 - **Strongly Typed IDs** — `BookingId` instead of `Guid`, `CustomerId` instead of `string`. The compiler catches wrong-ID substitution before tests run. See `examples/DemoProject/src/DemoProject.Domain/BookingId.cs`
 - **Custom Roslyn analyzer** — catches `Guid Id` in Domain entities (SAE001) and `Guid somethingId` in parameters (SAE002) right in the IDE, before `dotnet build`. Faster than regex architecture tests (Layer 2). See `examples/DemoProject/src/DemoProject.Analyzers/`
+- **[HotPath] guardrails (SAE003/004/005)** — catches `new`, `async` state machine and boxing in `[HotPath]` methods right in the IDE. Performance degradation is prevented before commit, not by a profiler in production. See `examples/DemoProject/src/DemoProject.Analyzers/HotPathAnalyzer.cs`
 
 ### Frontend
 - `tsc --noEmit` (strict mode) + `noUnusedLocals`

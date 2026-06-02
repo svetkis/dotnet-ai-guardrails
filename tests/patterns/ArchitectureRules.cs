@@ -32,7 +32,7 @@ public class ArchitectureRules
     {
         var result = Types.InCurrentDomain()
             .That().ResideInNamespace(".*Api.*")
-            .Should().Not().DependOnAny(Types.That().ResideInNamespace(".*Infrastructure.*"))
+            .Should().NotHaveDependencyOnAny(".*Infrastructure.*")
             .GetResult();
 
         Assert.That(result.IsSuccessful).IsTrue();
@@ -45,7 +45,7 @@ public class ArchitectureRules
     {
         var result = Types.InCurrentDomain()
             .That().ResideInNamespace(".*Application.*")
-            .Should().Not().DependOnAny(Types.That().HaveNameStartingWith("Microsoft.EntityFrameworkCore"))
+            .Should().NotHaveDependencyOnAny("Microsoft.EntityFrameworkCore")
             .GetResult();
 
         Assert.That(result.IsSuccessful).IsTrue();
@@ -60,6 +60,21 @@ public class ArchitectureRules
             .That().ResideInNamespace(".*Infrastructure.*")
             .And().HaveNameEndingWith("Service")
             .Should().ImplementInterface(typeof(IService))
+            .GetResult();
+
+        Assert.That(result.IsSuccessful).IsTrue();
+    }
+
+    // TRAP: Агент добавил mutable state в Domain через public field/setter.
+    // GUARDRAIL: BeImmutableExternally ловит mutable public API (eNhancedEdition 1.4.5+).
+    // NOTE: Авто-свойства (auto-properties) могут не детектироваться — используйте Roslyn analyzers для точной проверки.
+    [Test]
+    public void DomainTypes_ShouldBeImmutableExternally()
+    {
+        var result = Types.InCurrentDomain()
+            .That().ResideInNamespace(".*Domain.*")
+            .And().AreNotEnums()
+            .Should().BeImmutableExternally()
             .GetResult();
 
         Assert.That(result.IsSuccessful).IsTrue();

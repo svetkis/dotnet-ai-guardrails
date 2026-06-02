@@ -150,8 +150,7 @@ public void OrdersSlice_ShouldNotDependOn_PaymentsSlice()
 {
     var result = Types.InCurrentDomain()
         .That().ResideInNamespace("Features.Orders")
-        .Should().Not().DependOnAny(
-            Types.InCurrentDomain().That().ResideInNamespace("Features.Payments"))
+        .Should().NotHaveDependencyOnAny("Features.Payments")
         .GetResult();
 
     Assert.That(result.IsSuccessful).IsTrue();
@@ -171,8 +170,7 @@ public void NoSlice_ShouldDependOn_AnotherSlice()
         {
             var result = Types.InCurrentDomain()
                 .That().ResideInNamespace(slice)
-                .Should().Not().DependOnAny(
-                    Types.InCurrentDomain().That().ResideInNamespace(other))
+                .Should().NotHaveDependencyOnAny(other)
                 .GetResult();
 
             Assert.That(result.IsSuccessful).IsTrue(

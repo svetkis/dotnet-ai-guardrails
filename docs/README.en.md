@@ -104,7 +104,7 @@ Read before implementation — each trap explains **why** a guardrail exists.
 
 | Document | What's inside |
 |----------|---------------|
-| [architecture-tests.md](solutions/architecture-tests.md) | Detailed guide to NetArchTest + regex scanning |
+| [architecture-tests.md](solutions/architecture-tests.md) | Detailed guide to NetArchTest.eNhancedEdition + regex scanning |
 | [ai-patterns.md](solutions/ai-patterns.md) | 9 proven AI-driven development patterns |
 | [NUMBERED-DECISIONS.md](../skills/skeptical-ai-bootstrap/NUMBERED-DECISIONS.md) | Template for intentional deviation registry (`PERF-###`, `DB-###`, `AUD-###`) |
 

@@ -42,11 +42,23 @@ public class DependencyDriftTest
     {
         var result = Types.InAssembly(DomainAssembly)
             .ShouldNot()
-            .HaveDependencyOn(InfrastructureAssembly.GetName().Name!)
+            .HaveDependencyOnAny(InfrastructureAssembly.GetName().Name!)
             .GetResult();
 
         await Assert.That(result.IsSuccessful).IsTrue()
-            .Because("Domain layer must not depend on Infrastructure layer");
+            .Because(FormatFailingTypes(result));
+    }
+
+    private static string FormatFailingTypes(NetArchTest.Rules.TestResult result)
+    {
+        if (result.IsSuccessful)
+            return "Domain layer must not depend on Infrastructure layer";
+
+        var lines = result.FailingTypes
+            .Select(t => $"- {t.FullName}: {t.Explanation}")
+            .ToList();
+
+        return "Domain layer must not depend on Infrastructure layer. Failing types:\n" + string.Join("\n", lines);
     }
 
     // TRAP: Агент добавил using Infrastructure в Domain — regex дал false negative/positive.

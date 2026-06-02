@@ -110,7 +110,7 @@
 
 | Документ | Что внутри |
 |----------|------------|
-| [architecture-tests.md](solutions/architecture-tests.md) | Подробный гайд по NetArchTest + regex-сканированию |
+| [architecture-tests.md](solutions/architecture-tests.md) | Подробный гайд по NetArchTest.eNhancedEdition + regex-сканированию |
 | [ai-patterns.md](solutions/ai-patterns.md) | 9 проверенных паттернов AI-driven разработки |
 | [human-audit-bridge.md](solutions/human-audit-bridge.md) | Как использовать AI-чеклисты для ручного аудита человеком |
 | [ARCHITECTURE-INVENTORY.md](../skills/skeptical-ai-bootstrap/ARCHITECTURE-INVENTORY.md) | Шаблон фиксации текущей архитектуры перед внедрением guardrails |

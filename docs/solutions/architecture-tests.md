@@ -109,7 +109,92 @@ var violations = ScanServicesForPattern(@"\.FindAsync\(", "*.cs", whitelist);
 
 ---
 
-## 6. Roslyn-анализаторы как замена regex
+## 6. Иммутабельность доменных типов (eNhancedEdition)
+
+**Файл:** `ArchitectureRules.cs`
+
+| Тест | Правило |
+|------|---------|
+| `DomainTypes_ShouldBeImmutableExternally` | Типы в Domain с public access modifier не должны иметь mutable state (public fields/setters). Enum'ы исключаются. |
+
+**Зачем:** Агент добавляет `public string Status { get; set; }` в value object, "потому что так удобнее обновлять". Это ломает инварианты Domain.
+
+**Ограничение:** В eNhancedEdition 1.4.5 `BeImmutableExternally` ловит **public fields**, но auto-properties (`{ get; set; }`) могут не детектироваться. Для точной проверки mutable properties — используйте Roslyn analyzers.
+
+**Рабочий пример:** `examples/DemoProject/tests/DemoProject.Tests/ArchitectureRules.cs` (имя файла)  
+**NOTE:** `HaveSourceFilePathMatchingNamespace` в eNhancedEdition 1.4.5 может работать нестабильно в зависимости от структуры проекта. При необходимости используйте `HaveSourceFileNameMatchingName`.
+
+---
+
+## 7. Конвенции файлов и namespace (eNhancedEdition)
+
+**Файл:** `ArchitectureRules.cs`
+
+| Тест | Правило |
+|------|---------|
+| `Types_ShouldHaveSourceFileNameMatchingName` | Имя файла `.cs` должно совпадать с именем типа (кроме nested types) |
+| `Types_ShouldResideInMatchingFilePath` | Путь к файлу должен соответствовать namespace |
+
+**Зачем:** Агент при рефакторинге переименовывает класс, но забывает переименовать файл. Поиск по имени файла ломается, namespace рассогласовывается с папкой.
+
+**Рабочий пример:** `examples/DemoProject/tests/DemoProject.Tests/ArchitectureRules.cs`
+
+---
+
+## 8. Slices — межмодульные зависимости (eNhancedEdition)
+
+**Файл:** `ArchitectureTests.Slices.cs`
+
+| Тест | Правило |
+|------|---------|
+| `Features_ShouldNotDependOn_EachOther` | Модули (slices) не должны напрямую зависеть друг от друга |
+
+```csharp
+var result = Types.InAssembly(typeof(Program).Assembly)
+    .Slice()
+    .ByNamespacePrefix("MyApp.Features")
+    .Should()
+    .NotHaveDependenciesBetweenSlices()
+    .GetResult();
+```
+
+**Зачем:** В модульном монолите агент добавляет `using Features.Orders` в `Features.Payments` "ради одного DTO". Slice-тест ловит это мгновенно.
+
+**Рабочий пример:** см. [`docs/ONBOARDING.md`](../../docs/ONBOARDING.md) §"Шаг 5. Slices"
+
+---
+
+## 9. IType.Explanation — диагностика падений (eNhancedEdition)
+
+В отличие от оригинального NetArchTest 1.3.2, eNhancedEdition даёт **причину** падения для каждого типа:
+
+```csharp
+private static string FormatFailingTypes(NetArchTest.Rules.TestResult result)
+{
+    if (result.IsSuccessful)
+        return string.Empty;
+
+    var lines = result.FailingTypes
+        .Select(t => $"- {t.FullName}: {t.Explanation}")
+        .ToList();
+
+    return "Failing types:\n" + string.Join("\n", lines);
+}
+```
+
+Используйте в Assert:
+```csharp
+await Assert.That(result.IsSuccessful).IsTrue()
+    .Because(FormatFailingTypes(result));
+```
+
+**Зачем:** Когда тест падает с "IsSuccessful = False", непонятно, кто виноват. С `IType.Explanation` видно: `MyService depends on Infrastructure`.
+
+**Рабочий пример:** `examples/DemoProject/tests/DemoProject.Tests/ArchitectureRules.cs`
+
+---
+
+## 10. Roslyn-анализаторы как замена regex
 
 **Файл:** `DemoProject.Analyzers/StronglyTypedIdAnalyzer.cs`
 
@@ -125,6 +210,10 @@ var violations = ScanServicesForPattern(@"\.FindAsync\(", "*.cs", whitelist);
 **Когда использовать:** Если правило однозначно (нет gray area) и должно быть Error — делайте Roslyn-анализатор. Если правило требует исключений (whitelist) или проверяет архитектурные зависимости между проектами — оставьте regex / NetArchTest.
 
 **Рабочий пример:** `examples/DemoProject/src/DemoProject.Analyzers/`
+
+**Пример 2 — Performance:** `SAE003` ловит `new` в `[HotPath]` методах, `SAE004` — `async` state machine, `SAE005` — boxing (explicit cast struct → interface/reference). Атрибут `[HotPath]` ставит разработчик осознанно; анализатор не даёт забыть про аллокации.
+
+**Рабочий пример:** `examples/DemoProject/src/DemoProject.Analyzers/HotPathAnalyzer.cs`
 
 
 ---

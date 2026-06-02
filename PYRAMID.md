@@ -30,6 +30,7 @@
 - Агент не может вернуть `null` без проверки
 - **Strongly Typed IDs** — `BookingId` вместо `Guid`, `CustomerId` вместо `string`. Компилятор ловит подстановку чужого ID до запуска тестов. См. `examples/DemoProject/src/DemoProject.Domain/BookingId.cs`
 - **Кастомный Roslyn-анализатор** — ловит `Guid Id` в Domain-сущностях (SAE001) и `Guid somethingId` в параметрах (SAE002) прямо в IDE, ещё до `dotnet build`. Быстрее regex-архитектурных тестов (Слой 2). См. `examples/DemoProject/src/DemoProject.Analyzers/`
+- **[HotPath] guardrails (SAE003/004/005)** — ловит `new`, `async` state machine и boxing в методах с `[HotPath]` ещё в IDE. Перформанс-деградация предотвращается до коммита, а не профилировщиком на проде. См. `examples/DemoProject/src/DemoProject.Analyzers/HotPathAnalyzer.cs`
 
 ### Frontend
 - `tsc --noEmit` (strict mode) + `noUnusedLocals`

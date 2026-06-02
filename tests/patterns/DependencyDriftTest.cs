@@ -42,7 +42,7 @@ public class DependencyDriftTest
         //
         // var result = Types.InAssembly(domain)
         //     .ShouldNot()
-        //     .HaveDependencyOn(infra.GetName().Name!)
+        //     .HaveDependencyOnAny(infra.GetName().Name!)
         //     .GetResult();
         //
         // Assert.That(result.IsSuccessful).IsTrue();
