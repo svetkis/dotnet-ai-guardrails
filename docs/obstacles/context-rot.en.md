@@ -39,7 +39,7 @@ Our guardrails are designed as **stateless compensators** of context degradation
 |-----------|-------------|--------------|
 | `ArchitectureRules.cs` (regex scan) | Red zone — rule violation | The agent may forget the `.Select()` rule, but the regex scanner has no memory — it checks every build |
 | `RatchetTest.cs` | Red zone — attribute loss | The agent may forget to add `[SensitiveData]`, but the ratchet fails on build |
-| `Decision Guards` (`PERF-###`) | Agent "cleans up" old code | The agent sees "strange" code and "fixes" it — a numbered comment stops it |
+| `Decision Guards (ADR)` (`PERF-###`) | Agent "cleans up" old code | The agent sees "strange" code and "fixes" it — a numbered ADR comment stops it |
 | `PiiGuardTest.cs` | Forgotten `[SensitiveData]` | The regex scanner doesn't care that the agent forgot the attribute rule from message 2 |
 | `VersionAuditTest.cs` | Forgotten "stable SDK only" | The agent thinks preview is "latest" — the scanner catches `preview` in `global.json` |
 | `Hierarchical AGENTS.md` | Context dilution | Short files with layer-specific rules reduce the degradation surface |

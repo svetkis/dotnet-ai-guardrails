@@ -76,7 +76,7 @@
 | Описание ловушки | `docs/traps/` |
 | Архитектурные тесты | `docs/solutions/architecture-tests.md` |
 | Паттерны AI-разработки | `docs/solutions/ai-patterns.md` |
-| Осознанные отклонения (Decision Guards) | `skills/skeptical-ai-bootstrap/DECISION-GUARDS.md` |
+| Осознанные отклонения (Decision Guards / ADR) | `skills/skeptical-ai-bootstrap/DECISION-GUARDS.md` |
 | Онбординг проекта | `skills/skeptical-ai-bootstrap/` |
 | Интеграция с Kimi | `docs/agents/KIMI.md` |
 | Интеграция с Claude Code | `docs/agents/CLAUDE-CODE.md` |

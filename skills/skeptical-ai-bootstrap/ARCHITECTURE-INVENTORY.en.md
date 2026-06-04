@@ -96,7 +96,7 @@ Fill in once — use when adapting all skills (`ADAPTATION.md`).
 
 ---
 
-## 5. Decision Guards — Documented Architectural Decisions
+## 5. Decision Guards (ADR) — Documented Architectural Decisions
 
 Every conscious deviation from the "standard" — with a number and rationale. Agents see the number and don't "fix" the code.
 

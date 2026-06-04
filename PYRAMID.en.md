@@ -2,37 +2,43 @@
 
 > **Skeptical AI Engineering (SAE)** — methodology from the talk "AI is confident. I'm not" (Dotnext 2026).
 > Feedback speed determines how far the agent gets before you stop it.
-> Compiler catches in seconds. E2E in minutes. Anything slower is not the pyramid — it's the outer loop.
+> Compiler catches in seconds. Smoke in minutes. Anything longer is not the dev cycle — it's acceptance.
+> Anything requiring human judgment is the outer loop.
 
 ---
 
 <a name="layer-0"></a>
-## Layer 0. Agent Instructions (AGENTS.md + Decision Guards)
+## Layer 0. Agent Instructions (AGENTS.md + Decision Guards / ADR)
 
 This is not a "feedback layer" — it's the **ground rules**. Everything else is just enforcement.
 
 - `rules/AGENTS_TEMPLATE.md` — hierarchical instructions: root + per-module
-- `PERF-###` / `DB-###` / `AUD-###` — decision guards in code the agent must not "clean up"
+- `PERF-###` / `DB-###` / `AUD-###` — numbered decisions (ADR) in code the agent must not "clean up"
 - Architecture test checks uniqueness of decision IDs
 
 ---
 
+<a name="layer-1"></a>
+## Layer 1. Development Cycle / Fast Feedback
+
+Everything that runs in seconds and minutes — while the developer (or agent) is still in context. Fixing here is cheapest.
+
 <a name="layer-1-compiler"></a>
-## Layer 1. Compiler + Types (~seconds)
+### 1.1 Compiler + Types (~seconds)
 
 **Trap:** Agent returns `string` instead of `DateTime`, changes a DTO, frontend never finds out.
 
 **Fix:** Static typing — fastest and cheapest feedback loop.
 
-### Backend
+#### Backend
 - `dotnet build` — Nullable reference types, record-based DTO immutability
 - **BannedApiAnalyzers (RS0030)** — forbidden APIs (`DateTime.Now`, `FindAsync`) caught at build time, not in tests
 - Agent cannot return `null` unchecked
 - **Strongly Typed IDs** — `BookingId` instead of `Guid`, `CustomerId` instead of `string`. The compiler catches wrong-ID substitution before tests run. See `examples/DemoProject/src/DemoProject.Domain/BookingId.cs`
-- **Custom Roslyn analyzer** — catches `Guid Id` in Domain entities (SAE001) and `Guid somethingId` in parameters (SAE002) right in the IDE, before `dotnet build`. Faster than regex architecture tests (Layer 2). See `examples/DemoProject/src/DemoProject.Analyzers/`
+- **Custom Roslyn analyzer** — catches `Guid Id` in Domain entities (SAE001) and `Guid somethingId` in parameters (SAE002) right in the IDE, before `dotnet build`. Faster than regex architecture tests (1.2). See `examples/DemoProject/src/DemoProject.Analyzers/`
 - **[HotPath] guardrails (SAE003/004/005)** — catches `new`, `async` state machine and boxing in `[HotPath]` methods right in the IDE. Performance degradation is prevented before commit, not by a profiler in production. See `examples/DemoProject/src/DemoProject.Analyzers/HotPathAnalyzer.cs`
 
-### Frontend
+#### Frontend
 - `tsc --noEmit` (strict mode) + `noUnusedLocals`
 - Auto-generated types from OpenAPI snapshot — backend changes DTO, frontend fails to compile
 
@@ -40,8 +46,8 @@ This is not a "feedback layer" — it's the **ground rules**. Everything else is
 
 ---
 
-<a name="layer-2-architecture"></a>
-## Layer 2. Architecture + Ratchet (~10 seconds)
+<a name="layer-1-architecture"></a>
+### 1.2 Architecture + Ratchet (~10 seconds)
 
 **Trap:** Agent adds `using Infrastructure` in Application, deletes types/tests, or uses `.FindAsync()` in read-path.
 
@@ -59,12 +65,12 @@ This is not a "feedback layer" — it's the **ground rules**. Everything else is
 
 Whitelist for exceptions (write-path) self-validates: if a file from the whitelist no longer contains the pattern — the test fails.
 
-**Pattern:** `tests/patterns/ArchitectureRules.cs`, `tests/patterns/RatchetTest.cs`, `tests/patterns/DependencyDriftTest.cs`, `tests/patterns/EntityLeakTest.cs`, `tests/patterns/StronglyTypedIds.cs`
+**Pattern:** `tests/patterns/ArchitectureRules.cs`, `tests/patterns/RatchetTest.cs`, `tests/patterns/DependencyDriftTest.cs`, `tests/patterns/EntityLeakTest.cs`, `tests/patterns/StronglyTypedIds.cs`, `tests/patterns/ArchUnitNetSliceTest.cs`
 
 ---
 
-<a name="layer-3-tests"></a>
-## Layer 3. Tests (TUnit + `dotnet run`) (~30 seconds)
+<a name="layer-1-tests"></a>
+### 1.3 Tests (TUnit + `dotnet run`) (~30 seconds)
 
 **Trap:** CI is green but nothing is actually being tested. Code merges unchecked for weeks.
 
@@ -78,8 +84,8 @@ Whitelist for exceptions (write-path) self-validates: if a file from the whiteli
 
 ---
 
-<a name="layer-4-code-review"></a>
-## Layer 4. Code review by agent (~2 minutes)
+<a name="layer-1-code-review"></a>
+### 1.4 Code review by agent (~2 minutes)
 
 **Trap:** Agent wrote XSS in `returnUrl`, forgot `await`, leaked internal ClientId.
 
@@ -97,16 +103,56 @@ From practice: 8 review commits with findings:
 
 ---
 
-<a name="layer-5-e2e"></a>
-## Layer 5. E2E MCP (~5-15 minutes)
+<a name="layer-1-smoke"></a>
+### 1.5 Smoke tests (~5 minutes)
+
+**Trap:** Agent broke the critical path (auth, payment, booking), but all unit tests are green because each component works in isolation.
+
+**Fix:** Automated run of 10 critical scenarios — quick check that main flows are not broken. This is not full E2E; it's speed: if smoke is on fire, we don't proceed.
+
+---
+
+### Synthesis: Layer 1 (development cycle)
+
+```
+          ┌─────────────────────┐
+          │   Smoke tests       │  ← 1.5: 10 critical scenarios (~5 min)
+          ├─────────────────────┤
+          │   Code review       │  ← 1.4: Second agent reads diff (~2 min)
+          │   by agent          │
+          ├─────────────────────┤
+          │   TUnit             │  ← 1.3: BUG-regression, snapshot (~30 sec)
+          │   + dotnet run      │
+          ├─────────────────────┤
+          │   NetArchTest       │  ← 1.2: Layers, ratchet (~10 sec)
+          ├─────────────────────┤
+          │   Compiler          │  ← 1.1: dotnet build, tsc (~seconds)
+          │   + Snapshot        │
+          ├─────────────────────┤
+          │   AGENTS.md         │  ← Layer 0: Instructions before code
+          │  + Decision Guards (ADR)  │
+          └─────────────────────┘
+```
+
+---
+
+<a name="layer-2"></a>
+## Layer 2. Acceptance Cycle
+
+> Anything that runs before release or on trigger — not part of the daily feedback loop, but full validation that the system holds together as a whole.
+
+<a name="layer-2-e2e"></a>
+### 2.1 E2E MCP with full scenarios (~15–30 minutes)
 
 **Trap:** Agent does not see that shift mode shows all days as "Day Off" due to stale cache.
 
-**Fix:** 20+ MCP tools: Telegram, VK, browser, API. Agent pokes the app itself.
+**Fix:** 20+ MCP tools: Telegram, VK, browser, API. Agent pokes the app itself through full user scenarios.
 
-- Stale cache (22 days in prod!)
-- Dashboard date reset
-- Self-booking bypass
+| Bug | How it was found |
+|-----|------------------|
+| Stale cache (22 days in prod!) | Agent saw empty schedule on screenshot |
+| Dashboard date reset | Agent "clicked" through dashboard |
+| Self-booking bypass | Agent tried to book themselves |
 
 **Key point:** E2E found stale cache that slipped through:
 - Compiler ✅ (code is syntactically correct)
@@ -117,48 +163,14 @@ From practice: 8 review commits with findings:
 
 ---
 
-## Synthesis: inner loop
-
-```
-          ┌─────────────────────┐
-          │   E2E MCP           │  ← Layer 5: Poke with real hands
-          ├─────────────────────┤
-          │   Code review       │  ← Layer 4: Second agent reads diff
-          │   by agent          │
-          ├─────────────────────┤
-          │   TUnit             │  ← Layer 3: BUG-regression, snapshot
-          │   + dotnet run      │
-          ├─────────────────────┤
-          │   NetArchTest       │  ← Layer 2: Layers, ratchet
-          ├─────────────────────┤
-          │   Compiler          │  ← Layer 1: dotnet build, tsc
-          │   + Snapshot        │
-          ├─────────────────────┤
-          │   AGENTS.md         │  ← Layer 0: Instructions before code
-          │  + Decision Guards│
-          └─────────────────────┘
-```
-
----
-
-<a name="outer-loop"></a>
-## Outer Loop — 3 levels
-
-> Anything that runs on schedule, trigger, or before release — not part of the daily feedback loop, but deep validation.
-
-### Audit skills
+<a name="layer-2-audits"></a>
+### 2.2 Audits (~1–2 hours)
 
 This is not a "feedback level" — it's a **repeatable persona**. Without skills, outer loop becomes chaotic manual browsing.
 
 - `skills/security-audit/`, `skills/dba-audit/` etc. — narrow personas with `CHECKLIST.md`
 - Run in batches — cross-pollination of findings between security and UX, performance and DB schema
 - Each skill = an agent role you can run anytime with the same result
-
----
-
-### Level 1. Audits (~1-2 hours)
-
-Narrow skill-personas run in batches — cross-pollination of findings between security and UX, performance and DB schema.
 
 | Audit | Artifact |
 |-------|----------|
@@ -175,7 +187,10 @@ Narrow skill-personas run in batches — cross-pollination of findings between s
 
 **Schedule:** once per sprint or ad-hoc when you smell danger.
 
-### Level 2. Load (~minutes)
+---
+
+<a name="layer-2-load"></a>
+### 2.3 Load (NBomber) (~minutes)
 
 **Trap:** Agent shows P50 = 6ms, but Max = 4400ms. User hits tail latency.
 
@@ -185,30 +200,55 @@ Scenarios: read + write mix, spike, concurrent booking.
 
 **Pattern:** `tests/patterns/LoadTest.cs`
 
-### Level 3. Manual testing (~hours-days)
-
-- **Smoke check** (15 min) — 10 critical scenarios
-- **Production usage** — real users, real data
-
-Last line of defense. Anything that got here passed 5 inner loop layers + audits + load.
-
 ---
 
-## Synthesis: outer loop
+### Synthesis: Layer 2 (acceptance cycle)
 
 ```
           ┌─────────────────────┐
-          │   Manual            │  ← Level 3: Human, real data
-          │   testing           │
-          ├─────────────────────┤
-          │   Load              │  ← Level 2: NBomber, read+write mix
+          │   Load              │  ← 2.3: NBomber, read+write mix
           │   (NBomber)         │
           ├─────────────────────┤
-          │   Audits            │  ← Level 1: Batch narrow personas
+          │   Audits            │  ← 2.2: Batch narrow personas
           │   (batch)           │
           ├─────────────────────┤
-          │   skills/           │  ← Audit skills
-          │   + CHECKLIST.md    │
+          │   E2E MCP           │  ← 2.1: Full scenarios, real hands
+          │   (full scenarios)  │
+          └─────────────────────┘
+```
+
+---
+
+<a name="outer-loop"></a>
+## Outer Loop / Human Judgment
+
+> Anything that requires a business decision, product judgment, or final human validation.
+
+This is not a pyramid layer in the classic sense — it's the last line of defense that cannot be automated.
+
+- **Business decisions** — does the implementation match strategy, does it break contracts
+- **Product decisions** — UX, behavior, edge cases that cannot be formalized
+- **Final human validation** — production usage, real users, real data
+
+Anything that got here passed Layer 1 (fast feedback) + Layer 2 (acceptance cycle).
+
+---
+
+## Overall synthesis: pyramid + outer loop
+
+```
+          ┌─────────────────────┐
+          │   Outer loop        │  ← Human, business, product
+          │   (Human judgment)  │
+          ├─────────────────────┤
+          │   Acceptance cycle  │  ← Layer 2: E2E, audits, load
+          │   (Acceptance)      │
+          ├─────────────────────┤
+          │   Development cycle │  ← Layer 1: Compiler → Smoke
+          │   (Fast feedback)   │
+          ├─────────────────────┤
+          │   AGENTS.md         │  ← Layer 0: Rules before code
+          │  + Decision Guards (ADR)  │
           └─────────────────────┘
 ```
 
@@ -220,19 +260,20 @@ Last line of defense. Anything that got here passed 5 inner loop layers + audits
 
 | Cycle | Layer | Bugs found | % of fixes |
 |-------|-------|-----------|------------|
-| **Inner** | Compiler + types | ~0 commits | — |
-| **Inner** | Arch tests + Ratchet | ~0 commits | — |
-| **Inner** | Unit/integration | 6 commits | 1.3% |
-| **Inner** | Code review | 8 commits | 1.8% |
-| **Inner** | E2E (MCP) | 9 commits | 2.0% |
-| **Outer** | Load (NBomber) | ~0 commits | — |
-| **Outer** | Audits | 19 commits | 4.2% |
-| **Outer** | Manual (BUG-NNN) | ~78 commits | 17% |
+| **Inner** (Layer 1) | Compiler + types | ~0 commits | — |
+| **Inner** (Layer 1) | Arch tests + Ratchet | ~0 commits | — |
+| **Inner** (Layer 1) | Unit/integration | 6 commits | 1.3% |
+| **Inner** (Layer 1) | Code review | 8 commits | 1.8% |
+| **Inner** (Layer 1) | Smoke | ~0 commits | — |
+| **Acceptance** (Layer 2) | E2E MCP | 9 commits | 2.0% |
+| **Acceptance** (Layer 2) | Audits | 19 commits | 4.2% |
+| **Acceptance** (Layer 2) | Load | ~0 commits | — |
+| **Outer** | Human judgment | ~78 commits | 17% |
 | — | Gray zone | ~331 commits | 74% |
 
 ### The invisible layer paradox
 
-Compiler and arch tests are the **most effective** layers, but in git they show 0 commits. They prevent bugs **before** code leaves the workstation.
+Compiler, arch tests, and smoke are the **most effective** layers, but in git they show 0 commits. They prevent bugs **before** code leaves the workstation.
 
 ### ROI by layer
 
@@ -242,14 +283,17 @@ Compiler and arch tests are the **most effective** layers, but in git they show 
 | Arch tests + Ratchet | ~2 days | ~1 hour/month | First week |
 | Unit tests | ~2 weeks | ~30 min/feature | First month |
 | Code review | ~0 (AGENTS.md rule) | ~2 min/commit | First XSS |
+| Smoke | ~1 day | ~15 min/session | First broken critical path |
 | E2E MCP | ~3 days | ~1 hour/platform | After stale cache (22 days in prod) |
-| Load (NBomber) | ~1 day | ~30 min/scenario | First silent breakdown under load |
 | Audits | ~0 (prompts) | ~2 hours/audit | First batch |
-| Manual (smoke) | — | ~15 min/session | Impossible to measure |
+| Load (NBomber) | ~1 day | ~30 min/scenario | First silent breakdown under load |
+| Human judgment | — | ~hours-days | Impossible to measure |
+
+---
 
 ## Grooming loop — Artifact maintenance
 
-> Inner loop catches bugs in code. Outer loop catches cross-cutting issues.
+> Inner loop catches bugs in code. Acceptance catches cross-cutting issues. Outer catches human judgment.
 > But agent artifacts rot too: AGENTS.md drifts from code, Auto Memory
 > accumulates duplicates, backlog turns into a graveyard. This is the third loop.
 
@@ -269,19 +313,19 @@ Grooming is not a pyramid layer or an audit. It does not give feedback on code
 during development. It prevents **meta-information decay** that the whole
 pyramid depends on.
 
-| Artifact |
-|----------|
-| **Auto Memory** |
-| **AGENTS.md** |
-| **Backlog** |
+| Artifact | What rots | Consequences |
+|----------|-----------|--------------|
+| **Auto Memory** | Duplicates, stale notes, drift from AGENTS.md | Agent makes decisions based on garbage |
+| **AGENTS.md** | Contradictions between levels, code drift | Guardrails lie or become powerless |
+| **Backlog** | Orphaned specs, stale tasks, priority drift | `task-compliance` checks diff against dead requirements |
 
 ### Grooming skills
 
-| Skill |
-|-------|
-| `skills/memory-hygiene/` |
-| `skills/doc-hygiene/` |
-| `skills/backlog-hygiene/` |
+| Skill | What it cleans | Frequency |
+|-------|---------------|-----------|
+| `skills/memory-hygiene/` | Auto Memory: duplicates, hierarchical drift, stale refs | Once per sprint or on agent change |
+| `skills/doc-hygiene/` | AGENTS.md: hierarchy consistency, code drift, cross-agent docs | Once per sprint or after module refactoring |
+| `skills/backlog-hygiene/` | Backlog: stale, orphaned, duplicates, priority drift | Once per sprint |
 
 ### The invisible decay paradox
 
@@ -303,13 +347,13 @@ Auto Memory. Grooming is the only defense against this.
 ## Evolution: how the system grows
 
 ```
-January:   compiler + types → unit tests
+January:   compiler + types → unit tests → smoke
   ↓ architecture bugs
-February:  + arch tests → + audits (in batches) → + code review
+February:  + arch tests → + code review
   ↓ UI bugs
-March:     + E2E MCP → + characterization tests
+March:     + E2E MCP (acceptance) → + characterization tests
   ↓ write-path degradation
-April:     + NBomber (read+write mix) → + ratchet tests
+April:     + audits (in batches) → + NBomber → + ratchet tests
 ```
 
 Every new layer is a reaction to a bug class that previous layers missed.
@@ -325,6 +369,6 @@ A dead guardrail (0 triggers in 3 sprints) is not protection — it is tech debt
 ## 4 rules for Monday
 
 1. **Every bug-fix = `BUG###_` test.** No test — no fix.
-2. **Every PR = `dotnet run --project` tests + code review by agent.**
-3. **Every sprint = batch audit + NBomber before release.** An agent does not see cross-cutting issues — a persona does.
+2. **Every PR = `dotnet run --project` tests + code review by agent + smoke.**
+3. **Every sprint = acceptance cycle (E2E + audits + NBomber) before release.** An agent does not see cross-cutting issues — a persona does.
 4. **Every sprint = groom artifacts.** Memory-hygiene, doc-hygiene, backlog-hygiene — agent artifacts rot too.

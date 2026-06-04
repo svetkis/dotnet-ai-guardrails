@@ -29,7 +29,7 @@
 |--------|-------------|------------------|
 | **Read-path** | Путь чтения данных: запросы только на чтение. **Обязательны** `.Select()` + `.AsNoTracking()`. Запрещены `.Include()`, `.FindAsync()`. | [rules/AGENTS_TEMPLATE.md](rules/AGENTS_TEMPLATE.md) |
 | **Write-path** | Путь записи данных: команды, изменяющие состояние. Требуется change tracking, запрещён `.AsNoTracking()`. | [rules/AGENTS_TEMPLATE.md](rules/AGENTS_TEMPLATE.md) |
-| **Numbered Decision** | Осознанное отклонение от стандарта, задокументированное ID в комментарии: `PERF-###`, `DB-###`, `AUD-###`. Проверяется архитектурным тестом на уникальность. | [rules/AGENTS_TEMPLATE.md](rules/AGENTS_TEMPLATE.md), [tests/patterns/ArchitectureRules.cs](tests/patterns/ArchitectureRules.cs) |
+| **Numbered Decision (ADR)** | Осознанное отклонение от стандарта, задокументированное ID в комментарии: `PERF-###`, `DB-###`, `AUD-###`. Реализация паттерна **ADR (Architecture Decision Records)**. Проверяется архитектурным тестом на уникальность. | [rules/AGENTS_TEMPLATE.md](rules/AGENTS_TEMPLATE.md), [tests/patterns/ArchitectureRules.cs](tests/patterns/ArchitectureRules.cs) |
 | **Semantic Anchors** | Установленные термины вместо описаний. Каждый термин активирует конкретную методологию (например, "read-path" = `.Select()` + `.AsNoTracking()`). | [rules/AGENTS_TEMPLATE.md](rules/AGENTS_TEMPLATE.md) |
 
 ## Агенты и инструменты

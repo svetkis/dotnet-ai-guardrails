@@ -1,6 +1,6 @@
-# Decision Guards — Conscious Deviation Registry Template
+# Decision Guards — Conscious Deviation Registry Template (ADR)
 
-> **Purpose:** Document every conscious deviation from the "standard" with a number and rationale, so the agent doesn't try to "fix" it.  
+> **Purpose:** Implementation of the **ADR (Architecture Decision Records)** pattern — document every conscious deviation from the "standard" with a number and rationale, so the agent doesn't try to "fix" it.  
 > **Consumer:** Human (Tech Lead) writes, agent reads comments in code.  
 > **Result:** Registry of decisions like `PERF-###`, `DB-###`, `AUD-###` that are checked by an architecture uniqueness test.
 
