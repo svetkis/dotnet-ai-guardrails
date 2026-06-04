@@ -1,0 +1,35 @@
+// GUARDRAIL: ArchUnitNET ловит циклические зависимости между слайсами.
+// TRAP: Агент создал цикл Orders -> Payments -> Shipping -> Orders.
+using ArchUnitNET.Domain;
+using ArchUnitNET.Fluent;
+using ArchUnitNET.Fluent.Slices;
+using ArchUnitNET.Loader;
+using TUnit;
+
+namespace DemoProject.Traps.Tests;
+
+public class ArchUnitNetSliceTests
+{
+    private static readonly Architecture Architecture = new ArchLoader()
+        .LoadAssemblies(typeof(Domain.MutableState).Assembly)
+        .Build();
+
+    [Test]
+    public async Task Modules_ShouldBeFreeOfCycles()
+    {
+        IArchRule rule = SliceRuleDefinition.Slices()
+            .Matching("DemoProject.Traps.Modules.(*)..")
+            .Should()
+            .BeFreeOfCycles();
+
+        var violations = rule.Evaluate(Architecture).Where(v => !v.Passed).ToList();
+        var message = violations.Any()
+            ? "Cyclic dependencies detected between modules. " +
+              "Expected: Modules should not depend on each other in a cycle. " +
+              "Violations: " + string.Join(", ", violations.Select(v => v.ToString()))
+            : string.Empty;
+
+        await Assert.That(rule.HasNoViolations(Architecture)).IsTrue()
+            .Because(message);
+    }
+}

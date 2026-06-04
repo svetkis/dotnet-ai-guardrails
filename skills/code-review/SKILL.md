@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: Diff-based code review for .NET projects with agent-generated code. Reviews changed lines against architectural rules, EF constraints, TUnit conventions, and security hygiene. Stack-specific checks for .NET 10, EF Core, PostgreSQL.
+description: Diff-based code review for .NET projects with agent-generated code. Reviews changed lines against architectural rules, EF/Dapper constraints, TUnit conventions, and security hygiene. Stack-specific checks for .NET 10, EF Core, Dapper, PostgreSQL, SQL Server.
 ---
 
 ## Адаптация под проект
@@ -9,6 +9,7 @@ description: Diff-based code review for .NET projects with agent-generated code.
 - **Single-project MVP без Clean Architecture** → пропусти проверку слоёв (NetArchTest). Если нет отдельных проектов Domain / Infrastructure / Application — правило о зависимостях между ними неприменимо.
 - **Minimal API** → проверяй `.RequireAuthorization()`, а не `[Authorize]`.
 - **Проекции `.Select()` в DTO** — EF Core не отслеживает их, `.AsNoTracking()` не требуется. Не флаги отсутствие AsNoTracking на проекциях.
+- **Dapper / Raw SQL (нет EF Core)** → пропусти ВСЕ EF-специфичные проверки (AsNoTracking, Include, FindAsync, Change Tracker). Используй Dapper-раздел ниже.
 
 ---
 
@@ -24,19 +25,25 @@ This skill implements two concepts from [Augmented Coding Patterns](https://gith
 ## Scope
 - Review ONLY `+` lines in diff and directly related context lines
 - NEVER review unchanged code or entire files
-- Focus on stack: .NET 10, TUnit, EF Core, PostgreSQL, Minimal API
+- Focus on stack: .NET 10, TUnit, EF Core, Dapper, PostgreSQL, SQL Server, Minimal API
 
 ## Severity Levels
 - **BLOCKER**: Security vulnerability, data loss risk, compilation error, test breakage
-- **CRITICAL**: EF Core write-path with `AsNoTracking`, missing `CancellationToken`, `async void`, race condition, hexagonal violation
+- **CRITICAL**: EF Core write-path with `AsNoTracking` OR Dapper SQL injection, missing `CancellationToken`, `async void`, race condition, hexagonal violation
 - **MAJOR**: Missing test, exception swallowing, N+1 query, unhandled nullable, DTO mismatch, business logic duplication
 - **MINOR**: Naming inconsistency, missing XML doc, magic number
 - **NIT**: Formatting, trailing whitespace, unused using
 
 ## .NET / C# Specific Checks
 - **CancellationToken**: Every `async` public method MUST accept `CancellationToken ct = default`
-- **EF Core Read-Path**: Если read-path возвращает **entity** (не проекцию) — должен быть `.AsNoTracking()`. Проекции `.Select()` в DTO/record не требуют `.AsNoTracking()` — EF Core не отслеживает их.
-- **EF Core Write-Path**: No `.AsNoTracking()` on write operations. Исключение: raw SQL (`FromSqlRaw`, `ExecuteSqlRaw`) и bulk update API (`ExecuteUpdateAsync`) — Change Tracker их всё равно не отслеживает.
+- **EF Core Read-Path** (N/A для Dapper): Если read-path возвращает **entity** (не проекцию) — должен быть `.AsNoTracking()`. Проекции `.Select()` в DTO/record не требуют `.AsNoTracking()` — EF Core не отслеживает их.
+- **EF Core Write-Path** (N/A для Dapper): No `.AsNoTracking()` on write operations. Исключение: raw SQL (`FromSqlRaw`, `ExecuteSqlRaw`) и bulk update API (`ExecuteUpdateAsync`) — Change Tracker их всё равно не отслеживает.
+- **Dapper / Raw SQL** (N/A для EF-only):
+  - **SQL Injection**: Любая строковая интерполяция (`$"..."`) или конкатенация (`+`) в SQL-запросе — BLOCKER.
+  - **Parameterization**: Все SQL-запросы должны использовать параметры (`@param`). Нет `string.Format` в SQL.
+  - **CommandTimeout**: Каждый вызов `QueryAsync` / `ExecuteAsync` должен иметь `commandTimeout` или использовать глобальный default.
+  - **Transactions**: Write-операции (`Execute`, `ExecuteAsync`) должны быть внутри `IDbTransaction`.
+  - **Dynamic IN**: `IN` с динамическим списком — через TVP или временную таблицу. `string.Join` в SQL — BLOCKER.
 - **Architecture**: Domain MUST NOT reference Infrastructure **только если в проекте есть разделение на слои** (2+ проектов с суффиксами Domain / Infrastructure / Application). Для single-project MVP — пометить N/A.
 - **DTOs**: API returns records/DTOs, not Entities directly
 - **TUnit**: `[Test]` + `await Assert.That(value).IsEqualTo(expected)`. No xUnit/NUnit syntax

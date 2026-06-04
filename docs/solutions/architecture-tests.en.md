@@ -163,7 +163,44 @@ var result = Types.InAssembly(typeof(Program).Assembly)
 
 ---
 
-## 9. IType.Explanation — Failure Diagnostics (eNhancedEdition)
+## 9. Cyclic Dependencies Between Slices (ArchUnitNET)
+
+**File:** `ArchUnitNetSliceTest.cs`
+
+| Test | Rule |
+|------|------|
+| `Modules_ShouldBeFreeOfCycles` | Slices (modules/features) must not have cyclic dependencies |
+
+```csharp
+using ArchUnitNET.Domain;
+using ArchUnitNET.Fluent;
+using ArchUnitNET.Loader;
+using static ArchUnitNET.Fluent.ArchRuleDefinition;
+
+private static readonly Architecture Architecture = new ArchLoader()
+    .LoadAssemblies(typeof(Program).Assembly)
+    .Build();
+
+IArchRule rule = SliceRuleDefinition.Slices()
+    .Matching("MyApp.Modules.(*)..")
+    .Should()
+    .BeFreeOfCycles();
+
+rule.Check(Architecture);
+```
+
+**Why:** In a modular monolith the agent adds an integration event or a call via Mediator, creating an implicit cycle `Orders → Payments → Shipping → Orders`. NetArchTest `NotHaveDependenciesBetweenSlices` forbids **any** dependencies between slices (zero-tolerance). ArchUnitNET allows a directed acyclic graph (DAG), but catches only cycles.
+
+| Tool | Approach | When to use |
+|------|----------|-------------|
+| NetArchTest.eNhancedEdition | `NotHaveDependenciesBetweenSlices` — zero-tolerance | Modules must be fully isolated; any `using` into a neighbour feature is an error |
+| ArchUnitNET | `BeFreeOfCycles` — DAG validation | Modules may depend on each other hierarchically, but closed cycles are forbidden |
+
+**Working example:** `examples/DemoProject.Traps/tests/DemoProject.Traps.Tests/ArchUnitNetSliceTest.cs`
+
+---
+
+## 10. IType.Explanation — Failure Diagnostics (eNhancedEdition)
 
 Unlike original NetArchTest 1.3.2, eNhancedEdition provides a **reason** for each failing type:
 
@@ -193,7 +230,7 @@ await Assert.That(result.IsSuccessful).IsTrue()
 
 ---
 
-## 10. Roslyn Analyzers as Regex Replacement
+## 11. Roslyn Analyzers as Regex Replacement
 
 **File:** `DemoProject.Analyzers/StronglyTypedIdAnalyzer.cs`
 

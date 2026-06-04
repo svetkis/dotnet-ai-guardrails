@@ -36,22 +36,18 @@ jobs:
           dotnet-version: '10.0.x'
 
       # GUARDRAIL: dotnet test опасен — используем dotnet run --project
-      # Каждый проект запускаем отдельно, чтобы точно знать, что он реально бежал
-      - name: Architecture Tests
-        run: dotnet run --project tests/ArchitectureTests/ArchitectureTests.csproj --configuration Release
-
-      - name: Unit Tests
-        run: dotnet run --project tests/UnitTests/UnitTests.csproj --configuration Release
-
-      - name: Integration Tests
-        run: dotnet run --project tests/IntegrationTests/IntegrationTests.csproj --configuration Release
+      # Скрипт автоматически находит тестовые проекты в tests/ и src/.
+      # Адаптируй TEST_DIRS в ci/scripts/run-tests.sh под структуру своего проекта.
+      - name: Run Tests
+        run: |
+          chmod +x ci/scripts/run-tests.sh
+          ci/scripts/run-tests.sh
 
       # GUARDRAIL: Проверяем, что тесты реально запустились (не 0 ran)
       - name: Verify Tests Ran
         run: |
-          # Этот скрипт парсит вывод и проверяет, что count > 0
-          # Если агент сломал TUnit настройки — этот шаг упадёт
-          ./ci/scripts/verify-tests.sh
+          chmod +x ci/scripts/verify-tests.sh
+          ci/scripts/verify-tests.sh
 
   load-tests:
     runs-on: ubuntu-latest
@@ -66,6 +62,7 @@ jobs:
           dotnet-version: '10.0.x'
 
       # GUARDRAIL: NBomber на PR — проверяем, что нет деградации
+      # Адаптируй путь под свой проект. Или используй run-tests.sh с фильтром по NBomber.
       - name: Run Load Tests
         run: dotnet run --project tests/LoadTests/LoadTests.csproj --configuration Release
 
@@ -81,6 +78,7 @@ jobs:
           dotnet-version: '10.0.x'
 
       # GUARDRAIL: OpenAPI snapshot не должен расходиться
+      # Адаптируй путь к тестовому проекту и папке snapshots под свой проект.
       - name: Verify OpenAPI Snapshot
         run: |
           dotnet run --project tests/IntegrationTests/IntegrationTests.csproj --filter "FullyQualifiedName~OpenApi"

@@ -24,7 +24,7 @@
 |------|---------|------------------|-----------|
 | **0. Инструкции** | Правила для агента перед кодом | [PYRAMID.md §Слой 0](../PYRAMID.md#layer-0) | `rules/AGENTS_TEMPLATE.md` + Decision Guards |
 | 1. Компилятор | Быстрая обратная связь от типов | [PYRAMID.md §Слой 1](../PYRAMID.md#layer-1-compiler) | `.editorconfig`, `Directory.Build.props`, `DemoProject.Analyzers` (кастомный Roslyn-анализатор) |
-| 2. Архитектура | Авто-проверка слоёв и антипаттернов | [PYRAMID.md §Слой 2](../PYRAMID.md#layer-2-architecture) | [tests/patterns/ArchitectureRules.cs](../tests/patterns/ArchitectureRules.cs), [RatchetTest.cs](../tests/patterns/RatchetTest.cs) |
+| 2. Архитектура | Авто-проверка слоёв и антипаттернов | [PYRAMID.md §Слой 2](../PYRAMID.md#layer-2-architecture) | [tests/patterns/ArchitectureRules.cs](../tests/patterns/ArchitectureRules.cs), [RatchetTest.cs](../tests/patterns/RatchetTest.cs), [ArchUnitNetSliceTest.cs](../tests/patterns/ArchUnitNetSliceTest.cs) |
 | 3. Тесты | Silent breakdown, PII leaks, vibe-refactoring, контракты API | [PYRAMID.md §Слой 3](../PYRAMID.md#layer-3-tests) | [tests/patterns/](#тестовые-паттерны) |
 | 4. Code Review | Агент проверяет агента | [PYRAMID.md §Слой 4](../PYRAMID.md#layer-4-code-review) | [skills/code-review/SKILL.md](../skills/code-review/SKILL.md) |
 | 5. E2E / MCP | End-to-end через внешние системы | [PYRAMID.md §Слой 5](../PYRAMID.md#layer-5-e2e) | [tests/patterns/SnapshotTest.cs](../tests/patterns/SnapshotTest.cs), [LoadTest.cs](../tests/patterns/LoadTest.cs) |
@@ -38,7 +38,10 @@
 
 | Паттерн | Зачем | Где лежит | Рабочий пример в DemoProject |
 |---------|-------|-----------|------------------------------|
-| **ArchitectureRules** | Проверка зависимостей между слоями (NetArchTest) | [tests/patterns/ArchitectureRules.cs](../tests/patterns/ArchitectureRules.cs) | `examples/DemoProject/tests/DemoProject.Tests/ArchitectureRules.cs` |
+| **ArchitectureRules** | Универсальная проверка зависимостей между слоями (NetArchTest) | [tests/patterns/ArchitectureRules.cs](../tests/patterns/ArchitectureRules.cs) | `examples/DemoProject/tests/DemoProject.Tests/ArchitectureRules.cs` |
+| **EfCoreGuardRules** | EF Core-специфичные guardrails: `FindAsync`, `Include`, `AsNoTracking` | [tests/patterns/EfCoreGuardRules.cs](../tests/patterns/EfCoreGuardRules.cs) | `examples/DemoProject/tests/DemoProject.Tests/EfCoreGuardRules.cs` |
+| **DapperGuardRules** | Dapper / Raw SQL guardrails: параметризация, инъекции, таймауты | [tests/patterns/DapperGuardRules.cs](../tests/patterns/DapperGuardRules.cs) | — |
+| **ArchUnitNetSliceTest** | Циклические зависимости между слайсами (ArchUnitNET) | [tests/patterns/ArchUnitNetSliceTest.cs](../tests/patterns/ArchUnitNetSliceTest.cs) | `examples/DemoProject.Traps/tests/DemoProject.Traps.Tests/ArchUnitNetSliceTest.cs` |
 | **RatchetTest** | Публичные типы и тесты не уменьшились | [tests/patterns/RatchetTest.cs](../tests/patterns/RatchetTest.cs) | `examples/DemoProject/tests/DemoProject.Tests/RatchetTests.cs` |
 | **SnapshotTest** | Контракт JSON-сериализации, OpenAPI | [tests/patterns/SnapshotTest.cs](../tests/patterns/SnapshotTest.cs) | `examples/DemoProject/tests/DemoProject.Tests/SnapshotTests.cs` |
 | **LoadTest** | Silent breakdown под нагрузкой: read-оптимизации, которые ломают write | [tests/patterns/LoadTest.cs](../tests/patterns/LoadTest.cs) | `examples/DemoProject/tests/DemoProject.Tests/LoadTests.cs` |
@@ -50,7 +53,8 @@
 | **StronglyTypedIds** | Domain-сущности используют strongly typed IDs, а не голые Guid/string/int | [tests/patterns/StronglyTypedIds.cs](../tests/patterns/StronglyTypedIds.cs) | `examples/DemoProject/tests/DemoProject.Tests/StronglyTypedIds.cs` |
 | **BUG_TEMPLATE** | Формат regression-теста | [tests/conventions/BUG_TEMPLATE.cs](../tests/conventions/BUG_TEMPLATE.cs) | — |
 | **TUnit_Guide** | Соглашения по тестам | [tests/conventions/TUnit_Guide.md](../tests/conventions/TUnit_Guide.md) | — |
-| **Traps Demo** | Специально сломанный код для демонстрации guardrails (4 failing tests) | — | `examples/DemoProject.Traps/` |
+| **Traps Demo** | Специально сломанный код для демонстрации guardrails (5 failing tests) | — | `examples/DemoProject.Traps/` |
+| **MinimalApi Demo** | Single-project MVP без Clean Architecture — naming, banned APIs, ratchet | — | `examples/DemoProject.MinimalApi/` |
 
 ---
 
@@ -63,7 +67,8 @@
 | [code-review](../skills/code-review/SKILL.md) | На каждый PR |
 | [task-compliance](../skills/task-compliance/SKILL.md) | На каждый PR |
 | [security-audit](../skills/security-audit/SKILL.md) | Раз в спринт / на PR с Api/Infra |
-| [dba-audit](../skills/dba-audit/SKILL.md) | Раз в спринт / при миграциях |
+| [dba-audit](../skills/dba-audit/SKILL.md) | Раз в спринт / при миграциях (EF Core) |
+| [dba-audit-dapper](../skills/dba-audit-dapper/SKILL.md) | Раз в спринт / при изменениях репозиториев (Dapper / Raw SQL) |
 | [performance-audit](../skills/performance-audit/SKILL.md) | Перед релизом / при подозрении |
 | [api-design-audit](../skills/api-design-audit/SKILL.md) | Раз в спринт |
 | [bot-audit](../skills/bot-audit/SKILL.md) | Раз в спринт |
@@ -137,6 +142,7 @@
 | Артефакт | Назначение |
 |----------|------------|
 | [ci/github-actions/safe-ci.yml](../ci/github-actions/safe-ci.yml) | Шаблон воркфлоу: build + test + verify-tests |
+| [ci/scripts/run-tests.sh](../ci/scripts/run-tests.sh) | Автоматически находит и запускает все тестовые проекты через `dotnet run --project` |
 | [ci/scripts/verify-tests.sh](../ci/scripts/verify-tests.sh) | Проверяет, что `dotnet run` реально выполнил тесты (не 0 ran) |
 | [.github/workflows/demo-project-ci.yml](../.github/workflows/demo-project-ci.yml) | CI этого репозитория — собирает DemoProject |
 
@@ -146,7 +152,9 @@
 
 | Файл | Что внутри |
 |------|------------|
-| [rules/AGENTS_TEMPLATE.md](../rules/AGENTS_TEMPLATE.md) | Конституция для AI-агентов: EF, тесты, даты, кэш, коммиты |
+| [rules/AGENTS_TEMPLATE.md](../rules/AGENTS_TEMPLATE.md) | Базовая конституция для AI-агентов: тесты, даты, кэш, коммиты (универсальная) |
+| [rules/AGENTS_TEMPLATE.efcore.md](../rules/AGENTS_TEMPLATE.efcore.md) | Add-on: EF Core-специфичные правила (read/write path, `AsNoTracking`) |
+| [rules/AGENTS_TEMPLATE.dapper.md](../rules/AGENTS_TEMPLATE.dapper.md) | Add-on: Dapper / Raw SQL-специфичные правила (параметризация, таймауты) |
 | [rules/CONVENTIONS.md](../rules/CONVENTIONS.md) | Именование тестов, workflow, CI guardrails |
 | [BannedSymbols.txt](../examples/DemoProject/BannedSymbols.txt) | Compile-time guard: запрещённые API (BannedApiAnalyzers RS0030) |
 

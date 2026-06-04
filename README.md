@@ -76,7 +76,9 @@ cp tests/patterns/*.cs /your/project/tests/
 ├── AGENTS.md                     # Инструкции для AI-агентов
 ├── PYRAMID.md                    # Подробный разбор слоёв
 ├── rules/
-│   ├── AGENTS.md                 # EF-правила, naming, конвенции
+│   ├── AGENTS_TEMPLATE.md        # Базовая конституция для агентов (универсальная)
+│   ├── AGENTS_TEMPLATE.efcore.md # Add-on: EF Core-специфичные правила
+│   ├── AGENTS_TEMPLATE.dapper.md # Add-on: Dapper / Raw SQL-специфичные правила
 │   └── CONVENTIONS.md            # Коммиты, воркфлоу, тесты
 ├── skills/                        # Роли агента
 │   ├── memory-hygiene/            # Grooming: Auto Memory
@@ -86,7 +88,8 @@ cp tests/patterns/*.cs /your/project/tests/
 │   ├── code-review/               # Inner loop: review на каждый PR
 │   ├── task-compliance/           # Inner loop: проверка scope
 │   ├── security-audit/            # Outer loop: по триггеру
-│   ├── dba-audit/                 # Outer loop: по триггеру
+│   ├── dba-audit/                 # Outer loop: по триггеру (EF Core)
+│   ├── dba-audit-dapper/          # Outer loop: по триггеру (Dapper / Raw SQL)
 │   ├── api-design-audit/          # Outer loop: по триггеру
 │   ├── bot-audit/                 # Outer loop: по триггеру
 │   ├── performance-audit/         # Outer loop: по триггеру
@@ -101,7 +104,8 @@ cp tests/patterns/*.cs /your/project/tests/
 │   └── conventions/               # Именование, TUnit гайд
 ├── ci/                            # CI/CD guardrails
 └── examples/
-    └── DemoProject/               # Рабочий пример на .NET 10
+    ├── DemoProject/               # Рабочий пример на .NET 10 (Clean Architecture)
+    └── DemoProject.MinimalApi/    # Single-project MVP (Minimal API, no layers)
 ```
 
 ## DemoProject
@@ -127,9 +131,12 @@ dotnet run --project tests/DemoProject.Tests
 
 | Что нужно | Куда идти |
 |-----------|-----------|
-| Правила для агента | `rules/AGENTS_TEMPLATE.md` |
+| Правила для агента (базовые) | `rules/AGENTS_TEMPLATE.md` |
+| EF Core add-on | `rules/AGENTS_TEMPLATE.efcore.md` |
+| Dapper add-on | `rules/AGENTS_TEMPLATE.dapper.md` |
 | Аудит безопасности | `skills/security-audit/` |
-| Аудит БД | `skills/dba-audit/` |
+| Аудит БД (EF Core) | `skills/dba-audit/` |
+| Аудит БД (Dapper) | `skills/dba-audit-dapper/` |
 | Аудит производительности | `skills/performance-audit/` |
 | Аудит локализации | `skills/i18n-audit/` |
 | Code review агент | `skills/code-review/` |
@@ -143,6 +150,9 @@ dotnet run --project tests/DemoProject.Tests
 | Архитектурные тесты | `docs/solutions/architecture-tests.md` |
 | Паттерны AI-разработки | `docs/solutions/ai-patterns.md` |
 | Онбординг проекта | `skills/skeptical-ai-bootstrap/` |
+| Рабочий пример (Clean Architecture) | `examples/DemoProject/` |
+| Рабочий пример (Single-project MVP) | `examples/DemoProject.MinimalApi/` |
+| Failing demo (guardrails) | `examples/DemoProject.Traps/` |
 | Интеграция с Kimi | `docs/agents/KIMI.md` |
 | Интеграция с Claude Code | `docs/agents/CLAUDE-CODE.md` |
 | Интеграция с Codex | `docs/agents/CODEX.md` |

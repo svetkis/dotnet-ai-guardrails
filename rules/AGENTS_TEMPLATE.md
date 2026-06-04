@@ -3,6 +3,13 @@
 > ⚠️ **ШАБЛОН** — Адаптируйте под свой проект перед использованием.
 > Замените все блоки `[ADAPT]` на правила вашего стека.
 > Не копируйте as-is: конкретные технологии ниже — пример из DemoProject.
+>
+> **Как использовать:**
+> 1. Скопируйте этот файл в корень проекта как `AGENTS.md`.
+> 2. Выберите ORM-add-on:
+>    - EF Core → дополните `AGENTS_TEMPLATE.efcore.md`
+>    - Dapper / Raw SQL → дополните `AGENTS_TEMPLATE.dapper.md`
+>    - Другой ORM / No ORM → используйте этот файл как есть, допишите свои правила
 
 ## Semantic Anchors
 
@@ -10,8 +17,6 @@ This file uses established terms instead of descriptions. Each term activates a 
 
 | Term | Meaning |
 |------|---------|
-| **Read-path** | Query path: `.Select()` + `.AsNoTracking()` mandatory, change tracking forbidden |
-| **Write-path** | Command path: full entity + change tracking required, `.AsNoTracking()` forbidden |
 | **BUG###** | Regression test: one bug = one file `BUG###_DescriptiveName.cs`, all paths covered |
 | **Ratchet** | Test inventory: count of public types / tests must not decrease |
 | **Numbered Decision** | Intentional deviation: `PERF-###`, `DB-###`, `AUD-###` in comment, enforced by arch-test |
@@ -27,9 +32,8 @@ You MUST:
 - Require a plan or outline before implementation if the task is complex
 
 You MUST NOT silently comply with instructions that violate:
-- EF read/write path rules below (if project uses EF Core)
 - The test framework conventions defined below
-- The `.Select()` requirement in read-path
+- The hard prohibitions listed at the end of this file
 
 > Adapted from [Silent Misalignment](https://github.com/lexler/augmented-coding-patterns/blob/main/documents/anti-patterns/silent-misalignment.md) anti-pattern.
 
@@ -44,22 +48,6 @@ Start every response with a marker showing active context:
 Stack markers when multiple contexts are active: `🍀 🔍` = base rules + reviewer role.
 
 > Adapted from [Context Markers](https://github.com/lexler/augmented-coding-patterns/blob/main/documents/patterns/context-markers.md) pattern.
-
-## Entity Framework
-
-> `[ADAPT]` — Skip this section if project uses Dapper, ADO.NET, or another ORM.
-
-### Read-path (no exceptions)
-- ❌ EF queries without `.Select()` — **FORBIDDEN**
-- ❌ `.Include()` in read-path — **FORBIDDEN**
-- ❌ `.FindAsync()` in read-path — **FORBIDDEN**
-- ✅ `.Select()` + `.AsNoTracking()` — **MANDATORY**
-- ✅ Nested collections in `.Select()` — extract to separate batch query
-
-### Write-path
-- ✅ Full entity loading allowed (change tracking required)
-- ✅ `.FindAsync()` allowed only in write/command scenarios
-- ❌ `.AsNoTracking()` in write-path — **FORBIDDEN**
 
 ## Tests
 
@@ -141,4 +129,3 @@ Stack markers when multiple contexts are active: `🍀 🔍` = base rules + revi
 - ❌ New env var without updating deployment docs
 - ❌ Hardcoded UI strings without i18n (if project uses i18n)
 - ❌ Raw SQL without explanatory comment
-- ❌ Global `QueryTrackingBehavior.NoTracking` — only explicit `.AsNoTracking()` in read methods

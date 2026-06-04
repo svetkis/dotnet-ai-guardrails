@@ -1,6 +1,14 @@
-// TRAP: Агент использует FindAsync в read-path, нарушает слоистую архитектуру
-// или добавляет антипаттерны, которые рефлексия не видит.
-// GUARDRAIL: NetArchTest + regex-сканирование исходников ловят оба класса нарушений.
+// TRAP: Агент нарушает слоистую архитектуру, добавляет антипаттерны или создаёт дубли ID решений.
+// GUARDRAIL: NetArchTest + regex-сканирование исходников ловят универсальные нарушения,
+// независимые от ORM и тестового фреймворка.
+// NOTE: Для EF Core-специфичных правил см. EfCoreGuardRules.cs.
+//       Для Dapper-специфичных правил см. DapperGuardRules.cs.
+//
+// Адаптация под фреймворк:
+// - TUnit:  [Test] + Assert.That(result.IsSuccessful).IsTrue()
+// - xUnit:  [Fact] + Assert.True(result.IsSuccessful)
+// - NUnit:  [Test] + Assert.That(result.IsSuccessful, Is.True)
+// - MSTest: [TestMethod] + Assert.IsTrue(result.IsSuccessful)
 
 using NetArchTest.Rules;
 using System.Text.RegularExpressions;
@@ -10,21 +18,6 @@ namespace Tests.Patterns;
 
 public class ArchitectureRules
 {
-    // TRAP: Агент добавил FindAsync в query-handler, "потому что так короче".
-    // GUARDRAIL: FindAsync допустим только в Command-handlers (write-path).
-    // NOTE: Также ловится compile-time через BannedApiAnalyzers (RS0030) в BannedSymbols.txt.
-    //       NetArchTest тут — fallback / double-check.
-    [Test]
-    public void FindAsync_ShouldNotBeUsedInReadPath()
-    {
-        var result = Types.InCurrentDomain()
-            .That().ResideInNamespace(".*Queries.*")
-            .Should().Not().HaveMethodNameMatching("FindAsync")
-            .GetResult();
-
-        Assert.That(result.IsSuccessful).IsTrue();
-    }
-
     // TRAP: Агент зареференсил Infrastructure из Api напрямую.
     // GUARDRAIL: Api → Application → Domain. Infrastructure только через DI.
     [Test]
@@ -33,19 +26,6 @@ public class ArchitectureRules
         var result = Types.InCurrentDomain()
             .That().ResideInNamespace(".*Api.*")
             .Should().NotHaveDependencyOnAny(".*Infrastructure.*")
-            .GetResult();
-
-        Assert.That(result.IsSuccessful).IsTrue();
-    }
-
-    // TRAP: Агент добавил DbContext в Application layer.
-    // GUARDRAIL: Application знает только про Ports (интерфейсы).
-    [Test]
-    public void Application_ShouldNotReferenceEfCore()
-    {
-        var result = Types.InCurrentDomain()
-            .That().ResideInNamespace(".*Application.*")
-            .Should().NotHaveDependencyOnAny("Microsoft.EntityFrameworkCore")
             .GetResult();
 
         Assert.That(result.IsSuccessful).IsTrue();
@@ -80,22 +60,9 @@ public class ArchitectureRules
         Assert.That(result.IsSuccessful).IsTrue();
     }
 
-    // TRAP: Агент использовал .Include() в QueryService — N+1 и лишние данные.
-    // GUARDRAIL: Regex-сканирование ловит то, что рефлексия не видит.
-    [Test]
-    public void QueryServices_ShouldNotUse_Include()
-    {
-        var violations = ScanSourceFiles(
-            pattern: @"\.Include\(",
-            fileGlob: "*QueryService*.cs",
-            whitelist: Array.Empty<string>());
-
-        Assert.That(violations).IsEmpty()
-            .Because("QueryService must use .Select() projections, not .Include()");
-    }
-
     // TRAP: Агент добавил кэширование без указания размера — OOM в проде.
     // GUARDRAIL: Каждый bare cache.Set() ловится сканированием.
+    // NOTE: Универсальное правило, не зависит от ORM.
     [Test]
     public void CacheSet_ShouldAlwaysSpecifySize()
     {
@@ -120,7 +87,7 @@ public class ArchitectureRules
             .Because("Decision guards must be unique to prevent collision in documentation");
     }
 
-    // --- Helper: regex source scanning ---
+    // --- Helpers: regex source scanning ---
 
     private static IEnumerable<string> ScanSourceFiles(string pattern, string fileGlob, string[] whitelist)
     {

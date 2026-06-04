@@ -165,7 +165,44 @@ var result = Types.InAssembly(typeof(Program).Assembly)
 
 ---
 
-## 9. IType.Explanation — диагностика падений (eNhancedEdition)
+## 9. Циклические зависимости между слайсами (ArchUnitNET)
+
+**Файл:** `ArchUnitNetSliceTest.cs`
+
+| Тест | Правило |
+|------|---------|
+| `Modules_ShouldBeFreeOfCycles` | Слайсы (модули/фичи) не должны иметь циклических зависимостей |
+
+```csharp
+using ArchUnitNET.Domain;
+using ArchUnitNET.Fluent;
+using ArchUnitNET.Loader;
+using static ArchUnitNET.Fluent.ArchRuleDefinition;
+
+private static readonly Architecture Architecture = new ArchLoader()
+    .LoadAssemblies(typeof(Program).Assembly)
+    .Build();
+
+IArchRule rule = SliceRuleDefinition.Slices()
+    .Matching("MyApp.Modules.(*)..")
+    .Should()
+    .BeFreeOfCycles();
+
+rule.Check(Architecture);
+```
+
+**Зачем:** В модульном монолите агент добавляет интеграционное событие или вызов через Mediator, создавая неявный цикл `Orders → Payments → Shipping → Orders`. NetArchTest `NotHaveDependenciesBetweenSlices` запрещает **любые** зависимости между слайсами (zero-tolerance). ArchUnitNET позволяет иметь направленный ациклический граф (DAG), но ловит только циклы.
+
+| Инструмент | Подход | Когда использовать |
+|------------|--------|-------------------|
+| NetArchTest.eNhancedEdition | `NotHaveDependenciesBetweenSlices` — zero-tolerance | Модули должны быть полностью изолированы; любой `using` в соседнюю фичу — ошибка |
+| ArchUnitNET | `BeFreeOfCycles` — DAG validation | Модули могут зависеть друг от друга по иерархии, но не должно быть замкнутых циклов |
+
+**Рабочий пример:** `examples/DemoProject.Traps/tests/DemoProject.Traps.Tests/ArchUnitNetSliceTest.cs`
+
+---
+
+## 10. IType.Explanation — диагностика падений (eNhancedEdition)
 
 В отличие от оригинального NetArchTest 1.3.2, eNhancedEdition даёт **причину** падения для каждого типа:
 
@@ -195,7 +232,7 @@ await Assert.That(result.IsSuccessful).IsTrue()
 
 ---
 
-## 10. Roslyn-анализаторы как замена regex
+## 11. Roslyn-анализаторы как замена regex
 
 **Файл:** `DemoProject.Analyzers/StronglyTypedIdAnalyzer.cs`
 

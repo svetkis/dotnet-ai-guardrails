@@ -74,7 +74,7 @@ var cycles = FindCyclesInProjectReferenceGraph("*.csproj");
 
 Whitelist для исключений (write-path) сам проверяется: если файл из whitelist больше не содержит паттерн — тест падает.
 
-**Паттерн:** `tests/patterns/ArchitectureRules.cs`, `tests/patterns/RatchetTest.cs`, `tests/patterns/DependencyDriftTest.cs`, `tests/patterns/EntityLeakTest.cs`, `tests/patterns/StronglyTypedIds.cs`
+**Паттерн:** `tests/patterns/ArchitectureRules.cs`, `tests/patterns/RatchetTest.cs`, `tests/patterns/DependencyDriftTest.cs`, `tests/patterns/EntityLeakTest.cs`, `tests/patterns/StronglyTypedIds.cs`, `tests/patterns/ArchUnitNetSliceTest.cs`
 
 ---
 

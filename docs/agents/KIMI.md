@@ -37,6 +37,83 @@ cp -r /path/to/dotnet-skeptical-ai/skills/skeptical-ai-bootstrap ./.kimi/skills/
 kimi run skeptical-ai-bootstrap
 ```
 
+## Конкретные команды (ежедневный workflow)
+
+> **Примечание:** Флаги (`--git-diff`, `--paths`, `--mode`) — это **псевдокоманды** для иллюстрации workflow.
+> Kimi Code CLI может не поддерживать их нативно. Адаптируйте под реальный синтаксис своей версии Kimi
+> (например, передавайте diff через stdin или используйте переменные окружения).
+
+### Code review перед коммитом
+
+```bash
+# Review последнего коммита
+kimi run code-review --git-diff HEAD~1
+
+# Review текущих unstaged изменений
+kimi run code-review --git-diff
+
+# Review PR (ветка vs main)
+kimi run code-review --git-diff main...feature/my-branch
+```
+
+### Аудиты по расписанию
+
+```bash
+# Security audit на diff
+kimi run security-audit --git-diff HEAD~5
+
+# DBA audit при изменениях в миграциях
+kimi run dba-audit --git-diff --paths "src/*/Infrastructure/Migrations/"
+
+# Performance audit перед релизом
+kimi run performance-audit --mode pre-release
+```
+
+### Груминг артефактов (раз в спринт)
+
+```bash
+kimi run memory-hygiene
+kimi run doc-hygiene
+kimi run backlog-hygiene
+```
+
+### Установка всех скиллов разом
+
+```bash
+# Скопировать все аудит-скиллы
+for skill in code-review task-compliance security-audit dba-audit performance-audit; do
+    cp -r /path/to/dotnet-skeptical-ai/skills/$skill ./.kimi/skills/
+done
+
+# Сгенерировать README скиллов
+kimi skills list
+```
+
+## Структура `.kimi/skills/README.md` (рекомендуется)
+
+```markdown
+# Project Skills
+
+## Inner Loop (на каждый PR)
+- `code-review` — diff-based review
+- `task-compliance` — проверка scope
+
+## Outer Loop (аудиты)
+- `security-audit` — раз в спринт
+- `dba-audit` — при миграциях
+- `dba-audit-dapper` — если стек Dapper
+
+## Grooming (раз в спринт)
+- `memory-hygiene`
+- `doc-hygiene`
+
+## Статусы
+| Скилл | Статус | Адаптирован |
+|-------|--------|-------------|
+| code-review | Active | ✅ |
+| dba-audit | Backlog | ❌ (у нас Dapper) |
+```
+
 ## Нюансы
 
 - Скиллы — это Markdown-файлы с YAML frontmatter

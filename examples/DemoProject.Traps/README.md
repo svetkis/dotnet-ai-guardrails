@@ -16,10 +16,11 @@ dotnet run --project tests/DemoProject.Traps.Tests
 | `MutableState.cs` | `public int Counter;` в Domain | `BeImmutableExternally` |
 | `DomainLeakingToInfra.cs` | `using System.Net.Http` в Domain | `NotHaveDependencyOnAny` |
 | `PaymentService.cs` | `using Orders` из `Payments` | `NotHaveDependenciesBetweenSlices` |
+| `Modules/` (Orders→Payments→Shipping→Orders) | Циклические зависимости между модулями | `ArchUnitNET.BeFreeOfCycles` |
 | `RawGuidEntity.cs` | `Guid Id` вместо strongly typed ID | `NotHaveDependencyOnAny("System.Guid")` |
 
 ## Использование
 
-1. Запустите тесты — увидите 4 падения с `IType.Explanation`.
+1. Запустите тесты — увидите 5 падений (4 с `IType.Explanation`, 1 с ArchUnitNET).
 2. "Почините" ловушку (уберите нарушение) — тест станет зелёным.
 3. Используйте для onboarding команды: "вот что ловит guardrail, если агент сломает архитектуру".
