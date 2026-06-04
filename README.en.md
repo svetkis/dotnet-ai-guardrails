@@ -14,24 +14,30 @@ This repository contains ready-made artifacts for .NET projects: rules, skills, 
 
 Three verification loops: inner (on every change), outer (on schedule or before release), and artifact grooming (per sprint).
 
-### Inner loop — 5 layers
+### Layer 1. Development cycle (fast feedback)
 
-| Layer | Speed | Tool |
-|-------|-------|------|
+| Sub-layer | Speed | Tool |
+|-----------|-------|------|
 | 0. Instructions | — | `rules/AGENTS_TEMPLATE.md` + Decision Guards (ADR) |
-| 1. Compiler | ~sec | `dotnet build`, `tsc --noEmit` |
-| 2. Architecture | ~10 sec | NetArchTest |
-| 3. Tests | ~30 sec | TUnit + `dotnet run` |
-| 4. Code review | ~2 min | Separate agent |
-| 5. E2E MCP | ~15 min | Telegram, browser, API tools |
+| 1.1 Compiler | ~sec | `dotnet build`, `tsc --noEmit` |
+| 1.2 Architecture | ~10 sec | NetArchTest |
+| 1.3 Tests | ~30 sec | TUnit + `dotnet run` |
+| 1.4 Code review | ~2 min | Separate agent |
+| 1.5 Smoke | ~5 min | 10 critical scenarios |
 
-### Outer loop — 3 levels
+### Layer 2. Acceptance cycle
+
+| Sub-layer | Frequency | Tool |
+|-----------|-----------|------|
+| 2.1 E2E MCP | Before release | Telegram, browser, API tools |
+| 2.2 Audits | Per sprint / on PR in risk area | Security, DBA, UX, perf, i18n |
+| 2.3 Load | Before release | NBomber |
+
+### Outer loop
 
 | Level | Frequency | Tool |
 |-------|-----------|------|
-| 1. Audits | Per sprint / on PR in risk area | Security, DBA, UX, perf, i18n |
-| 2. Load | Before release | NBomber |
-| 3. Manual | After release | Human |
+| Human | After release | Business and product decisions |
 
 `skills/` — ready-made prompts for audits. Run on schedule or when code changes in their area.
 

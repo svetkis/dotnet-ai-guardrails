@@ -20,17 +20,20 @@
 
 ---
 
-## Pyramid: 6 Layers (0–5) + Outer Loop
+## Pyramid: 3 Layers (0–2) + Outer Loop
 
-| Layer | What it is | Main document | Artifacts |
-|-------|------------|---------------|-----------|
-| **0. Instructions** | Rules the agent reads before code | [PYRAMID.md §Layer 0](../PYRAMID.md#layer-0) | `rules/AGENTS_TEMPLATE.md` + Decision Guards (ADR) |
-| 1. Compiler | Fast feedback from types | [PYRAMID.md §Layer 1](../PYRAMID.md#layer-1-compiler) | `.editorconfig`, `Directory.Build.props`, `DemoProject.Analyzers` (custom Roslyn analyzer) |
-| 2. Architecture | Auto-check of layers and anti-patterns | [PYRAMID.md §Layer 2](../PYRAMID.md#layer-2-architecture) | [tests/patterns/ArchitectureRules.cs](../tests/patterns/ArchitectureRules.cs), [RatchetTest.cs](../tests/patterns/RatchetTest.cs) |
-| 3. Tests | Silent breakdown, PII leaks, vibe-refactoring, API contracts | [PYRAMID.md §Layer 3](../PYRAMID.md#layer-3-tests) | [tests/patterns/](#test-patterns) |
-| 4. Code Review | Agent checks agent | [PYRAMID.md §Layer 4](../PYRAMID.md#layer-4-code-review) | [skills/code-review/SKILL.md](../skills/code-review/SKILL.md) |
-| 5. E2E / MCP | End-to-end through external systems | [PYRAMID.md §Layer 5](../PYRAMID.md#layer-5-e2e) | [tests/patterns/SnapshotTest.cs](../tests/patterns/SnapshotTest.cs), [LoadTest.cs](../tests/patterns/LoadTest.cs) |
-| **Outer Loop** | Audits, load, manual | [PYRAMID.md §Outer Loop](../PYRAMID.md#outer-loop) | [skills/](#skills-audits) |
+| Layer | Sub-layer | What it is | Main document | Artifacts |
+|-------|-----------|------------|---------------|-----------|
+| **0** | — | **Instructions** — rules the agent reads before code | [PYRAMID.md §Layer 0](../PYRAMID.md#layer-0) | `rules/AGENTS_TEMPLATE.md` + Decision Guards (ADR) |
+| **1** | 1.1 Compiler | Fast feedback from types | [PYRAMID.md §1.1](../PYRAMID.md#layer-1-compiler) | `.editorconfig`, `Directory.Build.props`, `DemoProject.Analyzers` (custom Roslyn analyzer) |
+| **1** | 1.2 Architecture | Auto-check of layers and anti-patterns | [PYRAMID.md §1.2](../PYRAMID.md#layer-1-architecture) | [tests/patterns/ArchitectureRules.cs](../tests/patterns/ArchitectureRules.cs), [RatchetTest.cs](../tests/patterns/RatchetTest.cs) |
+| **1** | 1.3 Tests | Regressions, snapshot, API contracts | [PYRAMID.md §1.3](../PYRAMID.md#layer-1-tests) | [tests/patterns/](#test-patterns) |
+| **1** | 1.4 Code Review | Agent checks agent | [PYRAMID.md §1.4](../PYRAMID.md#layer-1-code-review) | [skills/code-review/SKILL.md](../skills/code-review/SKILL.md) |
+| **1** | 1.5 Smoke | Fast run of critical scenarios | [PYRAMID.md §1.5](../PYRAMID.md#layer-1-smoke) | — |
+| **2** | 2.1 E2E MCP | Full scenarios through external systems | [PYRAMID.md §2.1](../PYRAMID.md#layer-2-e2e) | [tests/patterns/SnapshotTest.cs](../tests/patterns/SnapshotTest.cs) |
+| **2** | 2.2 Audits | Deep checks on schedule | [PYRAMID.md §2.2](../PYRAMID.md#layer-2-audits) | [skills/](#skills-audits) |
+| **2** | 2.3 Load | NBomber, read+write mix | [PYRAMID.md §2.3](../PYRAMID.md#layer-2-load) | [tests/patterns/LoadTest.cs](../tests/patterns/LoadTest.cs) |
+| **Outer Loop** | — | Final human validation, business and product decisions | [PYRAMID.md §Outer Loop](../PYRAMID.md#outer-loop) | — |
 
 ---
 

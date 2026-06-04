@@ -18,7 +18,7 @@
 - ❌ Не используй `dotnet test` в примерах — только `dotnet run --project`
 
 ### Всегда
-- ✅ Обновляй `PYRAMID.md` при добавлении нового слоя (сейчас 6 слоёв 0–5 + внешний цикл)
+- ✅ Обновляй `PYRAMID.md` при добавлении нового слоя (сейчас 3 слоя 0–2 + внешний цикл)
 - ✅ Обновляй `docs/agents/` при добавлении поддержки нового AI-агента
 - ✅ Обновляй `docs/README.md` (карта знаний) при добавлении нового артефакта
 - ✅ Каждый новый скилл в `skills/` должен содержать `SKILL.md` + `CHECKLIST.md`
@@ -45,9 +45,9 @@
 | 1. Оценить зрелость | Запустить onboarding-скилл или ручную оценку | [`skills/skeptical-ai-bootstrap/SKILL.md`](skills/skeptical-ai-bootstrap/SKILL.md) |
 | 2. Адаптировать | Вычеркнуть неприменимые проверки под свой стек | [`skills/ADAPTATION.md`](skills/ADAPTATION.md) |
 | 3. Конституция | Скопировать `rules/AGENTS_TEMPLATE.md` в корень проекта и отредактировать под свой стек | [`rules/AGENTS_TEMPLATE.md`](rules/AGENTS_TEMPLATE.md) |
-| 4. Пирамида | Внедрить слои 1→5 по бэклогу из onboarding | [`PYRAMID.md`](PYRAMID.md) |
+| 4. Пирамида | Внедрить слои 1→2 по бэклогу из onboarding | [`PYRAMID.md`](PYRAMID.md) |
 | 5. Агент | Настроить свой AI-агент (Kimi / Claude / Cursor / Codex) | [`docs/agents/`](docs/agents/) |
-| 6. Аудиты | Внедрить внешний цикл (ручной или AI) | [`docs/solutions/human-audit-bridge.md`](docs/solutions/human-audit-bridge.md) |
+| 6. Приёмочный цикл | Внедрить аудиты + нагрузку (ручной или AI) | [`docs/solutions/human-audit-bridge.md`](docs/solutions/human-audit-bridge.md) |
 
 > **Принцип:** не копируй всё подряд — адаптируй или создавай новое. См. антипаттерны в [`docs/ONBOARDING.md`](docs/ONBOARDING.md) §«Антипаттерны внедрения».
 

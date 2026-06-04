@@ -1,7 +1,7 @@
 ---
 name: skeptical-ai-bootstrap
 description: >
-  Scans a .NET project through the lens of principles (5 layers of the pyramid),
+  Scans a .NET project through the lens of pyramid principles,
   determines guardrail maturity, and produces a backlog.
   Key feature: if ready-made artifacts don't fit the project stack,
   the agent proposes creating new skills instead of forcing foreign patterns.
@@ -18,19 +18,29 @@ and map them to a real codebase. The main rule:
 
 ## Philosophy
 
-The 5 layers of the pyramid are **feedback principles**, not specific tools:
-
-| Layer | Principle | What we catch |
-|-------|-----------|---------------|
-| 1. Compiler | Fast feedback from the compiler | Types, nullable, warnings |
-| 2. Architecture | Automatic architecture verification | Layers, anti-patterns, regression |
-| 3. Tests | Every change is covered by tests | Silent breakdown, PII leaks, vibe-refactoring, API contracts |
-| 4. Code Review | Agent checks agent's code | XSS, await, data leak before deploy |
-| 5. E2E / MCP | End-to-end verification via external tools | Cache, UI flow, self-booking |
-
 **Layer 0:** Instructions for the agent (`AGENTS.md`) — what is allowed, what is not.
 
-**Outer loop:** Deep audits on trigger (security, DBA, perf, UX, i18n).
+### Layer 1. Development cycle (fast feedback)
+
+| Sub-layer | Principle | What we catch |
+|-----------|-----------|---------------|
+| 1.1 Compiler | Fast feedback from the compiler | Types, nullable, warnings |
+| 1.2 Architecture | Automatic architecture verification | Layers, anti-patterns, regression |
+| 1.3 Tests | Every change is covered by tests | Silent breakdown, PII leaks, vibe-refactoring, API contracts |
+| 1.4 Code Review | Agent checks agent's code | XSS, await, data leak before deploy |
+| 1.5 Smoke | Fast run of critical scenarios | Broken critical paths |
+
+### Layer 2. Acceptance cycle
+
+| Sub-layer | Principle | What we catch |
+|-----------|-----------|---------------|
+| 2.1 E2E / MCP | End-to-end verification via external tools | Cache, UI flow, self-booking |
+| 2.2 Audits | Deep checks on trigger | Security, DBA, perf, UX, i18n |
+| 2.3 Load | Verification under mixed load | Tail latency, silent breakdown |
+
+### Outer loop
+
+Final human validation, business and product decisions.
 
 ## Scanning Process
 
@@ -61,7 +71,7 @@ The 5 layers of the pyramid are **feedback principles**, not specific tools:
 
 ### Phase 2: Fact-based Assessment
 
-For each layer answer the questions:
+For each sub-layer answer the questions:
 - **Is the principle followed?** (Yes / Partially / No)
 - **What is implemented now?** (facts from the codebase)
 - **Do ready-made artifacts fit?**

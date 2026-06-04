@@ -18,17 +18,20 @@
 
 ---
 
-## Пирамида: 6 слоёв (0–5) + внешний цикл
+## Пирамида: 3 слоя (0–2) + внешний цикл
 
-| Слой | Что это | Главный документ | Артефакты |
-|------|---------|------------------|-----------|
-| **0. Инструкции** | Правила для агента перед кодом | [PYRAMID.md §Слой 0](../PYRAMID.md#layer-0) | `rules/AGENTS_TEMPLATE.md` + Decision Guards (ADR) |
-| 1. Компилятор | Быстрая обратная связь от типов | [PYRAMID.md §Слой 1](../PYRAMID.md#layer-1-compiler) | `.editorconfig`, `Directory.Build.props`, `DemoProject.Analyzers` (кастомный Roslyn-анализатор) |
-| 2. Архитектура | Авто-проверка слоёв и антипаттернов | [PYRAMID.md §Слой 2](../PYRAMID.md#layer-2-architecture) | [tests/patterns/ArchitectureRules.cs](../tests/patterns/ArchitectureRules.cs), [RatchetTest.cs](../tests/patterns/RatchetTest.cs), [ArchUnitNetSliceTest.cs](../tests/patterns/ArchUnitNetSliceTest.cs) |
-| 3. Тесты | Silent breakdown, PII leaks, vibe-refactoring, контракты API | [PYRAMID.md §Слой 3](../PYRAMID.md#layer-3-tests) | [tests/patterns/](#тестовые-паттерны) |
-| 4. Code Review | Агент проверяет агента | [PYRAMID.md §Слой 4](../PYRAMID.md#layer-4-code-review) | [skills/code-review/SKILL.md](../skills/code-review/SKILL.md) |
-| 5. E2E / MCP | End-to-end через внешние системы | [PYRAMID.md §Слой 5](../PYRAMID.md#layer-5-e2e) | [tests/patterns/SnapshotTest.cs](../tests/patterns/SnapshotTest.cs), [LoadTest.cs](../tests/patterns/LoadTest.cs) |
-| **Внешний цикл** | Аудиты, нагрузка, ручное | [PYRAMID.md §Внешний цикл](../PYRAMID.md#outer-loop) | [skills/](#скиллы-аудиты) |
+| Слой | Подслой | Что это | Главный документ | Артефакты |
+|------|---------|---------|------------------|-----------|
+| **0** | — | Инструкции для агента перед кодом | [PYRAMID.md §Слой 0](../PYRAMID.md#layer-0) | `rules/AGENTS_TEMPLATE.md` + Decision Guards (ADR) |
+| **1** | 1.1 Компилятор | Быстрая обратная связь от типов | [PYRAMID.md §1.1](../PYRAMID.md#layer-1-compiler) | `.editorconfig`, `Directory.Build.props`, `DemoProject.Analyzers` (кастомный Roslyn-анализатор) |
+| **1** | 1.2 Архитектура | Авто-проверка слоёв и антипаттернов | [PYRAMID.md §1.2](../PYRAMID.md#layer-1-architecture) | [tests/patterns/ArchitectureRules.cs](../tests/patterns/ArchitectureRules.cs), [RatchetTest.cs](../tests/patterns/RatchetTest.cs), [ArchUnitNetSliceTest.cs](../tests/patterns/ArchUnitNetSliceTest.cs) |
+| **1** | 1.3 Тесты | Регрессии, snapshot, vibe-refactoring, контракты API | [PYRAMID.md §1.3](../PYRAMID.md#layer-1-tests) | [tests/patterns/](#тестовые-паттерны) |
+| **1** | 1.4 Code Review | Агент проверяет агента | [PYRAMID.md §1.4](../PYRAMID.md#layer-1-code-review) | [skills/code-review/SKILL.md](../skills/code-review/SKILL.md) |
+| **1** | 1.5 Smoke | Быстрый прогон критичных сценариев | [PYRAMID.md §1.5](../PYRAMID.md#layer-1-smoke) | — |
+| **2** | 2.1 E2E / MCP | Полные сценарии через внешние системы | [PYRAMID.md §2.1](../PYRAMID.md#layer-2-e2e) | [tests/patterns/SnapshotTest.cs](../tests/patterns/SnapshotTest.cs) |
+| **2** | 2.2 Аудиты | Глубинные проверки по расписанию | [PYRAMID.md §2.2](../PYRAMID.md#layer-2-audits) | [skills/](#скиллы-аудиты) |
+| **2** | 2.3 Нагрузка | Silent breakdown под нагрузкой (NBomber) | [PYRAMID.md §2.3](../PYRAMID.md#layer-2-load) | [tests/patterns/LoadTest.cs](../tests/patterns/LoadTest.cs) |
+| **Внешний** | — | Окончательная проверка человеком, бизнес и продуктовые решения | [PYRAMID.md §Внешний цикл](../PYRAMID.md#outer-loop) | — |
 
 ---
 

@@ -19,7 +19,7 @@ Do not write domain code here — only guardrails, skills, patterns, and example
 - ❌ Do not use `dotnet test` in examples — only `dotnet run --project`
 
 ### Always
-- ✅ Update `PYRAMID.md` when adding a new layer (currently 6 layers 0–5 + outer loop)
+- ✅ Update `PYRAMID.md` when adding a new layer (currently 3 layers 0–2 + outer loop)
 - ✅ Update `docs/agents/` when adding support for a new AI agent
 - ✅ Update `docs/README.md` (knowledge map) when adding a new artifact
 - ✅ Every new skill in `skills/` must contain `SKILL.md` + `CHECKLIST.md`
@@ -41,7 +41,7 @@ This repository is a **collection of defensive artifacts**, not a NuGet package.
 | 1. Assess maturity | Run the onboarding skill in your project | [`skills/skeptical-ai-bootstrap/SKILL.md`](skills/skeptical-ai-bootstrap/SKILL.md) |
 | 2. Adapt | Cross out inapplicable checks for your stack | [`skills/ADAPTATION.md`](skills/ADAPTATION.md) |
 | 3. Constitution | Copy `rules/AGENTS_TEMPLATE.md` to your project root and adapt to your stack | [`rules/AGENTS_TEMPLATE.md`](rules/AGENTS_TEMPLATE.md) |
-| 4. Pyramid | Implement layers 1→5 from the onboarding backlog | [`PYRAMID.md`](PYRAMID.md) |
+| 4. Pyramid | Implement layers 1→2 from the onboarding backlog | [`PYRAMID.md`](PYRAMID.md) |
 | 5. Agent | Configure your AI agent (Kimi / Claude / Cursor / Codex) | [`docs/agents/`](docs/agents/) |
 
 > **Principle:** don't copy everything blindly — adapt or create new. See anti-patterns in `skills/skeptical-ai-bootstrap/SKILL.md` §"Onboarding Anti-Patterns".

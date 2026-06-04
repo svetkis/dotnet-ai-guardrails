@@ -65,7 +65,7 @@ npm install -g @openai/codex
 codex
 
 # Inside the session:
-> Scan this .NET project. Evaluate guardrails against the 5 layers.
+> Scan this .NET project. Evaluate guardrails against the pyramid layers.
 > Output an implementation backlog. Consider that we use {stack}.
 ```
 
