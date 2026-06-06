@@ -10,8 +10,8 @@ description: >
 
 ## Context Marker
 
-When this skill is active, add 📂 to your STARTER_CHARACTER stack.
-Example: `🍀 📂` = base rules + Backlog Hygiene role active.
+When this skill is active, add 📋 to your STARTER_CHARACTER stack.
+Example: `🍀 📋` = base rules + Backlog Hygiene role active.
 When re-reading this skill, prepend `♻️` to the skill marker.
 
 

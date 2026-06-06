@@ -71,7 +71,7 @@
 | Скилл | Маркер |
 |---|---|
 | `api-design-audit` | 🎨 |
-| `backlog-hygiene` | 📂 |
+| `backlog-hygiene` | 📋 |
 | `bot-audit` | 🤖 |
 | `code-review` | 🔍 |
 | `dba-audit` | 🗄️ |
