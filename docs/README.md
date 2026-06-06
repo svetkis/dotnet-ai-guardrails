@@ -120,7 +120,7 @@
 | Документ | Что внутри |
 |----------|------------|
 | [architecture-tests.md](solutions/architecture-tests.md) | Подробный гайд по NetArchTest.eNhancedEdition + regex-сканированию |
-| [ai-patterns.md](solutions/ai-patterns.md) | 9 проверенных паттернов AI-driven разработки |
+| [ai-patterns.md](solutions/ai-patterns.md) | 10 проверенных паттернов AI-driven разработки |
 | [human-audit-bridge.md](solutions/human-audit-bridge.md) | Как использовать AI-чеклисты для ручного аудита человеком |
 | [ARCHITECTURE-INVENTORY.md](../skills/skeptical-ai-bootstrap/ARCHITECTURE-INVENTORY.md) | Шаблон фиксации текущей архитектуры перед внедрением guardrails |
 | [DECISION-GUARDS.md](../skills/skeptical-ai-bootstrap/DECISION-GUARDS.md) | Шаблон реестра осознанных отклонений (`PERF-###`, `DB-###`, `AUD-###`) |
@@ -129,6 +129,9 @@
 
 ## Интеграции с агентами (docs/agents/)
 
+> **⚠️ Агентам:** Прочитайте [BOOTSTRAP-PROTOCOL.md](agents/BOOTSTRAP-PROTOCOL.md) перед началом работы.  
+> Он определяет границу между "репо методологии" и "целевой проект".
+
 | Агент | Файл | Формат конфигурации |
 |-------|------|---------------------|
 | Kimi Code CLI | [KIMI.md](agents/KIMI.md) | `.kimi/skills/{name}/SKILL.md` |
@@ -136,6 +139,7 @@
 | Cursor | [CURSOR.md](agents/CURSOR.md) | `.cursorrules` + `.cursor/rules/` |
 | Codex (OpenAI) | [CODEX.md](agents/CODEX.md) | `.codex/instructions.md` |
 | OpenCode | [OPENCODE.md](agents/OPENCODE.md) | `.opencode/instructions.md` |
+| Bootstrap Protocol | [BOOTSTRAP-PROTOCOL.md](agents/BOOTSTRAP-PROTOCOL.md) | Правила поведения агента при онбординге |
 | Сравнение | [README.md](agents/README.md) | Таблица сравнения всех агентов |
 
 ---

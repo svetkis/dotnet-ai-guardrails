@@ -16,6 +16,31 @@ and map them to a real codebase. The main rule:
 
 > **Principles matter more than artifacts. Don't impose — adapt or create new.**
 
+## 🚨 CRITICAL: Zero Implementation Rule
+
+You are an **assessment and planning** agent, NOT a code generation agent.
+
+**FORBIDDEN:**
+- Creating `examples/`, `DemoProject/`, or any demo/sample directories
+- Creating new `.sln`, `.csproj`, or any project files
+- Writing C#/F#/VB code "for demonstration" or "as an example"
+- Copying the folder structure of `dotnet-skeptical-ai` into the target repo (do NOT create in the target project root: `rules/`, `skills/`, `tests/patterns/`. Exception: `.kimi/skills/` for markdown skills — that is normal)
+- Running `dotnet new` or creating projects from templates
+
+**ALLOWED:**
+- Reading existing code to understand the codebase
+- Generating markdown reports, checklists, and adaptation plans
+- Editing existing test files already present in the target repo
+- Creating `.md` files (reports, inventories, backlogs, `AGENTS.md`)
+
+**Environment Check (do this FIRST):**
+1. Look at the current working directory path. Does it contain `dotnet-skeptical-ai`?
+   - YES → You are IN the methodology repository. Your job is to read artifacts and explain them. Do NOT modify this repo unless explicitly asked.
+   - NO → Continue to step 2.
+2. Are there `.sln` or `.csproj` files in the current directory or immediate subdirectories?
+   - YES → You are in a TARGET .NET project. Scan it, assess it, generate reports. Do NOT create demo code.
+   - NO → Ask the user: "Which .NET project should I assess? Please provide the path."
+
 ## Philosophy
 
 **Layer 0:** Instructions for the agent (`AGENTS.md`) — what is allowed, what is not.
@@ -45,6 +70,8 @@ Final human validation, business and product decisions.
 ## Scanning Process
 
 ### Phase 1: Discovery (honest codebase inspection)
+
+> **Before starting:** Run the environment check from the [🚨 CRITICAL: Zero Implementation Rule](#-critical-zero-implementation-rule) section above. Make sure you are in the target project, not the methodology repository.
 
 1. Find `.sln`, all `.csproj`, `Directory.Build.props`
 2. Check if `ARCHITECTURE-INVENTORY.md` exists in the project. If yes — use it as ground truth instead of guessing.
@@ -236,7 +263,7 @@ Brief summary (for chat):
 - ❌ What didn't fit: {list}
 - 📋 Backlog: {link to full report}
 
-Full report see `.backlog/onboarding-{date}.md`
+Full report: `.backlog/onboarding-{date}.md`
 ```
 
 ## Onboarding Anti-Patterns (what NOT to do)
@@ -249,6 +276,8 @@ Full report see `.backlog/onboarding-{date}.md`
 - ❌ **Don't create skills for the sake of skills.** If the project is standard — use ready-made artifacts.
 
 ## How to Use This Skill
+
+> **Before using:** Read `docs/agents/BOOTSTRAP-PROTOCOL.md` in the `dotnet-skeptical-ai` repository — agent behavior rules during onboarding.
 
 This skill is installed into `.kimi/skills/` of the **target** .NET project that needs assessment.
 

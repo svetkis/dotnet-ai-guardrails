@@ -6,6 +6,11 @@
 > Each agent has its own ecosystem, configuration format, and nuances.
 > Choose the file matching your tool.
 
+## Bootstrap Protocol (read this first)
+
+Before configuring any agent — read [BOOTSTRAP-PROTOCOL.md](BOOTSTRAP-PROTOCOL.md).  
+It prevents situations where an agent tries to create a `DemoProject` in the target repo instead of assessing the existing codebase.
+
 ## Available Agents
 
 | Agent | File | Configuration Format | Features |
@@ -41,9 +46,9 @@ use the universal `AGENTS.md` in the project root:
 2. **Read the corresponding file** from the table above
 3. **Follow the instructions** for the configuration structure
 4. **Use `skeptical-ai-bootstrap`** for automatic scanning:
-   - The skill will determine the agent type
-   - Will generate configuration in the correct format
-   - Will create agent-specific artifacts
+   - It determines the agent type
+   - Generates configuration in the correct format
+   - Creates agent-specific artifacts
 
 ## Agent Comparison
 

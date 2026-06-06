@@ -39,15 +39,56 @@ You MUST NOT silently comply with instructions that violate:
 
 ## Context Markers
 
-Start every response with a marker showing active context:
-- 🍀 = these ground rules are loaded
-- 🔍 = acting as Code Reviewer (diff review mode)
-- ✅ = acting as Committer (commit message mode)
-- ♻️ = rules were just re-read (e.g., after context loss signal)
-
-Stack markers when multiple contexts are active: `🍀 🔍` = base rules + reviewer role.
-
 > Adapted from [Context Markers](https://github.com/lexler/augmented-coding-patterns/blob/main/documents/patterns/context-markers.md) pattern.
+
+**ALWAYS** start replies with `STARTER_CHARACTER` + space. Stack emojis when requested, don't replace.
+
+### Base markers
+
+| Marker | Meaning |
+|--------|---------|
+| 🍀 | Ground rules loaded (default `STARTER_CHARACTER`) |
+| ❗️ | Flagging an error or critical warning |
+| ♻️ | Rules were just re-read (e.g., after context loss signal) |
+| ✨📂 | Creating new repository / project structure |
+
+### Role markers (stackable)
+
+| Marker | Meaning | Trigger |
+|--------|---------|---------|
+| ✅ | Committer role active | User says "you're a committer" |
+| 🔍 | Code Reviewer role active | User asks for diff review |
+| 🔴 | TDD — Red phase | Process file `tdd.md` loaded, writing failing test |
+| 🌱 | TDD — Green phase | Process file `tdd.md` loaded, making test pass |
+| 🌀 | TDD — Refactor phase | Process file `tdd.md` loaded, refactoring |
+
+### Stacking rules
+
+- Stack markers left-to-right: `🍀 ✅` = base rules + committer role.
+- Always keep a space between any emojis and the text: `🍀 ✅ Commit message`.
+- Never replace a marker — add to the stack. If context ends, remove only that marker.
+
+### Impromptu markers
+
+When adding a crucial instruction mid-conversation, ask the agent to reply with an additional emoji:
+
+```
+> From now on treat all DateTime as UTC. Reply with 🕒 added to your markers.
+```
+
+This makes the invisible parts of context visible at a glance.
+
+### Process file integration
+
+In specialized process files (e.g., `tdd.md`):
+```markdown
+STARTER_CHARACTER = 🔴 for red test, 🌱 for green, 🌀 when refactoring, always followed by a space
+```
+
+In role definitions (e.g., committer):
+```markdown
+When I tell you're a committer, add ✅ to STARTER_CHARACTER emojis. Make sure there's a space between any emojis and the text.
+```
 
 ## Tests
 

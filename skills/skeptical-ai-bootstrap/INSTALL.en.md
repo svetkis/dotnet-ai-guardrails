@@ -89,8 +89,17 @@ See `docs/agents/` for details on each agent:
 - `docs/agents/CODEX.md`
 - `docs/agents/OPENCODE.md`
 
+## For Agents
+
+**If you are an AI agent executing this skill:**
+
+1. **Do NOT create demo projects.** Do not create `examples/`, `DemoProject/`, or new `.csproj`/`.sln`.
+2. **Do NOT copy the folder structure** of this repository (`rules/`, `skills/`, `tests/patterns/`) into the target project.
+3. **Your output is markdown only:** reports, checklists, `.backlog/*.md`, `AGENTS.md`, `CONVENTIONS.md`.
+4. **Your task:** read target project → assess → plan. Do not write code "as an example" or "to demonstrate".
+
 ## Modes
 
 - `fast` — only critical (1-2 days)
-- `standard` — all 5 pyramid layers (1-2 weeks)
-- `paranoid` — everything + audits (1 month)
+- `standard` — all pyramid layers (1-2 weeks)
+- `paranoid` — everything + outer loop (1 month)

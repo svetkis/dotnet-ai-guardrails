@@ -159,6 +159,30 @@ _logger.LogInformation("User {UserId} logged in", user.Id);
 
 ---
 
+## 10. Context Markers — визуальные маркеры активного контекста
+
+**Паттерн:** Использовать эмодзи в начале каждого ответа агента для сигнализации активного контекста:
+
+- 🍀 = базовые правила загружены
+- 🔴/🌱/🌀 = текущая фаза TDD (red/green/refactor)
+- ✅ = активна роль committer
+- 🔍 = активна роль code reviewer
+- ❗️ = агент флагает ошибку
+- ♻️ = правила только что перечитаны
+- ✨📂 = создание нового репозитория
+
+**Stacking:** Маркеры складываются: `🍀 ✅` = базовые правила + роль committer. Это позволяет одним взглядом понять, какой контекст «в голове» у агента.
+
+**Impromptu markers:** Когда даёшь критически важную инструкцию посреди разговора — попроси отвечать с дополнительным эмодзи. Например, после инструкции «всё DateTime — UTC» попросить добавить 🕒. Это делает невидимое состояние видимым.
+
+**Почему нестандартно:** Обычно контекст агента невидим. Невозможно понять, прочитал ли агент ground rules, помнит ли он про TDD-цикл, или потерял контекст после длинной сессии. Маркеры превращают невидимое состояние в явный сигнал.
+
+**Обобщение:** Любой проект с несколькими ролями агента (committer, reviewer, TDD) или длинными сессиями. Применимо к любому AI-агенту, поддерживающему system prompt.
+
+**Паттерн:** `rules/AGENTS_TEMPLATE.md` §Context Markers
+
+---
+
 ## Сводная таблица паттернов
 
 | Паттерн | Суть | Где смотреть |
@@ -172,3 +196,4 @@ _logger.LogInformation("User {UserId} logged in", user.Id);
 | **Hierarchical agent instructions** | AGENTS.md per directory, не один на проект | `rules/AGENTS_TEMPLATE.md` |
 | **Concurrency with real DB** | Race condition тесты на Testcontainers | `tests/patterns/` |
 | **PII redaction guard** | `[SensitiveData]` + compile-time + runtime redaction | `tests/patterns/PiiGuardTest.cs` |
+| **Context Markers** | Визуальные маркеры активного контекста в ответах агента | `rules/AGENTS_TEMPLATE.md` |

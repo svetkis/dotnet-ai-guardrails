@@ -159,6 +159,30 @@ _logger.LogInformation("User {UserId} logged in", user.Id);
 
 ---
 
+## 10. Context Markers — visual markers for active context
+
+**Pattern:** Use emojis at the start of every agent response to signal active context:
+
+- 🍀 = ground rules loaded
+- 🔴/🌱/🌀 = current TDD phase (red/green/refactor)
+- ✅ = committer role active
+- 🔍 = code reviewer role active
+- ❗️ = agent is flagging an error
+- ♻️ = rules were just re-read
+- ✨📂 = creating a new repository
+
+**Stacking:** Markers stack: `🍀 ✅` = base rules + committer role. This allows you to see at a glance what context the agent is operating under.
+
+**Impromptu markers:** When giving a critically important instruction mid-conversation, ask the agent to reply with an additional emoji. For example, after the instruction "all DateTime is UTC", ask to add 🕒. This makes the invisible state visible.
+
+**Why non-standard:** Usually agent context is invisible. It is impossible to tell whether the agent read the ground rules, remembers the TDD cycle, or lost context after a long session. Markers turn invisible state into an explicit signal.
+
+**Generalization:** Any project with multiple agent roles (committer, reviewer, TDD) or long sessions. Applicable to any AI agent that supports system prompts.
+
+**Pattern:** `rules/AGENTS_TEMPLATE.md` §Context Markers
+
+---
+
 ## Summary Table of Patterns
 
 | Pattern | Essence | Where to look |
@@ -172,3 +196,4 @@ _logger.LogInformation("User {UserId} logged in", user.Id);
 | **Hierarchical agent instructions** | AGENTS.md per directory, not one per project | `rules/AGENTS_TEMPLATE.md` |
 | **Concurrency with real DB** | Race condition tests on Testcontainers | `tests/patterns/` |
 | **PII redaction guard** | `[SensitiveData]` + compile-time + runtime redaction | `tests/patterns/PiiGuardTest.cs` |
+| **Context Markers** | Visual markers for active context in agent responses | `rules/AGENTS_TEMPLATE.md` |
