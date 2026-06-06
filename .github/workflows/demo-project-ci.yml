@@ -1,4 +1,4 @@
-name: DemoProject CI
+name: Examples CI
 
 on:
   push:
@@ -9,6 +9,19 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: DemoProject
+            solution: examples/DemoProject/DemoProject.sln
+            test_project: examples/DemoProject/tests/DemoProject.Tests/DemoProject.Tests.csproj
+          - name: MinimalApi
+            solution: examples/DemoProject.MinimalApi/DemoProject.MinimalApi.slnx
+            test_project: examples/DemoProject.MinimalApi/tests/DemoProject.MinimalApi.Tests/DemoProject.MinimalApi.Tests.csproj
+
+    name: ${{ matrix.name }} — Build & Test
+
     steps:
       - uses: actions/checkout@v4
 
@@ -18,21 +31,21 @@ jobs:
           dotnet-version: '10.0.x'
 
       - name: Restore
-        run: dotnet restore examples/DemoProject/DemoProject.sln
+        run: dotnet restore ${{ matrix.solution }}
 
       # GUARDRAIL: Сборка должна проходить без warning'ов как ошибки
       - name: Build
-        run: dotnet build examples/DemoProject/DemoProject.sln --no-restore --configuration Release /p:TreatWarningsAsErrors=true
+        run: dotnet build ${{ matrix.solution }} --no-restore --configuration Release -p:TreatWarningsAsErrors=true
 
       # GUARDRAIL: dotnet test опасен — используем dotnet run --project
       # Каждый проект запускаем отдельно, чтобы точно знать, что он реально бежал
-      - name: Run DemoProject Tests
-        run: dotnet run --project examples/DemoProject/tests/DemoProject.Tests/DemoProject.Tests.csproj --configuration Release
+      - name: Run Tests
+        run: dotnet run --project ${{ matrix.test_project }} --configuration Release
 
       # GUARDRAIL: Проверяем, что тесты реально запустились (не 0 ran)
       - name: Verify Tests Ran
         run: |
-          TEST_OUTPUT=$(dotnet run --project examples/DemoProject/tests/DemoProject.Tests/DemoProject.Tests.csproj --configuration Release 2>&1)
+          TEST_OUTPUT=$(dotnet run --project ${{ matrix.test_project }} --configuration Release 2>&1)
           echo "$TEST_OUTPUT"
 
           if echo "$TEST_OUTPUT" | grep -qi "0 tests ran\|no tests found\|discovered: 0"; then
@@ -45,4 +58,51 @@ jobs:
               exit 1
           fi
 
-          echo "OK: Tests were executed and results detected."
+          if echo "$TEST_OUTPUT" | grep -q "failed: [1-9]"; then
+              echo "ERROR: Tests failed!"
+              exit 1
+          fi
+
+          echo "OK: Tests were executed and passed."
+
+  traps-guardrails:
+    runs-on: ubuntu-latest
+    name: Traps — Guardrails Must Catch
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore
+        run: dotnet restore examples/DemoProject.Traps/DemoProject.Traps.slnx
+
+      # GUARDRAIL: Сборка должна проходить без warning'ов как ошибки
+      - name: Build
+        run: dotnet build examples/DemoProject.Traps/DemoProject.Traps.slnx --no-restore --configuration Release -p:TreatWarningsAsErrors=true
+
+      # GUARDRAIL: Traps — намеренно сломанный код. Тесты ДОЛЖНЫ падать.
+      # Если тесты проходят — значит guardrails сломаны и ловушки больше не ловятся.
+      - name: Run Traps Tests (Expect Failure)
+        run: |
+          set +e
+          TEST_OUTPUT=$(dotnet run --project examples/DemoProject.Traps/tests/DemoProject.Traps.Tests/DemoProject.Traps.Tests.csproj --configuration Release 2>&1)
+          EXIT_CODE=$?
+          set -e
+
+          echo "$TEST_OUTPUT"
+
+          if [ "$EXIT_CODE" -eq 0 ]; then
+              echo "ERROR: Traps tests passed! Guardrails are broken — traps are no longer caught."
+              exit 1
+          fi
+
+          if ! echo "$TEST_OUTPUT" | grep -q "failed:"; then
+              echo "ERROR: Tests crashed or did not run properly. Expected test failures, but got an unexpected error."
+              exit 1
+          fi
+
+          echo "OK: Traps correctly caught by guardrails (exit code $EXIT_CODE)."
