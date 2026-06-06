@@ -1,7 +1,7 @@
 # Architecture Tests in .NET — Catching Violations Before Review
 
 > 25+ tests in 4 files — catch violations BEFORE code review.  
-> **Failing demo:** [`examples/DemoProject.Traps/`](../DemoProject.Traps/) — intentionally broken code with 4 failing tests demonstrating guardrails in action.
+> **Failing demo:** [`examples/DemoProject.Traps/`](../../examples/DemoProject.Traps/) — intentionally broken code with 5 failing tests demonstrating guardrails in action.
 
 ## Tools
 

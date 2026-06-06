@@ -111,7 +111,8 @@ cp tests/patterns/*.cs /your/project/tests/
 ├── ci/                            # CI/CD guardrails
 └── examples/
     ├── DemoProject/               # Рабочий пример на .NET 10 (Clean Architecture)
-    └── DemoProject.MinimalApi/    # Single-project MVP (Minimal API, no layers)
+    ├── DemoProject.MinimalApi/    # Single-project MVP (Minimal API, no layers)
+    └── DemoProject.Traps/         # Intentionally broken code — демонстрация guardrails
 ```
 
 ## DemoProject
@@ -130,6 +131,42 @@ cd examples/DemoProject
 dotnet build
 dotnet run --project tests/DemoProject.Tests
 ```
+
+## DemoProject.Traps
+
+`examples/DemoProject.Traps/` — специально сломанный код для демонстрации guardrails в действии. Каждый тест здесь падает, показывая, что ловит архитектурный тест, если агент нарушает правила.
+
+```bash
+cd examples/DemoProject.Traps
+dotnet run --project tests/DemoProject.Traps.Tests
+```
+
+**Что ломается:**
+- `MutableState` — мутабельное состояние в Domain
+- `DomainLeakingToInfra` — Domain зависит от `System.Net.Http`
+- `PaymentService` — прямая зависимость между Features (Orders → Payments)
+- `Modules/` — циклические зависимости между модулями (ArchUnitNET)
+- `RawGuidEntity` — голый `Guid` вместо strongly typed ID
+
+См. также [`examples/DemoProject.Traps/README.md`](examples/DemoProject.Traps/README.md).
+
+## DemoProject.MinimalApi
+
+`examples/DemoProject.MinimalApi/` — вариант для **Minimal API без Clean Architecture**. Показывает, как адаптировать guardrails, когда нет слоёв Domain / Application / Infrastructure.
+
+```bash
+cd examples/DemoProject.MinimalApi
+dotnet build
+dotnet run --project tests/DemoProject.MinimalApi.Tests
+```
+
+**Что внутри:**
+- Naming conventions, banned APIs (`DateTime.Now`)
+- `CancellationToken` guard
+- Ratchet-тесты на публичные типы
+- Duplication guard для бизнес-логики
+
+См. также [`examples/DemoProject.MinimalApi/README.md`](examples/DemoProject.MinimalApi/README.md).
 
 ## Навигация
 
@@ -161,8 +198,10 @@ dotnet run --project tests/DemoProject.Tests
 | Failing demo (guardrails) | `examples/DemoProject.Traps/` |
 | Интеграция с Kimi | `docs/agents/KIMI.md` |
 | Интеграция с Claude Code | `docs/agents/CLAUDE-CODE.md` |
+| Интеграция с Cursor | `docs/agents/CURSOR.md` |
 | Интеграция с Codex | `docs/agents/CODEX.md` |
 | Интеграция с OpenCode | `docs/agents/OPENCODE.md` |
+| Bootstrap Protocol | `docs/agents/BOOTSTRAP-PROTOCOL.md` |
 | Сравнение агентов | `docs/agents/README.md` |
 
 ## Автор

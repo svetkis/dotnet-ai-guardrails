@@ -107,7 +107,9 @@ cp tests/patterns/*.cs /your/project/tests/
 │   └── conventions/               # Naming, TUnit guide
 ├── ci/                            # CI/CD guardrails
 └── examples/
-    └── DemoProject/               # Working .NET 10 example
+    ├── DemoProject/               # Working .NET 10 example (Clean Architecture)
+    ├── DemoProject.MinimalApi/    # Single-project MVP (Minimal API, no layers)
+    └── DemoProject.Traps/         # Intentionally broken code — guardrails demo
 ```
 
 ## DemoProject
@@ -126,6 +128,42 @@ cd examples/DemoProject
 dotnet build
 dotnet run --project tests/DemoProject.Tests
 ```
+
+## DemoProject.Traps
+
+`examples/DemoProject.Traps/` — intentionally broken code demonstrating guardrails in action. Every test here fails, showing what an architectural test catches when an agent violates the rules.
+
+```bash
+cd examples/DemoProject.Traps
+dotnet run --project tests/DemoProject.Traps.Tests
+```
+
+**What breaks:**
+- `MutableState` — mutable state in Domain
+- `DomainLeakingToInfra` — Domain depends on `System.Net.Http`
+- `PaymentService` — direct dependency between Features (Orders → Payments)
+- `Modules/` — cyclic dependencies between modules (ArchUnitNET)
+- `RawGuidEntity` — raw `Guid` instead of strongly typed ID
+
+See also [`examples/DemoProject.Traps/README.md`](examples/DemoProject.Traps/README.md).
+
+## DemoProject.MinimalApi
+
+`examples/DemoProject.MinimalApi/` — a variant for **Minimal API without Clean Architecture**. Shows how to adapt guardrails when there are no Domain / Application / Infrastructure layers.
+
+```bash
+cd examples/DemoProject.MinimalApi
+dotnet build
+dotnet run --project tests/DemoProject.MinimalApi.Tests
+```
+
+**What's inside:**
+- Naming conventions, banned APIs (`DateTime.Now`)
+- `CancellationToken` guard
+- Ratchet tests for public types
+- Duplication guard for business logic
+
+See also [`examples/DemoProject.MinimalApi/README.md`](examples/DemoProject.MinimalApi/README.md).
 
 ## Navigation
 
@@ -149,10 +187,15 @@ Lost? Start with [docs/README.md](docs/README.md).
 | Architecture tests | `docs/solutions/architecture-tests.md` |
 | AI patterns | `docs/solutions/ai-patterns.md` |
 | Project onboarding | `skills/skeptical-ai-bootstrap/` |
+| Working example (Clean Architecture) | `examples/DemoProject/` |
+| Working example (Single-project MVP) | `examples/DemoProject.MinimalApi/` |
+| Failing demo (guardrails) | `examples/DemoProject.Traps/` |
 | Kimi integration | `docs/agents/KIMI.md` |
 | Claude Code integration | `docs/agents/CLAUDE-CODE.md` |
+| Cursor integration | `docs/agents/CURSOR.md` |
 | Codex integration | `docs/agents/CODEX.md` |
 | OpenCode integration | `docs/agents/OPENCODE.md` |
+| Bootstrap Protocol | `docs/agents/BOOTSTRAP-PROTOCOL.md` |
 | Agent comparison | `docs/agents/README.md` |
 
 ## Author

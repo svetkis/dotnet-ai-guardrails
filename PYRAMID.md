@@ -61,6 +61,10 @@
 | Performance | 1 | Количество публичных типов и тестов не уменьшается |
 | Тестовый инвентарь | 1 | Количество тестов не уменьшается (страховка от "0 tests ran") |
 
+#### Failing demo
+
+Посмотри живой пример сломанных guardrails: [`examples/DemoProject.Traps/`](examples/DemoProject.Traps/) — 5 intentionally broken тестов с `IType.Explanation` и ArchUnitNET. Запусти `dotnet run --project tests/DemoProject.Traps.Tests` и увидишь, как выглядит падение при нарушении каждого правила.
+
 #### Уникальный подход: regex-сканирование исходников
 
 Не только рефлексия сборок (NetArchTest), но и **regex по .cs файлам**:

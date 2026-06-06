@@ -151,7 +151,8 @@
 | [ci/github-actions/safe-ci.yml](../ci/github-actions/safe-ci.yml) | Шаблон воркфлоу: build + test + verify-tests |
 | [ci/scripts/run-tests.sh](../ci/scripts/run-tests.sh) | Автоматически находит и запускает все тестовые проекты через `dotnet run --project` |
 | [ci/scripts/verify-tests.sh](../ci/scripts/verify-tests.sh) | Проверяет, что `dotnet run` реально выполнил тесты (не 0 ran) |
-| [.github/workflows/demo-project-ci.yml](../.github/workflows/demo-project-ci.yml) | CI этого репозитория — собирает DemoProject |
+| [.github/workflows/demo-project-ci.yml](../.github/workflows/demo-project-ci.yml) | CI этого репозитория — собирает DemoProject и DemoProject.MinimalApi |
+| `traps-guardrails` job в `demo-project-ci.yml` | Проверяет, что intentionally broken тесты в DemoProject.Traps реально падают (guardrails работают) |
 
 ---
 

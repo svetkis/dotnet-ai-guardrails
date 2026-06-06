@@ -61,6 +61,10 @@ Everything that runs in seconds and minutes — while the developer (or agent) i
 | Performance | 1 |
 | Test inventory | 1 |
 
+### Failing demo
+
+See the live example of broken guardrails: [`examples/DemoProject.Traps/`](examples/DemoProject.Traps/) — 5 intentionally broken tests with `IType.Explanation` and ArchUnitNET. Run `dotnet run --project tests/DemoProject.Traps.Tests` to see what a failure looks like for each violated rule.
+
 ### Whitelist with staleness check
 
 Whitelist for exceptions (write-path) self-validates: if a file from the whitelist no longer contains the pattern — the test fails.

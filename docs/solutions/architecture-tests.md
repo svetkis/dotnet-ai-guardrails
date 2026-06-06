@@ -1,7 +1,7 @@
 # Архитектурные тесты в .NET — ловля нарушений до review
 
 > 25+ тестов в 4 файлах — ловят нарушения ДО code review.  
-> **Failing demo:** [`examples/DemoProject.Traps/`](../DemoProject.Traps/) — специально сломанный код с 4 падающими тестами, демонстрирующий guardrails в действии.
+> **Failing demo:** [`examples/DemoProject.Traps/`](../../examples/DemoProject.Traps/) — специально сломанный код с 5 падающими тестами, демонстрирующий guardrails в действии.
 
 ## Инструменты
 

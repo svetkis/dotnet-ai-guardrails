@@ -90,8 +90,10 @@
 | Онбординг проекта | `skills/skeptical-ai-bootstrap/` |
 | Интеграция с Kimi | `docs/agents/KIMI.md` |
 | Интеграция с Claude Code | `docs/agents/CLAUDE-CODE.md` |
+| Интеграция с Cursor | `docs/agents/CURSOR.md` |
 | Интеграция с Codex | `docs/agents/CODEX.md` |
 | Интеграция с OpenCode | `docs/agents/OPENCODE.md` |
+| Bootstrap Protocol | `docs/agents/BOOTSTRAP-PROTOCOL.md` |
 | Сравнение агентов | `docs/agents/README.md` |
 | Контрибуция | `CONTRIBUTING.md` |
 | Лицензия | `LICENSE` |

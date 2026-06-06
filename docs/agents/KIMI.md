@@ -1,7 +1,7 @@
 # Kimi Code CLI — Guardrails Integration
 
 > Kimi Code CLI использует систему скиллов в `.kimi/skills/`.
-> Это нативный формат для репозитория `dotnet-agentic-engineering`.
+> Это нативный формат для репозитория `dotnet-skeptical-ai`.
 
 ## Структура интеграции
 

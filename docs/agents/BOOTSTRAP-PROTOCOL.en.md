@@ -27,7 +27,7 @@ Else:
 ### TARGET MODE
 - You are inside a third-party .NET project.
 - Your task: **assess the codebase** and produce a guardrail implementation plan.
-- **FORBIDDEN:** create `examples/`, `DemoProject/`, `DemoProject.Traps/`, new `.sln`/`.csproj`.
+- **FORBIDDEN:** create `examples/`, `DemoProject/`, `DemoProject.Traps/`, `DemoProject.MinimalApi/`, new `.sln`/`.csproj`.
 - **FORBIDDEN:** write code "for demonstration" or "as an example".
 - **ALLOWED:** generate `.md` reports, checklists, `AGENTS.md`, `CONVENTIONS.md`.
 
@@ -61,7 +61,7 @@ Else:
 
 | Type | Example | Why forbidden |
 |------|---------|---------------|
-| Demo projects | `examples/DemoProject/`, `DemoProject.sln` | These are methodology examples, not target code |
+| Demo projects | `examples/DemoProject/`, `DemoProject.Traps/`, `DemoProject.MinimalApi/`, `DemoProject.sln` | These are methodology examples, not target code |
 | New projects | `MyApp.Tests.csproj` (created from scratch) | Assessment agent does not write production code |
 | Methodology folders in root | `rules/`, `skills/`, `tests/patterns/` in target repo root | Target project has its own structure. Exception: `.kimi/skills/` for markdown skills — normal |
 | Code "for example" | `// Here's how it should look:` + 20 lines of C# | Agent must not generate unimplemented code in a working codebase |
@@ -105,7 +105,7 @@ Before creating ANY file, ask yourself:
 
 - [ ] Is it `.md`, `.yml`, `.editorconfig`, or `.props`? (If `.cs`/`.csproj`/`.sln` — stop)
 - [ ] Does this file already exist in the target repo? (If not — is it really needed?)
-- [ ] Am I creating `examples/` or `DemoProject/`? (If yes — stop, this is a trap)
+- [ ] Am I creating `examples/`, `DemoProject/`, or any demo project (`Traps`, `MinimalApi`)? (If yes — stop, this is a trap)
 - [ ] Am I copying the structure of `dotnet-skeptical-ai`? (If yes — stop)
 - [ ] Is my task to assess or to create? (Assess only → reports only)
 

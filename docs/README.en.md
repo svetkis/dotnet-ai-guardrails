@@ -153,7 +153,8 @@ Read before implementation — each trap explains **why** a guardrail exists.
 | [ci/github-actions/safe-ci.yml](../ci/github-actions/safe-ci.yml) | Workflow template: build + test + verify-tests |
 | [ci/scripts/run-tests.sh](../ci/scripts/run-tests.sh) | Automatically finds and runs all test projects via `dotnet run --project` |
 | [ci/scripts/verify-tests.sh](../ci/scripts/verify-tests.sh) | Checks that `dotnet run` actually executed tests (not 0 ran) |
-| [.github/workflows/demo-project-ci.yml](../.github/workflows/demo-project-ci.yml) | CI of this repository — builds DemoProject |
+| [.github/workflows/demo-project-ci.yml](../.github/workflows/demo-project-ci.yml) | CI of this repository — builds DemoProject and DemoProject.MinimalApi |
+| `traps-guardrails` job in `demo-project-ci.yml` | Ensures intentionally broken tests in DemoProject.Traps actually fail (guardrails are working) |
 
 ---
 

@@ -37,6 +37,10 @@ public void FindAsync_ShouldNotBeUsedInReadPath()
 }
 ```
 
+> Справочные шаблоны в этом репозитории:
+> - [`tests/conventions/BUG_TEMPLATE.cs`](../tests/conventions/BUG_TEMPLATE.cs) — формат regression-теста
+> - [`tests/conventions/TUnit_Guide.md`](../tests/conventions/TUnit_Guide.md) — соглашения по TUnit
+
 ## Workflow после изменений
 
 ```

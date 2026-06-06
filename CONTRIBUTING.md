@@ -39,7 +39,7 @@
 1. **Форкни** репозиторий
 2. **Создай ветку** по Conventional Commits: `feat/skill-name`, `fix/trap-description`
 3. **Внеси изменения** согласно чеклисту ниже
-4. **Проверь** `dotnet build` в `examples/DemoProject/` (если изменял код)
+4. **Проверь** `dotnet build` в `examples/DemoProject/`, `examples/DemoProject.Traps/` и `examples/DemoProject.MinimalApi/` (если изменял код)
 5. **Открой PR** с описанием: что, зачем, как проверено
 
 ## Чеклист перед PR
@@ -49,6 +49,7 @@
 - [ ] Если добавлял паттерн — есть комментарии `// TRAP:` и `// GUARDRAIL:`
 - [ ] Если менял пирамиду — обновил `PYRAMID.md`
 - [ ] Если добавлял агента — обновил `docs/agents/`
+- [ ] Если добавлял артефакт (скилл, паттерн, ловушку) — обновил `docs/README.md` (карта знаний) и корневые `README.md` / `README.en.md`
 - [ ] `dotnet build` проходит без warning'ов (если применимо)
 - [ ] Коммиты следуют Conventional Commits (`feat:`, `fix:`, `docs:`, `test:`)
 
@@ -109,7 +110,7 @@ Thank you for your interest! This repository contains defensive artifacts for .N
 1. **Fork** the repository
 2. **Create a branch** following Conventional Commits: `feat/skill-name`, `fix/trap-description`
 3. **Make changes** according to the checklist below
-4. **Verify** `dotnet build` in `examples/DemoProject/` (if you changed code)
+4. **Verify** `dotnet build` in `examples/DemoProject/`, `examples/DemoProject.Traps/`, and `examples/DemoProject.MinimalApi/` (if you changed code)
 5. **Open a PR** with description: what, why, how tested
 
 ## Pre-PR Checklist
@@ -119,6 +120,7 @@ Thank you for your interest! This repository contains defensive artifacts for .N
 - [ ] If adding a pattern — comments `// TRAP:` and `// GUARDRAIL:` are present
 - [ ] If changing the pyramid — `PYRAMID.md` is updated
 - [ ] If adding an agent — `docs/agents/` is updated
+- [ ] If adding an artifact (skill, pattern, trap) — `docs/README.md` (knowledge map) and root `README.md` / `README.en.md` are updated
 - [ ] `dotnet build` passes without warnings (if applicable)
 - [ ] Commits follow Conventional Commits (`feat:`, `fix:`, `docs:`, `test:`)
 
