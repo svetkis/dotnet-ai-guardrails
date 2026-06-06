@@ -1,5 +1,12 @@
 # Security Audit — Skill
 
+## Context Marker
+
+When this skill is active, add 🔒 to your STARTER_CHARACTER stack.
+Example: `🍀 🔒` = base rules + Security Audit role active.
+When re-reading this skill, prepend `♻️` to the skill marker.
+
+
 > Persona: Security auditor. Runs on schedule or on PR.
 > Finds data leaks, OWASP violations, authorization issues.
 

@@ -15,6 +15,13 @@ description: Diff-based code review for .NET projects with agent-generated code.
 
 # Code Review Agent
 
+## Context Marker
+
+Когда этот скилл активен, добавь `🔍` к своему STARTER_CHARACTER.
+Пример: `🍀 🔍` = базовые правила + роль Code Review активна.
+При перечитывании (re-read) добавь `♻️` перед маркером скилла.
+
+
 ## Why a Second Agent
 
 This skill implements two concepts from [Augmented Coding Patterns](https://github.com/lexler/augmented-coding-patterns):

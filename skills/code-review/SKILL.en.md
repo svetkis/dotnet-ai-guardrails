@@ -14,6 +14,13 @@ Before running, assess the project stack. If some checks are not applicable — 
 
 # Code Review Agent
 
+## Context Marker
+
+When this skill is active, add 🔍 to your STARTER_CHARACTER stack.
+Example: `🍀 🔍` = base rules + Code Review role active.
+When re-reading this skill, prepend `♻️` to the skill marker.
+
+
 ## Why a Second Agent
 
 This skill implements two concepts from [Augmented Coding Patterns](https://github.com/lexler/augmented-coding-patterns):

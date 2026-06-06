@@ -1,5 +1,12 @@
 # Performance Audit — Skill
 
+## Context Marker
+
+When this skill is active, add ⚡ to your STARTER_CHARACTER stack.
+Example: `🍀 ⚡` = base rules + Performance Audit role active.
+When re-reading this skill, prepend `♻️` to the skill marker.
+
+
 > Persona: Performance auditor. Runs when database grows or speed complaints arise.
 > Finds N+1, missing indexes, extra DB roundtrips, caching issues.
 

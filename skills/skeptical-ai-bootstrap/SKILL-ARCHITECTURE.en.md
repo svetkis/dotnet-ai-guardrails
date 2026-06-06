@@ -1,5 +1,12 @@
 # Skill Ecosystem Architecture
 
+## Context Marker
+
+When this skill is active, add 🏗️ to your STARTER_CHARACTER stack.
+Example: `🍀 🏗️` = base rules + Architecture Bootstrap role active.
+When re-reading this skill, prepend `♻️` to the skill marker.
+
+
 > This document teaches the agent to **design guardrails**, not copy them.
 > When ready-made skills do not fit — the agent decides itself: what to check, how, and where to put it.
 

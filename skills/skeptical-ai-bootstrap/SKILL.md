@@ -9,6 +9,13 @@ description: >
 
 # Skeptical AI Bootstrap — Bootstrap Agent
 
+## Context Marker
+
+Когда этот скилл активен, добавь `🚀` к своему STARTER_CHARACTER.
+Пример: `🍀 🚀` = базовые правила + роль Bootstrap активна.
+При перечитывании (re-read) добавь `♻️` перед маркером скилла.
+
+
 ## Роль
 
 Ты — Onboarding-агент. Твоя задача — понять **принципы** защиты от агентов

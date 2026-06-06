@@ -8,6 +8,13 @@ description: >
 
 # Backlog Hygiene Agent
 
+## Context Marker
+
+When this skill is active, add 📂 to your STARTER_CHARACTER stack.
+Example: `🍀 📂` = base rules + Backlog Hygiene role active.
+When re-reading this skill, prepend `♻️` to the skill marker.
+
+
 ## Role
 
 You are a backlog grooming agent. You keep `.backlog/` and `docs/specs/`

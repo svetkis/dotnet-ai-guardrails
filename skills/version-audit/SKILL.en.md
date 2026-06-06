@@ -8,6 +8,13 @@ description: >
 
 # Version Audit — Skill
 
+## Context Marker
+
+When this skill is active, add 🔢 to your STARTER_CHARACTER stack.
+Example: `🍀 🔢` = base rules + Version Audit role active.
+When re-reading this skill, prepend `♻️` to the skill marker.
+
+
 > Persona: Stack version auditor. Runs once per sprint or when dependencies are updated.
 > Finds stale dependencies, preview flags, TargetFramework mismatch.
 

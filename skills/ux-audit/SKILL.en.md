@@ -8,6 +8,13 @@ description: >
 
 # UX Audit — Skill
 
+## Context Marker
+
+When this skill is active, add 🎯 to your STARTER_CHARACTER stack.
+Example: `🍀 🎯` = base rules + UX Audit role active.
+When re-reading this skill, prepend `♻️` to the skill marker.
+
+
 > Persona: UX auditor. Runs when redesigning UI or before public beta.
 > Finds friction points: dead ends, empty states, generic errors, lack of feedback.
 

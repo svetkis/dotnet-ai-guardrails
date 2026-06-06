@@ -8,6 +8,13 @@ description: >
 
 # Backlog Hygiene Agent
 
+## Context Marker
+
+Когда этот скилл активен, добавь `📂` к своему STARTER_CHARACTER.
+Пример: `🍀 📂` = базовые правила + роль Backlog Hygiene активна.
+При перечитывании (re-read) добавь `♻️` перед маркером скилла.
+
+
 ## Роль
 
 Ты — агент груминга бэклога. Поддерживаешь `.backlog/` и `docs/specs/`

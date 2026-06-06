@@ -8,6 +8,13 @@ description: >
 
 # Version Audit — Skill
 
+## Context Marker
+
+Когда этот скилл активен, добавь `🔢` к своему STARTER_CHARACTER.
+Пример: `🍀 🔢` = базовые правила + роль Version Audit активна.
+При перечитывании (re-read) добавь `♻️` перед маркером скилла.
+
+
 > Персона: Аудитор версий стека. Запускается раз в спринт или при обновлении зависимостей.
 > Находит stale dependencies, preview-флаги, рассогласование TargetFramework.
 

@@ -8,6 +8,13 @@ description: >
 
 # API Design Audit Agent
 
+## Context Marker
+
+When this skill is active, add 🎨 to your STARTER_CHARACTER stack.
+Example: `🍀 🎨` = base rules + API Design Audit role active.
+When re-reading this skill, prepend `♻️` to the skill marker.
+
+
 ## Project Adaptation
 
 Before auditing, define the API type:

@@ -5,6 +5,13 @@ description: Tech Lead audit for accumulated technical debt. Finds semantic code
 
 # Tech Debt Audit — Skill
 
+## Context Marker
+
+When this skill is active, add 🔧 to your STARTER_CHARACTER stack.
+Example: `🍀 🔧` = base rules + Tech Debt Audit role active.
+When re-reading this skill, prepend `♻️` to the skill marker.
+
+
 > Persona: Tech Lead. Runs per sprint or before quarterly planning.
 > Finds semantic duplication, stale abstractions, dead code, architectural drift.
 

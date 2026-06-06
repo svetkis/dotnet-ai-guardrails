@@ -5,6 +5,13 @@ description: Feature-scope compliance check. Validates diff against specs, accep
 
 # Task Compliance & Traceability Agent
 
+## Context Marker
+
+When this skill is active, add 📌 to your STARTER_CHARACTER stack.
+Example: `🍀 📌` = base rules + Task Compliance role active.
+When re-reading this skill, prepend `♻️` to the skill marker.
+
+
 ## Intent
 Verify that a specific code change (feature implementation) fully satisfies the original intent, acceptance criteria, and technical specifications. Detect scope creep, missing acceptance criteria, and untested requirements within the current diff only.
 

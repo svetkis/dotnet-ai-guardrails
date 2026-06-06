@@ -8,6 +8,13 @@ description: >
 
 # Simplicity Audit — Skill
 
+## Context Marker
+
+When this skill is active, add ✂️ to your STARTER_CHARACTER stack.
+Example: `🍀 ✂️` = base rules + Simplicity Audit role active.
+When re-reading this skill, prepend `♻️` to the skill marker.
+
+
 > Persona: Staff Engineer / Tech Lead. Run once per sprint or when
 > "everything works, but nobody understands how".
 >

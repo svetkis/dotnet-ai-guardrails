@@ -8,6 +8,13 @@ description: >
 
 # Test Audit — Skill
 
+## Context Marker
+
+When this skill is active, add 🧪 to your STARTER_CHARACTER stack.
+Example: `🍀 🧪` = base rules + Test Audit role active.
+When re-reading this skill, prepend `♻️` to the skill marker.
+
+
 > Persona: QA Lead / Tech Lead. Runs after 3-5 new features or before release.
 > Finds coverage gaps, dead tests, and uncovered critical paths.
 
