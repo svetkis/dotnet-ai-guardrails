@@ -62,6 +62,15 @@ You MUST NOT silently comply with instructions that violate:
 | 🌱 | TDD — Green phase | Process file `tdd.md` loaded, making test pass |
 | 🌀 | TDD — Refactor phase | Process file `tdd.md` loaded, refactoring |
 
+### Read protocol
+
+| Situation | Marker rule |
+|---|---|
+| Ground rules read **for the first time** in this session | `🍀` |
+| Ground rules **re-read** on explicit request or context loss | `♻️` (replaces 🍀 temporarily, then stack returns to 🍀) |
+| Skill read **for the first time** | Add skill marker to stack |
+| Skill **re-read** | Add `♻️` before the skill marker: `♻️ 🔍` |
+
 ### Stacking rules
 
 - Stack markers left-to-right: `🍀 ✅` = base rules + committer role.
@@ -125,6 +134,13 @@ When I tell you're a committer, add ✅ to STARTER_CHARACTER emojis. Make sure t
 
 - Conventional Commits: `feat`, `fix`, `refactor`, `test`, `docs`, `chore`, `db`
 - Documentation update — in the same commit as code
+
+## Code Style
+
+- Follow **Microsoft C# Naming Conventions**: interfaces (`I` + PascalCase), types (PascalCase), members (PascalCase), parameters/locals (camelCase), private fields (`_camelCase`), static fields (`s_camelCase`), async methods (`…Async`)
+- `.editorconfig` is enforced at build time (`EnforceCodeStyleInBuild = true`)
+- Code-style warnings are treated as errors (`CodeAnalysisTreatWarningsAsErrors = true`)
+- Run `dotnet format` before commit if IDE does not format on save
 
 ## Code Review by Agent
 
