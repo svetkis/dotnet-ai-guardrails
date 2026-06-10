@@ -72,4 +72,4 @@ If ready-made skills require more than 50% adaptation — don't adapt, create a 
 2. Use `SKILL-ARCHITECTURE.md` to design a Guardrail from scratch
 3. Use `NEW-SKILL-TEMPLATE.md` to generate files for the new skill
 
-See `skills/skeptical-ai-bootstrap/SKILL-ARCHITECTURE.md`
+See `templates/skills/skeptical-ai-bootstrap/SKILL-ARCHITECTURE.md`

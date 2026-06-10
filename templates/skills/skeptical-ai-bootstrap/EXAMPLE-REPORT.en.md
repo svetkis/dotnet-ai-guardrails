@@ -51,7 +51,7 @@ The project uses **Claude Code**. Therefore, guardrails configuration will be in
 │   ├── architecture-audit.md        # NetArchTest with custom rules for VSlice
 │   ├── task-compliance.md         # Scope check (adapted)
 │   ├── e2e-worker.md              # E2E for Worker + RabbitMQ
-│   ├── security-audit.md          # Adapted from skills/security-audit/
+│   ├── security-audit.md          # Adapted from templates/skills/security-audit/
 │   └── dba-audit-dapper.md        # DBA audit for Dapper
 ```
 
@@ -118,7 +118,7 @@ In a Dapper project — need to check raw SQL, indexes, query plans.
   - Rules: MediatR handler must not be fat (>50 lines)
   - Template: `NEW-SKILL-TEMPLATE.md`
   - Put in: `.claude/commands/code-review-dapper.md` (for Claude) or `.kimi/skills/code-review-dapper/` (for Kimi)
-- [ ] **Adapt** `skills/task-compliance/` (fits 1-to-1, just replace stack references)
+- [ ] **Adapt** `templates/skills/task-compliance/` (fits 1-to-1, just replace stack references)
 
 ### Sprint 4 — E2E + CI (3 days)
 - [ ] **Create skill** `e2e-worker`:
@@ -136,8 +136,8 @@ In a Dapper project — need to check raw SQL, indexes, query plans.
   - Check: no `SELECT *` (explicit columns)
   - Check: indexes for WHERE columns (analysis via SQL Server DMVs)
   - Template: `NEW-SKILL-TEMPLATE.md`
-- [ ] **Adapt** `skills/security-audit/` (fits 1-to-1)
-- [ ] **Skip** `skills/i18n-audit/` (project is Russian only, documented)
+- [ ] **Adapt** `templates/skills/security-audit/` (fits 1-to-1)
+- [ ] **Skip** `templates/skills/i18n-audit/` (project is Russian only, documented)
 
 ---
 

@@ -56,7 +56,7 @@ public interface IBookingValidationStrategy<TRequest, TResult, TContext>
 ## Решение
 
 ### 1. Simplicity Audit — персона-аудитор
-Агент запускается раз в спринт с чеклистом простоты. См. `skills/simplicity-audit/SKILL.md`.
+Агент запускается раз в спринт с чеклистом простоты. См. `templates/skills/simplicity-audit/SKILL.md`.
 
 Чеклист:
 - [ ] Интерфейс с одной реализацией — можно заменить на класс?
@@ -67,7 +67,7 @@ public interface IBookingValidationStrategy<TRequest, TResult, TContext>
 - [ ] Методы с > 5 параметрами — вынести в DTO?
 
 ### 2. Code Review: "Объясни junior'у" `[ADAPT]`
-Добавь в свой `skills/code-review/CHECKLIST.md`:
+Добавь в свой `templates/skills/code-review/CHECKLIST.md`:
 > Если решение нельзя объяснить junior-разработчику за 5 минут — оно слишком сложное.
 
 ### 3. AGENTS.md: Правило «Простота > Паттерн» `[ADAPT]`
@@ -124,4 +124,4 @@ var ratio = (double)interfaces / classes;
 
 ## Паттерн
 
-См. `skills/simplicity-audit/SKILL.md` и `skills/simplicity-audit/CHECKLIST.md`
+См. `templates/skills/simplicity-audit/SKILL.md` и `templates/skills/simplicity-audit/CHECKLIST.md`

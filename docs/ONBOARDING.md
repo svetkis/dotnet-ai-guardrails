@@ -24,7 +24,7 @@
 - [ ] Понимание текущей архитектуры (Clean / VSlice / Modular / Big Ball of Mud)
 - [ ] Права на изменение CI/CD и добавление файлов в корень репозитория
 - [ ] Решение, какой AI-агент используется (Kimi / Claude / Cursor / Codex / несколько)
-- [ ] 30 минут на заполнение [`ARCHITECTURE-INVENTORY.md`](../skills/skeptical-ai-bootstrap/ARCHITECTURE-INVENTORY.md)
+- [ ] 30 минут на заполнение [`ARCHITECTURE-INVENTORY.md`](../templates/skills/skeptical-ai-bootstrap/ARCHITECTURE-INVENTORY.md)
 
 ---
 
@@ -34,13 +34,13 @@
 
 **Цель:** Агент (и ты сам) должен понимать, с чем работает, а не угадывать.
 
-1. Заполни [`ARCHITECTURE-INVENTORY.md`](../skills/skeptical-ai-bootstrap/ARCHITECTURE-INVENTORY.md):
+1. Заполни [`ARCHITECTURE-INVENTORY.md`](../templates/skills/skeptical-ai-bootstrap/ARCHITECTURE-INVENTORY.md):
    - Нарисуй C4 Container diagram (4–6 блоков)
    - Заполни таблицу Assembly Boundaries
    - Выдели 3–5 Critical Paths
    - Заполни Technology Inventory
 2. Сохрани файл в `docs/ARCHITECTURE-INVENTORY.md` своего проекта.
-3. Если есть осознанные отклонения от стандартов — зафиксируй их как `PERF-###` / `DB-###` / `ARCH-###` по шаблону [`DECISION-GUARDS.md`](../skills/skeptical-ai-bootstrap/DECISION-GUARDS.md).
+3. Если есть осознанные отклонения от стандартов — зафиксируй их как `PERF-###` / `DB-###` / `ARCH-###` по шаблону [`DECISION-GUARDS.md`](../templates/skills/skeptical-ai-bootstrap/DECISION-GUARDS.md).
 
 **Выход:** ground truth для всех последующих guardrails.
 
@@ -51,7 +51,7 @@
 **Цель:** Понять, что уже есть, а что нужно создать с нуля.
 
 **Вариант А — через агента (рекомендуется):**
-1. Установи скилл `skeptical-ai-bootstrap` в свой проект ([`INSTALL.md`](../skills/skeptical-ai-bootstrap/INSTALL.md))
+1. Установи скилл `skeptical-ai-bootstrap` в свой проект ([`INSTALL.md`](../templates/skills/skeptical-ai-bootstrap/INSTALL.md))
 2. Запусти: `kimi run skeptical-ai-bootstrap` (или аналог для своего агента)
 3. Получи отчёт `.backlog/onboarding-{дата}.md`
 
@@ -71,12 +71,12 @@
 
 **Цель:** Вычеркнуть неприменимое ДО первого запуска.
 
-1. Открой [`skills/ADAPTATION.md`](../skills/ADAPTATION.md)
+1. Открой [`templates/skills/ADAPTATION.md`](../templates/skills/ADAPTATION.md)
 2. Найди свой стек в таблице «Если в проекте… → пропусти…»
 3. Для каждого скилла, который планируешь использовать:
    - Открой `CHECKLIST.md`
    - Пометь пункты `[-]` (N/A) или `[ ]` (проверим)
-4. Если >50% скилла неприменимо — не адаптируй, создай новый ([`NEW-SKILL-TEMPLATE.md`](../skills/skeptical-ai-bootstrap/NEW-SKILL-TEMPLATE.md))
+4. Если >50% скилла неприменимо — не адаптируй, создай новый ([`NEW-SKILL-TEMPLATE.md`](../templates/skills/skeptical-ai-bootstrap/NEW-SKILL-TEMPLATE.md))
 
 **Выход:** адаптированные чеклисты, которые не генерируют false positives.
 
@@ -153,7 +153,7 @@
 
 **Цель:** Второй агент проверяет код первого.
 
-1. Скопируй [`skills/code-review/`](../skills/code-review/) в `.kimi/skills/code-review/` (или формат своего агента)
+1. Скопируй [`templates/skills/code-review/`](../templates/skills/code-review/) в `.kimi/skills/code-review/` (или формат своего агента)
 2. Адаптируй `SKILL.md` под свой стек (см. Шаг 2)
 3. Настрой запуск на каждый PR / перед коммитом:
    - Kimi: `kimi run code-review --git-diff HEAD~1`
@@ -202,7 +202,7 @@
 | Test audit | После 3–5 фич | Когда появляются новые фичи без тестов |
 
 **Как внедрять:**
-1. Скопируй `skills/{audit}/` в `.kimi/skills/{audit}/`
+1. Скопируй `templates/skills/{audit}/` в `.kimi/skills/{audit}/`
 2. Адаптируй `CHECKLIST.md` (Шаг 2)
 3. Запланируй в календаре команды (recurring meeting или CI-trigger)
 4. Для ручного аудита — используй [`human-audit-bridge.md`](solutions/human-audit-bridge.md)
@@ -290,7 +290,7 @@
 A: Да, но адаптируй. Nullable включай файлом (`#nullable enable`), NetArchTest замени на Roslyn analyzers, E2E — на интеграционные тесты через `HttpClient`.
 
 **Q: У нас Single-project MVP, нет Clean Architecture. Что проверять архитектурными тестами?**  
-A: Не слои, а конвенции: именование, запрещённые API-вызовы, ratchet на публичные типы. См. [`ADAPTATION.md`](../skills/ADAPTATION.md).
+A: Не слои, а конвенции: именование, запрещённые API-вызовы, ratchet на публичные типы. См. [`ADAPTATION.md`](../templates/skills/ADAPTATION.md).
 
 **Q: Команда сопротивляется — "это замедляет разработку".**  
 A: Начни с Fast-режима (1–2 дня). Покажи, как `AGENTS.md` предотвращает переписывание кода агентом. Guardrails экономят время, а не тратят.
@@ -307,13 +307,13 @@ A: Слои 0 + 1.1–1.2 — "поставил и забыл" (минималь
 
 | Застрял на шаге | Куда идти |
 |-----------------|-----------|
-| Не понимаю, какая у нас архитектура | [`ARCHITECTURE-INVENTORY.md`](../skills/skeptical-ai-bootstrap/ARCHITECTURE-INVENTORY.md) |
-| Не знаю, какие скиллы выбрать | [`ADAPTATION.md`](../skills/ADAPTATION.md) |
+| Не понимаю, какая у нас архитектура | [`ARCHITECTURE-INVENTORY.md`](../templates/skills/skeptical-ai-bootstrap/ARCHITECTURE-INVENTORY.md) |
+| Не знаю, какие скиллы выбрать | [`ADAPTATION.md`](../templates/skills/ADAPTATION.md) |
 | Не знаю, как настроить агента | [`docs/agents/`](agents/) → выбери своего |
 | Не понимаю, как работает слой | [`PYRAMID.md`](../PYRAMID.md) |
 | Хочу провести аудит руками | [`human-audit-bridge.md`](solutions/human-audit-bridge.md) |
-| Агент не находит скиллы | [`INSTALL.md`](../skills/skeptical-ai-bootstrap/INSTALL.md) |
-| Готовые артефакты не подходят | [`NEW-SKILL-TEMPLATE.md`](../skills/skeptical-ai-bootstrap/NEW-SKILL-TEMPLATE.md) + [`SKILL-ARCHITECTURE.md`](../skills/skeptical-ai-bootstrap/SKILL-ARCHITECTURE.md) |
+| Агент не находит скиллы | [`INSTALL.md`](../templates/skills/skeptical-ai-bootstrap/INSTALL.md) |
+| Готовые артефакты не подходят | [`NEW-SKILL-TEMPLATE.md`](../templates/skills/skeptical-ai-bootstrap/NEW-SKILL-TEMPLATE.md) + [`SKILL-ARCHITECTURE.md`](../templates/skills/skeptical-ai-bootstrap/SKILL-ARCHITECTURE.md) |
 
 ---
 

@@ -35,4 +35,4 @@ The agent cannot hold the entire codebase in its head. It optimizes locally, but
 
 ## Pattern
 
-See `skills/security-audit/`, `skills/dba-audit/`, `skills/api-design-audit/`, `skills/bot-audit/`
+See `templates/skills/security-audit/`, `templates/skills/dba-audit/`, `templates/skills/api-design-audit/`, `templates/skills/bot-audit/`

@@ -12,7 +12,7 @@
 
 ```bash
 # Находясь в корне ТВОЕГО .NET-проекта
-cp -r /path/to/dotnet-skeptical-ai/skills/skeptical-ai-bootstrap ./.kimi/skills/
+cp -r /path/to/dotnet-skeptical-ai/templates/skills/skeptical-ai-bootstrap ./.kimi/skills/
 ```
 
 Или вручную:
@@ -68,9 +68,9 @@ kimi run skeptical-ai-bootstrap
 | Архитектурные тесты | `dotnet-skeptical-ai/tests/patterns/ArchitectureRules.cs` |
 | Ratchet тесты | `dotnet-skeptical-ai/tests/patterns/RatchetTest.cs` |
 | CI воркфлоу | `dotnet-skeptical-ai/ci/github-actions/safe-ci.yml` |
-| Code review скилл | `dotnet-skeptical-ai/skills/code-review/` (RU или EN — один язык) |
-| Аудиты | `dotnet-skeptical-ai/skills/*-audit/` (RU или EN — один язык) |
-| Груминг | `dotnet-skeptical-ai/skills/memory-hygiene/`, `doc-hygiene/`, `backlog-hygiene/` (RU или EN — один язык) |
+| Code review скилл | `dotnet-skeptical-ai/templates/skills/code-review/` (RU или EN — один язык) |
+| Аудиты | `dotnet-skeptical-ai/templates/skills/*-audit/` (RU или EN — один язык) |
+| Груминг | `dotnet-skeptical-ai/templates/skills/memory-hygiene/`, `doc-hygiene/`, `backlog-hygiene/` (RU или EN — один язык) |
 
 **Рекомендация:** форкни `dotnet-skeptical-ai` и указывай артефакты из своего форка — так контролируешь версии.
 
@@ -94,7 +94,7 @@ kimi run skeptical-ai-bootstrap
 **Если ты AI-агент, выполняющий этот скилл:**
 
 1. **НЕ создавай демо-проекты.** Не создавай `examples/`, `DemoProject/`, или новые `.csproj`/`.sln`.
-2. **НЕ копируй структуру папок** этого репозитория (`rules/`, `skills/`, `tests/patterns/`) в целевой проект.
+2. **НЕ копируй структуру папок** этого репозитория (`rules/`, `templates/skills/`, `tests/patterns/`) в целевой проект.
 3. **Твой выход — только markdown-файлы:** отчёты, чеклисты, `.backlog/*.md`, `AGENTS.md`, `CONVENTIONS.md`.
 4. **Твоя задача:** читать целевой проект → оценивать → планировать. Не пиши код "для примера" или "чтобы показать".
 

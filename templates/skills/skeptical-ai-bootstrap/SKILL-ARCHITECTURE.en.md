@@ -373,5 +373,5 @@ This map helps the agent understand:
 - ❌ **"God Skill"** — one skill checks code, architecture, and security. Separate them.
 - ❌ **"Read-only Skill"** — skill only describes what to check, but is not integrated into CI. Every skill must have a launch mechanism.
 - ❌ **"Theory without Practice"** — skill requires the impossible (e.g., NetArchTest for .NET Framework). Choose a realistic mechanism.
-- ❌ **"Copy-paste without Context"** — copied `skills/security-audit/` but did not adapt to project ORM. The skill must know the stack.
+- ❌ **"Copy-paste without Context"** — copied `templates/skills/security-audit/` but did not adapt to project ORM. The skill must know the stack.
 - ❌ **"Orphan Skill"** — skill does not know who launches it and where results go. Define input/output/trigger.

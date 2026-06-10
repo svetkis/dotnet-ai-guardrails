@@ -8,7 +8,7 @@
 
 ## Problem
 
-All skills in `skills/` are written as **agent roles** ("You are a Security auditor…").  
+All skills in `templates/skills/` are written as **agent roles** ("You are a Security auditor…").  
 But every skill contains `CHECKLIST.md` — a structured checklist that works great in human hands.  
 This document is a "bridge": how to take an AI artifact and use it for a manual audit.
 
@@ -18,16 +18,16 @@ This document is a "bridge": how to take an AI artifact and use it for a manual 
 
 | I want to check… | Take CHECKLIST from… | Time | When to run |
 |-------------------|----------------------|-------|-----------------|
-| Data leaks, authorization, input | [`skills/security-audit/CHECKLIST.md`](../../skills/security-audit/CHECKLIST.md) | 1–2 h | Before release / once per sprint |
-| DB queries, migrations, indexes | [`skills/dba-audit/CHECKLIST.md`](../../skills/dba-audit/CHECKLIST.md) | 1–2 h | During migrations / once per sprint |
-| Performance, cache, N+1 | [`skills/performance-audit/CHECKLIST.md`](../../skills/performance-audit/CHECKLIST.md) | 1–2 h | Before release |
-| API contracts, DTO, OpenAPI | [`skills/api-design-audit/CHECKLIST.md`](../../skills/api-design-audit/CHECKLIST.md) | 1 h | Once per sprint |
-| Duplication, dead code, drift | [`skills/tech-debt-audit/CHECKLIST.md`](../../skills/tech-debt-audit/CHECKLIST.md) | 1–2 h | Before quarterly planning |
-| Test coverage, dead tests | [`skills/test-audit/CHECKLIST.md`](../../skills/test-audit/CHECKLIST.md) | 1 h | After 3–5 features |
-| UX, accessibility, mobile layout | [`skills/ux-audit/CHECKLIST.md`](../../skills/ux-audit/CHECKLIST.md) | 1 h | Before beta |
-| Localization, date/number formats | [`skills/i18n-audit/CHECKLIST.md`](../../skills/i18n-audit/CHECKLIST.md) | 30 min | Once per sprint |
-| SDK, NuGet, dependency versions | [`skills/version-audit/CHECKLIST.md`](../../skills/version-audit/CHECKLIST.md) | 30 min | Once per sprint |
-| Task compliance (scope creep) | [`skills/task-compliance/CHECKLIST.md`](../../skills/task-compliance/CHECKLIST.md) | 15 min | Per PR |
+| Data leaks, authorization, input | [`templates/skills/security-audit/CHECKLIST.md`](../../templates/skills/security-audit/CHECKLIST.md) | 1–2 h | Before release / once per sprint |
+| DB queries, migrations, indexes | [`templates/skills/dba-audit/CHECKLIST.md`](../../templates/skills/dba-audit/CHECKLIST.md) | 1–2 h | During migrations / once per sprint |
+| Performance, cache, N+1 | [`templates/skills/performance-audit/CHECKLIST.md`](../../templates/skills/performance-audit/CHECKLIST.md) | 1–2 h | Before release |
+| API contracts, DTO, OpenAPI | [`templates/skills/api-design-audit/CHECKLIST.md`](../../templates/skills/api-design-audit/CHECKLIST.md) | 1 h | Once per sprint |
+| Duplication, dead code, drift | [`templates/skills/tech-debt-audit/CHECKLIST.md`](../../templates/skills/tech-debt-audit/CHECKLIST.md) | 1–2 h | Before quarterly planning |
+| Test coverage, dead tests | [`templates/skills/test-audit/CHECKLIST.md`](../../templates/skills/test-audit/CHECKLIST.md) | 1 h | After 3–5 features |
+| UX, accessibility, mobile layout | [`templates/skills/ux-audit/CHECKLIST.md`](../../templates/skills/ux-audit/CHECKLIST.md) | 1 h | Before beta |
+| Localization, date/number formats | [`templates/skills/i18n-audit/CHECKLIST.md`](../../templates/skills/i18n-audit/CHECKLIST.md) | 30 min | Once per sprint |
+| SDK, NuGet, dependency versions | [`templates/skills/version-audit/CHECKLIST.md`](../../templates/skills/version-audit/CHECKLIST.md) | 30 min | Once per sprint |
+| Task compliance (scope creep) | [`templates/skills/task-compliance/CHECKLIST.md`](../../templates/skills/task-compliance/CHECKLIST.md) | 15 min | Per PR |
 
 ---
 
@@ -56,7 +56,7 @@ An AI skill consists of 4 sections. A human only needs 2:
 ### Step 0. Preparation (5 min)
 
 - Identify project stack (`.NET`, `EF/Dapper`, `Minimal API/MVC`, `Clean/VSlice`)
-- Open `skills/ADAPTATION.md` — find your configuration in the table
+- Open `templates/skills/ADAPTATION.md` — find your configuration in the table
 - Pick one audit — don't try to cover everything at once
 
 ### Step 1. Checklist Adaptation (10 min)
@@ -132,7 +132,7 @@ No need to copy AI templates verbatim. Use a short format:
 ## Example: Manual Security Audit
 
 **Stack:** .NET 10, Minimal API, EF Core, PostgreSQL  
-**Checklist:** `skills/security-audit/CHECKLIST.md`
+**Checklist:** `templates/skills/security-audit/CHECKLIST.md`
 
 **Adaptation:**
 - ❌ Checking `[Authorize]` on controllers — not applicable (Minimal API)

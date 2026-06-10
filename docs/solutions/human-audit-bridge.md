@@ -8,7 +8,7 @@
 
 ## Проблема
 
-Все скиллы в `skills/` написаны как **роли для агентов** («Ты — Security-аудитор…»).  
+Все скиллы в `templates/skills/` написаны как **роли для агентов** («Ты — Security-аудитор…»).  
 Но каждый скилл содержит `CHECKLIST.md` — структурированный список проверок, который отлично работает в руках человека.  
 Этот документ — «мост»: как взять AI-артефакт и использовать его для ручного аудита.
 
@@ -18,16 +18,16 @@
 
 | Я хочу проверить… | Беру CHECKLIST из… | Время | Когда запускать |
 |-------------------|----------------------|-------|-----------------|
-| Утечки данных, авторизация, ввод | [`skills/security-audit/CHECKLIST.md`](../../skills/security-audit/CHECKLIST.md) | 1–2 ч | Перед релизом / раз в спринт |
-| Запросы БД, миграции, индексы | [`skills/dba-audit/CHECKLIST.md`](../../skills/dba-audit/CHECKLIST.md) | 1–2 ч | При миграциях / раз в спринт |
-| Производительность, кэш, N+1 | [`skills/performance-audit/CHECKLIST.md`](../../skills/performance-audit/CHECKLIST.md) | 1–2 ч | Перед релизом |
-| API контракты, DTO, OpenAPI | [`skills/api-design-audit/CHECKLIST.md`](../../skills/api-design-audit/CHECKLIST.md) | 1 ч | Раз в спринт |
-| Дублирование, мёртвый код, drift | [`skills/tech-debt-audit/CHECKLIST.md`](../../skills/tech-debt-audit/CHECKLIST.md) | 1–2 ч | Перед планированием квартала |
-| Покрытие тестами, мёртвые тесты | [`skills/test-audit/CHECKLIST.md`](../../skills/test-audit/CHECKLIST.md) | 1 ч | После 3–5 фич |
-| UX, accessibility, мобильная вёрстка | [`skills/ux-audit/CHECKLIST.md`](../../skills/ux-audit/CHECKLIST.md) | 1 ч | Перед бетой |
-| Локализация, форматы дат/чисел | [`skills/i18n-audit/CHECKLIST.md`](../../skills/i18n-audit/CHECKLIST.md) | 30 мин | Раз в спринт |
-| Версии SDK, NuGet, зависимостей | [`skills/version-audit/CHECKLIST.md`](../../skills/version-audit/CHECKLIST.md) | 30 мин | Раз в спринт |
-| Соответствие задаче (scope creep) | [`skills/task-compliance/CHECKLIST.md`](../../skills/task-compliance/CHECKLIST.md) | 15 мин | На каждый PR |
+| Утечки данных, авторизация, ввод | [`templates/skills/security-audit/CHECKLIST.md`](../../templates/skills/security-audit/CHECKLIST.md) | 1–2 ч | Перед релизом / раз в спринт |
+| Запросы БД, миграции, индексы | [`templates/skills/dba-audit/CHECKLIST.md`](../../templates/skills/dba-audit/CHECKLIST.md) | 1–2 ч | При миграциях / раз в спринт |
+| Производительность, кэш, N+1 | [`templates/skills/performance-audit/CHECKLIST.md`](../../templates/skills/performance-audit/CHECKLIST.md) | 1–2 ч | Перед релизом |
+| API контракты, DTO, OpenAPI | [`templates/skills/api-design-audit/CHECKLIST.md`](../../templates/skills/api-design-audit/CHECKLIST.md) | 1 ч | Раз в спринт |
+| Дублирование, мёртвый код, drift | [`templates/skills/tech-debt-audit/CHECKLIST.md`](../../templates/skills/tech-debt-audit/CHECKLIST.md) | 1–2 ч | Перед планированием квартала |
+| Покрытие тестами, мёртвые тесты | [`templates/skills/test-audit/CHECKLIST.md`](../../templates/skills/test-audit/CHECKLIST.md) | 1 ч | После 3–5 фич |
+| UX, accessibility, мобильная вёрстка | [`templates/skills/ux-audit/CHECKLIST.md`](../../templates/skills/ux-audit/CHECKLIST.md) | 1 ч | Перед бетой |
+| Локализация, форматы дат/чисел | [`templates/skills/i18n-audit/CHECKLIST.md`](../../templates/skills/i18n-audit/CHECKLIST.md) | 30 мин | Раз в спринт |
+| Версии SDK, NuGet, зависимостей | [`templates/skills/version-audit/CHECKLIST.md`](../../templates/skills/version-audit/CHECKLIST.md) | 30 мин | Раз в спринт |
+| Соответствие задаче (scope creep) | [`templates/skills/task-compliance/CHECKLIST.md`](../../templates/skills/task-compliance/CHECKLIST.md) | 15 мин | На каждый PR |
 
 ---
 
@@ -56,7 +56,7 @@ AI-скилл состоит из 4 секций. Человеку нужны т
 ### Шаг 0. Подготовка (5 мин)
 
 - Определи стек проекта (`.NET`, `EF/Dapper`, `Minimal API/MVC`, `Clean/VSlice`)
-- Открой `skills/ADAPTATION.md` — найди свою конфигурацию в таблице
+- Открой `templates/skills/ADAPTATION.md` — найди свою конфигурацию в таблице
 - Выбери один аудит — не пытайся пройти всё за раз
 
 ### Шаг 1. Адаптация чеклиста (10 мин)
@@ -132,7 +132,7 @@ AI-скилл состоит из 4 секций. Человеку нужны т
 ## Пример: Security Audit вручную
 
 **Стек:** .NET 10, Minimal API, EF Core, PostgreSQL  
-**Чеклист:** `skills/security-audit/CHECKLIST.md`
+**Чеклист:** `templates/skills/security-audit/CHECKLIST.md`
 
 **Адаптация:**
 - ❌ Проверка `[Authorize]` на контроллерах — неприменимо (Minimal API)

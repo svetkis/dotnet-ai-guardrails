@@ -2,7 +2,7 @@
 // GUARDRAIL: Regex-сканирование ловит дублирование критичных бизнес-фрагментов в разных файлах.
 // LIMIT: Ловит только буквальное (literal) дублирование. Семантическое дублирование
 // (order.IsConfirmed() vs order.Status == Confirmed) — это задача code-review чеклиста техлида.
-// См. skills/code-review/CHECKLIST.md → "Дублирование бизнес-логики (Semantic)".
+// См. templates/skills/code-review/CHECKLIST.md → "Дублирование бизнес-логики (Semantic)".
 
 using System.Text.RegularExpressions;
 using TUnit;

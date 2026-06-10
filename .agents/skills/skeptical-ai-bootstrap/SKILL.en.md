@@ -31,7 +31,7 @@ You are an **assessment and planning** agent, NOT a code generation agent.
 - Creating `examples/`, `DemoProject/`, or any demo/sample directories
 - Creating new `.sln`, `.csproj`, or any project files
 - Writing C#/F#/VB code "for demonstration" or "as an example"
-- Copying the folder structure of `dotnet-skeptical-ai` into the target repo (do NOT create in the target project root: `rules/`, `skills/`, `tests/patterns/`. Exception: `.kimi/skills/` for markdown skills — that is normal)
+- Copying the folder structure of `dotnet-skeptical-ai` into the target repo (do NOT create in the target project root: `rules/`, `templates/skills/`, `tests/patterns/`. Exception: `.kimi/skills/` for markdown skills — that is normal)
 - Running `dotnet new` or creating projects from templates
 
 **ALLOWED:**
@@ -40,13 +40,19 @@ You are an **assessment and planning** agent, NOT a code generation agent.
 - Editing existing test files already present in the target repo
 - Creating `.md` files (reports, inventories, backlogs, `AGENTS.md`)
 
-**Environment Check (do this FIRST):**
-1. Look at the current working directory path. Does it contain `dotnet-skeptical-ai`?
-   - YES → You are IN the methodology repository. Your job is to read artifacts and explain them. Do NOT modify this repo unless explicitly asked.
-   - NO → Continue to step 2.
-2. Are there `.sln` or `.csproj` files in the current directory or immediate subdirectories?
-   - YES → You are in a TARGET .NET project. Scan it, assess it, generate reports. Do NOT create demo code.
-   - NO → Ask the user: "Which .NET project should I assess? Please provide the path."
+## Scope
+
+You are inside the `dotnet-skeptical-ai` repository.
+This is a project-scope skill.
+
+**Main task:** help the user apply the Skeptical AI Engineering methodology to an **external** .NET project.
+
+**If the user asks to modify the methodology repository itself** — follow the rules in the root `AGENTS.md`. Do NOT modify this repo unless explicitly asked.
+
+## First Step: Identify the Target Project
+
+1. If the user explicitly provided a path to a .NET project — use it.
+2. If no path is given — ask: "Please provide the path to the .NET project where the methodology should be applied."
 
 ## Philosophy
 
@@ -78,14 +84,14 @@ Final human validation, business and product decisions.
 
 ### Phase 1: Discovery (honest codebase inspection)
 
-> **Before starting:** Run the environment check from the [🚨 CRITICAL: Zero Implementation Rule](#-critical-zero-implementation-rule) section above. Make sure you are in the target project, not the methodology repository.
+> **Before starting:** Make sure a path to the target project is provided. All scanning operations apply to the external codebase, not the methodology repository.
 
 1. Find `.sln`, all `.csproj`, `Directory.Build.props`
 2. Check if `ARCHITECTURE-INVENTORY.md` exists in the project. If yes — use it as ground truth instead of guessing.
-   If not — propose creating one from the template [`ARCHITECTURE-INVENTORY.md`](ARCHITECTURE-INVENTORY.md).
+   If not — propose creating one from the template [`ARCHITECTURE-INVENTORY.md`](../../templates/skills/skeptical-ai-bootstrap/ARCHITECTURE-INVENTORY.md).
 3. Check if `DECISION-GUARDS.md` exists (or a similar `PERF-###` / `DB-###` registry).
    If yes — use it to avoid proposing "fixes" for documented architectural compromises.
-   If not — propose creating one from the template [`DECISION-GUARDS.md`](DECISION-GUARDS.md) if conscious deviations exist.
+   If not — propose creating one from the template [`DECISION-GUARDS.md`](../../templates/skills/skeptical-ai-bootstrap/DECISION-GUARDS.md) if conscious deviations exist.
 4. Determine the **type of AI agent** used in the project:
    - **Kimi Code CLI** → does `.kimi/skills/` exist?
    - **Claude Code** → does `.claude/CLAUDE.md` exist?
@@ -154,7 +160,7 @@ For each sub-layer answer the questions:
 
 | Project stack | Ready-made artifacts | Decision |
 |---------------|----------------------|----------|
-| .NET 10 + EF Core + PostgreSQL + Minimal API | `skills/code-review/SKILL.md` | ✅ Adapt (your naming conventions) |
+| .NET 10 + EF Core + PostgreSQL + Minimal API | `templates/skills/code-review/SKILL.md` | ✅ Adapt (your naming conventions) |
 | Razor Pages / MVC | Skill about Minimal API | ❌ **Create `code-review-razor`** (check ViewModel, XSS in Razor) |
 | Dapper (no EF) | EF-specific rules | ❌ **Create `code-review-dapper`** (parameterization, SQL injection) |
 | .NET Framework 4.8 | Rules about .NET 10 | ❌ **Create `code-review-netframework`** |
@@ -174,10 +180,10 @@ For each sub-layer answer the questions:
 
 | Stack | Ready-made artifacts | Decision |
 |-------|----------------------|----------|
-| EF Core + PostgreSQL | `skills/dba-audit/`, `skills/security-audit/` | ✅ Adapt |
+| EF Core + PostgreSQL | `templates/skills/dba-audit/`, `templates/skills/security-audit/` | ✅ Adapt |
 | Dapper + SQL Server | DBA audit is EF-specific | ❌ **Create `dba-audit-dapper`** (raw SQL review, indexes) |
 | MongoDB | DBA audit not applicable | ❌ **Create `dba-audit-mongo`** (indexes, queries, schema) |
-| No i18n (Russian only) | `skills/i18n-audit/` | 🔴 Won't do, document |
+| No i18n (Russian only) | `templates/skills/i18n-audit/` | 🔴 Won't do, document |
 
 ### Phase 4: User Context
 
@@ -214,7 +220,7 @@ The backlog contains 5 types of tasks:
 
 ### Phase 7: Creating New Skills (if needed)
 
-If the agent decides a new skill is needed, it uses the `NEW-SKILL-TEMPLATE.md` template.
+If the agent decides a new skill is needed, it uses the [`NEW-SKILL-TEMPLATE.md`](../../templates/skills/skeptical-ai-bootstrap/NEW-SKILL-TEMPLATE.md) template.
 
 **Language:** the new skill is created in the user's language (RU or EN from Phase 0).
 If the user selected Russian — generate only `SKILL.md` (RU).
@@ -238,7 +244,7 @@ If English — only `SKILL.md` (EN).
 
 ## Report Format
 
-The agent MUST generate a report using the `REPORT-TEMPLATE.md` template.
+The agent MUST generate a report using the [`REPORT-TEMPLATE.md`](../../templates/skills/skeptical-ai-bootstrap/REPORT-TEMPLATE.md) template.
 The report MUST contain **all 6 sections**:
 
 1. **Check structure** — what is deployed, what is in backlog, what is not applicable.
@@ -281,21 +287,6 @@ Full report: `.backlog/onboarding-{date}.md`
 - ❌ **Don't require OpenAPI snapshot for Worker Service.** It's meaningless.
 - ❌ **Don't propose NetArchTest for .NET Framework 4.8.** Use Roslyn analyzers or MSBuild targets.
 - ❌ **Don't create skills for the sake of skills.** If the project is standard — use ready-made artifacts.
-
-## How to Use This Skill
-
-> **Before using:** Read `docs/agents/BOOTSTRAP-PROTOCOL.md` in the `dotnet-skeptical-ai` repository — agent behavior rules during onboarding.
-
-This skill is installed into `.kimi/skills/` of the **target** .NET project that needs assessment.
-
-1. Copy `skills/skeptical-ai-bootstrap/` from `dotnet-skeptical-ai` to `.kimi/skills/skeptical-ai-bootstrap/` of the target project
-2. Run `kimi run skeptical-ai-bootstrap` (or `@skeptical-ai-bootstrap` in chat)
-3. The agent scans the current codebase, applies principles, and outputs a report
-
-**Important:** This skill teaches the agent to **design guardrails**, not copy them.
-If ready-made artifacts don't fit — the agent creates new skills from scratch.
-
-See `INSTALL.md` for installation, `SKILL-ARCHITECTURE.md` for the design framework.
 
 ## Integration
 

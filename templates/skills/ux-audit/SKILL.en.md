@@ -21,7 +21,7 @@ When re-reading this skill, prepend `♻️` to the skill marker.
 ## Project Adaptation
 
 - **No frontend (API only)** → focus on API error responses and client edge cases.
-- **Telegram bot** → check message flow, buttons, callback handling. See also `skills/bot-audit/`.
+- **Telegram bot** → check message flow, buttons, callback handling. See also `templates/skills/bot-audit/`.
 - **Web/Mobile** → check screen states, CTAs, loading indicators, validation feedback.
 
 ## Role

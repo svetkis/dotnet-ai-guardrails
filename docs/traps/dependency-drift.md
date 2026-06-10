@@ -129,7 +129,7 @@ NetArchTest + regex-сканирование ловят не только цик
 - [ ] Появился ли цикл в графе сборок (`.csproj`) или заголовков (`#include`)?
 
 ### 4. Tech Debt Audit: Граф зависимостей
-Раз в спринт техлид строит граф зависимостей и сверяет с `ARCHITECTURE-INVENTORY.md`. См. `skills/tech-debt-audit/SKILL.md`.
+Раз в спринт техлид строит граф зависимостей и сверяет с `ARCHITECTURE-INVENTORY.md`. См. `templates/skills/tech-debt-audit/SKILL.md`.
 
 Метрики аудита:
 - Количество «нелегальных» `using` по слоям (например, `grep -r "using .*Infrastructure" src/Api/`)

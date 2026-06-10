@@ -21,7 +21,7 @@ description: >
 ## Адаптация под проект
 
 - **Нет фронтенда (только API)** → фокус на API error responses и edge cases API-клиентов.
-- **Telegram-бот** → проверяй flow сообщений, кнопки, callback-обработку. См. также `skills/bot-audit/`.
+- **Telegram-бот** → проверяй flow сообщений, кнопки, callback-обработку. См. также `templates/skills/bot-audit/`.
 - **Web/Mobile** → проверяй состояния экранов, CTA, loading indicators, validation feedback.
 
 ## Роль

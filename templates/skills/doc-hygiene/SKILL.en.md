@@ -61,7 +61,7 @@ guardrails do not contradict each other and match the code.
 ### Phase 2: Code Drift
 1. `AGENTS.md` forbids `.FindAsync()` in read-path → is there a regex test?
 2. `AGENTS.md` requires `BUG###_` tests → is there a convention in `tests/`?
-3. Do mentioned modules/skills exist in `skills/`, `tests/`?
+3. Do mentioned modules/skills exist in `templates/skills/`, `tests/`?
 4. Are Decision Guards (`PERF-###`) from AGENTS.md present in code?
 
 ### Phase 2a: Rule Vitality
@@ -111,7 +111,7 @@ guardrails do not contradict each other and match the code.
 - [ ] `AGENTS.md` §6.1 forbids raw SQL without comment — no enforcement found (> 90 days)
 
 ### Cross-Agent
-- [ ] `docs/agents/KIMI.md` references deleted `skills/legacy-audit/`
+- [ ] `docs/agents/KIMI.md` references deleted `templates/skills/legacy-audit/`
 
 ### README
 - [ ] Build command outdated: `dotnet test` instead of `dotnet run --project`
@@ -127,7 +127,7 @@ guardrails do not contradict each other and match the code.
 ## Key Rule
 
 > AGENTS.md is the single source of truth for architectural guardrails.
-> Everything else (docs/agents/, skills/) — derived. If it diverges —
+> Everything else (docs/agents/, templates/skills/) — derived. If it diverges —
 > update derived, not the root.
 > A dead rule is worse than no rule. If there is no enforcement —
 > remove it or add a guardrail.

@@ -69,7 +69,7 @@ var violations = ScanServicesForPattern(@"\.FindAsync\(", "*.cs", whitelist);
 
 ### Отслеживание решений
 
-> Registry template: [`DECISION-GUARDS.md`](../../skills/skeptical-ai-bootstrap/DECISION-GUARDS.md)
+> Registry template: [`DECISION-GUARDS.md`](../../templates/skills/skeptical-ai-bootstrap/DECISION-GUARDS.md)
 
 | Тест | Правило |
 |------|---------|

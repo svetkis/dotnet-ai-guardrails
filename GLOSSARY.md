@@ -37,19 +37,19 @@
 | Термин | Определение | Где используется |
 |--------|-------------|------------------|
 | **MCP (Model Context Protocol)** | Протокол для подключения внешних инструментов к AI-агенту. Позволяет агенту "тыкать" Telegram, браузер, API. | [PYRAMID.md §Слой 2.1](PYRAMID.md#layer-2-e2e) |
-| **Code Review агент** | Отдельный экземпляр AI-агента, который ревьюит diff **до** коммита. Не тот, что писал код. | [skills/code-review/SKILL.md](skills/code-review/SKILL.md) |
-| **Skill** | Роль агента: инструкция + чеклист для конкретной задачи (аудит, ревью, онбординг). Устанавливается в `.kimi/skills/` или аналог. | `skills/` |
+| **Code Review агент** | Отдельный экземпляр AI-агента, который ревьюит diff **до** коммита. Не тот, что писал код. | [templates/skills/code-review/SKILL.md](templates/skills/code-review/SKILL.md) |
+| **Skill** | Роль агента: инструкция + чеклист для конкретной задачи (аудит, ревью, онбординг). Устанавливается в `.kimi/skills/` или аналог. | `templates/skills/` |
 | **Context Marker** | Эмодзи-маркер в начале ответа агента, показывающий активный контекст: 🍀 (ground rules), 🔍 (review), ✅ (commit). | [rules/AGENTS_TEMPLATE.md](rules/AGENTS_TEMPLATE.md) |
-| **Focused Agent** | Принцип: один агент — одна задача. Review-агент не пишет код, code-агент не ревьюит. | [skills/code-review/SKILL.md](skills/code-review/SKILL.md) |
+| **Focused Agent** | Принцип: один агент — одна задача. Review-агент не пишет код, code-агент не ревьюит. | [templates/skills/code-review/SKILL.md](templates/skills/code-review/SKILL.md) |
 
 ## Процессы и метрики
 
 | Термин | Определение | Где используется |
 |--------|-------------|------------------|
-| **Аудит (Audit)** | Глубинная проверка одной узкой области (security, perf, БД). Запускается раз в спринт или по триггеру, а не на каждый PR. | `skills/` |
+| **Аудит (Audit)** | Глубинная проверка одной узкой области (security, perf, БД). Запускается раз в спринт или по триггеру, а не на каждый PR. | `templates/skills/` |
 | **Cross-pollination** | Обмен находками между аудитами. Например, security-аудит находит лог-утечку, UX-аудит находит тот же endpoint как dead-end. | [PYRAMID.md §Внешний цикл](PYRAMID.md#outer-loop) |
 | **P50 / P95 / Max** | Персентили latency: медиана, 95-й перцентиль, максимум. Агенты часто оптимизируют P50, забывая про tail latency (Max). | [docs/traps/p50-vs-max.md](docs/traps/p50-vs-max.md) |
-| **Scope creep** | Расползание задачи: агент добавляет в PR изменения, выходящие за рамки исходного запроса. | [skills/task-compliance/SKILL.md](skills/task-compliance/SKILL.md) |
+| **Scope creep** | Расползание задачи: агент добавляет в PR изменения, выходящие за рамки исходного запроса. | [templates/skills/task-compliance/SKILL.md](templates/skills/task-compliance/SKILL.md) |
 | **Silent misalignment** | Молчаливая ошибка: агент не задал уточняющих вопросов, хотя инструкции были неясны или противоречивы. | [rules/AGENTS_TEMPLATE.md](rules/AGENTS_TEMPLATE.md) |
 
 ## Технологии

@@ -20,7 +20,7 @@
 
 | Тип | Куда | Требования |
 |-----|------|------------|
-| Новый скилл | `skills/{name}/` | `SKILL.md` + `CHECKLIST.md` |
+| Новый скилл | `templates/skills/{name}/` | `SKILL.md` + `CHECKLIST.md` |
 | Новый паттерн теста | `tests/patterns/` | Комментарии `// TRAP: ...` и `// GUARDRAIL: ...` |
 | Новая ловушка | `docs/traps/` | Сценарий + последствия + решение + ссылка на паттерн |
 | Новое решение | `docs/solutions/` | Подробный разбор с примерами |
@@ -30,7 +30,7 @@
 ## Чего НЕ делать
 
 - ❌ Не добавляй зависимости без явного запроса
-- ❌ Не меняй структуру папок (`rules/`, `skills/`, `tests/`, `ci/`, `docs/`)
+- ❌ Не меняй структуру папок (`rules/`, `templates/skills/`, `tests/`, `ci/`, `docs/`)
 - ❌ Не убирай примеры кода из `tests/patterns/` — они шаблонные
 - ❌ Не используй `dotnet test` в примерах — только `dotnet run --project`
 
@@ -91,7 +91,7 @@ Thank you for your interest! This repository contains defensive artifacts for .N
 
 | Type | Location | Requirements |
 |------|----------|--------------|
-| New skill | `skills/{name}/` | `SKILL.md` + `CHECKLIST.md` |
+| New skill | `templates/skills/{name}/` | `SKILL.md` + `CHECKLIST.md` |
 | New test pattern | `tests/patterns/` | Comments `// TRAP: ...` and `// GUARDRAIL: ...` |
 | New trap | `docs/traps/` | Scenario + consequences + solution + pattern link |
 | New solution | `docs/solutions/` | Detailed guide with examples |
@@ -101,7 +101,7 @@ Thank you for your interest! This repository contains defensive artifacts for .N
 ## What NOT to do
 
 - ❌ Don't add dependencies without explicit request
-- ❌ Don't change folder structure (`rules/`, `skills/`, `tests/`, `ci/`, `docs/`)
+- ❌ Don't change folder structure (`rules/`, `templates/skills/`, `tests/`, `ci/`, `docs/`)
 - ❌ Don't remove code examples from `tests/patterns/` — they are templates
 - ❌ Don't use `dotnet test` in examples — only `dotnet run --project`
 

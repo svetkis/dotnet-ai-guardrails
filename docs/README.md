@@ -10,10 +10,10 @@
 | Я — ... | С чего начать |
 |---------|---------------|
 | **Новичок** в агентной разработке | [GLOSSARY.md](../GLOSSARY.md) → [PYRAMID.md](../PYRAMID.md) → `examples/DemoProject/` |
-| **Tech Lead**, внедряю guardrails | [ONBOARDING.md](ONBOARDING.md) → [skills/skeptical-ai-bootstrap/SKILL.md](../skills/skeptical-ai-bootstrap/SKILL.md) → [ADAPTATION.md](../skills/ADAPTATION.md) → раздел «Внешний цикл» ниже |
+| **Tech Lead**, внедряю guardrails | [ONBOARDING.md](ONBOARDING.md) → [.agents/skills/skeptical-ai-bootstrap/SKILL.md](../.agents/skills/skeptical-ai-bootstrap/SKILL.md) → [ADAPTATION.md](../templates/skills/ADAPTATION.md) → раздел «Внешний цикл» ниже |
 | **Разработчик**, ищу паттерн теста | [tests/patterns/](#тестовые-паттерны) → копируй в проект |
 | **Внедряю SAE с нуля** | [ONBOARDING.md](ONBOARDING.md) → пошаговый план с контрольными точками |
-| **Аудитор**, готовлюсь к аудиту | [skills/](#скиллы-аудиты) → бери CHECKLIST.md → [human-audit-bridge.md](solutions/human-audit-bridge.md) для ручного прохода |
+| **Аудитор**, готовлюсь к аудиту | [templates/skills/](#скиллы-аудиты) → бери CHECKLIST.md → [human-audit-bridge.md](solutions/human-audit-bridge.md) для ручного прохода |
 | **Контрибьютор** | [CONTRIBUTING.md](../CONTRIBUTING.md) → раздел «Что можно добавлять» |
 
 ---
@@ -26,10 +26,10 @@
 | **1** | 1.1 Компилятор | Быстрая обратная связь от типов | [PYRAMID.md §1.1](../PYRAMID.md#layer-1-compiler) | `.editorconfig`, `Directory.Build.props`, `DemoProject.Analyzers` (кастомный Roslyn-анализатор) |
 | **1** | 1.2 Архитектура | Авто-проверка слоёв и антипаттернов | [PYRAMID.md §1.2](../PYRAMID.md#layer-1-architecture) | [tests/patterns/ArchitectureRules.cs](../tests/patterns/ArchitectureRules.cs), [RatchetTest.cs](../tests/patterns/RatchetTest.cs), [ArchUnitNetSliceTest.cs](../tests/patterns/ArchUnitNetSliceTest.cs) |
 | **1** | 1.3 Тесты | Регрессии, snapshot, vibe-refactoring, контракты API | [PYRAMID.md §1.3](../PYRAMID.md#layer-1-tests) | [tests/patterns/](#тестовые-паттерны) |
-| **1** | 1.4 Code Review | Агент проверяет агента | [PYRAMID.md §1.4](../PYRAMID.md#layer-1-code-review) | [skills/code-review/SKILL.md](../skills/code-review/SKILL.md) |
+| **1** | 1.4 Code Review | Агент проверяет агента | [PYRAMID.md §1.4](../PYRAMID.md#layer-1-code-review) | [templates/skills/code-review/SKILL.md](../templates/skills/code-review/SKILL.md) |
 | **1** | 1.5 Smoke | Быстрый прогон критичных сценариев | [PYRAMID.md §1.5](../PYRAMID.md#layer-1-smoke) | — |
 | **2** | 2.1 E2E / MCP | Полные сценарии через внешние системы | [PYRAMID.md §2.1](../PYRAMID.md#layer-2-e2e) | [tests/patterns/SnapshotTest.cs](../tests/patterns/SnapshotTest.cs) |
-| **2** | 2.2 Аудиты | Глубинные проверки по расписанию | [PYRAMID.md §2.2](../PYRAMID.md#layer-2-audits) | [skills/](#скиллы-аудиты) |
+| **2** | 2.2 Аудиты | Глубинные проверки по расписанию | [PYRAMID.md §2.2](../PYRAMID.md#layer-2-audits) | [templates/skills/](#скиллы-аудиты) |
 | **2** | 2.3 Нагрузка | Silent breakdown под нагрузкой (NBomber) | [PYRAMID.md §2.3](../PYRAMID.md#layer-2-load) | [tests/patterns/LoadTest.cs](../tests/patterns/LoadTest.cs) |
 | **Внешний** | — | Окончательная проверка человеком, бизнес и продуктовые решения | [PYRAMID.md §Внешний цикл](../PYRAMID.md#outer-loop) | — |
 
@@ -67,31 +67,31 @@
 
 | Скилл | Когда запускать |
 |-------|-----------------|
-| [code-review](../skills/code-review/SKILL.md) | На каждый PR |
-| [task-compliance](../skills/task-compliance/SKILL.md) | На каждый PR |
-| [security-audit](../skills/security-audit/SKILL.md) | Раз в спринт / на PR с Api/Infra |
-| [dba-audit](../skills/dba-audit/SKILL.md) | Раз в спринт / при миграциях (EF Core) |
-| [dba-audit-dapper](../skills/dba-audit-dapper/SKILL.md) | Раз в спринт / при изменениях репозиториев (Dapper / Raw SQL) |
-| [performance-audit](../skills/performance-audit/SKILL.md) | Перед релизом / при подозрении |
-| [api-design-audit](../skills/api-design-audit/SKILL.md) | Раз в спринт |
-| [bot-audit](../skills/bot-audit/SKILL.md) | Раз в спринт |
-| [i18n-audit](../skills/i18n-audit/SKILL.md) | Раз в спринт |
-| [version-audit](../skills/version-audit/SKILL.md) | Раз в спринт |
-| [tech-debt-audit](../skills/tech-debt-audit/SKILL.md) | Раз в спринт / перед квартальным планированием |
-| [test-audit](../skills/test-audit/SKILL.md) | После 3-5 фич / перед релизом |
-| [simplicity-audit](../skills/simplicity-audit/SKILL.md) | Раз в спринт / когда код трудно объяснить |
-| [ux-audit](../skills/ux-audit/SKILL.md) | При переработке UI / перед бетой |
-| [type-safety](../skills/type-safety/SKILL.md) | На PR с Domain/DTO / при рефакторинге идентификаторов |
-| [skeptical-ai-bootstrap](../skills/skeptical-ai-bootstrap/SKILL.md) | Однократно при старте |
-| [adaptation-guide](../skills/ADAPTATION.md) | Перед первым запуском скиллов |
+| [code-review](../templates/skills/code-review/SKILL.md) | На каждый PR |
+| [task-compliance](../templates/skills/task-compliance/SKILL.md) | На каждый PR |
+| [security-audit](../templates/skills/security-audit/SKILL.md) | Раз в спринт / на PR с Api/Infra |
+| [dba-audit](../templates/skills/dba-audit/SKILL.md) | Раз в спринт / при миграциях (EF Core) |
+| [dba-audit-dapper](../templates/skills/dba-audit-dapper/SKILL.md) | Раз в спринт / при изменениях репозиториев (Dapper / Raw SQL) |
+| [performance-audit](../templates/skills/performance-audit/SKILL.md) | Перед релизом / при подозрении |
+| [api-design-audit](../templates/skills/api-design-audit/SKILL.md) | Раз в спринт |
+| [bot-audit](../templates/skills/bot-audit/SKILL.md) | Раз в спринт |
+| [i18n-audit](../templates/skills/i18n-audit/SKILL.md) | Раз в спринт |
+| [version-audit](../templates/skills/version-audit/SKILL.md) | Раз в спринт |
+| [tech-debt-audit](../templates/skills/tech-debt-audit/SKILL.md) | Раз в спринт / перед квартальным планированием |
+| [test-audit](../templates/skills/test-audit/SKILL.md) | После 3-5 фич / перед релизом |
+| [simplicity-audit](../templates/skills/simplicity-audit/SKILL.md) | Раз в спринт / когда код трудно объяснить |
+| [ux-audit](../templates/skills/ux-audit/SKILL.md) | При переработке UI / перед бетой |
+| [type-safety](../templates/skills/type-safety/SKILL.md) | На PR с Domain/DTO / при рефакторинге идентификаторов |
+| [skeptical-ai-bootstrap](../.agents/skills/skeptical-ai-bootstrap/SKILL.md) | Однократно при старте |
+| [adaptation-guide](../templates/skills/ADAPTATION.md) | Перед первым запуском скиллов |
 
 ### Груминг артефактов
 
 | Скилл | Когда запускать |
 |-------|-----------------|
-| [memory-hygiene](../skills/memory-hygiene/SKILL.md) | Раз в спринт или при смене агента |
-| [doc-hygiene](../skills/doc-hygiene/SKILL.md) | Раз в спринт или после рефакторинга |
-| [backlog-hygiene](../skills/backlog-hygiene/SKILL.md) | Раз в спринт |
+| [memory-hygiene](../templates/skills/memory-hygiene/SKILL.md) | Раз в спринт или при смене агента |
+| [doc-hygiene](../templates/skills/doc-hygiene/SKILL.md) | Раз в спринт или после рефакторинга |
+| [backlog-hygiene](../templates/skills/backlog-hygiene/SKILL.md) | Раз в спринт |
 
 ---
 
@@ -106,12 +106,12 @@
 | [context-blindness](traps/context-blindness.md) | Агент не видит бизнес-контекста | [AGENTS.md](../rules/AGENTS_TEMPLATE.md) |
 | [false-safety](traps/false-safety.md) | Зелёный CI ≠ рабочий код | [verify-tests.sh](../ci/scripts/verify-tests.sh) |
 | [p50-vs-max](traps/p50-vs-max.md) | Средняя latency хороша, tail — ужасен | [LoadTest.cs](../tests/patterns/LoadTest.cs) |
-| [agent-circles](traps/agent-circles.md) | Агенты зацикливаются на одной проблеме | [task-compliance](../skills/task-compliance/SKILL.md) |
+| [agent-circles](traps/agent-circles.md) | Агенты зацикливаются на одной проблеме | [task-compliance](../templates/skills/task-compliance/SKILL.md) |
 | [stale-stack](traps/stale-stack.md) | Агент использует устаревший стек из-за training cutoff | [VersionAuditTest.cs](../tests/patterns/VersionAuditTest.cs) |
 | [log-leak](traps/log-leak.md) | PII утекает в логи | [PiiGuardTest.cs](../tests/patterns/PiiGuardTest.cs) |
 | [code-duplication](traps/code-duplication.md) | Агент дублирует бизнес-логику вместо реюза | [DuplicationGuardTest.cs](../tests/patterns/DuplicationGuardTest.cs) |
 | [dependency-drift](traps/dependency-drift.md) | +1 using/#include замыкает цикл в графе зависимостей | [DependencyDriftTest.cs](../tests/patterns/DependencyDriftTest.cs) |
-| [over-engineering](traps/over-engineering.md) | Агент строит архитектурный собор вместо простого решения | [simplicity-audit](../skills/simplicity-audit/SKILL.md) |
+| [over-engineering](traps/over-engineering.md) | Агент строит архитектурный собор вместо простого решения | [simplicity-audit](../templates/skills/simplicity-audit/SKILL.md) |
 
 ---
 
@@ -122,8 +122,8 @@
 | [architecture-tests.md](solutions/architecture-tests.md) | Подробный гайд по NetArchTest.eNhancedEdition + regex-сканированию |
 | [ai-patterns.md](solutions/ai-patterns.md) | 10 проверенных паттернов AI-driven разработки |
 | [human-audit-bridge.md](solutions/human-audit-bridge.md) | Как использовать AI-чеклисты для ручного аудита человеком |
-| [ARCHITECTURE-INVENTORY.md](../skills/skeptical-ai-bootstrap/ARCHITECTURE-INVENTORY.md) | Шаблон фиксации текущей архитектуры перед внедрением guardrails |
-| [DECISION-GUARDS.md](../skills/skeptical-ai-bootstrap/DECISION-GUARDS.md) | Шаблон реестра осознанных отклонений (`PERF-###`, `DB-###`, `AUD-###`) |
+| [ARCHITECTURE-INVENTORY.md](../templates/skills/skeptical-ai-bootstrap/ARCHITECTURE-INVENTORY.md) | Шаблон фиксации текущей архитектуры перед внедрением guardrails |
+| [DECISION-GUARDS.md](../templates/skills/skeptical-ai-bootstrap/DECISION-GUARDS.md) | Шаблон реестра осознанных отклонений (`PERF-###`, `DB-###`, `AUD-###`) |
 
 ---
 

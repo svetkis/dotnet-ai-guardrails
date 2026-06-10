@@ -104,4 +104,4 @@
 2. Используй `SKILL-ARCHITECTURE.md` для проектирования guardrail'а с нуля
 3. Используй `NEW-SKILL-TEMPLATE.md` для генерации файлов нового скилла
 
-См. `skills/skeptical-ai-bootstrap/SKILL-ARCHITECTURE.md`
+См. `templates/skills/skeptical-ai-bootstrap/SKILL-ARCHITECTURE.md`

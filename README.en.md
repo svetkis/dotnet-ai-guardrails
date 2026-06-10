@@ -39,7 +39,7 @@ Three verification loops: inner (on every change), outer (on schedule or before 
 |-------|-----------|------|
 | Human | After release | Business and product decisions |
 
-`skills/` — ready-made prompts for audits. Run on schedule or when code changes in their area.
+`templates/skills/` — ready-made prompts for audits. Run on schedule or when code changes in their area.
 
 ### Grooming loop
 
@@ -63,15 +63,15 @@ dotnet build
 dotnet run --project tests/DemoProject.Tests
 
 # 3. Assess your project
-# Open skills/skeptical-ai-bootstrap/SKILL.md and run the checklist —
+# Open .agents/skills/skeptical-ai-bootstrap/SKILL.md and run the checklist —
 # figure out what you already have and what to implement first.
 
 # 4. Adapt skills to your stack
-# See skills/ADAPTATION.md — cross out irrelevant checks.
+# See templates/skills/ADAPTATION.md — cross out irrelevant checks.
 
 # 5. Copy needed artifacts
 cp rules/AGENTS_TEMPLATE.md /your/project/
-cp -r skills/code-review /your/project/.kimi/skills/
+cp -r templates/skills/code-review /your/project/.kimi/skills/
 cp tests/patterns/*.cs /your/project/tests/
 ```
 
@@ -84,7 +84,7 @@ cp tests/patterns/*.cs /your/project/tests/
 ├── rules/
 │   ├── AGENTS.md                 # EF rules, naming, conventions
 │   └── CONVENTIONS.md            # Commits, workflow, tests
-├── skills/                        # Agent roles
+├── templates/skills/                        # Agent roles
 │   ├── memory-hygiene/            # Grooming: Auto Memory
 │   ├── doc-hygiene/               # Grooming: documentation
 │   ├── backlog-hygiene/           # Grooming: backlog
@@ -172,21 +172,24 @@ Lost? Start with [docs/README.md](docs/README.md).
 | What you need | Where to go |
 |---------------|-------------|
 | Agent rules | `rules/AGENTS_TEMPLATE.md` |
-| Security audit | `skills/security-audit/` |
-| DBA audit | `skills/dba-audit/` |
-| Performance audit | `skills/performance-audit/` |
-| i18n audit | `skills/i18n-audit/` |
-| Code review agent | `skills/code-review/` |
-| Scope check | `skills/task-compliance/` |
+| Security audit | `templates/skills/security-audit/` |
+| DBA audit | `templates/skills/dba-audit/` |
+| DBA audit (Dapper) | `templates/skills/dba-audit-dapper/` |
+| Performance audit | `templates/skills/performance-audit/` |
+| API design audit | `templates/skills/api-design-audit/` |
+| Bot audit | `templates/skills/bot-audit/` |
+| i18n audit | `templates/skills/i18n-audit/` |
+| Code review agent | `templates/skills/code-review/` |
+| Scope check | `templates/skills/task-compliance/` |
 | Test pattern | `tests/patterns/` |
 | CI security | `ci/github-actions/safe-ci.yml` |
 | Agent traps | `docs/traps/` |
-| Auto Memory grooming | `skills/memory-hygiene/` |
-| Doc grooming | `skills/doc-hygiene/` |
-| Backlog grooming | `skills/backlog-hygiene/` |
+| Auto Memory grooming | `templates/skills/memory-hygiene/` |
+| Doc grooming | `templates/skills/doc-hygiene/` |
+| Backlog grooming | `templates/skills/backlog-hygiene/` |
 | Architecture tests | `docs/solutions/architecture-tests.md` |
 | AI patterns | `docs/solutions/ai-patterns.md` |
-| Project onboarding | `skills/skeptical-ai-bootstrap/` |
+| Project onboarding | `templates/skills/skeptical-ai-bootstrap/` |
 | Working example (Clean Architecture) | `examples/DemoProject/` |
 | Working example (Single-project MVP) | `examples/DemoProject.MinimalApi/` |
 | Failing demo (guardrails) | `examples/DemoProject.Traps/` |

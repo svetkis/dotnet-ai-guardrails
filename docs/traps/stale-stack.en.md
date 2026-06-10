@@ -57,4 +57,4 @@ The agent generates code based on training data, not on the actual state of the 
 
 ## Pattern
 
-See `tests/patterns/VersionAuditTest.cs` and `skills/version-audit/`
+See `tests/patterns/VersionAuditTest.cs` and `templates/skills/version-audit/`

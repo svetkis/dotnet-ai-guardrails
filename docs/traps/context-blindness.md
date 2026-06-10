@@ -36,4 +36,4 @@ public record TicketDto(
 
 ## Паттерн
 
-См. `skills/security-audit/`, `skills/dba-audit/`, `skills/api-design-audit/`, `skills/bot-audit/`
+См. `templates/skills/security-audit/`, `templates/skills/dba-audit/`, `templates/skills/api-design-audit/`, `templates/skills/bot-audit/`

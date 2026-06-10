@@ -129,7 +129,7 @@ Review checklist:
 - [ ] Did a cycle appear in the assembly graph (`.csproj`) or header graph (`#include`)?
 
 ### 4. Tech Debt Audit: Dependency graph
-Once per sprint the tech lead builds the dependency graph and compares it with `ARCHITECTURE-INVENTORY.md`. See `skills/tech-debt-audit/SKILL.md`.
+Once per sprint the tech lead builds the dependency graph and compares it with `ARCHITECTURE-INVENTORY.md`. See `templates/skills/tech-debt-audit/SKILL.md`.
 
 Audit metrics:
 - Number of "illegal" `using` statements per layer (e.g. `grep -r "using .*Infrastructure" src/Api/`)

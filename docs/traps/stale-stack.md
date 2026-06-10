@@ -57,4 +57,4 @@
 
 ## Паттерн
 
-См. `tests/patterns/VersionAuditTest.cs` и `skills/version-audit/`
+См. `tests/patterns/VersionAuditTest.cs` и `templates/skills/version-audit/`

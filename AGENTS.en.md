@@ -13,7 +13,7 @@ Do not write domain code here — only guardrails, skills, patterns, and example
 
 ### Never
 - ❌ Do not add dependencies without explicit request
-- ❌ Do not change folder structure (`rules/`, `skills/`, `tests/`, `ci/`, `docs/`)
+- ❌ Do not change folder structure (`rules/`, `templates/skills/`, `tests/`, `ci/`, `docs/`)
 - ❌ Do not remove code examples from `tests/patterns/` — they are template-based
 - ❌ Do not use `dotnet test` in examples — only `dotnet run --project`
 
@@ -21,7 +21,7 @@ Do not write domain code here — only guardrails, skills, patterns, and example
 - ✅ Update `PYRAMID.md` when adding a new layer (currently 3 layers 0–2 + outer loop)
 - ✅ Update `docs/agents/` when adding support for a new AI agent
 - ✅ Update `docs/README.md` (knowledge map) when adding a new artifact
-- ✅ Every new skill in `skills/` must contain `SKILL.md` + `CHECKLIST.md`
+- ✅ Every new skill in `templates/skills/` must contain `SKILL.md` + `CHECKLIST.md`
 - ✅ Every new test pattern — with comments `// TRAP: ...` and `// GUARDRAIL: ...`
 - ✅ Code examples compile (minimal `examples/DemoProject/` if verification needed)
 
@@ -39,9 +39,9 @@ This repository is a **collection of defensive artifacts**, not a NuGet package.
 
 | Step | What to do | Where to go |
 |------|-----------|-------------|
-| 0. Record architecture | Fill in assembly inventory, critical paths, and conscious deviations | [`skills/skeptical-ai-bootstrap/ARCHITECTURE-INVENTORY.md`](skills/skeptical-ai-bootstrap/ARCHITECTURE-INVENTORY.md) + [`DECISION-GUARDS.md`](skills/skeptical-ai-bootstrap/DECISION-GUARDS.md) |
-| 1. Assess maturity | Run the onboarding skill in your project | [`skills/skeptical-ai-bootstrap/SKILL.md`](skills/skeptical-ai-bootstrap/SKILL.md) |
-| 2. Adapt | Cross out inapplicable checks for your stack | [`skills/ADAPTATION.md`](skills/ADAPTATION.md) |
+| 0. Record architecture | Fill in assembly inventory, critical paths, and conscious deviations | [`templates/skills/skeptical-ai-bootstrap/ARCHITECTURE-INVENTORY.md`](templates/skills/skeptical-ai-bootstrap/ARCHITECTURE-INVENTORY.md) + [`DECISION-GUARDS.md`](templates/skills/skeptical-ai-bootstrap/DECISION-GUARDS.md) |
+| 1. Assess maturity | Run the onboarding skill in your project | [`.agents/skills/skeptical-ai-bootstrap/SKILL.md`](.agents/skills/skeptical-ai-bootstrap/SKILL.md) |
+| 2. Adapt | Cross out inapplicable checks for your stack | [`templates/skills/ADAPTATION.md`](templates/skills/ADAPTATION.md) |
 | 3. Constitution | Copy `rules/AGENTS_TEMPLATE.md` to your project root and adapt to your stack | [`rules/AGENTS_TEMPLATE.md`](rules/AGENTS_TEMPLATE.md) |
 | 4. Pyramid | Implement layers 1→2 from the onboarding backlog | [`PYRAMID.md`](PYRAMID.md) |
 | 5. Agent | Configure your AI agent (Kimi / Claude / Cursor / Codex) | [`docs/agents/`](docs/agents/) |
@@ -55,7 +55,7 @@ This repository is a **collection of defensive artifacts**, not a NuGet package.
 
 If you are an AI agent reading this file in the context of a **different** repository:
 - This repository (`dotnet-skeptical-ai`) is a **methodology archive**, not a project template.
-- Do NOT copy its folder structure (`rules/`, `skills/`, `examples/`, `tests/patterns/`) into the target project.
+- Do NOT copy its folder structure (`rules/`, `templates/skills/`, `examples/`, `tests/patterns/`) into the target project.
 - Do NOT create `DemoProject`, `examples/`, or `DemoProject.Traps/` in the target project.
 - Extract only the **principles** and **markdown guidelines** applicable to the target stack.
 - Your output should be assessment reports and plans, not implementation code.
@@ -69,14 +69,14 @@ If you are an AI agent reading this file in the context of a **different** repos
 |-----------|-----------|
 | Rules for the agent | `rules/AGENTS_TEMPLATE.md` |
 | Bootstrap protocol (don't create DemoProject) | `docs/agents/BOOTSTRAP-PROTOCOL.md` |
-| Security audit | `skills/security-audit/` |
-| DBA audit | `skills/dba-audit/` |
-| Performance audit | `skills/performance-audit/` |
-| API design audit | `skills/api-design-audit/` |
-| Bot audit | `skills/bot-audit/` |
-| Localization audit | `skills/i18n-audit/` |
-| Code review agent | `skills/code-review/` |
-| Scope compliance check | `skills/task-compliance/` |
+| Security audit | `templates/skills/security-audit/` |
+| DBA audit | `templates/skills/dba-audit/` |
+| Performance audit | `templates/skills/performance-audit/` |
+| API design audit | `templates/skills/api-design-audit/` |
+| Bot audit | `templates/skills/bot-audit/` |
+| Localization audit | `templates/skills/i18n-audit/` |
+| Code review agent | `templates/skills/code-review/` |
+| Scope compliance check | `templates/skills/task-compliance/` |
 | Test pattern | `tests/patterns/` |
 | Working example | `examples/DemoProject/` |
 | Failing demo (guardrails) | `examples/DemoProject.Traps/` |
@@ -84,7 +84,8 @@ If you are an AI agent reading this file in the context of a **different** repos
 | Trap description | `docs/traps/` |
 | Architecture tests | `docs/solutions/architecture-tests.md` |
 | AI development patterns | `docs/solutions/ai-patterns.md` |
-| Project onboarding | `skills/skeptical-ai-bootstrap/` |
+| Intentional deviations (Decision Guards / ADR) | `templates/skills/skeptical-ai-bootstrap/DECISION-GUARDS.md` |
+| Project onboarding | `templates/skills/skeptical-ai-bootstrap/` |
 | Kimi integration | `docs/agents/KIMI.md` |
 | Claude Code integration | `docs/agents/CLAUDE-CODE.md` |
 | Codex integration | `docs/agents/CODEX.md` |

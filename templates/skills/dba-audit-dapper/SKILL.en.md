@@ -12,7 +12,7 @@ When re-reading this skill, prepend `♻️` to the skill marker.
 
 ## Project Adaptation
 
-- **EF Core (no Dapper)** → use `skills/dba-audit/` (EF-specific audit)
+- **EF Core (no Dapper)** → use `templates/skills/dba-audit/` (EF-specific audit)
 - **SQL Server instead of PostgreSQL** → adapt data types (`datetimeoffset` instead of `timestamptz`, `nvarchar` instead of `varchar`) and syntax
 - **NoSQL (Mongo)** → skip relational checks, focus on indexes and document schema
 

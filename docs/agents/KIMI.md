@@ -31,7 +31,7 @@
 
 ```bash
 # Установить скилл онбординга
-cp -r /path/to/dotnet-skeptical-ai/skills/skeptical-ai-bootstrap ./.kimi/skills/
+cp -r /path/to/dotnet-skeptical-ai/templates/skills/skeptical-ai-bootstrap ./.kimi/skills/
 
 # Запустить
 kimi run skeptical-ai-bootstrap
@@ -82,7 +82,7 @@ kimi run backlog-hygiene
 ```bash
 # Скопировать все аудит-скиллы
 for skill in code-review task-compliance security-audit dba-audit performance-audit; do
-    cp -r /path/to/dotnet-skeptical-ai/skills/$skill ./.kimi/skills/
+    cp -r /path/to/dotnet-skeptical-ai/templates/skills/$skill ./.kimi/skills/
 done
 
 # Сгенерировать README скиллов

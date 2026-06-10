@@ -39,7 +39,7 @@
 |---------|---------|-----------|
 | Человек | После релиза | Бизнес- и продуктовые решения |
 
-`skills/` — готовые промпты для аудитов. Запускаются по расписанию или когда меняется код в зоне ответственности.
+`templates/skills/` — готовые промпты для аудитов. Запускаются по расписанию или когда меняется код в зоне ответственности.
 
 ### Цикл груминга
 
@@ -63,15 +63,15 @@ dotnet build
 dotnet run --project tests/DemoProject.Tests
 
 # 3. Оцени свой проект
-# Открой skills/skeptical-ai-bootstrap/SKILL.md — прогони чеклист,
+# Открой .agents/skills/skeptical-ai-bootstrap/SKILL.md — прогони чеклист,
 # разберись что уже есть и что внедрить в первую очередь.
 
 # 4. Адаптируй скиллы под свой стек
-# См. skills/ADAPTATION.md — вычеркни неприменимые проверки.
+# См. templates/skills/ADAPTATION.md — вычеркни неприменимые проверки.
 
 # 5. Скопируй нужные артефакты
 cp rules/AGENTS_TEMPLATE.md /your/project/
-cp -r skills/code-review /your/project/.kimi/skills/
+cp -r templates/skills/code-review /your/project/.kimi/skills/
 cp tests/patterns/*.cs /your/project/tests/
 ```
 
@@ -86,7 +86,7 @@ cp tests/patterns/*.cs /your/project/tests/
 │   ├── AGENTS_TEMPLATE.efcore.md # Add-on: EF Core-специфичные правила
 │   ├── AGENTS_TEMPLATE.dapper.md # Add-on: Dapper / Raw SQL-специфичные правила
 │   └── CONVENTIONS.md            # Коммиты, воркфлоу, тесты
-├── skills/                        # Роли агента
+├── templates/skills/                        # Роли агента
 │   ├── memory-hygiene/            # Grooming: Auto Memory
 │   ├── doc-hygiene/               # Grooming: документация
 │   ├── backlog-hygiene/           # Grooming: бэклог
@@ -177,22 +177,22 @@ dotnet run --project tests/DemoProject.MinimalApi.Tests
 | Правила для агента (базовые) | `rules/AGENTS_TEMPLATE.md` |
 | EF Core add-on | `rules/AGENTS_TEMPLATE.efcore.md` |
 | Dapper add-on | `rules/AGENTS_TEMPLATE.dapper.md` |
-| Аудит безопасности | `skills/security-audit/` |
-| Аудит БД (EF Core) | `skills/dba-audit/` |
-| Аудит БД (Dapper) | `skills/dba-audit-dapper/` |
-| Аудит производительности | `skills/performance-audit/` |
-| Аудит локализации | `skills/i18n-audit/` |
-| Code review агент | `skills/code-review/` |
-| Проверка scope | `skills/task-compliance/` |
+| Аудит безопасности | `templates/skills/security-audit/` |
+| Аудит БД (EF Core) | `templates/skills/dba-audit/` |
+| Аудит БД (Dapper) | `templates/skills/dba-audit-dapper/` |
+| Аудит производительности | `templates/skills/performance-audit/` |
+| Аудит локализации | `templates/skills/i18n-audit/` |
+| Code review агент | `templates/skills/code-review/` |
+| Проверка scope | `templates/skills/task-compliance/` |
 | Паттерн теста | `tests/patterns/` |
 | CI безопасность | `ci/github-actions/safe-ci.yml` |
 | Ловушки агента | `docs/traps/` |
-| Груминг Auto Memory | `skills/memory-hygiene/` |
-| Груминг доков | `skills/doc-hygiene/` |
-| Груминг бэклога | `skills/backlog-hygiene/` |
+| Груминг Auto Memory | `templates/skills/memory-hygiene/` |
+| Груминг доков | `templates/skills/doc-hygiene/` |
+| Груминг бэклога | `templates/skills/backlog-hygiene/` |
 | Архитектурные тесты | `docs/solutions/architecture-tests.md` |
 | Паттерны AI-разработки | `docs/solutions/ai-patterns.md` |
-| Онбординг проекта | `skills/skeptical-ai-bootstrap/` |
+| Онбординг проекта | `templates/skills/skeptical-ai-bootstrap/` |
 | Рабочий пример (Clean Architecture) | `examples/DemoProject/` |
 | Рабочий пример (Single-project MVP) | `examples/DemoProject.MinimalApi/` |
 | Failing demo (guardrails) | `examples/DemoProject.Traps/` |

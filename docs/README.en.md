@@ -12,10 +12,10 @@
 | I am a ... | Where to start |
 |------------|----------------|
 | **Newcomer** to agentic development | [GLOSSARY.md](../GLOSSARY.md) → [PYRAMID.md](../PYRAMID.md) → `examples/DemoProject/` |
-| **Tech Lead** implementing guardrails | [ONBOARDING.md](ONBOARDING.md) → [skills/skeptical-ai-bootstrap/SKILL.md](../skills/skeptical-ai-bootstrap/SKILL.md) → [ADAPTATION.md](../skills/ADAPTATION.md) → "Outer Loop" section below |
+| **Tech Lead** implementing guardrails | [ONBOARDING.md](ONBOARDING.md) → [.agents/skills/skeptical-ai-bootstrap/SKILL.md](../.agents/skills/skeptical-ai-bootstrap/SKILL.md) → [ADAPTATION.md](../templates/skills/ADAPTATION.md) → "Outer Loop" section below |
 | **Developer** looking for a test pattern | [tests/patterns/](#test-patterns) → copy into your project |
 | **Implementing SAE from scratch** | [ONBOARDING.md](ONBOARDING.md) → step-by-step guide with checkpoints |
-| **Auditor** preparing for an audit | [skills/](#skills-audits) → take CHECKLIST.md → [human-audit-bridge.md](solutions/human-audit-bridge.md) for manual walkthrough |
+| **Auditor** preparing for an audit | [templates/skills/](#skills-audits) → take CHECKLIST.md → [human-audit-bridge.md](solutions/human-audit-bridge.md) for manual walkthrough |
 | **Contributor** | [CONTRIBUTING.md](../CONTRIBUTING.md) → "What can be added" section |
 
 ---
@@ -28,10 +28,10 @@
 | **1** | 1.1 Compiler | Fast feedback from types | [PYRAMID.md §1.1](../PYRAMID.md#layer-1-compiler) | `.editorconfig`, `Directory.Build.props`, `DemoProject.Analyzers` (custom Roslyn analyzer) |
 | **1** | 1.2 Architecture | Auto-check of layers and anti-patterns | [PYRAMID.md §1.2](../PYRAMID.md#layer-1-architecture) | [tests/patterns/ArchitectureRules.cs](../tests/patterns/ArchitectureRules.cs), [RatchetTest.cs](../tests/patterns/RatchetTest.cs), [ArchUnitNetSliceTest.cs](../tests/patterns/ArchUnitNetSliceTest.cs) |
 | **1** | 1.3 Tests | Regressions, snapshot, vibe-refactoring, API contracts | [PYRAMID.md §1.3](../PYRAMID.md#layer-1-tests) | [tests/patterns/](#test-patterns) |
-| **1** | 1.4 Code Review | Agent checks agent | [PYRAMID.md §1.4](../PYRAMID.md#layer-1-code-review) | [skills/code-review/SKILL.md](../skills/code-review/SKILL.md) |
+| **1** | 1.4 Code Review | Agent checks agent | [PYRAMID.md §1.4](../PYRAMID.md#layer-1-code-review) | [templates/skills/code-review/SKILL.md](../templates/skills/code-review/SKILL.md) |
 | **1** | 1.5 Smoke | Fast run of critical scenarios | [PYRAMID.md §1.5](../PYRAMID.md#layer-1-smoke) | — |
 | **2** | 2.1 E2E / MCP | Full scenarios through external systems | [PYRAMID.md §2.1](../PYRAMID.md#layer-2-e2e) | [tests/patterns/SnapshotTest.cs](../tests/patterns/SnapshotTest.cs) |
-| **2** | 2.2 Audits | Deep checks on schedule | [PYRAMID.md §2.2](../PYRAMID.md#layer-2-audits) | [skills/](#skills-audits) |
+| **2** | 2.2 Audits | Deep checks on schedule | [PYRAMID.md §2.2](../PYRAMID.md#layer-2-audits) | [templates/skills/](#skills-audits) |
 | **2** | 2.3 Load | Silent breakdown under load (NBomber) | [PYRAMID.md §2.3](../PYRAMID.md#layer-2-load) | [tests/patterns/LoadTest.cs](../tests/patterns/LoadTest.cs) |
 | **Outer Loop** | — | Final human validation, business and product decisions | [PYRAMID.md §Outer Loop](../PYRAMID.md#outer-loop) | — |
 
@@ -69,31 +69,31 @@ Each skill = an agent role. Contains `SKILL.md` (instructions) + `CHECKLIST.md` 
 
 | Skill | When to run |
 |-------|-------------|
-| [code-review](../skills/code-review/SKILL.md) | On every PR |
-| [task-compliance](../skills/task-compliance/SKILL.md) | On every PR |
-| [security-audit](../skills/security-audit/SKILL.md) | Once per sprint / on PR with Api/Infra |
-| [dba-audit](../skills/dba-audit/SKILL.md) | Once per sprint / on migrations (EF Core) |
-| [dba-audit-dapper](../skills/dba-audit-dapper/SKILL.md) | Once per sprint / on repository changes (Dapper / Raw SQL) |
-| [performance-audit](../skills/performance-audit/SKILL.md) | Before release / on suspicion |
-| [api-design-audit](../skills/api-design-audit/SKILL.md) | Once per sprint |
-| [bot-audit](../skills/bot-audit/SKILL.md) | Once per sprint |
-| [i18n-audit](../skills/i18n-audit/SKILL.md) | Once per sprint |
-| [version-audit](../skills/version-audit/SKILL.md) | Once per sprint |
-| [tech-debt-audit](../skills/tech-debt-audit/SKILL.md) | Once per sprint / before quarterly planning |
-| [test-audit](../skills/test-audit/SKILL.md) | After 3-5 features / before release |
-| [simplicity-audit](../skills/simplicity-audit/SKILL.md) | Once per sprint / when code is hard to explain |
-| [ux-audit](../skills/ux-audit/SKILL.md) | During UI rework / before beta |
-| [type-safety](../skills/type-safety/SKILL.md) | On PR with Domain/DTO / when refactoring identifiers |
-| [skeptical-ai-bootstrap](../skills/skeptical-ai-bootstrap/SKILL.md) | Once at project start |
-| [adaptation-guide](../skills/ADAPTATION.md) | Before first skill run |
+| [code-review](../templates/skills/code-review/SKILL.md) | On every PR |
+| [task-compliance](../templates/skills/task-compliance/SKILL.md) | On every PR |
+| [security-audit](../templates/skills/security-audit/SKILL.md) | Once per sprint / on PR with Api/Infra |
+| [dba-audit](../templates/skills/dba-audit/SKILL.md) | Once per sprint / on migrations (EF Core) |
+| [dba-audit-dapper](../templates/skills/dba-audit-dapper/SKILL.md) | Once per sprint / on repository changes (Dapper / Raw SQL) |
+| [performance-audit](../templates/skills/performance-audit/SKILL.md) | Before release / on suspicion |
+| [api-design-audit](../templates/skills/api-design-audit/SKILL.md) | Once per sprint |
+| [bot-audit](../templates/skills/bot-audit/SKILL.md) | Once per sprint |
+| [i18n-audit](../templates/skills/i18n-audit/SKILL.md) | Once per sprint |
+| [version-audit](../templates/skills/version-audit/SKILL.md) | Once per sprint |
+| [tech-debt-audit](../templates/skills/tech-debt-audit/SKILL.md) | Once per sprint / before quarterly planning |
+| [test-audit](../templates/skills/test-audit/SKILL.md) | After 3-5 features / before release |
+| [simplicity-audit](../templates/skills/simplicity-audit/SKILL.md) | Once per sprint / when code is hard to explain |
+| [ux-audit](../templates/skills/ux-audit/SKILL.md) | During UI rework / before beta |
+| [type-safety](../templates/skills/type-safety/SKILL.md) | On PR with Domain/DTO / when refactoring identifiers |
+| [skeptical-ai-bootstrap](../.agents/skills/skeptical-ai-bootstrap/SKILL.md) | Once at project start |
+| [adaptation-guide](../templates/skills/ADAPTATION.md) | Before first skill run |
 
 ### Artifact Grooming
 
 | Skill | When to run |
 |-------|-------------|
-| [memory-hygiene](../skills/memory-hygiene/SKILL.md) | Once per sprint or on agent change |
-| [doc-hygiene](../skills/doc-hygiene/SKILL.md) | Once per sprint or after refactoring |
-| [backlog-hygiene](../skills/backlog-hygiene/SKILL.md) | Once per sprint |
+| [memory-hygiene](../templates/skills/memory-hygiene/SKILL.md) | Once per sprint or on agent change |
+| [doc-hygiene](../templates/skills/doc-hygiene/SKILL.md) | Once per sprint or after refactoring |
+| [backlog-hygiene](../templates/skills/backlog-hygiene/SKILL.md) | Once per sprint |
 
 ---
 
@@ -108,12 +108,12 @@ Read before implementation — each trap explains **why** a guardrail exists.
 | [context-blindness](traps/context-blindness.md) | Agent does not see business context | [AGENTS.md](../rules/AGENTS_TEMPLATE.md) |
 | [false-safety](traps/false-safety.md) | Green CI ≠ working code | [verify-tests.sh](../ci/scripts/verify-tests.sh) |
 | [p50-vs-max](traps/p50-vs-max.md) | Average latency is good, tail is terrible | [LoadTest.cs](../tests/patterns/LoadTest.cs) |
-| [agent-circles](traps/agent-circles.md) | Agents loop on one problem | [task-compliance](../skills/task-compliance/SKILL.md) |
+| [agent-circles](traps/agent-circles.md) | Agents loop on one problem | [task-compliance](../templates/skills/task-compliance/SKILL.md) |
 | [stale-stack](traps/stale-stack.md) | Agent uses outdated stack due to training cutoff | [VersionAuditTest.cs](../tests/patterns/VersionAuditTest.cs) |
 | [log-leak](traps/log-leak.md) | PII leaks into logs | [PiiGuardTest.cs](../tests/patterns/PiiGuardTest.cs) |
 | [code-duplication](traps/code-duplication.md) | Agent duplicates business logic instead of reuse | [DuplicationGuardTest.cs](../tests/patterns/DuplicationGuardTest.cs) |
 | [dependency-drift](traps/dependency-drift.md) | +1 using/#include closes a cycle in the dependency graph | [DependencyDriftTest.cs](../tests/patterns/DependencyDriftTest.cs) |
-| [over-engineering](traps/over-engineering.md) | Agent builds an architectural cathedral instead of a simple solution | [simplicity-audit](../skills/simplicity-audit/SKILL.md) |
+| [over-engineering](traps/over-engineering.md) | Agent builds an architectural cathedral instead of a simple solution | [simplicity-audit](../templates/skills/simplicity-audit/SKILL.md) |
 
 ---
 
@@ -124,8 +124,8 @@ Read before implementation — each trap explains **why** a guardrail exists.
 | [architecture-tests.md](solutions/architecture-tests.md) | Detailed guide to NetArchTest.eNhancedEdition + regex scanning |
 | [ai-patterns.md](solutions/ai-patterns.md) | 9 proven AI-driven development patterns |
 | [human-audit-bridge.md](solutions/human-audit-bridge.md) | How to use AI checklists for manual human audit |
-| [ARCHITECTURE-INVENTORY.md](../skills/skeptical-ai-bootstrap/ARCHITECTURE-INVENTORY.md) | Template for recording current architecture before implementing guardrails |
-| [DECISION-GUARDS.md](../skills/skeptical-ai-bootstrap/DECISION-GUARDS.md) | Template for intentional deviation registry (`PERF-###`, `DB-###`, `AUD-###`) |
+| [ARCHITECTURE-INVENTORY.md](../templates/skills/skeptical-ai-bootstrap/ARCHITECTURE-INVENTORY.md) | Template for recording current architecture before implementing guardrails |
+| [DECISION-GUARDS.md](../templates/skills/skeptical-ai-bootstrap/DECISION-GUARDS.md) | Template for intentional deviation registry (`PERF-###`, `DB-###`, `AUD-###`) |
 
 ---
 

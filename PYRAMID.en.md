@@ -103,7 +103,7 @@ From practice: 8 review commits with findings:
 
 **Checklist:** when reviewing a commit with `fix:` — check for `BUG*Tests.cs`.
 
-**Artifact:** `skills/code-review/`
+**Artifact:** `templates/skills/code-review/`
 
 ---
 
@@ -172,22 +172,22 @@ From practice: 8 review commits with findings:
 
 This is not a "feedback level" — it's a **repeatable persona**. Without skills, outer loop becomes chaotic manual browsing.
 
-- `skills/security-audit/`, `skills/dba-audit/` etc. — narrow personas with `CHECKLIST.md`
+- `templates/skills/security-audit/`, `templates/skills/dba-audit/` etc. — narrow personas with `CHECKLIST.md`
 - Run in batches — cross-pollination of findings between security and UX, performance and DB schema
 - Each skill = an agent role you can run anytime with the same result
 
 | Audit | Artifact |
 |-------|----------|
-| Security | `skills/security-audit/` |
-| DBA | `skills/dba-audit/` |
-| Performance | `skills/performance-audit/` |
-| i18n | `skills/i18n-audit/` |
-| API Design | `skills/api-design-audit/` |
-| Tech Debt | `skills/tech-debt-audit/` |
-| Test Coverage | `skills/test-audit/` |
-| UX Flow | `skills/ux-audit/` |
-| Simplicity | `skills/simplicity-audit/` |
-| Version | `skills/version-audit/` |
+| Security | `templates/skills/security-audit/` |
+| DBA | `templates/skills/dba-audit/` |
+| Performance | `templates/skills/performance-audit/` |
+| i18n | `templates/skills/i18n-audit/` |
+| API Design | `templates/skills/api-design-audit/` |
+| Tech Debt | `templates/skills/tech-debt-audit/` |
+| Test Coverage | `templates/skills/test-audit/` |
+| UX Flow | `templates/skills/ux-audit/` |
+| Simplicity | `templates/skills/simplicity-audit/` |
+| Version | `templates/skills/version-audit/` |
 
 **Schedule:** once per sprint or ad-hoc when you smell danger.
 
@@ -327,9 +327,9 @@ pyramid depends on.
 
 | Skill | What it cleans | Frequency |
 |-------|---------------|-----------|
-| `skills/memory-hygiene/` | Auto Memory: duplicates, hierarchical drift, stale refs | Once per sprint or on agent change |
-| `skills/doc-hygiene/` | AGENTS.md: hierarchy consistency, code drift, cross-agent docs | Once per sprint or after module refactoring |
-| `skills/backlog-hygiene/` | Backlog: stale, orphaned, duplicates, priority drift | Once per sprint |
+| `templates/skills/memory-hygiene/` | Auto Memory: duplicates, hierarchical drift, stale refs | Once per sprint or on agent change |
+| `templates/skills/doc-hygiene/` | AGENTS.md: hierarchy consistency, code drift, cross-agent docs | Once per sprint or after module refactoring |
+| `templates/skills/backlog-hygiene/` | Backlog: stale, orphaned, duplicates, priority drift | Once per sprint |
 
 ### The invisible decay paradox
 

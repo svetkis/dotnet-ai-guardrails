@@ -118,7 +118,7 @@ Whitelist для исключений (write-path) сам проверяется
 
 **Чеклист:** при ревью коммита с `fix:` — проверить наличие `BUG*Tests.cs`.
 
-**Артефакт:** `skills/code-review/`
+**Артефакт:** `templates/skills/code-review/`
 
 ---
 
@@ -187,22 +187,22 @@ Whitelist для исключений (write-path) сам проверяется
 
 Это не «уровень обратной связи» — это **повторяемая персона**. Без скиллов outer loop превращается в хаотичный ручной просмотр.
 
-- `skills/security-audit/`, `skills/dba-audit/` и др. — узкие персоны с `CHECKLIST.md`
+- `templates/skills/security-audit/`, `templates/skills/dba-audit/` и др. — узкие персоны с `CHECKLIST.md`
 - Запускаются пачками (batch) — cross-pollination находок между security и UX, performance и DB schema
 - Каждый скилл = роль агента, которую можно запустить в любой момент с одинаковым результатом
 
 | Аудит | Артефакт |
 |-------|----------|
-| Security | `skills/security-audit/` |
-| DBA | `skills/dba-audit/` |
-| Performance | `skills/performance-audit/` |
-| i18n | `skills/i18n-audit/` |
-| API Design | `skills/api-design-audit/` |
-| Tech Debt | `skills/tech-debt-audit/` |
-| Test Coverage | `skills/test-audit/` |
-| UX Flow | `skills/ux-audit/` |
-| Simplicity | `skills/simplicity-audit/` |
-| Version | `skills/version-audit/` |
+| Security | `templates/skills/security-audit/` |
+| DBA | `templates/skills/dba-audit/` |
+| Performance | `templates/skills/performance-audit/` |
+| i18n | `templates/skills/i18n-audit/` |
+| API Design | `templates/skills/api-design-audit/` |
+| Tech Debt | `templates/skills/tech-debt-audit/` |
+| Test Coverage | `templates/skills/test-audit/` |
+| UX Flow | `templates/skills/ux-audit/` |
+| Simplicity | `templates/skills/simplicity-audit/` |
+| Version | `templates/skills/version-audit/` |
 
 **График:** раз в спринт или точечно, когда чуете опасность.
 
@@ -342,9 +342,9 @@ Whitelist для исключений (write-path) сам проверяется
 
 | Скилл | Что чистит | Периодичность |
 |-------|-----------|---------------|
-| `skills/memory-hygiene/` | Auto Memory: дубли, hierarchical drift, stale refs | Раз в спринт или при смене агента |
-| `skills/doc-hygiene/` | AGENTS.md: консистентность иерархии, code drift, cross-agent docs | Раз в спринт или после рефакторинга модулей |
-| `skills/backlog-hygiene/` | Бэклог: stale, orphaned, duplicates, priority drift | Раз в спринт |
+| `templates/skills/memory-hygiene/` | Auto Memory: дубли, hierarchical drift, stale refs | Раз в спринт или при смене агента |
+| `templates/skills/doc-hygiene/` | AGENTS.md: консистентность иерархии, code drift, cross-agent docs | Раз в спринт или после рефакторинга модулей |
+| `templates/skills/backlog-hygiene/` | Бэклог: stale, orphaned, duplicates, priority drift | Раз в спринт |
 
 ### Парадокс невидимой деградации
 

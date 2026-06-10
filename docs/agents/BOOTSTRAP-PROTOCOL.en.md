@@ -22,7 +22,7 @@ Else:
 - You are inside the methodology repository.
 - Your task: **read artifacts**, explain them to the user, help adapt.
 - **FORBIDDEN:** modify this repo without explicit request.
-- **FORBIDDEN:** copy the structure of `examples/`, `skills/`, `tests/` anywhere.
+- **FORBIDDEN:** copy the structure of `examples/`, `templates/skills/`, `tests/` anywhere.
 
 ### TARGET MODE
 - You are inside a third-party .NET project.
@@ -39,7 +39,7 @@ Else:
 |------|---------------------|--------------------|------------------|
 | `examples/DemoProject.sln` | A full .NET project with tests | "I need to create a similar project for the user" | This is a DEMONSTRATION of the methodology, not a template to copy |
 | `tests/patterns/ArchitectureRules.cs` | Ready-made C# code | "I need to create `tests/patterns/` and write code" | Adapt existing tests in the target repo, or create a report with recommendations |
-| `skills/*/SKILL.md` | Skill instructions | "I need to create `.kimi/skills/` with all skills" | Copy only markdown skill files, adapting to the stack. Do NOT create `.cs` skill files. |
+| `templates/skills/*/SKILL.md` | Skill instructions | "I need to create `.kimi/skills/` with all skills" | Copy only markdown skill files, adapting to the stack. Do NOT create `.cs` skill files. |
 | `AGENTS.md` with `[ADAPT]` | A template with placeholders | "I need to fill it and create a full project" | Replace `[ADAPT]` with target project specifics, save as `AGENTS.md`. |
 
 ---
@@ -63,7 +63,7 @@ Else:
 |------|---------|---------------|
 | Demo projects | `examples/DemoProject/`, `DemoProject.Traps/`, `DemoProject.MinimalApi/`, `DemoProject.sln` | These are methodology examples, not target code |
 | New projects | `MyApp.Tests.csproj` (created from scratch) | Assessment agent does not write production code |
-| Methodology folders in root | `rules/`, `skills/`, `tests/patterns/` in target repo root | Target project has its own structure. Exception: `.kimi/skills/` for markdown skills — normal |
+| Methodology folders in root | `rules/`, `templates/skills/`, `tests/patterns/` in target repo root | Target project has its own structure. Exception: `.kimi/skills/` for markdown skills — normal |
 | Code "for example" | `// Here's how it should look:` + 20 lines of C# | Agent must not generate unimplemented code in a working codebase |
 
 ---
@@ -92,7 +92,7 @@ User asks: "Adapt the code-review skill for my stack"
     │
     ▼
 Are you in the target project?
-    ├── YES → Read skills/code-review/SKILL.md from dotnet-skeptical-ai (if available) →
+    ├── YES → Read templates/skills/code-review/SKILL.md from dotnet-skeptical-ai (if available) →
     │        Adapt text → Save to .kimi/skills/code-review/SKILL.md (markdown only!)
     └── NO → "Install me in the target project or provide its path."
 ```

@@ -56,10 +56,10 @@ This is the same business rule, but the automated test **will not see it**.
 Regex scanning for literal copying. Catches agent copy-paste. See `tests/patterns/DuplicationGuardTest.cs`.
 
 ### 2. Code Review: Semantic Duplication in diff
-The reviewer agent checks: if validation/calculation was added in the PR — does similar logic already exist in other services? See `skills/code-review/CHECKLIST.md`.
+The reviewer agent checks: if validation/calculation was added in the PR — does similar logic already exist in other services? See `templates/skills/code-review/CHECKLIST.md`.
 
 ### 3. Tech Debt Audit: Semantic Duplication across codebase
-An agent (and regex) cannot recognize **semantic** duplication across the entire codebase. This is the task of the Tech Lead persona-audit, run once per sprint. See `skills/tech-debt-audit/SKILL.md`.
+An agent (and regex) cannot recognize **semantic** duplication across the entire codebase. This is the task of the Tech Lead persona-audit, run once per sprint. See `templates/skills/tech-debt-audit/SKILL.md`.
 
 Audit checklist:
 - [ ] New validation/status calculation — does similar logic exist in other services?

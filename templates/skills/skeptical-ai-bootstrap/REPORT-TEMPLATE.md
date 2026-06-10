@@ -48,9 +48,9 @@
 
 | Артефакт | Причина отклонения | Чем заменили | Статус |
 |----------|-------------------|--------------|--------|
-| `skills/code-review/` (стандартный) | Проект без Clean Architecture — проверка слоёв даёт 100% false positives | Адаптирован: убрана проверка слоёв, добавлены правила Minimal API | Адаптирован |
+| `templates/skills/code-review/` (стандартный) | Проект без Clean Architecture — проверка слоёв даёт 100% false positives | Адаптирован: убрана проверка слоёв, добавлены правила Minimal API | Адаптирован |
 | `tests/patterns/SnapshotTest.cs` | Worker Service — нет HTTP, OpenAPI не существует | Создан `e2e-worker` — проверка обработки сообщений из очереди | Создан новый |
-| `skills/dba-audit/` | Dapper вместо EF Core — миграции и `Include()` неприменимы | Создан `dba-audit-dapper` | Создан новый |
+| `templates/skills/dba-audit/` | Dapper вместо EF Core — миграции и `Include()` неприменимы | Создан `dba-audit-dapper` | Создан новый |
 
 ---
 
@@ -58,12 +58,12 @@
 
 Для каждого адаптированного скилла:
 
-### `skills/security-audit/`
+### `templates/skills/security-audit/`
 - **Что изменено:** Заменена проверка `[Authorize]` на `.RequireAuthorization()` для Minimal API
 - **Какие проверки вычеркнуты:** MVC-атрибуты авторизации
 - **Какие добавлены:** Проверка защиты webhook'ов через secret token; проверка middleware-авторизации
 
-### `skills/performance-audit/`
+### `templates/skills/performance-audit/`
 - **Что изменено:** Добавлено исключение для `.Select()`-проекций (не требуют AsNoTracking)
 - **Какие проверки вычеркнуты:** AsNoTracking на read-path с проекциями
 - **Какие добавлены:** Исключение для raw SQL (`FromSqlRaw`) — Change Tracker их не отслеживает

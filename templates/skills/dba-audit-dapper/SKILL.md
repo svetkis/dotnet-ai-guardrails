@@ -20,7 +20,7 @@ description: >
 
 ## Адаптация под проект
 
-- **EF Core (нет Dapper)** → используй `skills/dba-audit/` (EF-специфичный аудит)
+- **EF Core (нет Dapper)** → используй `templates/skills/dba-audit/` (EF-специфичный аудит)
 - **SQL Server вместо PostgreSQL** → адаптируй типы данных (`datetimeoffset` вместо `timestamptz`, `nvarchar` вместо `varchar`) и синтаксис
 - **NoSQL (Mongo)** → пропусти реляционные проверки, фокус на индексах и схеме документов
 

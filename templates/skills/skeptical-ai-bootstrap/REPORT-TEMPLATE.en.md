@@ -48,9 +48,9 @@ For each rejected ready-made artifact:
 
 | Artifact | Reason for rejection | Replaced with | Status |
 |----------|---------------------|---------------|--------|
-| `skills/code-review/` (standard) | Project without Clean Architecture — layer checks give 100% false positives | Adapted: removed layer checks, added Minimal API rules | Adapted |
+| `templates/skills/code-review/` (standard) | Project without Clean Architecture — layer checks give 100% false positives | Adapted: removed layer checks, added Minimal API rules | Adapted |
 | `tests/patterns/SnapshotTest.cs` | Worker Service — no HTTP, OpenAPI does not exist | Created `e2e-worker` — check message processing from queue | Created new |
-| `skills/dba-audit/` | Dapper instead of EF Core — migrations and `Include()` are not applicable | Created `dba-audit-dapper` | Created new |
+| `templates/skills/dba-audit/` | Dapper instead of EF Core — migrations and `Include()` are not applicable | Created `dba-audit-dapper` | Created new |
 
 ---
 
@@ -58,12 +58,12 @@ For each rejected ready-made artifact:
 
 For each adapted skill:
 
-### `skills/security-audit/`
+### `templates/skills/security-audit/`
 - **What changed:** Replaced `[Authorize]` check with `.RequireAuthorization()` for Minimal API
 - **What checks were removed:** MVC authorization attributes
 - **What was added:** Webhook protection check via secret token; middleware authorization check
 
-### `skills/performance-audit/`
+### `templates/skills/performance-audit/`
 - **What changed:** Added exception for `.Select()` projections (do not require AsNoTracking)
 - **What checks were removed:** AsNoTracking on read-path with projections
 - **What was added:** Exception for raw SQL (`FromSqlRaw`) — Change Tracker does not track them

@@ -56,7 +56,7 @@ The test will say "many generic parameters" but won't explain why they exist.
 ## Solution
 
 ### 1. Simplicity Audit — Persona Auditor
-An agent runs once per sprint with a simplicity checklist. See `skills/simplicity-audit/SKILL.md`.
+An agent runs once per sprint with a simplicity checklist. See `templates/skills/simplicity-audit/SKILL.md`.
 
 Checklist:
 - [ ] Interface with one implementation — can it be replaced with a class?
@@ -67,7 +67,7 @@ Checklist:
 - [ ] Methods with > 5 parameters — extract into a DTO?
 
 ### 2. Code Review: "Explain to a Junior" `[ADAPT]`
-Add to your `skills/code-review/CHECKLIST.md`:
+Add to your `templates/skills/code-review/CHECKLIST.md`:
 > If a solution cannot be explained to a junior developer in 5 minutes, it is too complex.
 
 ### 3. AGENTS.md: "Simplicity > Pattern" Rule `[ADAPT]`
@@ -124,4 +124,4 @@ Not: "might come in handy". Only: "already hurts without it".
 
 ## Pattern
 
-See `skills/simplicity-audit/SKILL.md` and `skills/simplicity-audit/CHECKLIST.md`
+See `templates/skills/simplicity-audit/SKILL.md` and `templates/skills/simplicity-audit/CHECKLIST.md`

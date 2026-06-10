@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `docs/traps/stale-stack.md` — ловушка "Устаревший стек": агент использует preview SDK или устаревшие NuGet-пакеты из-за training cutoff.
 - `docs/traps/log-leak.md` — ловушка "Утечка данных в логи": агент логирует email, phone, password.
 - `docs/relationships.mmd` — граф связей guardrails, traps и obstacles (Mermaid).
-- `skills/version-audit/` — новый скилл аудита актуальности стека (SDK, NuGet, frontend, CI actions).
+- `templates/skills/version-audit/` — новый скилл аудита актуальности стека (SDK, NuGet, frontend, CI actions).
 - `tests/patterns/VersionAuditTest.cs` — тест-паттерн: regex-сканирование `global.json`, `*.csproj`, `package.json` на preview-флаги и рассогласование версий.
 - `tests/patterns/PiiGuardTest.cs` — тест-паттерн: `[SensitiveData]` attribute + ratchet + regex-сканирование Log* вызовов на PII.
 - `docs/solutions/ai-patterns.md` — паттерн #9: Attribute-driven PII redaction (compile-time + runtime).
@@ -50,7 +50,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 5-layer inner-loop pyramid documented in `PYRAMID.md`.
 - `rules/AGENTS_TEMPLATE.md` — EF Core, PostgreSQL, API/DTO, caching, and commit conventions.
 - `rules/CONVENTIONS.md` — naming, workflow, and CI guardrails.
-- `skills/` — 8 agent roles: code-review, task-compliance, security-audit, dba-audit, ux-audit, performance-audit, i18n-audit, skeptical-ai-bootstrap.
+- `templates/skills/` — 8 agent roles: code-review, task-compliance, security-audit, dba-audit, ux-audit, performance-audit, i18n-audit, skeptical-ai-bootstrap.
 - `tests/patterns/` — template tests: ArchitectureRules, RatchetTest, SnapshotTest, LoadTest.
 - `tests/conventions/` — BUG_TEMPLATE.cs, TUnit_Guide.md.
 - `docs/traps/` — 6 documented agent traps: agent-circles, context-blindness, false-safety, p50-vs-max, silent-breakdown, vibe-refactoring.

@@ -11,7 +11,7 @@
 
 ## Code Drift
 - [ ] Every AGENTS.md rule has a guardrail in code or CI
-- [ ] Mentioned skills/tests exist in `skills/`, `tests/`
+- [ ] Mentioned templates/skills/tests exist in `templates/skills/`, `tests/`
 - [ ] Decision Guards from AGENTS.md found in code
 
 ## Dead Rules
@@ -22,7 +22,7 @@
 ## Cross-Agent
 - [ ] All `docs/agents/*.md` are consistent with root `AGENTS.md`
 - [ ] Pipeline descriptions are identical for all agents (format differs, substance does not)
-- [ ] No links to deleted skills/modules
+- [ ] No links to deleted templates/skills/modules
 
 ## Fact Check (Documentation vs Code)
 - [ ] All numbers in reports/docs verified via `git log` / `wc` / `grep`

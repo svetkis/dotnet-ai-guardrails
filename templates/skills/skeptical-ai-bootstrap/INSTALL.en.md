@@ -12,7 +12,7 @@ From the `dotnet-skeptical-ai` repository, copy the folder into your project:
 
 ```bash
 # From the root of YOUR .NET project
-cp -r /path/to/dotnet-skeptical-ai/skills/skeptical-ai-bootstrap ./.kimi/skills/
+cp -r /path/to/dotnet-skeptical-ai/templates/skills/skeptical-ai-bootstrap ./.kimi/skills/
 ```
 
 Or manually:
@@ -68,9 +68,9 @@ The report contains links to artifacts from `dotnet-skeptical-ai`:
 | Architecture tests | `dotnet-skeptical-ai/tests/patterns/ArchitectureRules.cs` |
 | Ratchet tests | `dotnet-skeptical-ai/tests/patterns/RatchetTest.cs` |
 | CI workflow | `dotnet-skeptical-ai/ci/github-actions/safe-ci.yml` |
-| Code review skill | `dotnet-skeptical-ai/skills/code-review/` (RU or EN — one language) |
-| Audits | `dotnet-skeptical-ai/skills/*-audit/` (RU or EN — one language) |
-| Grooming | `dotnet-skeptical-ai/skills/memory-hygiene/`, `doc-hygiene/`, `backlog-hygiene/` (RU or EN — one language) |
+| Code review skill | `dotnet-skeptical-ai/templates/skills/code-review/` (RU or EN — one language) |
+| Audits | `dotnet-skeptical-ai/templates/skills/*-audit/` (RU or EN — one language) |
+| Grooming | `dotnet-skeptical-ai/templates/skills/memory-hygiene/`, `doc-hygiene/`, `backlog-hygiene/` (RU or EN — one language) |
 
 **Recommendation:** fork `dotnet-skeptical-ai` and reference artifacts from your fork — this way you control versions.
 
@@ -94,7 +94,7 @@ See `docs/agents/` for details on each agent:
 **If you are an AI agent executing this skill:**
 
 1. **Do NOT create demo projects.** Do not create `examples/`, `DemoProject/`, or new `.csproj`/`.sln`.
-2. **Do NOT copy the folder structure** of this repository (`rules/`, `skills/`, `tests/patterns/`) into the target project.
+2. **Do NOT copy the folder structure** of this repository (`rules/`, `templates/skills/`, `tests/patterns/`) into the target project.
 3. **Your output is markdown only:** reports, checklists, `.backlog/*.md`, `AGENTS.md`, `CONVENTIONS.md`.
 4. **Your task:** read target project → assess → plan. Do not write code "as an example" or "to demonstrate".
 

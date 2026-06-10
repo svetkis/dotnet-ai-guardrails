@@ -32,7 +32,7 @@ We follow a **responsible disclosure** approach:
 Security issues within scope include:
 - Vulnerabilities in test patterns or CI templates that could lead to unsafe defaults
 - Insecure code examples in `examples/DemoProject/`
-- Misleading security guidance in `skills/security-audit/`
+- Misleading security guidance in `templates/skills/security-audit/`
 
 Out of scope:
 - Third-party dependencies (report to their maintainers)

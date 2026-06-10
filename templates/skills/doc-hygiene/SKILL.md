@@ -61,7 +61,7 @@ description: >
 ### Phase 2: Code Drift
 1. `AGENTS.md` запрещает `.FindAsync()` в read-path → есть ли regex-тест?
 2. `AGENTS.md` требует `BUG###_` тесты → есть ли convention в `tests/`?
-3. Упомянутые модули/скиллы существуют в `skills/`, `tests/`?
+3. Упомянутые модули/скиллы существуют в `templates/skills/`, `tests/`?
 4. Decision Guards (`PERF-###`) из `AGENTS.md` реально есть в коде?
 
 ### Phase 2a: Rule Vitality
@@ -87,7 +87,7 @@ description: >
 2. Все даты коммитов/релизов соответствуют `git log`
 3. Все имена файлов и номера строк из примеров существуют в текущей кодовой базе
 4. Все ссылки на Decision Guards (`PERF-###`, `DB-###`, `BR-###`) ведут на существующий код
-5. Все ссылки на скиллы/тесты существуют в `skills/`, `tests/`, `examples/`
+5. Все ссылки на скиллы/тесты существуют в `templates/skills/`, `tests/`, `examples/`
 6. Все `case study` / `incident report` содержат корректные хеши коммитов (`git show --stat`)
 
 ### Phase 4: README & CHANGELOG
@@ -123,7 +123,7 @@ description: >
 - [ ] `AGENTS.md` §6.1 запрещает raw SQL без комментария — enforcement не найден (> 90 дней)
 
 ### Cross-Agent
-- [ ] `docs/agents/KIMI.md` ссылается на удалённый `skills/legacy-audit/`
+- [ ] `docs/agents/KIMI.md` ссылается на удалённый `templates/skills/legacy-audit/`
 
 ### Fact Check
 - [ ] В отчёте `AGENT_FIX_STATS.md` 450 fix-коммитов, факт — 377 (`git log --grep='fix:' | wc -l`)
@@ -144,7 +144,7 @@ description: >
 ## Ключевое правило
 
 > AGENTS.md — единый источник правды для архитектурных guardrail.
-> Всё остальное (docs/agents/, skills/) — derived. Если расходится —
+> Всё остальное (docs/agents/, templates/skills/) — derived. Если расходится —
 > обновлять derived, не корень.
 > Мёртвое правило хуже, чем отсутствующее. Если нет enforcement —
 > удалить или добавить guardrail.
