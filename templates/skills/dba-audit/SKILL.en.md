@@ -98,8 +98,8 @@ Every finding MUST include:
 ## DBA Audit — {date}
 
 ### BLOCKER
-- [ ] [CERTAIN] Migration `20250615_AddOrderIndex` creates index without `CONCURRENTLY` on a 50M record table
-  → `src/Infrastructure/Migrations/20250615_AddOrderIndex.cs:12`
+- [ ] [CERTAIN] Migration `20260615_AddOrderIndex` creates index without `CONCURRENTLY` on a 50M record table
+  → `src/Infrastructure/Migrations/20260615_AddOrderIndex.cs:12`
   → Code: `migrationBuilder.CreateIndex("ix_orders_status", "orders", "status")`
   → Fix: `CREATE INDEX CONCURRENTLY ix_orders_status ON orders (status)`
 
@@ -126,7 +126,7 @@ Every finding MUST include:
 
 ### MINOR
 - [ ] [REVIEW] Composite index `ix_orders_status_created` — column order may be suboptimal
-  → `src/Infrastructure/Migrations/20250610_AddCompositeIndex.cs:8`
+  → `src/Infrastructure/Migrations/20260610_AddCompositeIndex.cs:8`
   → Code: `.HasIndex(["Status", "CreatedAt", "UserId"])`
   → Fix: if filter is only by `Status` — order is ok. If range by `CreatedAt` — `Status, CreatedAt` is correct.
 

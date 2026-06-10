@@ -43,7 +43,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `tests/conventions/TUnit_Guide.md` — added note about TUnit 1.x auto-generated entry point (no `Program.cs` required).
 - `README.md` and `README.en.md` — added badges (.NET 10, License, CI), author section, and community contacts.
 
-## [0.1.0] - 2025-05-29
+## [0.1.0] - 2026-05-29
 
 ### Added
 - Initial release of defensive artifacts for .NET agentic engineering.

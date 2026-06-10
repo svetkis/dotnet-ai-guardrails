@@ -7,7 +7,7 @@
 
 # Onboarding Report: Logistics.Worker
 
-**Дата:** 2025-06-15  
+**Дата:** 2026-06-15  
 **Режим:** standard  
 **Агент:** skeptical-ai-bootstrap
 

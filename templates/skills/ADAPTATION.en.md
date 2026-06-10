@@ -42,7 +42,7 @@
 
 ## Confidence Level: how to interpret
 
-All audit skills since version 2025-06 mark findings with a confidence level:
+All audit skills since version 2026-06 mark findings with a confidence level:
 
 | Marker | Meaning | Action |
 |---|---|---|

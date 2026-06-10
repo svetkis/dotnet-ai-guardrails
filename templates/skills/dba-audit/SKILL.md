@@ -98,8 +98,8 @@
 ## DBA Audit — {дата}
 
 ### BLOCKER
-- [ ] [CERTAIN] Миграция `20250615_AddOrderIndex` создаёт индекс без `CONCURRENTLY` на таблице 50M записей
-  → `src/Infrastructure/Migrations/20250615_AddOrderIndex.cs:12`
+- [ ] [CERTAIN] Миграция `20260615_AddOrderIndex` создаёт индекс без `CONCURRENTLY` на таблице 50M записей
+  → `src/Infrastructure/Migrations/20260615_AddOrderIndex.cs:12`
   → Code: `migrationBuilder.CreateIndex("ix_orders_status", "orders", "status")`
   → Fix: `CREATE INDEX CONCURRENTLY ix_orders_status ON orders (status)`
 
@@ -126,7 +126,7 @@
 
 ### MINOR
 - [ ] [REVIEW] Composite index `ix_orders_status_created` — порядок колонок может быть неоптимальным
-  → `src/Infrastructure/Migrations/20250610_AddCompositeIndex.cs:8`
+  → `src/Infrastructure/Migrations/20260610_AddCompositeIndex.cs:8`
   → Code: `.HasIndex(["Status", "CreatedAt", "UserId"])`
   → Fix: если фильтр только по `Status` — порядок ок. Если диапазон по `CreatedAt` — `Status, CreatedAt` правильно.
 

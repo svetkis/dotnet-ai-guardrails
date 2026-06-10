@@ -100,7 +100,7 @@ description: >
 ## Backlog Hygiene Report
 
 ### Stale (>90 дней)
-- [ ] `.backlog/legacy-migration.md` — последнее обновление 2025-11-10
+- [ ] `.backlog/legacy-migration.md` — последнее обновление 2026-02-10
 
 ### Orphaned
 - [ ] `docs/specs/payment-v2.md` — реализовано в PR #447, не закрыто

@@ -100,7 +100,7 @@ the project's current reality.
 ## Backlog Hygiene Report
 
 ### Stale (>90 days)
-- [ ] `.backlog/legacy-migration.md` — last updated 2025-11-10
+- [ ] `.backlog/legacy-migration.md` — last updated 2026-02-10
 
 ### Orphaned
 - [ ] `docs/specs/payment-v2.md` — implemented in PR #447, not closed
