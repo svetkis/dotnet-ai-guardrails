@@ -1,6 +1,6 @@
 # .NET Skeptical AI Engineering
 
-Quality control methodology when working with AI agents. Based on the talk "AI is confident. I am not" (Dotnext 2026).
+AI-accelerated quality control methodology for .NET teams. Extending DORA practices: if AI can assist review, it can scale audits, load testing, and architecture guardrails too. Based on the talk "AI is confident. I am not" (Dotnext 2026).
 
 [🇷🇺 Русская версия](README.md)
 
@@ -8,7 +8,15 @@ Quality control methodology when working with AI agents. Based on the talk "AI i
 ![License MIT](https://img.shields.io/badge/License-MIT-green.svg)
 ![CI](https://github.com/svetkis/dotnet-skeptical-ai/workflows/DemoProject%20CI/badge.svg)
 
+> Although examples and tests are implemented in .NET, the methodology itself — Decision Guards, three-layer verification loops, and prompt hygiene — applies to any stack.
+
 This repository contains ready-made artifacts for .NET projects: rules, skills, test patterns, and CI workflows.
+
+## Problem
+
+AI agents (Cursor, Claude, Copilot) speed up code writing, but generate hidden tech debt, violate architectural boundaries, and break security. Manual review of such code becomes a bottleneck.
+
+**Skeptical AI** is a Zero-Trust methodology for generated code. Control moves from probabilistic prompts into deterministic pipelines.
 
 ## How it works
 
