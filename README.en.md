@@ -204,6 +204,7 @@ Lost? Start with [docs/README.md](docs/README.md).
 | Doc grooming | `templates/skills/doc-hygiene/` |
 | Backlog grooming | `templates/skills/backlog-hygiene/` |
 | Architecture tests | `docs/solutions/architecture-tests.md` |
+| Roslyn analyzers | `docs/solutions/roslyn-analyzers.md` |
 | AI patterns | `docs/solutions/ai-patterns.md` |
 | Project onboarding | `templates/skills/skeptical-ai-bootstrap/` |
 | Working example (Clean Architecture) | `examples/DemoProject/` |

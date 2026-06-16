@@ -19,18 +19,18 @@
 
 ---
 
-## 2. Source-code Scanning in Architecture Tests — Traps for AI
+## 2. Roslyn-First Source Guardrails — Traps for AI
 
-**Pattern:** Tests scan source code with regexes:
-- `FindAsync()` — forbidden in services (whitelist of files with explanations)
-- `.Include()` — forbidden in `*QueryService*.cs`
-- `cache.Set()` without `SetSized()` — forbidden in all `src/`
+**Pattern:** Source-level C# rules are implemented as Roslyn analyzers:
+- `FindAsync()` — forbidden in read-path, allowed only in explicitly marked write-path
+- `.Include()` — forbidden in `*QueryService`, where `.Select()` projections are required
+- `[HotPath]` — forbids `new`, array allocations, `async` state machines, and boxing
 
-**Why non-standard:** These are not ordinary architecture tests via NetArchTest (dependency checking). This is regex scanning of source files at the text level, because semantic analysis via reflection cannot catch the `.Include()` vs `.Select()` pattern. Whitelist with explanations is decision documentation right in the test code.
+**Why non-standard:** Most teams leave these checks to tests or code review. Here the rule moves into the compiler layer: the agent sees a diagnostic in the IDE / `dotnet build`, before the test runner. Roslyn understands the C# semantic model; regex only sees strings.
 
-**Generalization:** Source-level anti-pattern scanning + explicit whitelist. Regex tests for forbidden API calls in specific layers.
+**Generalization:** Roslyn analyzer for C# semantic rules. Regex remains for markdown/config/manifests and temporary spike checks.
 
-**Pattern:** `tests/patterns/ArchitectureRules.cs`
+**Pattern:** `examples/DemoProject/src/DemoProject.Analyzers/`, `docs/solutions/roslyn-analyzers.md`
 
 ---
 
@@ -188,7 +188,7 @@ _logger.LogInformation("User {UserId} logged in", user.Id);
 | Pattern | Essence | Where to look |
 |---------|---------|---------------|
 | **Namespace/Type inventory ratchet** | Count public types in layer + tests | `tests/patterns/RatchetTest.cs` |
-| **Source-level anti-pattern gates** | Regex code scanning in CI, not reflection | `tests/patterns/ArchitectureRules.cs` |
+| **Roslyn-first source guardrails** | C# diagnostics in IDE / `dotnet build`, not regex over strings | `examples/DemoProject/src/DemoProject.Analyzers/` |
 | **Bug-as-fixture** | One file = one bug = all code paths | `tests/conventions/BUG_TEMPLATE.cs` |
 | **Numbered optimization decisions** | `PERF-022`, `DB-013` in code comments | [`templates/skills/skeptical-ai-bootstrap/DECISION-GUARDS.md`](../../templates/skills/skeptical-ai-bootstrap/DECISION-GUARDS.md) |
 | **Serialization contract tests** | Tests for JSON format, not business logic | `tests/patterns/SnapshotTest.cs` |

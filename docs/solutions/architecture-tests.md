@@ -7,8 +7,9 @@
 
 | Подход | Что проверяет | Библиотека |
 |--------|--------------|------------|
+| Roslyn-анализаторы | C# semantic rules: API-вызовы, типы, символы, атрибуты | Microsoft.CodeAnalysis |
 | Рефлексия сборок | Зависимости, именование, наследование | NetArchTest |
-| Сканирование исходников | Антипаттерны в коде (regex по .cs файлам) | Свой хелпер |
+| Сканирование артефактов | Markdown/config/manifests, где не нужен C# semantic model | Regex / structured parser |
 | Подсчёт типов | Количество публичных типов и тестов не уменьшается | Рефлексия |
 
 ---
@@ -42,24 +43,27 @@
 
 ---
 
-## 3. Структурные правила + Regex-сканирование
+## 3. Структурные правила: Roslyn-first
 
 **Файл:** `ArchitectureTests.Structure.cs`
 
-### EF-антипаттерны (сканирование исходников)
+### EF-антипаттерны
 
-Не только рефлексия сборок, но и **regex по .cs файлам**:
+Для C#-кода предпочтительный путь — Roslyn analyzer. Он проверяет syntax tree и semantic model, поэтому отличает реальный вызов от комментария, extension method от похожей строки, read-path от write-path по namespace/attribute/symbol.
 
 ```csharp
-// Ищем FindAsync() в сервисах (запрещено в read-path)
-var violations = ScanServicesForPattern(@"\.FindAsync\(", "*.cs", whitelist);
+// Идея правила SAE006:
+// InvocationExpression -> symbol.Name == "FindAsync"
+// + containing namespace/type/attribute определяют read-path vs write-path.
 ```
 
 | Тест | Правило |
 |------|---------|
-| `Services_ShouldNotUse_FindAsync` | Запрет `FindAsync()` — грузит полную Entity. Whitelist для write-path |
-| `QueryServices_ShouldNotUse_Include` | Запрет `.Include()` в QueryService — только `.Select()` проекции |
-| `FindAsync_Whitelist_ShouldNotBeStale` | Whitelist не протухает — если файл больше не использует FindAsync, тест падает |
+| Правило | Guardrail |
+|---------|-----------|
+| Запрет `FindAsync()` в read-path | Roslyn analyzer: реальный вызов метода, контекст read/write через namespace/attribute |
+| Запрет `.Include()` в QueryService | Roslyn analyzer: invocation chain + тип query service |
+| Исключения для write-path | Явный атрибут/namespace/decision ID вместо текстового whitelist |
 
 ### Безопасность кэша
 
@@ -232,20 +236,22 @@ await Assert.That(result.IsSuccessful).IsTrue()
 
 ---
 
-## 11. Roslyn-анализаторы как замена regex
+## 11. Roslyn-анализаторы как default для C#
 
 **Файл:** `DemoProject.Analyzers/StronglyTypedIdAnalyzer.cs`
 
-Всё, что ловится regex-сканированием исходников, можно усилить кастомным Roslyn-анализатором. Разница во времени обратной связи:
+Для C# guardrails по исходникам default choice — Roslyn analyzer. Regex ищет строки, Roslyn понимает C#: syntax tree, semantic model, типы, symbols, attributes и реальные invocation'ы. Разница во времени обратной связи:
 
 | Подход | Время обратной связи | Когда срабатывает |
 |--------|---------------------|-------------------|
-| Regex-сканирование | ~10 секунд | `dotnet test` (Слой 2) |
+| Regex-сканирование `.cs` | ~10 секунд | `dotnet run --project` (Layer 1.2), только как временный fallback |
 | Roslyn-анализатор | ~0.5 секунды | Ввод кода в IDE / `dotnet build` (Слой 1) |
 
 **Пример:** `SAE001` ловит `public Guid Id { get; init; }` в Domain-сущностях ещё до компиляции — IDE показывает красное подчёркивание. `SAE002` ловит `void DoSomething(Guid orderId)` — сырой Guid в параметре.
 
-**Когда использовать:** Если правило однозначно (нет gray area) и должно быть Error — делайте Roslyn-анализатор. Если правило требует исключений (whitelist) или проверяет архитектурные зависимости между проектами — оставьте regex / NetArchTest.
+**Когда использовать Roslyn:** если правило смотрит на C#-код и зависит от смысла языка: вызовы методов, типы, атрибуты, namespace, inheritance, generic constraints, nullable, allocation patterns.
+
+**Когда НЕ Roslyn:** если проверяешь граф зависимостей между сборками — используй NetArchTest / ArchUnitNET. Если проверяешь markdown, `.csproj`, `.yml`, lock-файлы или уникальность Decision Guard ID — используй regex или structured parser.
 
 **Рабочий пример:** `examples/DemoProject/src/DemoProject.Analyzers/`
 
@@ -285,19 +291,8 @@ public async Task MyRule_ShouldBeEnforced()
     await Assert.That(result.IsSuccessful).IsTrue();
 }
 
-// Сканирование: поиск антипаттерна в коде
-[Test]
-public async Task Services_ShouldNotUse_BadPattern()
-{
-    var violations = ScanServicesForPattern(
-        @"\.BadMethod\(",
-        "*.cs",
-        whitelist: new[] { "LegitimateUse.cs:2" });
-
-    await Assert.That(violations)
-        .IsEmpty()
-        .Because("BadMethod загружает слишком много данных");
-}
+// Для C# anti-pattern по исходникам сначала пишите Roslyn analyzer.
+// Regex оставляйте для markdown/config/manifests или временного spike.
 ```
 
 ---

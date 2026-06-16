@@ -115,7 +115,7 @@ Assert.That(cycles).IsEmpty();
 ```
 
 ### 2. Architectural test: Layer Boundaries
-NetArchTest + regex scanning catch not only cycles but also the "first crack" — a using from a forbidden layer. See `tests/patterns/ArchitectureRules.cs`.
+NetArchTest catches real assembly dependencies between layers, while a Roslyn analyzer fits C# source-level rules such as forbidden `using` statements, API calls and attributes. See `tests/patterns/ArchitectureRules.cs` and `docs/solutions/roslyn-analyzers.md`.
 
 **Rule:** add architecture tests **in the very first commit** with layered architecture. A test added after 3 months and immediately failing does not mean the test is bad. It means the graph has been drifting unnoticed.
 

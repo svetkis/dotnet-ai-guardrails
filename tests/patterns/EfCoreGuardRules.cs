@@ -1,7 +1,8 @@
 // TRAP: Агент использует EF Core антипаттерны, которые рефлексия не видит
 // или нарушает read/write path конвенции.
-// GUARDRAIL: NetArchTest + regex-сканирование исходников ловят нарушения EF-специфичных правил.
-// NOTE: Этот файл — только для проектов с EF Core. Для Dapper см. DapperGuardRules.cs.
+// GUARDRAIL: NetArchTest + starter regex checks ловят нарушения EF-специфичных правил.
+// NOTE: Для стабильных C# semantic rules (FindAsync/Include/read-path) предпочитай Roslyn analyzer.
+// Этот файл — только для проектов с EF Core. Для Dapper см. DapperGuardRules.cs.
 //
 // Адаптация под фреймворк:
 // - TUnit:  [Test] + Assert.That(result.IsSuccessful).IsTrue()

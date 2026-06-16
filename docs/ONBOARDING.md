@@ -124,7 +124,7 @@
 3. Адаптируй namespace и имена сборок под свой проект (используй таблицу из Шага 0)
 4. Добавь `RatchetTest.cs` — baseline публичных типов и тестов
 5. **Modular Monolith / Vertical Slice:** используй `Slice().ByNamespacePrefix(...).Should().NotHaveDependenciesBetweenSlices()` для проверки межмодульных зависимостей
-6. Если нужно — добавь regex-сканирование исходников (см. [`architecture-tests.md`](solutions/architecture-tests.md))
+6. Если правило смотрит на C#-исходники — предпочитай Roslyn analyzer (см. [`roslyn-analyzers.md`](solutions/roslyn-analyzers.md)); regex оставляй для config/markdown/manifests или временного spike
 7. Запусти: `dotnet run --project tests/YourProject.Tests` — тесты проходят?
 8. Посмотри живой failing demo: [`examples/DemoProject.Traps/`](../examples/DemoProject.Traps/) — 5 intentionally broken guardrails с `IType.Explanation` и ArchUnitNET
 

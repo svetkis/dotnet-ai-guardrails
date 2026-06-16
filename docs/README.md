@@ -121,7 +121,8 @@
 
 | Документ | Что внутри |
 |----------|------------|
-| [architecture-tests.md](solutions/architecture-tests.md) | Подробный гайд по NetArchTest.eNhancedEdition + regex-сканированию |
+| [architecture-tests.md](solutions/architecture-tests.md) | Подробный гайд по NetArchTest.eNhancedEdition, ArchUnitNET и границам архитектуры |
+| [roslyn-analyzers.md](solutions/roslyn-analyzers.md) | Roslyn-first guardrails для C#: diagnostics в IDE / `dotnet build` вместо regex по `.cs` |
 | [ai-patterns.md](solutions/ai-patterns.md) | 10 проверенных паттернов AI-driven разработки |
 | [human-audit-bridge.md](solutions/human-audit-bridge.md) | Как использовать AI-чеклисты для ручного аудита человеком |
 | [ARCHITECTURE-INVENTORY.md](../templates/skills/skeptical-ai-bootstrap/ARCHITECTURE-INVENTORY.md) | Шаблон фиксации текущей архитектуры перед внедрением guardrails |

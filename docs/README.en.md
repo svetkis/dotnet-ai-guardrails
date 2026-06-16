@@ -123,7 +123,8 @@ Read before implementation — each trap explains **why** a guardrail exists.
 
 | Document | What's inside |
 |----------|---------------|
-| [architecture-tests.md](solutions/architecture-tests.md) | Detailed guide to NetArchTest.eNhancedEdition + regex scanning |
+| [architecture-tests.md](solutions/architecture-tests.md) | Detailed guide to NetArchTest.eNhancedEdition, ArchUnitNET and architecture boundaries |
+| [roslyn-analyzers.md](solutions/roslyn-analyzers.md) | Roslyn-first guardrails for C#: IDE / `dotnet build` diagnostics instead of regex over `.cs` |
 | [ai-patterns.md](solutions/ai-patterns.md) | 10 proven AI-driven development patterns |
 | [human-audit-bridge.md](solutions/human-audit-bridge.md) | How to use AI checklists for manual human audit |
 | [ARCHITECTURE-INVENTORY.md](../templates/skills/skeptical-ai-bootstrap/ARCHITECTURE-INVENTORY.md) | Template for recording current architecture before implementing guardrails |

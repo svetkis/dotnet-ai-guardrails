@@ -115,7 +115,7 @@ Assert.That(cycles).IsEmpty();
 ```
 
 ### 2. Архитектурный тест: Layer Boundaries
-NetArchTest + regex-сканирование ловят не только циклы, но и "первую трещину" — using из запрещённого слоя. См. `tests/patterns/ArchitectureRules.cs`.
+NetArchTest ловит реальные assembly-зависимости между слоями, а Roslyn analyzer подходит для C# source-level правил вроде запрещённых `using`, API-вызовов и атрибутов. См. `tests/patterns/ArchitectureRules.cs` и `docs/solutions/roslyn-analyzers.md`.
 
 **Правило:** добавлять архитектурные тесты **в первый же коммит** со слоистой архитектурой. Тест, добавленный через 3 месяца, покажет красный — и это не значит, что тест плохой. Это значит, что граф дрейфовал незамеченным.
 

@@ -202,6 +202,7 @@ dotnet run --project tests/DemoProject.MinimalApi.Tests
 | Груминг доков | `templates/skills/doc-hygiene/` |
 | Груминг бэклога | `templates/skills/backlog-hygiene/` |
 | Архитектурные тесты | `docs/solutions/architecture-tests.md` |
+| Roslyn-анализаторы | `docs/solutions/roslyn-analyzers.md` |
 | Паттерны AI-разработки | `docs/solutions/ai-patterns.md` |
 | Онбординг проекта | `templates/skills/skeptical-ai-bootstrap/` |
 | Рабочий пример (Clean Architecture) | `examples/DemoProject/` |

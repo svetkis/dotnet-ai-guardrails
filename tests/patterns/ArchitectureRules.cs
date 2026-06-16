@@ -1,6 +1,7 @@
 // TRAP: Агент нарушает слоистую архитектуру, добавляет антипаттерны или создаёт дубли ID решений.
-// GUARDRAIL: NetArchTest + regex-сканирование исходников ловят универсальные нарушения,
-// независимые от ORM и тестового фреймворка.
+// GUARDRAIL: NetArchTest ловит архитектурные зависимости.
+// NOTE: Regex-проверки ниже — starter/fallback для артефактов и временных C# spikes.
+// Для стабильных C# semantic rules предпочитай Roslyn analyzer (Layer 1.1).
 // NOTE: Для EF Core-специфичных правил см. EfCoreGuardRules.cs.
 //       Для Dapper-специфичных правил см. DapperGuardRules.cs.
 //

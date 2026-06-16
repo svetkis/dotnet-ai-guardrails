@@ -35,7 +35,7 @@ Everything that runs in seconds and minutes — while the developer (or agent) i
 - **BannedApiAnalyzers (RS0030)** — forbidden APIs (`DateTime.Now`, `FindAsync`) caught at build time, not in tests
 - Agent cannot return `null` unchecked
 - **Strongly Typed IDs** — `BookingId` instead of `Guid`, `CustomerId` instead of `string`. The compiler catches wrong-ID substitution before tests run. See `examples/DemoProject/src/DemoProject.Domain/BookingId.cs`
-- **Custom Roslyn analyzer** — catches `Guid Id` in Domain entities (SAE001) and `Guid somethingId` in parameters (SAE002) right in the IDE, before `dotnet build`. Faster than regex architecture tests (1.2). See `examples/DemoProject/src/DemoProject.Analyzers/`
+- **Roslyn-first for C# guardrails** — source-level C# rules should live in analyzers when they need language meaning, types or symbols. `SAE001` catches `Guid Id` in Domain entities, `SAE002` catches `Guid somethingId` parameters right in the IDE, before `dotnet build`. See `examples/DemoProject/src/DemoProject.Analyzers/`
 - **[HotPath] guardrails (SAE003/004/005)** — catches `new`, `async` state machine and boxing in `[HotPath]` methods right in the IDE. Performance degradation is prevented before commit, not by a profiler in production. See `examples/DemoProject/src/DemoProject.Analyzers/HotPathAnalyzer.cs`
 
 #### Frontend
@@ -64,6 +64,19 @@ Everything that runs in seconds and minutes — while the developer (or agent) i
 ### Failing demo
 
 See the live example of broken guardrails: [`examples/DemoProject.Traps/`](examples/DemoProject.Traps/) — 5 intentionally broken tests with `IType.Explanation` and ArchUnitNET. Run `dotnet run --project tests/DemoProject.Traps.Tests` to see what a failure looks like for each violated rule.
+
+### Roslyn-first, regex-last
+
+For C# source code, the default choice is a **Roslyn analyzer**, because it understands syntax trees, semantic model, types and symbols. Regex is text matching: it catches comments, dead code and formatting, but does not understand C#.
+
+Use tools by meaning:
+
+| Task | Preferred guardrail |
+|------|---------------------|
+| Forbidden API / raw primitive ID / hot-path allocation | Roslyn analyzer (Layer 1.1) |
+| Dependencies between layers, slices, cycles | NetArchTest / ArchUnitNET (Layer 1.2) |
+| Unique `PERF-###`, `.csproj`, `.yml`, markdown, package manifests | Regex / parser over artifacts |
+| Urgent spike before the rule stabilizes | Temporary regex with TODO to promote to Roslyn |
 
 ### Whitelist with staleness check
 
@@ -366,7 +379,7 @@ Every new layer is a reaction to a bug class that previous layers missed.
 
 > Do not add a guardrail for a problem that has not yet occurred.
 
-Every test, regex, architecture check, or linter rule must answer: **"What specific bug does this catch?"**
+Every guardrail — Roslyn analyzer, architecture check, test, artifact regex or linter rule — must answer: **"What specific bug does this catch?"**
 
 A dead guardrail (0 triggers in 3 sprints) is not protection — it is tech debt. It creates a false sense of security, wastes CI time, and dilutes team attention. Delete it without regret.
 

@@ -37,11 +37,11 @@ Our guardrails are designed as **stateless compensators** of context degradation
 
 | Guardrail | Compensates | Why it works |
 |-----------|-------------|--------------|
-| `ArchitectureRules.cs` (regex scan) | Red zone — rule violation | The agent may forget the `.Select()` rule, but the regex scanner has no memory — it checks every build |
+| Roslyn analyzer / `ArchitectureRules.cs` | Red zone — rule violation | The agent may forget the `.Select()` rule, but the compiler/architecture guardrail has no memory — it checks every build |
 | `RatchetTest.cs` | Red zone — attribute loss | The agent may forget to add `[SensitiveData]`, but the ratchet fails on build |
 | `Decision Guards (ADR)` (`PERF-###`) | Agent "cleans up" old code | The agent sees "strange" code and "fixes" it — a numbered ADR comment stops it |
-| `PiiGuardTest.cs` | Forgotten `[SensitiveData]` | The regex scanner doesn't care that the agent forgot the attribute rule from message 2 |
+| Roslyn analyzer / `PiiGuardTest.cs` | Forgotten `[SensitiveData]` | The compile-time/static guardrail does not depend on whether the agent remembers the rule from message 2 |
 | `VersionAuditTest.cs` | Forgotten "stable SDK only" | The agent thinks preview is "latest" — the scanner catches `preview` in `global.json` |
 | `Hierarchical AGENTS.md` | Context dilution | Short files with layer-specific rules reduce the degradation surface |
 
-> **Key insight:** The compiler, regex scanners, and ratchet tests are our "external memory". They do not fade. The agent will eventually enter the Red zone — our job is to make the build fail before the broken code reaches `main`.
+> **Key insight:** The compiler, Roslyn analyzers, architecture checks, and ratchet tests are our "external memory". They do not fade. The agent will eventually enter the Red zone — our job is to make the build fail before the broken code reaches `main`.

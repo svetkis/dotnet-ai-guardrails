@@ -1,6 +1,7 @@
 // TRAP: Агент добавляет логирование с email, phone, password —
 // PII утекает в лог-систему (Elastic, Kibana, Seq).
-// GUARDRAIL: [SensitiveData] attribute + regex-сканирование Log* вызовов.
+// GUARDRAIL: [SensitiveData] inventory + starter regex checks для Log* вызовов.
+// NOTE: Для стабильной проверки C# логирования предпочитай Roslyn analyzer.
 
 using System.Reflection;
 using System.Text.RegularExpressions;

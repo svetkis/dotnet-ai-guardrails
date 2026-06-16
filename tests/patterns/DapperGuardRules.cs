@@ -1,7 +1,8 @@
 // TRAP: Агент пишет непараметризованный SQL, использует string interpolation в запросах
 // или забывает таймауты при Dapper-вызовах.
-// GUARDRAIL: Regex-сканирование исходников ловит SQL-инъекции и антипаттерны Dapper.
-// NOTE: Этот файл — только для проектов с Dapper / Raw SQL. Для EF Core см. EfCoreGuardRules.cs.
+// GUARDRAIL: Starter regex checks ловят очевидные SQL-инъекции и антипаттерны Dapper.
+// NOTE: Для стабильных C# semantic rules предпочитай Roslyn analyzer; для SQL — parser/DB audit.
+// Этот файл — только для проектов с Dapper / Raw SQL. Для EF Core см. EfCoreGuardRules.cs.
 //
 // Адаптация под фреймворк:
 // - TUnit:  [Test] + Assert.That(violations).IsEmpty()
