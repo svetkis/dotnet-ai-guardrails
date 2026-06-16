@@ -1,8 +1,15 @@
 # Code Review — Checklist
 
 ## Before Start
-- [ ] Diff obtained (`git diff`)
+- [ ] Staged diff obtained (`git diff --cached`)
 - [ ] Task context known (backlog item / spec)
+- [ ] Skill activated automatically before `git commit` or explicitly via `/skill:code-review`
+
+## Pre-commit / Trigger
+- [ ] Staged changes include .NET backend files (*.cs, *.csproj, *.sln, *.props, *.targets)
+- [ ] Frontend-only changes are skipped (use separate frontend-code-review skill)
+- [ ] When staged diff is empty, agent reports nothing and does not block commit
+- [ ] Agent does NOT run `git commit` itself
 
 ## Security
 - [ ] XSS: query params, returnUrl stripped
@@ -14,8 +21,8 @@
 ## EF Core
 - [ ] Read-path without projection: `.AsNoTracking()` present. Projections `.Select()` to DTO — not required.
 - [ ] Write-path: no `.AsNoTracking()`. Exception: raw SQL (`FromSqlRaw`, `ExecuteSqlRaw`, `ExecuteUpdateAsync`).
-- [ ] No `.Include()` in QueryService
-- [ ] No `.FindAsync()` in read-path
+- [ ] `.Include()` in QueryService justified; no over-fetched chains without projection
+- [ ] `.FindAsync()` in read-path reasonable for PK reads; flag for lists/filters
 
 ## Architecture
 - [ ] If project uses Clean Architecture (has Domain / Infrastructure projects) — Domain does not depend on Infrastructure

@@ -62,12 +62,14 @@ If you are an AI agent reading this file in the context of a **different** repos
 
 ## Navigation
 
-**Lost?** Start with [docs/README.md](docs/README.md) — the unified map of all artifacts.
+**Lost?** Start with [docs/README.en.md](docs/README.en.md) — the unified map of all artifacts.
 **Unfamiliar terms?** See [GLOSSARY.md](GLOSSARY.md).
 
 | What you need | Where to go |
 |-----------|-----------|
-| Rules for the agent | `rules/AGENTS_TEMPLATE.md` |
+| Rules for the agent (base) | `rules/AGENTS_TEMPLATE.md` |
+| EF Core add-on | `rules/AGENTS_TEMPLATE.efcore.md` |
+| Dapper add-on | `rules/AGENTS_TEMPLATE.dapper.md` |
 | Bootstrap protocol (don't create DemoProject) | `docs/agents/BOOTSTRAP-PROTOCOL.md` |
 | Security audit | `templates/skills/security-audit/` |
 | DBA audit | `templates/skills/dba-audit/` |
@@ -75,10 +77,12 @@ If you are an AI agent reading this file in the context of a **different** repos
 | API design audit | `templates/skills/api-design-audit/` |
 | Bot audit | `templates/skills/bot-audit/` |
 | Localization audit | `templates/skills/i18n-audit/` |
-| Code review agent | `templates/skills/code-review/` |
+| Pre-commit code review agent | `templates/skills/code-review/` |
+| Frontend pre-commit code review agent | `templates/skills/frontend-code-review/` |
 | Scope compliance check | `templates/skills/task-compliance/` |
 | Test pattern | `tests/patterns/` |
 | Working example | `examples/DemoProject/` |
+| Working example (Single-project MVP) | `examples/DemoProject.MinimalApi/` |
 | Failing demo (guardrails) | `examples/DemoProject.Traps/` |
 | CI security | `ci/github-actions/safe-ci.yml` |
 | Trap description | `docs/traps/` |
@@ -88,6 +92,7 @@ If you are an AI agent reading this file in the context of a **different** repos
 | Project onboarding | `templates/skills/skeptical-ai-bootstrap/` |
 | Kimi integration | `docs/agents/KIMI.md` |
 | Claude Code integration | `docs/agents/CLAUDE-CODE.md` |
+| Cursor integration | `docs/agents/CURSOR.md` |
 | Codex integration | `docs/agents/CODEX.md` |
 | OpenCode integration | `docs/agents/OPENCODE.md` |
 | Agent comparison | `docs/agents/README.md` |

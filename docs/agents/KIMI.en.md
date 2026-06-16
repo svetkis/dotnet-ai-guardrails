@@ -9,7 +9,8 @@
 .kimi/
 └── skills/
     ├── skeptical-ai-bootstrap/          # Scanning + backlog
-    ├── code-review/                 # Review on every PR
+    ├── code-review/                 # Review on every PR / pre-commit (.NET)
+    ├── frontend-code-review/        # Review on every PR / pre-commit (React + TS)
     ├── task-compliance/             # Scope check
     ├── security-audit/              # Security audit
     ├── dba-audit/                   # DB audit
@@ -35,6 +36,90 @@ cp -r /path/to/dotnet-skeptical-ai/templates/skills/skeptical-ai-bootstrap ./.ki
 
 # Run
 kimi run skeptical-ai-bootstrap
+```
+
+## Concrete commands (daily workflow)
+
+> **Note:** Flags (`--git-diff`, `--paths`, `--mode`) are **pseudo-commands** for workflow illustration.
+> Kimi Code CLI may not support them natively. Adapt to the real syntax of your Kimi version
+> (for example, pass the diff via stdin or use environment variables).
+
+### Pre-commit code review
+
+The `code-review` skill is tuned for pre-commit: it reads `git diff --cached` and triggers
+automatically before commit (via a trigger in `SKILL.md`) or explicitly via `/skill:code-review`.
+
+```bash
+# Review staged changes before commit
+# (the skill reads git diff --cached itself)
+kimi run code-review
+
+# Review the last commit
+kimi run code-review --git-diff HEAD~1
+
+# Review current unstaged changes
+kimi run code-review --git-diff
+
+# Review a PR (branch vs main)
+kimi run code-review --git-diff main...feature/my-branch
+```
+
+### Scheduled audits
+
+```bash
+# Security audit on diff
+kimi run security-audit --git-diff HEAD~5
+
+# DBA audit when migrations change
+kimi run dba-audit --git-diff --paths "src/*/Infrastructure/Migrations/"
+
+# Performance audit before release
+kimi run performance-audit --mode pre-release
+```
+
+### Artifact grooming (once per sprint)
+
+```bash
+kimi run memory-hygiene
+kimi run doc-hygiene
+kimi run backlog-hygiene
+```
+
+### Install all skills at once
+
+```bash
+# Copy all audit skills
+for skill in code-review task-compliance security-audit dba-audit performance-audit; do
+    cp -r /path/to/dotnet-skeptical-ai/templates/skills/$skill ./.kimi/skills/
+done
+
+# Generate skills README
+kimi skills list
+```
+
+## Structure of `.kimi/skills/README.md` (recommended)
+
+```markdown
+# Project Skills
+
+## Inner Loop (on every PR)
+- `code-review` — diff-based review
+- `task-compliance` — scope check
+
+## Outer Loop (audits)
+- `security-audit` — once per sprint
+- `dba-audit` — on migrations
+- `dba-audit-dapper` — if the stack is Dapper
+
+## Grooming (once per sprint)
+- `memory-hygiene`
+- `doc-hygiene`
+
+## Statuses
+| Skill | Status | Adapted |
+|-------|--------|---------|
+| code-review | Active | ✅ |
+| dba-audit | Backlog | ❌ (we use Dapper) |
 ```
 
 ## Nuances

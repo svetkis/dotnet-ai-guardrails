@@ -1,8 +1,15 @@
 # Code Review — Чеклист
 
 ## Перед началом
-- [ ] Получен diff изменений (`git diff`)
+- [ ] Получен staged diff (`git diff --cached`)
 - [ ] Известен контекст задачи (backlog item / spec)
+- [ ] Скилл активирован автоматически перед `git commit` или явно через `/skill:code-review`
+
+## Pre-commit / Триггер
+- [ ] В staged-изменениях есть .NET backend файлы (*.cs, *.csproj, *.sln, *.props, *.targets)
+- [ ] Frontend-only изменения пропущены (отдельный frontend-code-review скилл)
+- [ ] При пустом staged diff агент не пишет находок и не блокирует коммит
+- [ ] Агент НЕ вызывает `git commit` самостоятельно
 
 ## Security
 - [ ] XSS: query params, returnUrl стрипаются

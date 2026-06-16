@@ -1,6 +1,24 @@
 ---
 name: code-review
-description: Diff-based code review for .NET projects with agent-generated code. Reviews changed lines against architectural rules, EF/Dapper constraints, TUnit conventions, and security hygiene. Stack-specific checks for .NET 10, EF Core, Dapper, PostgreSQL, SQL Server.
+description: |
+  Pre-commit code review for .NET projects with agent-generated code.
+  Trigger this skill right before `git commit`, when the user asks to review staged changes,
+  or when the staged diff contains .NET backend files (*.cs, *.csproj, *.sln, *.props, *.targets).
+  Reviews staged changes against architectural rules, EF Core / Dapper constraints, TUnit conventions,
+  and security hygiene.
+whenToUse:
+  - Before committing .NET backend changes (pre-commit).
+  - User says "pre-commit review", "review my staged changes", "check the diff", "code review".
+  - Staged diff includes *.cs, *.csproj, *.sln, *.props, *.targets.
+triggers:
+  - pre-commit
+  - review staged diff
+  - code review
+  - check diff before commit
+invocation:
+  manual: true
+  auto: true
+version: 1.0.0
 ---
 
 ## Адаптация под проект
@@ -8,12 +26,14 @@ description: Diff-based code review for .NET projects with agent-generated code.
 Перед запуском оцени стек проекта. Если какие-то проверки неприменимы — пометь их N/A и не используй как находки:
 - **Single-project MVP без Clean Architecture** → пропусти проверку слоёв (NetArchTest). Если нет отдельных проектов Domain / Infrastructure / Application — правило о зависимостях между ними неприменимо.
 - **Minimal API** → проверяй `.RequireAuthorization()`, а не `[Authorize]`.
-- **Проекции `.Select()` в DTO** — EF Core не отслеживает их, `.AsNoTracking()` не требуется. Не флаги отсутствие AsNoTracking на проекциях.
+- **Проекции `.Select()` в DTO** — EF Core не отслеживает их, `.AsNoTracking()` не требуется. Не ставь флаги на отсутствие AsNoTracking на проекциях.
 - **Dapper / Raw SQL (нет EF Core)** → пропусти ВСЕ EF-специфичные проверки (AsNoTracking, Include, FindAsync, Change Tracker). Используй Dapper-раздел ниже.
+- **Frontend на React + TypeScript (JS/TS/CSS/HTML)** → этот скилл не применим. Используй `frontend-code-review`.
+- **Razor / Blazor / Vue / Svelte / другие фреймворки** → `frontend-code-review` не покрывает их; заведи отдельный скилл или пометь проверки N/A.
 
 ---
 
-# Code Review Agent
+# Pre-commit Code Review Agent
 
 ## Context Marker
 
@@ -21,6 +41,21 @@ description: Diff-based code review for .NET projects with agent-generated code.
 Пример: `🍀 🔍` = базовые правила + роль Code Review активна.
 При перечитывании (re-read) добавь `♻️` перед маркером скилла.
 
+## Trigger / When to invoke
+
+Автоматически активируй этот скилл **перед каждым `git commit`**, если в staged-изменениях есть бэкендовые .NET-файлы.
+Явный вызов: `/skill:code-review` или фразы:
+- "pre-commit review"
+- "review my staged changes"
+- "check the diff"
+- "code review"
+- "проревьюй staged changes"
+
+Не активируй скилл, если:
+- Изменения только в React + TypeScript frontend-файлах (используй frontend-code-review).
+- Изменения в Razor/Blazor/Vue/Svelte/другом фреймворке — для них нужен отдельный скилл.
+- Нет staged-изменений.
+- Пользователь просит ревью всего файла без diff.
 
 ## Why a Second Agent
 
@@ -30,9 +65,18 @@ This skill implements two concepts from [Augmented Coding Patterns](https://gith
 - **Silent Misalignment** ([anti-pattern](https://github.com/lexler/augmented-coding-patterns/blob/main/documents/anti-patterns/silent-misalignment.md)): The original agent may have silently misunderstood the task, producing plausible but wrong changes. The reviewer acts as a diagnostic move — a second perspective that surfaces misalignment before it reaches `main`.
 
 ## Scope
-- Review ONLY `+` lines in diff and directly related context lines
-- NEVER review unchanged code or entire files
-- Focus on stack: .NET 10, TUnit, EF Core, Dapper, PostgreSQL, SQL Server, Minimal API
+- Review ONLY staged changes (`git diff --cached`).
+- Review ONLY `+` lines in the staged diff and directly related context lines.
+- NEVER review unchanged code or entire files.
+- Focus on stack: .NET 10, TUnit, EF Core, Dapper, PostgreSQL, SQL Server, Minimal API.
+
+## Pre-commit behavior
+1. Read the staged diff: `git diff --cached --diff-filter=ACMR -- '*.cs' '*.csproj' '*.sln' '*.props' '*.targets'`.
+2. If there are no staged .NET backend changes, tell the user there is nothing to review and stop.
+3. Apply the checks below to every `+` block.
+4. Produce findings in the required format.
+5. State a verdict.
+6. If the verdict is **CHANGES_REQUESTED**, advise the user to fix BLOCKER/CRITICAL/MAJOR issues and stage the fixes before committing. Do NOT run `git commit` yourself.
 
 ## Severity Levels
 - **BLOCKER**: Security vulnerability, data loss risk, compilation error, test breakage
@@ -88,13 +132,14 @@ If you cannot satisfy 1-4, you MUST NOT report the finding.
 - **CHANGES_REQUESTED**: Any BLOCKER/CRITICAL/MAJOR
 
 ## Execution
-1. Read the diff (`git diff main...[branch]`)
-2. For each `+` block, apply stack-specific checks
-3. Verify evidence for every finding
-4. Output findings in format above
-5. State verdict with rationale
+1. Read the staged diff (`git diff --cached --diff-filter=ACMR -- '*.cs' '*.csproj' '*.sln' '*.props' '*.targets'`).
+2. For each `+` block, apply stack-specific checks.
+3. Verify evidence for every finding.
+4. Output findings in format above.
+5. State verdict with rationale and clear next step for the user.
 
 ## Integration
-- **Input from:** Task Compliance Agent (scope-validated diff)
-- **Output to:** Programmer Agent (defects for rework), Human supervisor (approval gate)
-- **Runs after:** Task Compliance Agent confirms no scope creep
+- **Default trigger:** Before `git commit` (pre-commit).
+- **Input from:** Staged diff in the local working tree.
+- **Output to:** User (list of findings + verdict + whether it is safe to commit).
+- **Also usable in PR flow:** Run after Task Compliance Agent confirms no scope creep; in that case use `git diff main...[branch]`.

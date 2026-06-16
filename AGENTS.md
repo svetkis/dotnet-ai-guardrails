@@ -70,6 +70,8 @@
 | Что нужно | Куда идти |
 |-----------|-----------|
 | Правила для агента | `rules/AGENTS_TEMPLATE.md` |
+| Add-on: EF Core | `rules/AGENTS_TEMPLATE.efcore.md` |
+| Add-on: Dapper / Raw SQL | `rules/AGENTS_TEMPLATE.dapper.md` |
 | Протокол онбординга (не создавать DemoProject) | `docs/agents/BOOTSTRAP-PROTOCOL.md` |
 | Аудит безопасности | `templates/skills/security-audit/` |
 | Аудит БД | `templates/skills/dba-audit/` |
@@ -77,10 +79,12 @@
 | Аудит дизайна API | `templates/skills/api-design-audit/` |
 | Аудит бота | `templates/skills/bot-audit/` |
 | Аудит локализации | `templates/skills/i18n-audit/` |
-| Code review агент | `templates/skills/code-review/` |
+| Pre-commit code review агент | `templates/skills/code-review/` |
+| Frontend pre-commit code review агент | `templates/skills/frontend-code-review/` |
 | Проверка scope | `templates/skills/task-compliance/` |
 | Паттерн теста | `tests/patterns/` |
 | Рабочий пример | `examples/DemoProject/` |
+| Рабочий пример (Single-project MVP) | `examples/DemoProject.MinimalApi/` |
 | Failing demo (guardrails) | `examples/DemoProject.Traps/` |
 | CI безопасность | `ci/github-actions/safe-ci.yml` |
 | Описание ловушки | `docs/traps/` |

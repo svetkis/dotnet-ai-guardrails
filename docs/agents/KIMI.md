@@ -9,7 +9,8 @@
 .kimi/
 └── skills/
     ├── skeptical-ai-bootstrap/          # Сканирование + бэклог
-    ├── code-review/                 # Review на каждый PR
+    ├── code-review/                 # Review на каждый PR / pre-commit (.NET)
+    ├── frontend-code-review/        # Review на каждый PR / pre-commit (React + TS)
     ├── task-compliance/             # Проверка scope
     ├── security-audit/              # Аудит безопасности
     ├── dba-audit/                   # Аудит БД
@@ -45,7 +46,14 @@ kimi run skeptical-ai-bootstrap
 
 ### Code review перед коммитом
 
+Скилл `code-review` заточен под pre-commit: он читает `git diff --cached` и срабатывает
+автоматически перед коммитом (через триггер в `SKILL.md`) или явно через `/skill:code-review`.
+
 ```bash
+# Review staged-изменений перед коммитом
+# (скилл сам читает git diff --cached)
+kimi run code-review
+
 # Review последнего коммита
 kimi run code-review --git-diff HEAD~1
 

@@ -89,7 +89,7 @@ Whitelist for exceptions (write-path) self-validates: if a file from the whiteli
 ---
 
 <a name="layer-1-code-review"></a>
-### 1.4 Code review by agent (~2 minutes)
+### 1.4 Pre-commit code review by agent (~2 minutes)
 
 **Trap:** Agent wrote XSS in `returnUrl`, forgot `await`, leaked internal ClientId.
 
@@ -122,8 +122,8 @@ From practice: 8 review commits with findings:
           ┌─────────────────────┐
           │   Smoke tests       │  ← 1.5: 10 critical scenarios (~5 min)
           ├─────────────────────┤
-          │   Code review       │  ← 1.4: Second agent reads diff (~2 min)
-          │   by agent          │
+          │   Pre-commit        │  ← 1.4: Second agent reads staged diff (~2 min)
+          │   code review       │
           ├─────────────────────┤
           │   TUnit             │  ← 1.3: BUG-regression, snapshot (~30 sec)
           │   + dotnet run      │

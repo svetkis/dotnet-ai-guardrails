@@ -30,7 +30,7 @@ Three verification loops: inner (on every change), outer (on schedule or before 
 | 1.1 Compiler | ~sec | `dotnet build`, `tsc --noEmit` |
 | 1.2 Architecture | ~10 sec | NetArchTest |
 | 1.3 Tests | ~30 sec | TUnit + `dotnet run` |
-| 1.4 Code review | ~2 min | Separate agent |
+| 1.4 Pre-commit code review | ~2 min | Separate agent (staged diff) |
 | 1.5 Smoke | ~5 min | 10 critical scenarios |
 
 ### Layer 2. Acceptance cycle
@@ -80,6 +80,8 @@ dotnet run --project tests/DemoProject.Tests
 # 5. Copy needed artifacts
 cp rules/AGENTS_TEMPLATE.md /your/project/
 cp -r templates/skills/code-review /your/project/.kimi/skills/
+# For React/TypeScript frontend:
+# cp -r templates/skills/frontend-code-review /your/project/.kimi/skills/
 cp tests/patterns/*.cs /your/project/tests/
 ```
 
@@ -90,17 +92,20 @@ cp tests/patterns/*.cs /your/project/tests/
 ├── AGENTS.md                     # Instructions for AI agents
 ├── PYRAMID.md                    # Detailed breakdown of layers
 ├── rules/
-│   ├── AGENTS.md                 # EF rules, naming, conventions
+│   ├── AGENTS_TEMPLATE.md        # Base constitution for agents (universal)
+│   ├── AGENTS_TEMPLATE.efcore.md # Add-on: EF Core-specific rules
+│   ├── AGENTS_TEMPLATE.dapper.md # Add-on: Dapper / Raw SQL-specific rules
 │   └── CONVENTIONS.md            # Commits, workflow, tests
 ├── templates/skills/                        # Agent roles
 │   ├── memory-hygiene/            # Grooming: Auto Memory
 │   ├── doc-hygiene/               # Grooming: documentation
 │   ├── backlog-hygiene/           # Grooming: backlog
 │   ├── skeptical-ai-bootstrap/    # Maturity assessment + guardrails backlog
-│   ├── code-review/               # Inner loop: review every PR
+│   ├── code-review/               # Inner loop: pre-commit / PR review (.NET)
 │   ├── task-compliance/           # Inner loop: scope check
 │   ├── security-audit/            # Outer loop: trigger-based
-│   ├── dba-audit/                 # Outer loop: trigger-based
+│   ├── dba-audit/                 # Outer loop: trigger-based (EF Core)
+│   ├── dba-audit-dapper/          # Outer loop: trigger-based (Dapper / Raw SQL)
 │   ├── api-design-audit/          # Outer loop: trigger-based
 │   ├── bot-audit/                 # Outer loop: trigger-based
 │   ├── performance-audit/         # Outer loop: trigger-based
@@ -179,7 +184,9 @@ Lost? Start with [docs/README.md](docs/README.md).
 
 | What you need | Where to go |
 |---------------|-------------|
-| Agent rules | `rules/AGENTS_TEMPLATE.md` |
+| Agent rules (base) | `rules/AGENTS_TEMPLATE.md` |
+| EF Core add-on | `rules/AGENTS_TEMPLATE.efcore.md` |
+| Dapper add-on | `rules/AGENTS_TEMPLATE.dapper.md` |
 | Security audit | `templates/skills/security-audit/` |
 | DBA audit | `templates/skills/dba-audit/` |
 | DBA audit (Dapper) | `templates/skills/dba-audit-dapper/` |
@@ -187,7 +194,8 @@ Lost? Start with [docs/README.md](docs/README.md).
 | API design audit | `templates/skills/api-design-audit/` |
 | Bot audit | `templates/skills/bot-audit/` |
 | i18n audit | `templates/skills/i18n-audit/` |
-| Code review agent | `templates/skills/code-review/` |
+| Pre-commit code review agent | `templates/skills/code-review/` |
+| Frontend pre-commit code review agent | `templates/skills/frontend-code-review/` |
 | Scope check | `templates/skills/task-compliance/` |
 | Test pattern | `tests/patterns/` |
 | CI security | `ci/github-actions/safe-ci.yml` |

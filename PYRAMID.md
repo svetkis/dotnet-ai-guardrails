@@ -104,7 +104,7 @@ Whitelist для исключений (write-path) сам проверяется
 ---
 
 <a name="layer-1-code-review"></a>
-### 1.4 Code review агентом (~2 минуты)
+### 1.4 Pre-commit code review агентом (~2 минуты)
 
 **Ловушка:** Агент написал XSS в `returnUrl`, забыл `await`, утёк internal ClientId.
 
@@ -137,8 +137,8 @@ Whitelist для исключений (write-path) сам проверяется
           ┌─────────────────────┐
           │   Smoke тесты       │  ← 1.5: 10 критичных сценариев (~5 мин)
           ├─────────────────────┤
-          │   Code review       │  ← 1.4: Второй агент смотрит diff (~2 мин)
-          │   агентом           │
+          │   Pre-commit        │  ← 1.4: Второй агент смотрит staged diff (~2 мин)
+          │   code review       │
           ├─────────────────────┤
           │   TUnit             │  ← 1.3: BUG-regression, snapshot (~30 сек)
           │   + dotnet run      │

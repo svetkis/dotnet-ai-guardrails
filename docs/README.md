@@ -26,7 +26,7 @@
 | **1** | 1.1 Компилятор | Быстрая обратная связь от типов | [PYRAMID.md §1.1](../PYRAMID.md#layer-1-compiler) | `.editorconfig`, `Directory.Build.props`, `DemoProject.Analyzers` (кастомный Roslyn-анализатор) |
 | **1** | 1.2 Архитектура | Авто-проверка слоёв и антипаттернов | [PYRAMID.md §1.2](../PYRAMID.md#layer-1-architecture) | [tests/patterns/ArchitectureRules.cs](../tests/patterns/ArchitectureRules.cs), [RatchetTest.cs](../tests/patterns/RatchetTest.cs), [ArchUnitNetSliceTest.cs](../tests/patterns/ArchUnitNetSliceTest.cs) |
 | **1** | 1.3 Тесты | Регрессии, snapshot, vibe-refactoring, контракты API | [PYRAMID.md §1.3](../PYRAMID.md#layer-1-tests) | [tests/patterns/](#тестовые-паттерны) |
-| **1** | 1.4 Code Review | Агент проверяет агента | [PYRAMID.md §1.4](../PYRAMID.md#layer-1-code-review) | [templates/skills/code-review/SKILL.md](../templates/skills/code-review/SKILL.md) |
+| **1** | 1.4 Code Review | Агент проверяет агента (pre-commit / PR) | [PYRAMID.md §1.4](../PYRAMID.md#layer-1-code-review) | [templates/skills/code-review/SKILL.md](../templates/skills/code-review/SKILL.md), [templates/skills/frontend-code-review/SKILL.md](../templates/skills/frontend-code-review/SKILL.md) |
 | **1** | 1.5 Smoke | Быстрый прогон критичных сценариев | [PYRAMID.md §1.5](../PYRAMID.md#layer-1-smoke) | — |
 | **2** | 2.1 E2E / MCP | Полные сценарии через внешние системы | [PYRAMID.md §2.1](../PYRAMID.md#layer-2-e2e) | [tests/patterns/SnapshotTest.cs](../tests/patterns/SnapshotTest.cs) |
 | **2** | 2.2 Аудиты | Глубинные проверки по расписанию | [PYRAMID.md §2.2](../PYRAMID.md#layer-2-audits) | [templates/skills/](#скиллы-аудиты) |
@@ -67,7 +67,8 @@
 
 | Скилл | Когда запускать |
 |-------|-----------------|
-| [code-review](../templates/skills/code-review/SKILL.md) | На каждый PR |
+| [code-review](../templates/skills/code-review/SKILL.md) | На каждый коммит (pre-commit) / PR |
+| [frontend-code-review](../templates/skills/frontend-code-review/SKILL.md) | На каждый коммит (pre-commit) / PR с React/TS |
 | [task-compliance](../templates/skills/task-compliance/SKILL.md) | На каждый PR |
 | [security-audit](../templates/skills/security-audit/SKILL.md) | Раз в спринт / на PR с Api/Infra |
 | [dba-audit](../templates/skills/dba-audit/SKILL.md) | Раз в спринт / при миграциях (EF Core) |

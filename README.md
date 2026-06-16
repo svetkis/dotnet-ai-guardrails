@@ -30,7 +30,7 @@ AI-агенты (Cursor, Claude, Copilot) ускоряют написание к
 | 1.1 Компилятор | ~сек | `dotnet build`, `tsc --noEmit` |
 | 1.2 Архитектура | ~10 сек | NetArchTest |
 | 1.3 Тесты | ~30 сек | TUnit + `dotnet run` |
-| 1.4 Code review | ~2 мин | Отдельный агент |
+| 1.4 Pre-commit code review | ~2 мин | Отдельный агент (staged diff) |
 | 1.5 Smoke | ~5 мин | 10 критичных сценариев |
 
 ### Слой 2. Приёмочный цикл
@@ -80,6 +80,8 @@ dotnet run --project tests/DemoProject.Tests
 # 5. Скопируй нужные артефакты
 cp rules/AGENTS_TEMPLATE.md /your/project/
 cp -r templates/skills/code-review /your/project/.kimi/skills/
+# Для React/TypeScript фронтенда:
+# cp -r templates/skills/frontend-code-review /your/project/.kimi/skills/
 cp tests/patterns/*.cs /your/project/tests/
 ```
 
@@ -99,7 +101,7 @@ cp tests/patterns/*.cs /your/project/tests/
 │   ├── doc-hygiene/               # Grooming: документация
 │   ├── backlog-hygiene/           # Grooming: бэклог
 │   ├── skeptical-ai-bootstrap/    # Оценка зрелости + бэклог guardrails
-│   ├── code-review/               # Inner loop: review на каждый PR
+│   ├── code-review/               # Inner loop: pre-commit / PR review (.NET)
 │   ├── task-compliance/           # Inner loop: проверка scope
 │   ├── security-audit/            # Outer loop: по триггеру
 │   ├── dba-audit/                 # Outer loop: по триггеру (EF Core)
@@ -190,7 +192,8 @@ dotnet run --project tests/DemoProject.MinimalApi.Tests
 | Аудит БД (Dapper) | `templates/skills/dba-audit-dapper/` |
 | Аудит производительности | `templates/skills/performance-audit/` |
 | Аудит локализации | `templates/skills/i18n-audit/` |
-| Code review агент | `templates/skills/code-review/` |
+| Pre-commit code review агент | `templates/skills/code-review/` |
+| Frontend pre-commit code review агент | `templates/skills/frontend-code-review/` |
 | Проверка scope | `templates/skills/task-compliance/` |
 | Паттерн теста | `tests/patterns/` |
 | CI безопасность | `ci/github-actions/safe-ci.yml` |
