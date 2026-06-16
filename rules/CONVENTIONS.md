@@ -44,7 +44,7 @@ public void FindAsync_ShouldNotBeUsedInReadPath()
 ## Workflow после изменений
 
 ```
-код → dotnet build → тесты ([ADAPT]: dotnet test / dotnet run --project) → docs → коммит
+код → dotnet build → тесты ([ADAPT]: для TUnit используй dotnet run --project; для другого фреймворка зафиксируй команду явно) → docs → коммит
 ```
 
 ## Code Review агентом

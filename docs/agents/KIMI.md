@@ -32,7 +32,9 @@
 
 ```bash
 # Установить скилл онбординга
-cp -r /path/to/dotnet-skeptical-ai/templates/skills/skeptical-ai-bootstrap ./.kimi/skills/
+mkdir -p ./.kimi/skills/skeptical-ai-bootstrap
+cp /path/to/dotnet-skeptical-ai/.agents/skills/skeptical-ai-bootstrap/SKILL.md ./.kimi/skills/skeptical-ai-bootstrap/
+cp -r /path/to/dotnet-skeptical-ai/templates/skills/skeptical-ai-bootstrap/* ./.kimi/skills/skeptical-ai-bootstrap/
 
 # Запустить
 kimi run skeptical-ai-bootstrap

@@ -1,3 +1,7 @@
+# TEMPLATE: copy this workflow into a target project and adapt all paths before use.
+# This file is intentionally not the CI workflow for this repository.
+# The runnable workflow for this repository lives in .github/workflows/demo-project-ci.yml.
+
 name: Safe CI — Agent Guardrails
 
 on:
@@ -18,10 +22,14 @@ jobs:
           dotnet-version: '10.0.x'
 
       - name: Restore
+        # ADAPT: pass your solution or project path, for example:
+        # dotnet restore MyProject.sln
         run: dotnet restore
 
       # GUARDRAIL: Сборка должна проходить без warning'ов
       - name: Build
+        # ADAPT: pass your solution or project path, for example:
+        # dotnet build MyProject.sln --no-restore --configuration Release /p:TreatWarningsAsErrors=true
         run: dotnet build --no-restore --configuration Release /p:TreatWarningsAsErrors=true
 
   tests:
@@ -62,7 +70,8 @@ jobs:
           dotnet-version: '10.0.x'
 
       # GUARDRAIL: NBomber на PR — проверяем, что нет деградации
-      # Адаптируй путь под свой проект. Или используй run-tests.sh с фильтром по NBomber.
+      # ADAPT REQUIRED: replace tests/LoadTests/LoadTests.csproj with your load-test project.
+      # Or remove this job if the target project has no load tests yet.
       - name: Run Load Tests
         run: dotnet run --project tests/LoadTests/LoadTests.csproj --configuration Release
 
@@ -78,7 +87,8 @@ jobs:
           dotnet-version: '10.0.x'
 
       # GUARDRAIL: OpenAPI snapshot не должен расходиться
-      # Адаптируй путь к тестовому проекту и папке snapshots под свой проект.
+      # ADAPT REQUIRED: replace the project path, filter and snapshots directory.
+      # Or remove this job if the target project has no OpenAPI snapshot yet.
       - name: Verify OpenAPI Snapshot
         run: |
           dotnet run --project tests/IntegrationTests/IntegrationTests.csproj --filter "FullyQualifiedName~OpenApi"

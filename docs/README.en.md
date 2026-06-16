@@ -65,7 +65,8 @@ All templates are `copy-paste friendly`. Each contains comments `// TRAP:` and `
 
 ## Skills (Audits)
 
-Each skill = an agent role. Contains `SKILL.md` (instructions) + `CHECKLIST.md` (checklist).
+Each standalone skill = an agent role. It usually contains `SKILL.md` (instructions) + `CHECKLIST.md` (checklist).
+Exception: `templates/skills/skeptical-ai-bootstrap/` contains supporting templates; the executable bootstrap skill lives in `.agents/skills/skeptical-ai-bootstrap/`.
 
 | Skill | When to run |
 |-------|-------------|

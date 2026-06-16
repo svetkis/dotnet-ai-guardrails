@@ -104,7 +104,7 @@ When I tell you're a committer, add ✅ to STARTER_CHARACTER emojis. Make sure t
 > `[ADAPT]` — Replace with your test framework and run command.
 
 - **Framework** — `[ADAPT]`: TUnit / xUnit / NUnit / MSTest
-- Run command — `[ADAPT]`: `dotnet test` / `dotnet run --project tests/...`
+- Run command — `[ADAPT]`: for TUnit use `dotnet run --project tests/...`; for another framework, define the exact command explicitly.
 - Every bug fix must include a test: `BUG###_DescriptiveName`
 - Failing test first → then fix → test passes
 

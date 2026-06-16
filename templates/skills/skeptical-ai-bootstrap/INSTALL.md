@@ -8,20 +8,23 @@
 
 ### 1. Скопируй скилл в свой проект
 
-Из репозитория `dotnet-skeptical-ai` скопируй папку в свой проект:
+Из репозитория `dotnet-skeptical-ai` скопируй исполняемый скилл и supporting templates в свой проект:
 
 ```bash
 # Находясь в корне ТВОЕГО .NET-проекта
-cp -r /path/to/dotnet-skeptical-ai/templates/skills/skeptical-ai-bootstrap ./.kimi/skills/
+mkdir -p ./.kimi/skills/skeptical-ai-bootstrap
+cp /path/to/dotnet-skeptical-ai/.agents/skills/skeptical-ai-bootstrap/SKILL.md ./.kimi/skills/skeptical-ai-bootstrap/
+cp -r /path/to/dotnet-skeptical-ai/templates/skills/skeptical-ai-bootstrap/* ./.kimi/skills/skeptical-ai-bootstrap/
 ```
 
 Или вручную:
 - Создать `.kimi/skills/skeptical-ai-bootstrap/` в своём проекте
-- Скопировать `SKILL.md`, `CHECKLIST.md`, `EXAMPLE-REPORT.md`
+- Скопировать `.agents/skills/skeptical-ai-bootstrap/SKILL.md`
+- Скопировать нужные supporting templates из `templates/skills/skeptical-ai-bootstrap/`
 
 **Важно:** выбери язык. В целевом проекте должен быть только один язык:
 - **Русский** → скопируй `SKILL.md` (RU), не копируй `SKILL.en.md`
-- **Английский** → скопируй `SKILL.en.md` и переименуй в `SKILL.md`
+- **Английский** → используй английскую версию скилла, если она добавлена; supporting templates бери из `*.en.md` и переименовывай в базовые имена
 
 ### 2. Убедись, что Kimi Code CLI видит скилл
 

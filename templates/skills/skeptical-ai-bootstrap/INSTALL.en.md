@@ -8,20 +8,23 @@ This skill is installed into **your** .NET project so that Kimi Code CLI can sca
 
 ### 1. Copy the skill into your project
 
-From the `dotnet-skeptical-ai` repository, copy the folder into your project:
+From the `dotnet-skeptical-ai` repository, copy the executable skill and supporting templates into your project:
 
 ```bash
 # From the root of YOUR .NET project
-cp -r /path/to/dotnet-skeptical-ai/templates/skills/skeptical-ai-bootstrap ./.kimi/skills/
+mkdir -p ./.kimi/skills/skeptical-ai-bootstrap
+cp /path/to/dotnet-skeptical-ai/.agents/skills/skeptical-ai-bootstrap/SKILL.md ./.kimi/skills/skeptical-ai-bootstrap/
+cp -r /path/to/dotnet-skeptical-ai/templates/skills/skeptical-ai-bootstrap/* ./.kimi/skills/skeptical-ai-bootstrap/
 ```
 
 Or manually:
 - Create `.kimi/skills/skeptical-ai-bootstrap/` in your project
-- Copy `SKILL.md`, `CHECKLIST.md`, `EXAMPLE-REPORT.md`
+- Copy `.agents/skills/skeptical-ai-bootstrap/SKILL.md`
+- Copy the needed supporting templates from `templates/skills/skeptical-ai-bootstrap/`
 
 **Important:** pick a language. The target project should have only one language:
 - **Russian** → copy `SKILL.md` (RU), don't copy `SKILL.en.md`
-- **English** → copy `SKILL.en.md` and rename to `SKILL.md`
+- **English** → use the English skill version if present; take supporting templates from `*.en.md` and rename them to the base names
 
 ### 2. Make sure Kimi Code CLI sees the skill
 

@@ -63,7 +63,8 @@
 
 ## Скиллы (аудиты)
 
-Каждый скилл = роль агента. Содержит `SKILL.md` (инструкция) + `CHECKLIST.md` (проверка).
+Каждый standalone-скилл = роль агента. Обычно содержит `SKILL.md` (инструкция) + `CHECKLIST.md` (проверка).
+Исключение: `templates/skills/skeptical-ai-bootstrap/` — это набор supporting templates; сам исполняемый bootstrap-скилл лежит в `.agents/skills/skeptical-ai-bootstrap/`.
 
 | Скилл | Когда запускать |
 |-------|-----------------|
