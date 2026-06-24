@@ -34,8 +34,7 @@ public class RatchetTests
     private static int CountPublicTypes(Assembly assembly)
     {
         return assembly.GetTypes()
-            .Where(t => t.IsPublic && !t.IsNested)
-            .Count();
+            .Count(t => t.IsPublic && !t.IsNested);
     }
 
     private static IEnumerable<MethodInfo> GetTestMethods(Assembly assembly)

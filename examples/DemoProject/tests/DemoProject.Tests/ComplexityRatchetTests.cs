@@ -1,0 +1,62 @@
+// GUARDRAIL: Количество методов с нарушениями S3776/S1541 не растёт.
+// Этот файл — рабочая адаптация шаблона из tests/patterns/ComplexityRatchetTest.cs
+
+using System.Diagnostics;
+using System.Text.RegularExpressions;
+using TUnit;
+
+namespace DemoProject.Tests;
+
+public class ComplexityRatchetTests
+{
+    private static readonly string RepoRoot = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", ".."));
+
+    [Test]
+    public async Task SonarComplexityViolations_ShouldNotIncrease()
+    {
+        var violationCount = CountSonarComplexityViolations(RepoRoot);
+        var baseline = GetBaselineOrSet(violationCount, "complexity-baseline.txt");
+
+        await Assert.That(violationCount)
+            .IsLessThanOrEqualTo(baseline)
+            .Because("Cognitive/cyclomatic complexity violations must not increase.");
+    }
+
+    private static int CountSonarComplexityViolations(string rootDir)
+    {
+        var solutionFile = Directory.GetFiles(rootDir, "*.sln", SearchOption.TopDirectoryOnly)
+            .Concat(Directory.GetFiles(rootDir, "*.slnx", SearchOption.TopDirectoryOnly))
+            .FirstOrDefault();
+
+        if (solutionFile == null)
+            return 0;
+
+        var psi = new ProcessStartInfo
+        {
+            FileName = "dotnet",
+            Arguments = $"build \"{solutionFile}\" -warnaserror:false -clp:NoSummary",
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false,
+            CreateNoWindow = true,
+            WorkingDirectory = rootDir
+        };
+
+        using var process = Process.Start(psi)!;
+        var output = process.StandardOutput.ReadToEnd();
+        process.WaitForExit();
+
+        var matches = Regex.Matches(output, @"(S3776|S1541)");
+        return matches.Count;
+    }
+
+    private static int GetBaselineOrSet(int current, string baselineFile)
+    {
+        var path = Path.Combine(RepoRoot, baselineFile);
+        if (File.Exists(path) && int.TryParse(File.ReadAllText(path), out var baseline))
+            return baseline;
+
+        File.WriteAllText(path, current.ToString());
+        return current;
+    }
+}

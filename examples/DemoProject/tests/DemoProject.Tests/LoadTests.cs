@@ -17,8 +17,8 @@ public class LoadTests
         var readScenario = Scenario.Create("read_bookings", async context =>
         {
             var svc = new DemoProject.Application.BookingService();
-            var result = await svc.GetPendingAsync();
-            return result.Count >= 0 ? Response.Ok() : Response.Fail();
+            await svc.GetPendingAsync();
+            return Response.Ok();
         })
         .WithoutWarmUp()
         .WithLoadSimulations(Simulation.Inject(rate: 100, interval: TimeSpan.FromSeconds(1), during: TimeSpan.FromSeconds(5)));

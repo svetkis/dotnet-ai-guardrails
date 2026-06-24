@@ -12,6 +12,8 @@
     <PackageReference Include="TUnit" Version="1.19.74" />
     <PackageReference Include="NetArchTest.eNhancedEdition" Version="1.4.5" />
     <PackageReference Include="NBomber" Version="5.8.0" />
+    <PackageReference Include="SonarAnalyzer.CSharp" Version="10.6.0.109712" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.14.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -25,6 +27,7 @@
     <ProjectReference Include="..\..\src\DemoProject.Domain\DemoProject.Domain.csproj" />
     <ProjectReference Include="..\..\src\DemoProject.Application\DemoProject.Application.csproj" />
     <ProjectReference Include="..\..\src\DemoProject.Infrastructure\DemoProject.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\DemoProject.Analyzers\DemoProject.Analyzers.csproj" />
   </ItemGroup>
 
 </Project>

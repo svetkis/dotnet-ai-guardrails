@@ -1,0 +1,26 @@
+{
+  "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json",
+  "version": "0.2",
+  "language": "en",
+  "words": [
+    "DemoProject",
+    "NetArchTest",
+    "NBomber",
+    "TUnit",
+    "booking",
+    "ratchet"
+  ],
+  "ignorePaths": [
+    "bin/",
+    "obj/",
+    "TestResults/",
+    "*.trx",
+    "coverage/"
+  ],
+  "files": [
+    "**/*.md",
+    "**/*.cs",
+    "**/*.csproj",
+    "**/*.props"
+  ]
+}

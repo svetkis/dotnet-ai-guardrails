@@ -37,6 +37,8 @@
 - **Strongly Typed IDs** — `BookingId` вместо `Guid`, `CustomerId` вместо `string`. Компилятор ловит подстановку чужого ID до запуска тестов. См. `examples/DemoProject/src/DemoProject.Domain/BookingId.cs`
 - **Roslyn-first для C# guardrails** — правила по исходникам C# должны жить в анализаторах, если им нужен смысл языка, типов или символов. `SAE001` ловит `Guid Id` в Domain-сущностях, `SAE002` — `Guid somethingId` в параметрах прямо в IDE, ещё до `dotnet build`. См. `examples/DemoProject/src/DemoProject.Analyzers/`
 - **[HotPath] guardrails (SAE003/004/005)** — ловит `new`, `async` state machine и boxing в методах с `[HotPath]` ещё в IDE. Перформанс-деградация предотвращается до коммита, а не профилировщиком на проде. См. `examples/DemoProject/src/DemoProject.Analyzers/HotPathAnalyzer.cs`
+- **Complexity analyzers** — `SonarAnalyzer.CSharp` (`S3776` cognitive / `S1541` cyclomatic) не даёт агенту незаметно превратить метод в клубок ветвлений. Для новых проектов — `error` с порогами 15/10; для legacy — baseline + ratchet. См. `tests/patterns/ComplexityRatchetTest.cs`
+- **Analyzer tests** — кастомные Roslyn-анализаторы имеют positive/negative unit-тесты, чтобы обновление Roslyn не сломало guardrails тихо. См. `tests/patterns/AnalyzerTests.cs`
 
 #### Frontend
 - `tsc --noEmit` (strict mode) + `noUnusedLocals`
@@ -58,6 +60,8 @@
 | Слои (Clean Architecture) | 10 | Domain не зависит от Infrastructure |
 | Именование | 3 | Job-классы заканчиваются на `Job` |
 | Структура и антипаттерны | 12 | Запрет `.FindAsync()` и `.Include()` в read-path; запрет дублирования бизнес-логики; запрет циклических зависимостей; Entity leak guard; запрет голых Guid/string/int для идентификаторов в Domain |
+| Complexity | 1 | Количество методов с нарушениями `S3776`/`S1541` не растёт (baseline + ratchet) |
+| Allocation budget | 1 | Каждый `[HotPath]` метод имеет `{MethodName}_AllocationBudget` тест; аллокации не превышают baseline + 10% |
 | Performance | 1 | Количество публичных типов и тестов не уменьшается |
 | Тестовый инвентарь | 1 | Количество тестов не уменьшается (страховка от "0 tests ran") |
 
@@ -215,6 +219,12 @@ Whitelist для исключений (write-path) сам проверяется
 | UX Flow | `templates/skills/ux-audit/` |
 | Simplicity | `templates/skills/simplicity-audit/` |
 | Version | `templates/skills/version-audit/` |
+| Complexity | `templates/skills/complexity-audit/` |
+| Allocation Budget | `templates/skills/allocation-budget-audit/` |
+| Spellcheck | `templates/skills/spellcheck-audit/` |
+| Release Readiness | `templates/skills/release-readiness-audit/` |
+| Mutation Testing | `templates/skills/mutation-audit/` |
+| Analyzer Tests | `templates/skills/analyzer-tests-audit/` |
 
 **График:** раз в спринт или точечно, когда чуете опасность.
 
@@ -229,7 +239,9 @@ Whitelist для исключений (write-path) сам проверяется
 
 Сценарии: read + write mix, spike, concurrent booking.
 
-**Паттерн:** `tests/patterns/LoadTest.cs`
+Дополнение: **allocation budget tests** для `[HotPath]` методов ловят регресс аллокаций ещё до нагрузочного стенда — дешевле и быстрее, чем профилировщик на проде.
+
+**Паттерны:** `tests/patterns/LoadTest.cs`, `tests/patterns/AllocationBudgetTest.cs`
 
 ---
 

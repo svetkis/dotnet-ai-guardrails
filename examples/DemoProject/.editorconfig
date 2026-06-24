@@ -2,6 +2,12 @@
 # BannedApiAnalyzers: banned symbol usage must fail the build
 dotnet_diagnostic.RS0030.severity = error
 
+# SonarAnalyzer: complexity guardrails (warning for demo; use error for new projects)
+dotnet_diagnostic.S3776.severity = warning
+dotnet_diagnostic.S1541.severity = warning
+dotnet_code_quality.S3776.threshold = 15
+dotnet_code_quality.S1541.threshold = 10
+
 # ─────────────────────────────────────────────
 # Standard Microsoft C# Naming Conventions
 # ─────────────────────────────────────────────

@@ -48,6 +48,12 @@
 | **RatchetTest** | Публичные типы и тесты не уменьшились | [tests/patterns/RatchetTest.cs](../tests/patterns/RatchetTest.cs) | `examples/DemoProject/tests/DemoProject.Tests/RatchetTests.cs` |
 | **SnapshotTest** | Контракт JSON-сериализации, OpenAPI | [tests/patterns/SnapshotTest.cs](../tests/patterns/SnapshotTest.cs) | `examples/DemoProject/tests/DemoProject.Tests/SnapshotTests.cs` |
 | **LoadTest** | Silent breakdown под нагрузкой: read-оптимизации, которые ломают write | [tests/patterns/LoadTest.cs](../tests/patterns/LoadTest.cs) | `examples/DemoProject/tests/DemoProject.Tests/LoadTests.cs` |
+| **ComplexityRatchetTest** | Методы с `S3776`/`S1541` нарушениями не растут (baseline + ratchet) | [tests/patterns/ComplexityRatchetTest.cs](../tests/patterns/ComplexityRatchetTest.cs) | — |
+| **AllocationBudgetTest** | Аллокации `[HotPath]` методов не превышают baseline + 10% | [tests/patterns/AllocationBudgetTest.cs](../tests/patterns/AllocationBudgetTest.cs) | — |
+| **SpellcheckGuardTest** | Новых опечаток в публичных символах/docs не появляется | [tests/patterns/SpellcheckGuardTest.cs](../tests/patterns/SpellcheckGuardTest.cs) | — |
+| **ReleaseReadinessTest** | Наличие критичных артефактов и runtime guardrails перед релизом | [tests/patterns/ReleaseReadinessTest.cs](../tests/patterns/ReleaseReadinessTest.cs) | — |
+| **MutationGuardTest** | Mutation score не падает (Stryker.NET) | [tests/patterns/MutationGuardTest.cs](../tests/patterns/MutationGuardTest.cs) | — |
+| **AnalyzerTests** | Positive/negative тесты для кастомных Roslyn-анализаторов | [tests/patterns/AnalyzerTests.cs](../tests/patterns/AnalyzerTests.cs) | — |
 | **PiiGuardTest** | `[SensitiveData]` + redaction guard | [tests/patterns/PiiGuardTest.cs](../tests/patterns/PiiGuardTest.cs) | — |
 | **VersionAuditTest** | Аудит версий SDK/NuGet и frontend-зависимостей | [tests/patterns/VersionAuditTest.cs](../tests/patterns/VersionAuditTest.cs) | — |
 | **DuplicationGuardTest** | Бизнес-логика не дублируется между сервисами | [tests/patterns/DuplicationGuardTest.cs](../tests/patterns/DuplicationGuardTest.cs) | `examples/DemoProject/tests/DemoProject.Tests/DuplicationGuardTest.cs` |
@@ -84,6 +90,12 @@
 | [simplicity-audit](../templates/skills/simplicity-audit/SKILL.md) | Раз в спринт / когда код трудно объяснить |
 | [ux-audit](../templates/skills/ux-audit/SKILL.md) | При переработке UI / перед бетой |
 | [type-safety](../templates/skills/type-safety/SKILL.md) | На PR с Domain/DTO / при рефакторинге идентификаторов |
+| [complexity-audit](../templates/skills/complexity-audit/SKILL.md) | Раз в спринт / при росте техдолга |
+| [allocation-budget-audit](../templates/skills/allocation-budget-audit/SKILL.md) | Перед релизом / при изменениях hot paths |
+| [spellcheck-audit](../templates/skills/spellcheck-audit/SKILL.md) | Раз в спринт / перед публичным релизом |
+| [release-readiness-audit](../templates/skills/release-readiness-audit/SKILL.md) | Перед релизом / бета-запуском |
+| [mutation-audit](../templates/skills/mutation-audit/SKILL.md) | Перед релизом / раз в спринт |
+| [analyzer-tests-audit](../templates/skills/analyzer-tests-audit/SKILL.md) | При создании/обновлении Roslyn-анализаторов |
 | [skeptical-ai-bootstrap](../.agents/skills/skeptical-ai-bootstrap/SKILL.md) | Однократно при старте |
 | [adaptation-guide](../templates/skills/ADAPTATION.md) | Перед первым запуском скиллов |
 

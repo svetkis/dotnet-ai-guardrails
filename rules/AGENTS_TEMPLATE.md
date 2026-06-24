@@ -18,8 +18,8 @@ This file uses established terms instead of descriptions. Each term activates a 
 | Term | Meaning |
 |------|---------|
 | **BUG###** | Regression test: one bug = one file `BUG###_DescriptiveName.cs`, all paths covered |
-| **Ratchet** | Test inventory: count of public types / tests must not decrease |
-| **Numbered Decision** | Intentional deviation: `PERF-###`, `DB-###`, `AUD-###` in comment, enforced by arch-test |
+| **Ratchet** | Test inventory: count of public types / tests / complexity violations / allocation budgets must not decrease |
+| **Numbered Decision** | Intentional deviation: `PERF-###`, `DB-###`, `AUD-###`, `COMPLEXITY-###`, `SPELL-###`, `MUTATION-###` in comment, enforced by arch-test |
 
 > Adapted from [Semantic Anchors](https://github.com/lexler/augmented-coding-patterns/blob/main/documents/patterns/semantic-anchors.md) pattern.
 
@@ -171,6 +171,43 @@ When I tell you're a committer, add ✅ to STARTER_CHARACTER emojis. Make sure t
 - After an agent's perf commit — **manual audit of write-paths**
 - Agent optimizes read, human verifies write is not broken
 - Load test scenario must pass before deploy (if applicable)
+- Every `[HotPath]` method must have `{MethodName}_AllocationBudget` test; regressions > 10% are forbidden
+
+## Complexity
+
+> `[ADAPT]` — Define your complexity thresholds.
+
+- Cognitive complexity (`S3776`) threshold: `[ADAPT]` (default 15; API layer 10)
+- Cyclomatic complexity (`S1541`) threshold: `[ADAPT]` (default 10; API layer 7)
+- For new projects: `error` severity in `.editorconfig`
+- For legacy: baseline + ratchet; number of violations must not increase
+- Intentional deviations use `COMPLEXITY-###` ID and are recorded in `DECISION-GUARDS.md`
+
+## Spellcheck
+
+> `[ADAPT]` — Skip if project does not have public API / docs.
+
+- `cspell` runs on markdown, comments, public type/property names, OpenAPI contracts
+- Project dictionary lives in `cspell.json`
+- New misspellings in public API names are **FORBIDDEN**
+- Intentional domain terms use `SPELL-###` ID if they cannot be added to dictionary
+
+## Mutation Testing
+
+> `[ADAPT]` — Skip if Stryker does not support your test framework.
+
+- Run Stryker on critical assemblies (e.g., Domain) before release
+- Mutation score must not decrease from baseline
+- Survived mutants in critical code must be analyzed and covered or documented
+- Intentional exceptions use `MUTATION-###` ID
+
+## Analyzer Tests
+
+> `[ADAPT]` — Skip if project has no custom Roslyn analyzers.
+
+- Every custom diagnostic ID must have positive + negative tests
+- Tests must verify exact diagnostic span/location
+- Run analyzer tests in CI when `Microsoft.CodeAnalysis.*` packages update
 
 ## Guardrails: Born from Pain
 
@@ -186,3 +223,7 @@ When I tell you're a committer, add ✅ to STARTER_CHARACTER emojis. Make sure t
 - ❌ New env var without updating deployment docs
 - ❌ Hardcoded UI strings without i18n (if project uses i18n)
 - ❌ Raw SQL without explanatory comment
+- ❌ Method with cognitive complexity above project threshold without `COMPLEXITY-###` decision guard
+- ❌ `[HotPath]` method without `{MethodName}_AllocationBudget` test
+- ❌ Public API name with misspelling
+- ❌ Custom Roslyn analyzer without positive/negative tests

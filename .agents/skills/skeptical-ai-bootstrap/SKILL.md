@@ -131,6 +131,8 @@ description: >
 | Warning'и есть, но не падают сборку | 🟡 Включить в `Directory.Build.props` |
 | .NET Framework 4.8, нет nullable | 🟡 Включить `#nullable enable` файлом, Roslyn analyzers |
 | Нет `.editorconfig` | 🔴 Создать с severity=error для критичных правил |
+| Нет проверки сложности | 🟡 Добавить `SonarAnalyzer.CSharp` (`S3776`/`S1541`) см. `complexity-audit` |
+| Есть кастомные Roslyn-анализаторы без тестов | 🟡 Добавить `tests/patterns/AnalyzerTests.cs` см. `analyzer-tests-audit` |
 
 #### Слой 2: Архитектура
 **Принцип:** Архитектурные нарушения ловятся автоматически, до code review.
@@ -142,6 +144,8 @@ description: >
 | .NET Framework 4.8 | NetArchTest работает, но рассмотри Roslyn analyzers для скорости | ⚠️ **Адаптировать**: NetArchTest + Roslyn analyzers для критичных правил |
 | Dapper (нет EF) | EF-специфичные тесты бесполезны | ⚠️ Адаптировать: убрать EF-правила, добавить Dapper-правила |
 | Big Ball of Mud | Нет слоёв для проверки | 🔴 Сначала рефакторинг, потом арх-тесты |
+| Методы с высокой сложностью | `tests/patterns/ComplexityRatchetTest.cs` + `templates/skills/complexity-audit/` | ⚠️ **Адаптировать**: baseline + ratchet для legacy |
+| Есть `[HotPath]` методы | `tests/patterns/AllocationBudgetTest.cs` + `templates/skills/allocation-budget-audit/` | ⚠️ **Адаптировать**: зафиксировать baseline аллокаций |
 
 #### Слой 3: Тесты
 **Принцип:** Каждое изменение покрыто тестами, и тесты реально запускаются.
@@ -178,12 +182,28 @@ description: >
 
 #### Внешний цикл (Аудиты)
 
-| Стек | Готовые артефакты | Решение |
+| Стек / ситуация | Готовые артефакты | Решение |
 |------|-------------------|---------|
 | EF Core + PostgreSQL | `templates/skills/dba-audit/`, `templates/skills/security-audit/` | ✅ Адаптировать |
 | Dapper + SQL Server | DBA-аудит EF-специфичен | ❌ **Создать `dba-audit-dapper`** (raw SQL review, индексы) |
 | MongoDB | DBA-аудит не применим | ❌ **Создать `dba-audit-mongo`** (индексы, запросы, схема) |
 | Нет i18n (только русский) | `templates/skills/i18n-audit/` | 🔴 Won't do, документировать |
+| Любой .NET проект | `templates/skills/complexity-audit/` | ✅ **Внедрить**: SonarAnalyzer + пороги |
+| Любой .NET проект с hot paths | `templates/skills/allocation-budget-audit/` | ⚠️ **Адаптировать** под `[HotPath]` маркер |
+| Публичный API / документация | `templates/skills/spellcheck-audit/` | ⚠️ **Адаптировать**: CSpell + dictionary |
+| Подготовка к релизу/бете | `templates/skills/release-readiness-audit/` | ✅ **Внедрить**: batch-аудит перед релизом |
+| Критичные сборки с тестами | `templates/skills/mutation-audit/` | ⚠️ **Адаптировать**: Stryker.NET |
+| Есть кастомные Roslyn-анализаторы | `templates/skills/analyzer-tests-audit/` | ✅ **Внедрить**: positive/negative tests |
+
+#### Слой 1.5: Complexity & Allocation Budget (дополнение)
+
+**Принцип:** Методы не должны незаметно разрастаться, а критичные пути — деградировать по аллокациям.
+
+| Ситуация | Рекомендация для нового проекта | Рекомендация для legacy |
+|----------|--------------------------------|-------------------------|
+| Cognitive complexity | `S3776` severity=error, threshold 15 | Baseline + ratchet через `ComplexityRatchetTest` |
+| Cyclomatic complexity | `S1541` severity=error, threshold 10 | Baseline + ratchet через `ComplexityRatchetTest` |
+| `[HotPath]` методы | Allocation-тест для каждого | Baseline + ratchet, постепенное покрытие |
 
 ### Phase 4: Контекст пользователя
 

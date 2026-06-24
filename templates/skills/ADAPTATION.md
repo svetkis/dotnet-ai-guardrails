@@ -37,6 +37,12 @@
 | .NET Framework 4.8 | Все скиллы → NetArchTest, TUnit, Minimal API | Стек отличается кардинально; используй `skeptical-ai-bootstrap` |
 | Razor Pages | `code-review` → проверку Minimal API | Razor Pages используют PageModel, не endpoint-роутинг |
 | Vertical Slice Architecture | `code-review` → стандартные слоёвые правила | Границы по фичам, а не по слоям; используй custom NetArchTest |
+| Нет hot path методов / не latency-sensitive | `allocation-budget-audit` | Нечего измерять |
+| Нет публичного API / docs | `spellcheck-audit` → public API names | Проверяй только markdown/comments |
+| Не релиз / не бета | `release-readiness-audit` | Won't do, документировать |
+| Нет кастомных Roslyn-анализаторов | `analyzer-tests-audit` | Нечего тестировать |
+| Нет Stryker / не TUnit-compatible | `mutation-audit` → CI gate | Запускать как periodic audit |
+| Legacy с сотнями complexity-нарушений | `complexity-audit` → error severity | Использовать baseline + ratchet, не error |
 
 ---
 
@@ -70,8 +76,14 @@
 
 | Скилл | Маркер |
 |---|---|
+| `allocation-budget-audit` | ⚡ |
+| `analyzer-tests-audit` | 🔍 |
 | `api-design-audit` | 🎨 |
 | `backlog-hygiene` | 📋 |
+| `complexity-audit` | 🧠 |
+| `mutation-audit` | 🧬 |
+| `release-readiness-audit` | 🚀 |
+| `spellcheck-audit` | 🔤 |
 | `bot-audit` | 🤖 |
 | `code-review` | 🔍 |
 | `dba-audit` | 🗄️ |

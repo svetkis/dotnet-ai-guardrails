@@ -13,6 +13,8 @@
     <PackageReference Include="TngTech.ArchUnitNET" Version="0.13.3" />
     <PackageReference Include="TngTech.ArchUnitNET.TUnit" Version="0.13.3" />
     <PackageReference Include="TUnit" Version="1.19.74" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.14.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Metrics" Version="4.14.0" />
   </ItemGroup>
 
   <ItemGroup>

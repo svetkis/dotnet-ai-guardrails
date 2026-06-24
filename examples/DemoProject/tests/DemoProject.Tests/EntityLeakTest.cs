@@ -32,7 +32,7 @@ public class EntityLeakTest
 
     private static int CountViolations(Assembly appAssembly, EntityLeakRule rule)
     {
-        var result = Types.InAssembly(appAssembly)
+        Types.InAssembly(appAssembly)
             .That().AreInterfaces()
             .Should().MeetCustomRule(rule)
             .GetResult();

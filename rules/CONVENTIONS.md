@@ -37,6 +37,42 @@ public void FindAsync_ShouldNotBeUsedInReadPath()
 }
 ```
 
+### Complexity ratchet
+```csharp
+// Формат: {Metric}_ShouldNotIncrease
+[Test]
+public void SonarComplexityViolations_ShouldNotIncrease()
+{
+    // Бaseline + ratchet для S3776/S1541
+}
+```
+
+### Allocation budget
+```csharp
+// Формат: {HotPathMethod}_AllocationBudget
+[Test]
+public void GetAvailableSlots_AllocationBudget()
+{
+    // GC.GetAllocatedBytesForCurrentThread vs baseline + 10%
+}
+```
+
+### Spellcheck / Release readiness / Mutation / Analyzer tests
+```csharp
+// Формат: {Guard}_Should{Condition}
+[Test]
+public void CSpell_ShouldNotFindNewMisspellings() { }
+
+[Test]
+public void HealthEndpoint_ShouldBeHealthy() { }
+
+[Test]
+public void StrykerMutationScore_ShouldMeetBaseline() { }
+
+[Test]
+public void StrongTypedIdAnalyzer_FlagsPrimitiveIdInDomainEntity() { }
+```
+
 > Справочные шаблоны в этом репозитории:
 > - [`tests/conventions/BUG_TEMPLATE.cs`](../tests/conventions/BUG_TEMPLATE.cs) — формат regression-теста
 > - [`tests/conventions/TUnit_Guide.md`](../tests/conventions/TUnit_Guide.md) — соглашения по TUnit
@@ -60,3 +96,17 @@ public void FindAsync_ShouldNotBeUsedInReadPath()
 - `[ADAPT]` — тесты должны реально бежать (не 0 ran)
 - `[ADAPT]` — контрактные проверки (OpenAPI snapshot / DTO snapshot / etc.)
 - `[ADAPT]` — нагрузочные метрики не должны деградировать (если применимо)
+- `[ADAPT]` — complexity violations не должны расти (baseline + ratchet)
+- `[ADAPT]` — allocation budget tests для `[HotPath]` методов
+- `[ADAPT]` — spellcheck для markdown/public API (если применимо)
+- `[ADAPT]` — mutation testing перед релизом (если применимо)
+- `[ADAPT]` — analyzer tests для кастомных Roslyn-анализаторов (если применимо)
+
+## Decision Guard IDs
+
+- `PERF-###` — performance decisions
+- `DB-###` — database/schema decisions
+- `AUD-###` — audit decisions
+- `COMPLEXITY-###` — complexity threshold deviations
+- `SPELL-###` — intentional misspellings / non-dictionary terms
+- `MUTATION-###` — mutation testing exceptions
