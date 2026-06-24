@@ -1,9 +1,9 @@
-# Knowledge Map
+﻿# Knowledge Map
 
 > Unified table of contents for all repository artifacts.  
-> If you are here for the first time — start with [GLOSSARY.md](../GLOSSARY.md), then return here.
+> If you are here for the first time â€” start with [GLOSSARY.md](../GLOSSARY.md), then return here.
 >
-> [🇷🇺 Русская версия](README.md)
+> [ðŸ‡·ðŸ‡º Ð ÑƒÑÑÐºÐ°Ñ Ð²ÐµÑ€ÑÐ¸Ñ](README.md)
 
 ---
 
@@ -11,29 +11,29 @@
 
 | I am a ... | Where to start |
 |------------|----------------|
-| **Newcomer** to agentic development | [GLOSSARY.md](../GLOSSARY.md) → [PYRAMID.md](../PYRAMID.md) → `examples/DemoProject/` |
-| **Tech Lead** implementing guardrails | [ONBOARDING.md](ONBOARDING.md) → [.agents/skills/skeptical-ai-bootstrap/SKILL.md](../.agents/skills/skeptical-ai-bootstrap/SKILL.md) → [ADAPTATION.md](../templates/skills/ADAPTATION.md) → "Outer Loop" section below |
-| **Developer** looking for a test pattern | [tests/patterns/](#test-patterns) → copy into your project |
-| **Implementing SAE from scratch** | [ONBOARDING.md](ONBOARDING.md) → step-by-step guide with checkpoints |
-| **Auditor** preparing for an audit | [templates/skills/](#skills-audits) → take CHECKLIST.md → [human-audit-bridge.md](solutions/human-audit-bridge.md) for manual walkthrough |
-| **Contributor** | [CONTRIBUTING.md](../CONTRIBUTING.md) → "What can be added" section |
+| **Newcomer** to agentic development | [GLOSSARY.md](../GLOSSARY.md) â†’ [PYRAMID.md](../PYRAMID.md) â†’ `examples/DemoProject/` |
+| **Tech Lead** implementing guardrails | [ONBOARDING.md](ONBOARDING.md) â†’ [.agents/skills/skeptical-ai-bootstrap/SKILL.en.md](../.agents/skills/skeptical-ai-bootstrap/SKILL.en.md) â†’ [ADAPTATION.en.md](../templates/skills/ADAPTATION.en.md) â†’ "Outer Loop" section below |
+| **Developer** looking for a test pattern | [tests/patterns/](#test-patterns) â†’ copy into your project |
+| **Implementing SAE from scratch** | [ONBOARDING.md](ONBOARDING.md) â†’ step-by-step guide with checkpoints |
+| **Auditor** preparing for an audit | [templates/skills/](#skills-audits) â†’ take CHECKLIST.md â†’ [human-audit-bridge.md](solutions/human-audit-bridge.md) for manual walkthrough |
+| **Contributor** | [CONTRIBUTING.md](../CONTRIBUTING.md) â†’ "What can be added" section |
 
 ---
 
-## Pyramid: 3 Layers (0–2) + Outer Loop
+## Pyramid: 3 Layers (0â€“2) + Outer Loop
 
 | Layer | Sub-layer | What it is | Main document | Artifacts |
 |-------|-----------|------------|---------------|-----------|
-| **0** | — | Instructions for the agent before code | [PYRAMID.md §Layer 0](../PYRAMID.md#layer-0) | `rules/AGENTS_TEMPLATE.md` + Decision Guards (ADR) |
-| **1** | 1.1 Compiler | Fast feedback from types | [PYRAMID.md §1.1](../PYRAMID.md#layer-1-compiler) | `.editorconfig`, `Directory.Build.props`, `DemoProject.Analyzers` (custom Roslyn analyzer) |
-| **1** | 1.2 Architecture | Auto-check of layers and anti-patterns | [PYRAMID.md §1.2](../PYRAMID.md#layer-1-architecture) | [tests/patterns/ArchitectureRules.cs](../tests/patterns/ArchitectureRules.cs), [RatchetTest.cs](../tests/patterns/RatchetTest.cs), [ArchUnitNetSliceTest.cs](../tests/patterns/ArchUnitNetSliceTest.cs) |
-| **1** | 1.3 Tests | Regressions, snapshot, vibe-refactoring, API contracts | [PYRAMID.md §1.3](../PYRAMID.md#layer-1-tests) | [tests/patterns/](#test-patterns) |
-| **1** | 1.4 Code Review | Agent checks agent (pre-commit / PR) | [PYRAMID.md §1.4](../PYRAMID.md#layer-1-code-review) | [templates/skills/code-review/SKILL.md](../templates/skills/code-review/SKILL.md), [templates/skills/frontend-code-review/SKILL.md](../templates/skills/frontend-code-review/SKILL.md) |
-| **1** | 1.5 Smoke | Fast run of critical scenarios | [PYRAMID.md §1.5](../PYRAMID.md#layer-1-smoke) | — |
-| **2** | 2.1 E2E / MCP | Full scenarios through external systems | [PYRAMID.md §2.1](../PYRAMID.md#layer-2-e2e) | [tests/patterns/SnapshotTest.cs](../tests/patterns/SnapshotTest.cs) |
-| **2** | 2.2 Audits | Deep checks on schedule | [PYRAMID.md §2.2](../PYRAMID.md#layer-2-audits) | [templates/skills/](#skills-audits) |
-| **2** | 2.3 Load | Silent breakdown under load (NBomber) | [PYRAMID.md §2.3](../PYRAMID.md#layer-2-load) | [tests/patterns/LoadTest.cs](../tests/patterns/LoadTest.cs) |
-| **Outer Loop** | — | Final human validation, business and product decisions | [PYRAMID.md §Outer Loop](../PYRAMID.md#outer-loop) | — |
+| **0** | â€” | Instructions for the agent before code | [PYRAMID.md Â§Layer 0](../PYRAMID.md#layer-0) | `rules/AGENTS_TEMPLATE.md` + Decision Guards (ADR) |
+| **1** | 1.1 Compiler | Fast feedback from types | [PYRAMID.md Â§1.1](../PYRAMID.md#layer-1-compiler) | `.editorconfig`, `Directory.Build.props`, `DemoProject.Analyzers` (custom Roslyn analyzer) |
+| **1** | 1.2 Architecture | Auto-check of layers and anti-patterns | [PYRAMID.md Â§1.2](../PYRAMID.md#layer-1-architecture) | [tests/patterns/ArchitectureRules.cs](../tests/patterns/ArchitectureRules.cs), [RatchetTest.cs](../tests/patterns/RatchetTest.cs), [ArchUnitNetSliceTest.cs](../tests/patterns/ArchUnitNetSliceTest.cs) |
+| **1** | 1.3 Tests | Regressions, snapshot, vibe-refactoring, API contracts | [PYRAMID.md Â§1.3](../PYRAMID.md#layer-1-tests) | [tests/patterns/](#test-patterns) |
+| **1** | 1.4 Code Review | Agent checks agent (pre-commit / PR) | [PYRAMID.md Â§1.4](../PYRAMID.md#layer-1-code-review) | [templates/skills/code-review/SKILL.md](../templates/skills/code-review/SKILL.md), [templates/skills/frontend-code-review/SKILL.md](../templates/skills/frontend-code-review/SKILL.md) |
+| **1** | 1.5 Smoke | Fast run of critical scenarios | [PYRAMID.md Â§1.5](../PYRAMID.md#layer-1-smoke) | â€” |
+| **2** | 2.1 E2E / MCP | Full scenarios through external systems | [PYRAMID.md Â§2.1](../PYRAMID.md#layer-2-e2e) | [tests/patterns/SnapshotTest.cs](../tests/patterns/SnapshotTest.cs) |
+| **2** | 2.2 Audits | Deep checks on schedule | [PYRAMID.md Â§2.2](../PYRAMID.md#layer-2-audits) | [templates/skills/](#skills-audits) |
+| **2** | 2.3 Load | Silent breakdown under load (NBomber) | [PYRAMID.md Â§2.3](../PYRAMID.md#layer-2-load) | [tests/patterns/LoadTest.cs](../tests/patterns/LoadTest.cs) |
+| **Outer Loop** | â€” | Final human validation, business and product decisions | [PYRAMID.md Â§Outer Loop](../PYRAMID.md#outer-loop) | â€” |
 
 ---
 
@@ -45,21 +45,27 @@ All templates are `copy-paste friendly`. Each contains comments `// TRAP:` and `
 |---------|---------|----------|-------------------------------|
 | **ArchitectureRules** | Universal layer dependency check (NetArchTest) | [tests/patterns/ArchitectureRules.cs](../tests/patterns/ArchitectureRules.cs) | `examples/DemoProject/tests/DemoProject.Tests/ArchitectureRules.cs` |
 | **EfCoreGuardRules** | EF Core-specific guardrails: `FindAsync`, `Include`, `AsNoTracking` | [tests/patterns/EfCoreGuardRules.cs](../tests/patterns/EfCoreGuardRules.cs) | `examples/DemoProject/tests/DemoProject.Tests/EfCoreGuardRules.cs` |
-| **DapperGuardRules** | Dapper / Raw SQL guardrails: parameterization, injections, timeouts | [tests/patterns/DapperGuardRules.cs](../tests/patterns/DapperGuardRules.cs) | — |
+| **DapperGuardRules** | Dapper / Raw SQL guardrails: parameterization, injections, timeouts | [tests/patterns/DapperGuardRules.cs](../tests/patterns/DapperGuardRules.cs) | â€” |
 | **ArchUnitNetSliceTest** | Cyclic dependencies between slices (ArchUnitNET) | [tests/patterns/ArchUnitNetSliceTest.cs](../tests/patterns/ArchUnitNetSliceTest.cs) | `examples/DemoProject.Traps/tests/DemoProject.Traps.Tests/ArchUnitNetSliceTest.cs` |
 | **RatchetTest** | Public types and tests did not decrease | [tests/patterns/RatchetTest.cs](../tests/patterns/RatchetTest.cs) | `examples/DemoProject/tests/DemoProject.Tests/RatchetTests.cs` |
 | **SnapshotTest** | JSON serialization contract, OpenAPI | [tests/patterns/SnapshotTest.cs](../tests/patterns/SnapshotTest.cs) | `examples/DemoProject/tests/DemoProject.Tests/SnapshotTests.cs` |
 | **LoadTest** | Silent breakdown under load: read optimizations that break write path | [tests/patterns/LoadTest.cs](../tests/patterns/LoadTest.cs) | `examples/DemoProject/tests/DemoProject.Tests/LoadTests.cs` |
-| **PiiGuardTest** | `[SensitiveData]` + redaction guard | [tests/patterns/PiiGuardTest.cs](../tests/patterns/PiiGuardTest.cs) | — |
-| **VersionAuditTest** | Audit of SDK/NuGet and frontend dependency versions | [tests/patterns/VersionAuditTest.cs](../tests/patterns/VersionAuditTest.cs) | — |
+| **ComplexityRatchetTest** | Methods with `S3776` / `S1541` violations do not grow (baseline + ratchet) | [tests/patterns/ComplexityRatchetTest.cs](../tests/patterns/ComplexityRatchetTest.cs) | — |
+| **AllocationBudgetTest** | `[HotPath]` method allocations do not exceed baseline + 10% | [tests/patterns/AllocationBudgetTest.cs](../tests/patterns/AllocationBudgetTest.cs) | — |
+| **SpellcheckGuardTest** | No new typos appear in public symbols / docs | [tests/patterns/SpellcheckGuardTest.cs](../tests/patterns/SpellcheckGuardTest.cs) | — |
+| **ReleaseReadinessTest** | Critical artifacts and runtime guardrails exist before release | [tests/patterns/ReleaseReadinessTest.cs](../tests/patterns/ReleaseReadinessTest.cs) | — |
+| **MutationGuardTest** | Mutation score does not drop (Stryker.NET) | [tests/patterns/MutationGuardTest.cs](../tests/patterns/MutationGuardTest.cs) | — |
+| **AnalyzerTests** | Positive / negative tests for custom Roslyn analyzers | [tests/patterns/AnalyzerTests.cs](../tests/patterns/AnalyzerTests.cs) | — |
+| **PiiGuardTest** | `[SensitiveData]` + redaction guard | [tests/patterns/PiiGuardTest.cs](../tests/patterns/PiiGuardTest.cs) | â€” |
+| **VersionAuditTest** | Audit of SDK/NuGet and frontend dependency versions | [tests/patterns/VersionAuditTest.cs](../tests/patterns/VersionAuditTest.cs) | â€” |
 | **DuplicationGuardTest** | Business logic is not duplicated between services | [tests/patterns/DuplicationGuardTest.cs](../tests/patterns/DuplicationGuardTest.cs) | `examples/DemoProject/tests/DemoProject.Tests/DuplicationGuardTest.cs` |
 | **DependencyDriftTest** | Cyclic dependencies between projects and layer drift | [tests/patterns/DependencyDriftTest.cs](../tests/patterns/DependencyDriftTest.cs) | `examples/DemoProject/tests/DemoProject.Tests/DependencyDriftTest.cs` |
 | **EntityLeakTest** | Application interfaces do not return Domain Entity (ratchet) | [tests/patterns/EntityLeakTest.cs](../tests/patterns/EntityLeakTest.cs) | `examples/DemoProject/tests/DemoProject.Tests/EntityLeakTest.cs` |
 | **StronglyTypedIds** | Domain entities must use strongly typed IDs, not raw Guid/string/int | [tests/patterns/StronglyTypedIds.cs](../tests/patterns/StronglyTypedIds.cs) | `examples/DemoProject/tests/DemoProject.Tests/StronglyTypedIds.cs` |
-| **BUG_TEMPLATE** | Regression test format | [tests/conventions/BUG_TEMPLATE.cs](../tests/conventions/BUG_TEMPLATE.cs) | — |
-| **TUnit_Guide** | Test conventions | [tests/conventions/TUnit_Guide.md](../tests/conventions/TUnit_Guide.md) | — |
-| **Traps Demo** | Intentionally broken code to demonstrate guardrails (5 failing tests) | — | `examples/DemoProject.Traps/` |
-| **MinimalApi Demo** | Single-project MVP without Clean Architecture — naming, banned APIs, ratchet | — | `examples/DemoProject.MinimalApi/` |
+| **BUG_TEMPLATE** | Regression test format | [tests/conventions/BUG_TEMPLATE.cs](../tests/conventions/BUG_TEMPLATE.cs) | â€” |
+| **TUnit_Guide** | Test conventions | [tests/conventions/TUnit_Guide.md](../tests/conventions/TUnit_Guide.md) | â€” |
+| **Traps Demo** | Intentionally broken code to demonstrate guardrails (5 failing tests) | â€” | `examples/DemoProject.Traps/` |
+| **MinimalApi Demo** | Single-project MVP without Clean Architecture â€” naming, banned APIs, ratchet | â€” | `examples/DemoProject.MinimalApi/` |
 
 ---
 
@@ -86,8 +92,14 @@ Exception: `templates/skills/skeptical-ai-bootstrap/` contains supporting templa
 | [simplicity-audit](../templates/skills/simplicity-audit/SKILL.md) | Once per sprint / when code is hard to explain |
 | [ux-audit](../templates/skills/ux-audit/SKILL.md) | During UI rework / before beta |
 | [type-safety](../templates/skills/type-safety/SKILL.md) | On PR with Domain/DTO / when refactoring identifiers |
-| [skeptical-ai-bootstrap](../.agents/skills/skeptical-ai-bootstrap/SKILL.md) | Once at project start |
-| [adaptation-guide](../templates/skills/ADAPTATION.md) | Before first skill run |
+| [complexity-audit](../templates/skills/complexity-audit/SKILL.en.md) | Once per sprint / when technical debt grows |
+| [allocation-budget-audit](../templates/skills/allocation-budget-audit/SKILL.en.md) | Before release / when hot paths change |
+| [spellcheck-audit](../templates/skills/spellcheck-audit/SKILL.en.md) | Once per sprint / before public release |
+| [release-readiness-audit](../templates/skills/release-readiness-audit/SKILL.en.md) | Before release / beta launch |
+| [mutation-audit](../templates/skills/mutation-audit/SKILL.en.md) | Before release / once per sprint |
+| [analyzer-tests-audit](../templates/skills/analyzer-tests-audit/SKILL.en.md) | When creating / updating Roslyn analyzers |
+| [skeptical-ai-bootstrap](../.agents/skills/skeptical-ai-bootstrap/SKILL.en.md) | Once at project start |
+| [adaptation-guide](../templates/skills/ADAPTATION.en.md) | Before first skill run |
 
 ### Artifact Grooming
 
@@ -101,14 +113,14 @@ Exception: `templates/skills/skeptical-ai-bootstrap/` contains supporting templa
 
 ## Agent Traps (docs/traps/)
 
-Read before implementation — each trap explains **why** a guardrail exists.
+Read before implementation â€” each trap explains **why** a guardrail exists.
 
 | Trap | Essence | Pattern solution |
 |------|---------|------------------|
-| [silent-breakdown](traps/silent-breakdown.md) | `AsNoTracking` in write-path → silent breakdown | [LoadTest.cs](../tests/patterns/LoadTest.cs) |
-| [vibe-refactoring](traps/vibe-refactoring.md) | Agent removes "unnecessary" — breaks hot paths | [RatchetTest.cs](../tests/patterns/RatchetTest.cs) |
+| [silent-breakdown](traps/silent-breakdown.md) | `AsNoTracking` in write-path â†’ silent breakdown | [LoadTest.cs](../tests/patterns/LoadTest.cs) |
+| [vibe-refactoring](traps/vibe-refactoring.md) | Agent removes "unnecessary" â€” breaks hot paths | [RatchetTest.cs](../tests/patterns/RatchetTest.cs) |
 | [context-blindness](traps/context-blindness.md) | Agent does not see business context | [AGENTS.md](../rules/AGENTS_TEMPLATE.md) |
-| [false-safety](traps/false-safety.md) | Green CI ≠ working code | [verify-tests.sh](../ci/scripts/verify-tests.sh) |
+| [false-safety](traps/false-safety.md) | Green CI â‰  working code | [verify-tests.sh](../ci/scripts/verify-tests.sh) |
 | [p50-vs-max](traps/p50-vs-max.md) | Average latency is good, tail is terrible | [LoadTest.cs](../tests/patterns/LoadTest.cs) |
 | [agent-circles](traps/agent-circles.md) | Agents loop on one problem | [task-compliance](../templates/skills/task-compliance/SKILL.md) |
 | [stale-stack](traps/stale-stack.md) | Agent uses outdated stack due to training cutoff | [VersionAuditTest.cs](../tests/patterns/VersionAuditTest.cs) |
@@ -134,7 +146,7 @@ Read before implementation — each trap explains **why** a guardrail exists.
 
 ## Agent Integrations (docs/agents/)
 
-> **⚠️ Agents:** Read [BOOTSTRAP-PROTOCOL.md](agents/BOOTSTRAP-PROTOCOL.md) before starting work.  
+> **âš ï¸ Agents:** Read [BOOTSTRAP-PROTOCOL.md](agents/BOOTSTRAP-PROTOCOL.md) before starting work.  
 > It defines the boundary between "methodology repository" and "target project".
 
 | Agent | File | Configuration format |
@@ -156,7 +168,7 @@ Read before implementation — each trap explains **why** a guardrail exists.
 | [ci/github-actions/safe-ci.yml](../ci/github-actions/safe-ci.yml) | Workflow template: build + test + verify-tests |
 | [ci/scripts/run-tests.sh](../ci/scripts/run-tests.sh) | Automatically finds and runs all test projects via `dotnet run --project` |
 | [ci/scripts/verify-tests.sh](../ci/scripts/verify-tests.sh) | Checks that `dotnet run` actually executed tests (not 0 ran) |
-| [.github/workflows/demo-project-ci.yml](../.github/workflows/demo-project-ci.yml) | CI of this repository — builds DemoProject and DemoProject.MinimalApi |
+| [.github/workflows/demo-project-ci.yml](../.github/workflows/demo-project-ci.yml) | CI of this repository â€” builds DemoProject and DemoProject.MinimalApi |
 | `traps-guardrails` job in `demo-project-ci.yml` | Ensures intentionally broken tests in DemoProject.Traps actually fail (guardrails are working) |
 
 ---
@@ -178,4 +190,6 @@ Read before implementation — each trap explains **why** a guardrail exists.
 When adding a new artifact:
 1. Add a row to the corresponding table
 2. Provide a link to the pattern/solution
-3. If it's a new pyramid layer — update [PYRAMID.md](../PYRAMID.md)
+3. If it's a new pyramid layer â€” update [PYRAMID.md](../PYRAMID.md)
+
+

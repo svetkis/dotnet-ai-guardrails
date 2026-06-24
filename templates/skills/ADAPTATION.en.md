@@ -1,4 +1,4 @@
-# Skill Adaptation Guide
+﻿# Skill Adaptation Guide
 
 > Copying skills is easy. Adapting them is important.
 > This guide will help you strike out inapplicable checks before the first run.
@@ -37,6 +37,12 @@
 | .NET Framework 4.8 | All skills → NetArchTest, TUnit, Minimal API | Stack differs radically; use `skeptical-ai-bootstrap` |
 | Razor Pages | `code-review` → Minimal API check | Razor Pages use PageModel, not endpoint routing |
 | Vertical Slice Architecture | `code-review` → standard layer rules | Boundaries by feature, not by layer; use custom NetArchTest |
+| No hot path methods / not latency-sensitive | `allocation-budget-audit` | Nothing to measure |
+| No public API / docs | `spellcheck-audit` → public API names | Check only markdown / comments |
+| Not a release / beta | `release-readiness-audit` | Won't do, document it |
+| No custom Roslyn analyzers | `analyzer-tests-audit` | Nothing to test |
+| No Stryker / not TUnit-compatible | `mutation-audit` → CI gate | Run as periodic audit |
+| Legacy with hundreds of complexity violations | `complexity-audit` → error severity | Use baseline + ratchet, not error |
 
 ---
 
@@ -73,3 +79,34 @@ If ready-made skills require more than 50% adaptation — don't adapt, create a 
 3. Use `NEW-SKILL-TEMPLATE.md` to generate files for the new skill
 
 See `templates/skills/skeptical-ai-bootstrap/SKILL-ARCHITECTURE.md`
+
+---
+
+## Skill Markers
+
+| Skill | Marker |
+|---|---|
+| `allocation-budget-audit` | ⚡ |
+| `analyzer-tests-audit` | 🔍 |
+| `api-design-audit` | 🎨 |
+| `backlog-hygiene` | 📋 |
+| `bot-audit` | 🤖 |
+| `code-review` | 🔍 |
+| `complexity-audit` | 🧠 |
+| `dba-audit` | 🗄️ |
+| `doc-hygiene` | 🧹 |
+| `frontend-code-review` | 🎯 |
+| `i18n-audit` | 🌍 |
+| `memory-hygiene` | 🧠 |
+| `mutation-audit` | 🧬 |
+| `performance-audit` | 🚀 |
+| `release-readiness-audit` | 🚀 |
+| `security-audit` | 🔒 |
+| `simplicity-audit` | ✂️ |
+| `spellcheck-audit` | 🔤 |
+| `task-compliance` | ✅ |
+| `tech-debt-audit` | 🧱 |
+| `test-audit` | 🧪 |
+| `type-safety` | 🧷 |
+| `ux-audit` | 🎨 |
+| `version-audit` | 📦 |

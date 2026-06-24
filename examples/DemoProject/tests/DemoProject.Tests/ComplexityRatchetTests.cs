@@ -44,10 +44,24 @@ public class ComplexityRatchetTests
 
         using var process = Process.Start(psi)!;
         var output = process.StandardOutput.ReadToEnd();
+        var error = process.StandardError.ReadToEnd();
         process.WaitForExit();
 
-        var matches = Regex.Matches(output, @"(S3776|S1541)");
-        return matches.Count;
+        var combinedOutput = $"{output}{Environment.NewLine}{error}";
+        if (process.ExitCode != 0)
+            throw new InvalidOperationException($"Complexity scan failed for '{solutionFile}'.{Environment.NewLine}{combinedOutput}");
+
+        return combinedOutput
+            .Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries)
+            .Where(IsProductionDiagnosticLine)
+            .Distinct(StringComparer.Ordinal)
+            .Count(line => Regex.IsMatch(line, @"\b(S3776|S1541)\b"));
+    }
+
+    private static bool IsProductionDiagnosticLine(string line)
+    {
+        return Regex.IsMatch(line, @"\b(S3776|S1541)\b")
+            && line.Contains($"{Path.DirectorySeparatorChar}src{Path.DirectorySeparatorChar}", StringComparison.OrdinalIgnoreCase);
     }
 
     private static int GetBaselineOrSet(int current, string baselineFile)

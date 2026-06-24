@@ -12,6 +12,8 @@
 
 using System.Diagnostics;
 using System.Text.RegularExpressions;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using TUnit;
 
 namespace Tests.Patterns;
@@ -73,19 +75,79 @@ public class ComplexityRatchetTests
 
         using var process = Process.Start(psi)!;
         var output = process.StandardOutput.ReadToEnd();
+        var error = process.StandardError.ReadToEnd();
         process.WaitForExit();
 
-        // Match S3776 (cognitive) and S1541 (cyclomatic) warnings.
-        var matches = Regex.Matches(output, @"(S3776|S1541)");
-        return matches.Count;
+        var combinedOutput = $"{output}{Environment.NewLine}{error}";
+        if (process.ExitCode != 0)
+            throw new InvalidOperationException($"Complexity scan failed for '{solutionFile}'.{Environment.NewLine}{combinedOutput}");
+
+        return combinedOutput
+            .Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries)
+            .Where(IsProductionDiagnosticLine)
+            .Distinct(StringComparer.Ordinal)
+            .Count(line => Regex.IsMatch(line, @"\b(S3776|S1541)\b"));
     }
 
     private static IReadOnlyList<Hotspot> GetTopComplexityHotspots(string rootDir, int topN)
     {
-        // Placeholder: in a real project, parse SonarLint/ReportGenerator output
-        // or use Microsoft.CodeAnalysis.Metrics to compute per-method complexity.
-        // For copy-paste friendly template, return empty list; replace with real scanner.
-        return Array.Empty<Hotspot>();
+        var files = Directory.GetFiles(rootDir, "*.cs", SearchOption.AllDirectories)
+            .Where(IsProductionSourceFile);
+
+        var hotspots = new List<Hotspot>();
+
+        foreach (var file in files)
+        {
+            var tree = CSharpSyntaxTree.ParseText(File.ReadAllText(file));
+            var root = tree.GetRoot();
+            var methods = root.DescendantNodes().OfType<MethodDeclarationSyntax>();
+
+            foreach (var method in methods)
+            {
+                var complexity = CalculateCyclomaticComplexity(method);
+                var line = tree.GetLineSpan(method.Identifier.Span).StartLinePosition.Line + 1;
+                hotspots.Add(new Hotspot($"{file}:{line} {method.Identifier.Text}", complexity));
+            }
+        }
+
+        return hotspots
+            .OrderByDescending(h => h.Complexity)
+            .ThenBy(h => h.MethodName, StringComparer.Ordinal)
+            .Take(topN)
+            .ToList();
+    }
+
+    private static int CalculateCyclomaticComplexity(MethodDeclarationSyntax method)
+    {
+        var decisionPoints = method.DescendantNodes()
+            .Count(node => node is IfStatementSyntax
+                or WhileStatementSyntax
+                or ForStatementSyntax
+                or ForEachStatementSyntax
+                or CaseSwitchLabelSyntax
+                or CatchClauseSyntax
+                or ConditionalExpressionSyntax);
+
+        var logicalOperators = method.DescendantTokens()
+            .Count(t => t.RawKind == (int)SyntaxKind.AmpersandAmpersandToken
+                || t.RawKind == (int)SyntaxKind.BarBarToken);
+
+        return 1 + decisionPoints + logicalOperators;
+    }
+
+    private static bool IsProductionDiagnosticLine(string line)
+    {
+        return Regex.IsMatch(line, @"\b(S3776|S1541)\b")
+            && !Regex.IsMatch(line, @"[/\\](tests?|test)[/\\]", RegexOptions.IgnoreCase);
+    }
+
+    private static bool IsProductionSourceFile(string filePath)
+    {
+        if (filePath.Contains($"{Path.DirectorySeparatorChar}bin{Path.DirectorySeparatorChar}", StringComparison.OrdinalIgnoreCase)
+            || filePath.Contains($"{Path.DirectorySeparatorChar}obj{Path.DirectorySeparatorChar}", StringComparison.OrdinalIgnoreCase))
+            return false;
+
+        return !Regex.IsMatch(filePath, @"[/\\](tests?|test)[/\\]", RegexOptions.IgnoreCase);
     }
 
     private static int GetBaselineOrSet(int current, string baselineFile)
