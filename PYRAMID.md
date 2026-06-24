@@ -67,7 +67,7 @@
 
 #### Failing demo
 
-Посмотри живой пример сломанных guardrails: [`examples/DemoProject.Traps/`](examples/DemoProject.Traps/) — 5 intentionally broken тестов с `IType.Explanation` и ArchUnitNET. Запусти `dotnet run --project tests/DemoProject.Traps.Tests` и увидишь, как выглядит падение при нарушении каждого правила.
+Посмотри живой пример сломанных guardrails: [`examples/DemoProject.Traps/`](examples/DemoProject.Traps/) — 7 intentionally broken тестов с `IType.Explanation` и ArchUnitNET. Запусти `dotnet run --project tests/DemoProject.Traps.Tests` и увидишь, как выглядит падение при нарушении каждого правила.
 
 #### Roslyn-first, regex-last
 

@@ -18,6 +18,12 @@
     ├── api-design-audit/            # Аудит дизайна API
     ├── bot-audit/                   # Аудит Telegram-ботов
     ├── i18n-audit/                  # Аудит локализации
+    ├── complexity-audit/            # Аудит сложности методов
+    ├── allocation-budget-audit/     # Аудит аллокаций hot path
+    ├── spellcheck-audit/            # Аудит орфографии
+    ├── release-readiness-audit/     # Аудит готовности к релизу
+    ├── mutation-audit/              # Аудит mutation testing
+    ├── analyzer-tests-audit/        # Аудит тестов Roslyn-анализаторов
     └── {project-specific}/          # Кастомные скиллы
 ```
 

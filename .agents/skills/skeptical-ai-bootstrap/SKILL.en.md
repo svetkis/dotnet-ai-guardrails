@@ -1,4 +1,4 @@
-﻿---
+---
 name: skeptical-ai-bootstrap
 description: >
   Scans a .NET project through the lens of pyramid principles,
@@ -318,6 +318,3 @@ Full report: `.backlog/onboarding-{date}.md`
 - Do not install NuGet packages
 - When creating a new skill — only generate markdown files (not code)
 - Artifacts for adaptation are taken from `dotnet-skeptical-ai`
-
-
-

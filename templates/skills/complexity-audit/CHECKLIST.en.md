@@ -1,4 +1,4 @@
-﻿# Complexity Audit — Checklist
+# Complexity Audit — Checklist
 
 ## Before Starting
 - [ ] Project stack is known (.NET version, SonarAnalyzer version)

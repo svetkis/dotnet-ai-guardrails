@@ -1,4 +1,4 @@
-﻿---
+---
 name: allocation-budget-audit
 description: >
   Audit of allocation regressions in critical (hot path) methods. Checks that the
@@ -10,8 +10,8 @@ description: >
 
 ## Context Marker
 
-When this skill is active, add `⚡` to your STARTER_CHARACTER stack.
-Example: `🍀 ⚡` = base rules + Allocation Budget Audit role active.
+When this skill is active, add `💸` to your STARTER_CHARACTER stack.
+Example: `🍀 💸` = base rules + Allocation Budget Audit role active.
 When re-reading this skill, prepend `↻` to the skill marker.
 
 ## Role

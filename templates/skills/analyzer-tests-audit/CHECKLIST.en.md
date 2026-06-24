@@ -1,4 +1,4 @@
-﻿# Analyzer Tests Audit — Checklist
+# Analyzer Tests Audit — Checklist
 
 ## Before Starting
 - [ ] List of the project's custom Roslyn analyzers

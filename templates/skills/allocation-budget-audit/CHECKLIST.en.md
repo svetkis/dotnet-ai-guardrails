@@ -1,4 +1,4 @@
-﻿# Allocation Budget Audit — Checklist
+# Allocation Budget Audit — Checklist
 
 ## Before Starting
 - [ ] Critical project paths are known (latency-sensitive)

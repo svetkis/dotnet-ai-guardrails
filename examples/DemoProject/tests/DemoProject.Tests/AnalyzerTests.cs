@@ -3,6 +3,7 @@
 
 using System.Collections.Immutable;
 using DemoProject.Analyzers;
+using DemoProject.Domain;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -118,17 +119,105 @@ public class AnalyzerTests
             .Because("Valid strongly typed ID usage must not trigger analyzer diagnostics.");
     }
 
+    [Test]
+    public async Task HotPathAnalyzer_FlagsNewAllocationInHotPath()
+    {
+        const string code = """
+            using System;
+            using DemoProject.Domain;
+
+            namespace DemoProject.Application;
+
+            public class HotPathService
+            {
+                [HotPath]
+                public byte[] Process()
+                {
+                    return new byte[1024];
+                }
+            }
+            """;
+
+        var diagnostics = await RunAnalyzerAsync<HotPathAnalyzer>(code,
+            MetadataReference.CreateFromFile(typeof(HotPathAttribute).Assembly.Location));
+
+        await Assert.That(diagnostics)
+            .Contains(d => d.Id == HotPathAnalyzer.NewDiagnosticId)
+            .Because("`new` allocation in a [HotPath] method must trigger SAE003.");
+    }
+
+    [Test]
+    public async Task HotPathAnalyzer_FlagsAsyncStateMachineInHotPath()
+    {
+        const string code = """
+            using System.Threading.Tasks;
+            using DemoProject.Domain;
+
+            namespace DemoProject.Application;
+
+            public class HotPathService
+            {
+                [HotPath]
+                public async Task<int> ProcessAsync()
+                {
+                    return await Task.FromResult(42);
+                }
+            }
+            """;
+
+        var diagnostics = await RunAnalyzerAsync<HotPathAnalyzer>(code,
+            MetadataReference.CreateFromFile(typeof(HotPathAttribute).Assembly.Location));
+
+        await Assert.That(diagnostics)
+            .Contains(d => d.Id == HotPathAnalyzer.AsyncDiagnosticId)
+            .Because("`async` in a [HotPath] method must trigger SAE004.");
+    }
+
+    [Test]
+    public async Task HotPathAnalyzer_IgnoresNewOutsideHotPath()
+    {
+        const string code = """
+            using System;
+            using DemoProject.Domain;
+
+            namespace DemoProject.Application;
+
+            public class RegularService
+            {
+                public byte[] Process()
+                {
+                    return new byte[1024];
+                }
+            }
+            """;
+
+        var diagnostics = await RunAnalyzerAsync<HotPathAnalyzer>(code,
+            MetadataReference.CreateFromFile(typeof(HotPathAttribute).Assembly.Location));
+
+        await Assert.That(diagnostics)
+            .IsEmpty()
+            .Because("Allocations outside [HotPath] methods must not trigger HotPathAnalyzer diagnostics.");
+    }
+
     private static async Task<IReadOnlyList<Diagnostic>> RunAnalyzerAsync(string sourceCode)
     {
+        return await RunAnalyzerAsync<StronglyTypedIdAnalyzer>(sourceCode);
+    }
+
+    private static async Task<IReadOnlyList<Diagnostic>> RunAnalyzerAsync<T>(string sourceCode, params MetadataReference[] additionalReferences)
+        where T : DiagnosticAnalyzer, new()
+    {
+        var references = new List<MetadataReference>
+        {
+            MetadataReference.CreateFromFile(GetSystemRuntimeReference())
+        };
+        references.AddRange(additionalReferences);
+
         var syntaxTree = CSharpSyntaxTree.ParseText(sourceCode);
         var compilation = CSharpCompilation.Create(
             assemblyName: "TestAssembly",
             syntaxTrees: new[] { syntaxTree },
-            references: new[]
-            {
-                MetadataReference.CreateFromFile(typeof(object).Assembly.Location),
-                MetadataReference.CreateFromFile(typeof(Guid).Assembly.Location)
-            },
+            references: references,
             options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 
         var compilationErrors = compilation.GetDiagnostics()
@@ -138,10 +227,26 @@ public class AnalyzerTests
         if (compilationErrors.Count > 0)
             throw new InvalidOperationException($"Analyzer test input failed to compile: {string.Join(Environment.NewLine, compilationErrors)}");
 
-        var analyzer = new StronglyTypedIdAnalyzer();
+        var analyzer = new T();
         var compilationWithAnalyzers = compilation.WithAnalyzers(ImmutableArray.Create<DiagnosticAnalyzer>(analyzer));
 
         return await compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync();
+    }
+
+    private static string GetSystemRuntimeReference()
+    {
+        // Reference assemblies live in the .NET SDK packs directory.
+        // The runtime assembly (System.Private.CoreLib) points to the shared runtime folder,
+        // from which we can reach the corresponding ref assembly in packs.
+        var runtimeDir = Path.GetDirectoryName(typeof(object).Assembly.Location)!;
+        var version = Path.GetFileName(runtimeDir); // e.g. "10.0.8"
+        var dotnetRoot = Directory.GetParent(Directory.GetParent(runtimeDir)!.Parent!.FullName)!.FullName;
+
+        var refAssemblyPath = Path.Combine(dotnetRoot, "packs", "Microsoft.NETCore.App.Ref", version, "ref", "net10.0", "System.Runtime.dll");
+        if (File.Exists(refAssemblyPath))
+            return refAssemblyPath;
+
+        throw new InvalidOperationException($"Could not locate System.Runtime.dll reference assembly. Expected: {refAssemblyPath}");
     }
 
     private static (int Line, int Character) FindSnippetLocation(string sourceCode, string snippet)

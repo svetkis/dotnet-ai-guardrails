@@ -1,4 +1,4 @@
-﻿# Spellcheck Audit — Checklist
+# Spellcheck Audit — Checklist
 
 ## Before Starting
 - [ ] `cspell` is installed (global or local)

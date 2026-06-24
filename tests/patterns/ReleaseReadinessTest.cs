@@ -9,13 +9,13 @@
 //
 // NOTE: Это не замена полным аудитам, а быстрый gate перед релизом. Не дублируйте логику других тестов.
 
-using System.Net.Http.Json;
 using TUnit;
 
 namespace Tests.Patterns;
 
 public class ReleaseReadinessTests
 {
+    private static readonly string RepoRoot = FindRepoRoot();
     private static readonly HttpClient HttpClient = new() { BaseAddress = new Uri("http://localhost:5000") };
 
     // TRAP: Релиз уходит без проверки health endpoint.
@@ -59,13 +59,31 @@ public class ReleaseReadinessTests
     {
         var requiredFiles = new[]
         {
-            "../AGENTS.md",
-            "../docs/DEPLOYMENT.md",
-            "../.github/workflows/deploy-api.yml"
+            Path.Combine(RepoRoot, "AGENTS.md"),
+            Path.Combine(RepoRoot, "docs", "DEPLOYMENT.md"),
+            Path.Combine(RepoRoot, ".github", "workflows", "deploy-api.yml")
         };
 
         var missing = requiredFiles.Where(f => !File.Exists(f)).ToList();
         Assert.That(missing).IsEmpty()
             .Because("Required release artifacts must exist: {0}", string.Join(", ", missing));
+    }
+
+    private static string FindRepoRoot()
+    {
+        var dir = AppContext.BaseDirectory;
+        while (!string.IsNullOrEmpty(dir))
+        {
+            if (Directory.Exists(Path.Combine(dir, ".git"))
+                || Directory.GetFiles(dir, "*.sln", SearchOption.TopDirectoryOnly).Any()
+                || Directory.GetFiles(dir, "*.slnx", SearchOption.TopDirectoryOnly).Any())
+            {
+                return dir;
+            }
+
+            dir = Directory.GetParent(dir)?.FullName;
+        }
+
+        throw new InvalidOperationException("Could not find repository root. Ensure .git, .sln or .slnx exists.");
     }
 }

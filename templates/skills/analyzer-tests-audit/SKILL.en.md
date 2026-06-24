@@ -1,4 +1,4 @@
-﻿---
+---
 name: analyzer-tests-audit
 description: >
   Audit of unit tests for custom Roslyn analyzers. Checks that custom guardrails
@@ -10,8 +10,8 @@ description: >
 
 ## Context Marker
 
-When this skill is active, add `🔍` to your STARTER_CHARACTER stack.
-Example: `🍀 🔍` = base rules + Analyzer Tests Audit role active.
+When this skill is active, add `🔬` to your STARTER_CHARACTER stack.
+Example: `🍀 🔬` = base rules + Analyzer Tests Audit role active.
 When re-reading this skill, prepend `↻` to the skill marker.
 
 ## Role

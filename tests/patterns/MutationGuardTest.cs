@@ -18,12 +18,14 @@ namespace Tests.Patterns;
 
 public class MutationGuardTests
 {
+    private static readonly string RepoRoot = FindRepoRoot();
+
     // TRAP: Покрытие строк высокое, но ассерты слабые — мутанты выживают.
     // GUARDRAIL: Mutation score для критичной сборки >= baseline (например, 70%).
     [Test]
     public void StrykerMutationScore_ShouldMeetBaseline()
     {
-        var score = RunStrykerAndGetScore("..", targetProject: "src/YourProject.Domain/YourProject.Domain.csproj");
+        var score = RunStrykerAndGetScore(RepoRoot, targetProject: "src/YourProject.Domain/YourProject.Domain.csproj");
         var baseline = GetBaselineOrSet((int)(score * 100), "mutation-score-baseline.txt");
         var current = (int)(score * 100);
 
@@ -79,11 +81,29 @@ public class MutationGuardTests
 
     private static int GetBaselineOrSet(int current, string baselineFile)
     {
-        var path = Path.Combine("..", baselineFile);
+        var path = Path.Combine(RepoRoot, baselineFile);
         if (File.Exists(path) && int.TryParse(File.ReadAllText(path), out var baseline))
             return baseline;
 
         File.WriteAllText(path, current.ToString());
         return current;
+    }
+
+    private static string FindRepoRoot()
+    {
+        var dir = AppContext.BaseDirectory;
+        while (!string.IsNullOrEmpty(dir))
+        {
+            if (Directory.Exists(Path.Combine(dir, ".git"))
+                || Directory.GetFiles(dir, "*.sln", SearchOption.TopDirectoryOnly).Any()
+                || Directory.GetFiles(dir, "*.slnx", SearchOption.TopDirectoryOnly).Any())
+            {
+                return dir;
+            }
+
+            dir = Directory.GetParent(dir)?.FullName;
+        }
+
+        throw new InvalidOperationException("Could not find repository root. Ensure .git, .sln or .slnx exists.");
     }
 }

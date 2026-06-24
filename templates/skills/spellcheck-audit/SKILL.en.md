@@ -1,4 +1,4 @@
-﻿---
+---
 name: spellcheck-audit
 description: >
   Project-wide spelling audit via CSpell. Catches typos in public API names,

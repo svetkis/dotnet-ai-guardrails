@@ -1,4 +1,4 @@
-﻿---
+---
 name: mutation-audit
 description: >
   Mutation testing with Stryker.NET. Checks test quality: do tests actually kill

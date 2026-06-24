@@ -18,12 +18,14 @@ namespace Tests.Patterns;
 
 public class SpellcheckGuardTests
 {
+    private static readonly string RepoRoot = FindRepoRoot();
+
     // TRAP: Агент добавил опечатку в публичное API-имя.
     // GUARDRAIL: CSpell не находит новых ошибок в проверяемых файлах.
     [Test]
     public void CSpell_ShouldNotFindNewMisspellings()
     {
-        var misspellingCount = RunCSpell("..");
+        var misspellingCount = RunCSpell(RepoRoot);
         var baseline = GetBaselineOrSet(misspellingCount, "spellcheck-baseline.txt");
 
         Assert.That(misspellingCount)
@@ -75,11 +77,29 @@ public class SpellcheckGuardTests
 
     private static int GetBaselineOrSet(int current, string baselineFile)
     {
-        var path = Path.Combine("..", baselineFile);
+        var path = Path.Combine(RepoRoot, baselineFile);
         if (File.Exists(path) && int.TryParse(File.ReadAllText(path), out var baseline))
             return baseline;
 
         File.WriteAllText(path, current.ToString());
         return current;
+    }
+
+    private static string FindRepoRoot()
+    {
+        var dir = AppContext.BaseDirectory;
+        while (!string.IsNullOrEmpty(dir))
+        {
+            if (Directory.Exists(Path.Combine(dir, ".git"))
+                || Directory.GetFiles(dir, "*.sln", SearchOption.TopDirectoryOnly).Any()
+                || Directory.GetFiles(dir, "*.slnx", SearchOption.TopDirectoryOnly).Any())
+            {
+                return dir;
+            }
+
+            dir = Directory.GetParent(dir)?.FullName;
+        }
+
+        throw new InvalidOperationException("Could not find repository root. Ensure .git, .sln or .slnx exists.");
     }
 }

@@ -90,7 +90,7 @@ public class HotPathAnalyzer : DiagnosticAnalyzer
         if (!IsInHotPathMethod(context, cast))
             return;
 
-        if (!IsBoxingConversion(context, cast.Expression))
+        if (!IsBoxingConversion(context, cast))
             return;
 
         context.ReportDiagnostic(Diagnostic.Create(BoxingRule, cast.GetLocation()));
@@ -102,7 +102,7 @@ public class HotPathAnalyzer : DiagnosticAnalyzer
         if (!IsInHotPathMethod(context, asExpr))
             return;
 
-        if (!IsBoxingConversion(context, asExpr.Left))
+        if (!IsBoxingConversion(context, asExpr))
             return;
 
         context.ReportDiagnostic(Diagnostic.Create(BoxingRule, asExpr.GetLocation()));
@@ -110,8 +110,18 @@ public class HotPathAnalyzer : DiagnosticAnalyzer
 
     private static bool IsBoxingConversion(SyntaxNodeAnalysisContext context, ExpressionSyntax expression)
     {
+        var typeInfo = context.SemanticModel.GetTypeInfo(expression);
         var conversion = context.SemanticModel.GetConversion(expression);
-        return conversion.IsBoxing;
+
+        if (conversion.IsBoxing)
+            return true;
+
+        // Fallback for cases where GetConversion does not report boxing explicitly
+        // (e.g. reference assemblies or certain cast forms).
+        if (typeInfo.Type is { IsValueType: true } && typeInfo.ConvertedType is { IsReferenceType: true })
+            return true;
+
+        return false;
     }
 
     private static bool IsInHotPathMethod(SyntaxNodeAnalysisContext context, SyntaxNode node)

@@ -76,6 +76,8 @@ For any change:
     ├── onboarding.md              # Project scanning
     ├── code-review.md             # PR review
     ├── security-audit.md          # Security audit
+    ├── complexity-audit.md        # Complexity audit
+    ├── allocation-budget-audit.md # Hot path allocation audit
     └── architecture-audit.md      # Architecture audit
 ```
 

@@ -1,4 +1,4 @@
-﻿---
+---
 name: release-readiness-audit
 description: >
   Comprehensive audit of release / beta readiness. Aggregates findings from
@@ -10,8 +10,8 @@ description: >
 
 ## Context Marker
 
-When this skill is active, add `🚀` to your STARTER_CHARACTER stack.
-Example: `🍀 🚀` = base rules + Release Readiness Audit role active.
+When this skill is active, add `📦` to your STARTER_CHARACTER stack.
+Example: `🍀 📦` = base rules + Release Readiness Audit role active.
 When re-reading this skill, prepend `↻` to the skill marker.
 
 ## Role

@@ -1,4 +1,4 @@
-﻿---
+---
 name: complexity-audit
 description: >
   Audit of cognitive and cyclomatic complexity. Finds methods that agents turned

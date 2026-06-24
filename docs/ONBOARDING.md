@@ -126,7 +126,7 @@
 5. **Modular Monolith / Vertical Slice:** используй `Slice().ByNamespacePrefix(...).Should().NotHaveDependenciesBetweenSlices()` для проверки межмодульных зависимостей
 6. Если правило смотрит на C#-исходники — предпочитай Roslyn analyzer (см. [`roslyn-analyzers.md`](solutions/roslyn-analyzers.md)); regex оставляй для config/markdown/manifests или временного spike
 7. Запусти: `dotnet run --project tests/YourProject.Tests` — тесты проходят?
-8. Посмотри живой failing demo: [`examples/DemoProject.Traps/`](../examples/DemoProject.Traps/) — 5 intentionally broken guardrails с `IType.Explanation` и ArchUnitNET
+8. Посмотри живой failing demo: [`examples/DemoProject.Traps/`](../examples/DemoProject.Traps/) — 7 intentionally broken guardrails с `IType.Explanation` и ArchUnitNET
 
 **Критерий готовности:** Новый `using Infrastructure` в Application = красный CI.
 
@@ -198,6 +198,12 @@
 | Security audit | Раз в спринт | После внедрения Слоя 1.3 |
 | DBA audit | Раз в спринт / при миграциях | Если используешь EF Core / Dapper |
 | Performance audit | Перед релизом | После стабилизации архитектуры |
+| Complexity audit | Раз в спринт | Когда методы начинают разрастаться |
+| Allocation budget audit | Перед релизом / при изменении hot paths | Если есть latency-sensitive пути |
+| Spellcheck audit | Раз в спринт | Если есть публичные API / документация |
+| Release readiness audit | Перед релизом / бета-запуском | Перед выходом в прод |
+| Mutation audit | Раз в спринт | Если Stryker совместим с тестовым фреймворком |
+| Analyzer tests audit | При создании / обновлении Roslyn-анализаторов | Если есть кастомные analyzers |
 | Tech debt audit | Раз в спринт | Сразу — ловит дублирование и мёртвый код |
 | Test audit | После 3–5 фич | Когда появляются новые фичи без тестов |
 

@@ -1,4 +1,4 @@
-﻿# Knowledge Map
+# Knowledge Map
 
 > Unified table of contents for all repository artifacts.  
 > If you are here for the first time — start with [GLOSSARY.md](../GLOSSARY.md), then return here.
@@ -28,7 +28,7 @@
 | **1** | 1.1 Compiler | Fast feedback from types | [PYRAMID.md §1.1](../PYRAMID.md#layer-1-compiler) | `.editorconfig`, `Directory.Build.props`, `DemoProject.Analyzers` (custom Roslyn analyzer) |
 | **1** | 1.2 Architecture | Auto-check of layers and anti-patterns | [PYRAMID.md §1.2](../PYRAMID.md#layer-1-architecture) | [tests/patterns/ArchitectureRules.cs](../tests/patterns/ArchitectureRules.cs), [RatchetTest.cs](../tests/patterns/RatchetTest.cs), [ArchUnitNetSliceTest.cs](../tests/patterns/ArchUnitNetSliceTest.cs) |
 | **1** | 1.3 Tests | Regressions, snapshot, vibe-refactoring, API contracts | [PYRAMID.md §1.3](../PYRAMID.md#layer-1-tests) | [tests/patterns/](#test-patterns) |
-| **1** | 1.4 Code Review | Agent checks agent (pre-commit / PR) | [PYRAMID.md §1.4](../PYRAMID.md#layer-1-code-review) | [templates/skills/code-review/SKILL.md](../templates/skills/code-review/SKILL.md), [templates/skills/frontend-code-review/SKILL.md](../templates/skills/frontend-code-review/SKILL.md) |
+| **1** | 1.4 Code Review | Agent checks agent (pre-commit / PR) | [PYRAMID.md §1.4](../PYRAMID.md#layer-1-code-review) | [templates/skills/code-review/SKILL.en.md](../templates/skills/code-review/SKILL.en.md), [templates/skills/frontend-code-review/SKILL.en.md](../templates/skills/frontend-code-review/SKILL.en.md) |
 | **1** | 1.5 Smoke | Fast run of critical scenarios | [PYRAMID.md §1.5](../PYRAMID.md#layer-1-smoke) | — |
 | **2** | 2.1 E2E / MCP | Full scenarios through external systems | [PYRAMID.md §2.1](../PYRAMID.md#layer-2-e2e) | [tests/patterns/SnapshotTest.cs](../tests/patterns/SnapshotTest.cs) |
 | **2** | 2.2 Audits | Deep checks on schedule | [PYRAMID.md §2.2](../PYRAMID.md#layer-2-audits) | [templates/skills/](#skills-audits) |
@@ -71,27 +71,27 @@ All templates are `copy-paste friendly`. Each contains comments `// TRAP:` and `
 
 ## Skills (Audits)
 
-Each standalone skill = an agent role. It usually contains `SKILL.md` (instructions) + `CHECKLIST.md` (checklist).
+Each standalone skill = an agent role. It usually contains `SKILL.en.md` (instructions) + `CHECKLIST.en.md` (checklist).
 Exception: `templates/skills/skeptical-ai-bootstrap/` contains supporting templates; the executable bootstrap skill lives in `.agents/skills/skeptical-ai-bootstrap/`.
 
 | Skill | When to run |
 |-------|-------------|
-| [code-review](../templates/skills/code-review/SKILL.md) | On every commit (pre-commit) / PR |
-| [frontend-code-review](../templates/skills/frontend-code-review/SKILL.md) | On every commit (pre-commit) / PR with React/TS |
-| [task-compliance](../templates/skills/task-compliance/SKILL.md) | On every PR |
-| [security-audit](../templates/skills/security-audit/SKILL.md) | Once per sprint / on PR with Api/Infra |
-| [dba-audit](../templates/skills/dba-audit/SKILL.md) | Once per sprint / on migrations (EF Core) |
-| [dba-audit-dapper](../templates/skills/dba-audit-dapper/SKILL.md) | Once per sprint / on repository changes (Dapper / Raw SQL) |
-| [performance-audit](../templates/skills/performance-audit/SKILL.md) | Before release / on suspicion |
-| [api-design-audit](../templates/skills/api-design-audit/SKILL.md) | Once per sprint |
-| [bot-audit](../templates/skills/bot-audit/SKILL.md) | Once per sprint |
-| [i18n-audit](../templates/skills/i18n-audit/SKILL.md) | Once per sprint |
-| [version-audit](../templates/skills/version-audit/SKILL.md) | Once per sprint |
-| [tech-debt-audit](../templates/skills/tech-debt-audit/SKILL.md) | Once per sprint / before quarterly planning |
-| [test-audit](../templates/skills/test-audit/SKILL.md) | After 3-5 features / before release |
-| [simplicity-audit](../templates/skills/simplicity-audit/SKILL.md) | Once per sprint / when code is hard to explain |
-| [ux-audit](../templates/skills/ux-audit/SKILL.md) | During UI rework / before beta |
-| [type-safety](../templates/skills/type-safety/SKILL.md) | On PR with Domain/DTO / when refactoring identifiers |
+| [code-review](../templates/skills/code-review/SKILL.en.md) | On every commit (pre-commit) / PR |
+| [frontend-code-review](../templates/skills/frontend-code-review/SKILL.en.md) | On every commit (pre-commit) / PR with React/TS |
+| [task-compliance](../templates/skills/task-compliance/SKILL.en.md) | On every PR |
+| [security-audit](../templates/skills/security-audit/SKILL.en.md) | Once per sprint / on PR with Api/Infra |
+| [dba-audit](../templates/skills/dba-audit/SKILL.en.md) | Once per sprint / on migrations (EF Core) |
+| [dba-audit-dapper](../templates/skills/dba-audit-dapper/SKILL.en.md) | Once per sprint / on repository changes (Dapper / Raw SQL) |
+| [performance-audit](../templates/skills/performance-audit/SKILL.en.md) | Before release / on suspicion |
+| [api-design-audit](../templates/skills/api-design-audit/SKILL.en.md) | Once per sprint |
+| [bot-audit](../templates/skills/bot-audit/SKILL.en.md) | Once per sprint |
+| [i18n-audit](../templates/skills/i18n-audit/SKILL.en.md) | Once per sprint |
+| [version-audit](../templates/skills/version-audit/SKILL.en.md) | Once per sprint |
+| [tech-debt-audit](../templates/skills/tech-debt-audit/SKILL.en.md) | Once per sprint / before quarterly planning |
+| [test-audit](../templates/skills/test-audit/SKILL.en.md) | After 3-5 features / before release |
+| [simplicity-audit](../templates/skills/simplicity-audit/SKILL.en.md) | Once per sprint / when code is hard to explain |
+| [ux-audit](../templates/skills/ux-audit/SKILL.en.md) | During UI rework / before beta |
+| [type-safety](../templates/skills/type-safety/SKILL.en.md) | On PR with Domain/DTO / when refactoring identifiers |
 | [complexity-audit](../templates/skills/complexity-audit/SKILL.en.md) | Once per sprint / when technical debt grows |
 | [allocation-budget-audit](../templates/skills/allocation-budget-audit/SKILL.en.md) | Before release / when hot paths change |
 | [spellcheck-audit](../templates/skills/spellcheck-audit/SKILL.en.md) | Once per sprint / before public release |
@@ -105,9 +105,9 @@ Exception: `templates/skills/skeptical-ai-bootstrap/` contains supporting templa
 
 | Skill | When to run |
 |-------|-------------|
-| [memory-hygiene](../templates/skills/memory-hygiene/SKILL.md) | Once per sprint or on agent change |
-| [doc-hygiene](../templates/skills/doc-hygiene/SKILL.md) | Once per sprint or after refactoring |
-| [backlog-hygiene](../templates/skills/backlog-hygiene/SKILL.md) | Once per sprint |
+| [memory-hygiene](../templates/skills/memory-hygiene/SKILL.en.md) | Once per sprint or on agent change |
+| [doc-hygiene](../templates/skills/doc-hygiene/SKILL.en.md) | Once per sprint or after refactoring |
+| [backlog-hygiene](../templates/skills/backlog-hygiene/SKILL.en.md) | Once per sprint |
 
 ---
 
@@ -122,12 +122,12 @@ Read before implementation — each trap explains **why** a guardrail exists.
 | [context-blindness](traps/context-blindness.md) | Agent does not see business context | [AGENTS.md](../rules/AGENTS_TEMPLATE.md) |
 | [false-safety](traps/false-safety.md) | Green CI ≠ working code | [verify-tests.sh](../ci/scripts/verify-tests.sh) |
 | [p50-vs-max](traps/p50-vs-max.md) | Average latency is good, tail is terrible | [LoadTest.cs](../tests/patterns/LoadTest.cs) |
-| [agent-circles](traps/agent-circles.md) | Agents loop on one problem | [task-compliance](../templates/skills/task-compliance/SKILL.md) |
+| [agent-circles](traps/agent-circles.md) | Agents loop on one problem | [task-compliance](../templates/skills/task-compliance/SKILL.en.md) |
 | [stale-stack](traps/stale-stack.md) | Agent uses outdated stack due to training cutoff | [VersionAuditTest.cs](../tests/patterns/VersionAuditTest.cs) |
 | [log-leak](traps/log-leak.md) | PII leaks into logs | [PiiGuardTest.cs](../tests/patterns/PiiGuardTest.cs) |
 | [code-duplication](traps/code-duplication.md) | Agent duplicates business logic instead of reuse | [DuplicationGuardTest.cs](../tests/patterns/DuplicationGuardTest.cs) |
 | [dependency-drift](traps/dependency-drift.md) | +1 using/#include closes a cycle in the dependency graph | [DependencyDriftTest.cs](../tests/patterns/DependencyDriftTest.cs) |
-| [over-engineering](traps/over-engineering.md) | Agent builds an architectural cathedral instead of a simple solution | [simplicity-audit](../templates/skills/simplicity-audit/SKILL.md) |
+| [over-engineering](traps/over-engineering.md) | Agent builds an architectural cathedral instead of a simple solution | [simplicity-audit](../templates/skills/simplicity-audit/SKILL.en.md) |
 
 ---
 
@@ -151,7 +151,7 @@ Read before implementation — each trap explains **why** a guardrail exists.
 
 | Agent | File | Configuration format |
 |-------|------|----------------------|
-| Kimi Code CLI | [KIMI.md](agents/KIMI.md) | `.kimi/skills/{name}/SKILL.md` |
+| Kimi Code CLI | [KIMI.md](agents/KIMI.md) | `.kimi/skills/{name}/SKILL.en.md` |
 | Claude Code | [CLAUDE-CODE.md](agents/CLAUDE-CODE.md) | `.claude/CLAUDE.md` + commands |
 | Cursor | [CURSOR.md](agents/CURSOR.md) | `.cursorrules` + `.cursor/rules/` |
 | Codex (OpenAI) | [CODEX.md](agents/CODEX.md) | `.codex/instructions.md` |
@@ -191,5 +191,3 @@ When adding a new artifact:
 1. Add a row to the corresponding table
 2. Provide a link to the pattern/solution
 3. If it's a new pyramid layer — update [PYRAMID.md](../PYRAMID.md)
-
-

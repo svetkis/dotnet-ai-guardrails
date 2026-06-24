@@ -18,6 +18,12 @@
     ├── api-design-audit/            # API design audit
     ├── bot-audit/                   # Telegram bot audit
     ├── i18n-audit/                  # Localization audit
+    ├── complexity-audit/            # Method complexity audit
+    ├── allocation-budget-audit/     # Hot path allocation audit
+    ├── spellcheck-audit/            # Spellcheck audit
+    ├── release-readiness-audit/     # Release readiness audit
+    ├── mutation-audit/              # Mutation testing audit
+    ├── analyzer-tests-audit/        # Roslyn analyzer tests audit
     └── {project-specific}/          # Custom skills
 ```
 

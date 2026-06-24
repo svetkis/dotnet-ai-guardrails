@@ -14,6 +14,8 @@
     ├── code-review.md             # /code-review
     ├── task-compliance.md         # /task-compliance
     ├── security-audit.md          # /security-audit
+    ├── complexity-audit.md        # /complexity-audit
+    ├── allocation-budget-audit.md # /allocation-budget-audit
     └── {project-specific}.md      # Custom commands
 ```
 

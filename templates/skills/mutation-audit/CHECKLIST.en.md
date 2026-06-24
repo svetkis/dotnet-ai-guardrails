@@ -1,4 +1,4 @@
-﻿# Mutation Audit — Checklist
+# Mutation Audit — Checklist
 
 ## Before Starting
 - [ ] `dotnet-stryker` is installed (global or local)

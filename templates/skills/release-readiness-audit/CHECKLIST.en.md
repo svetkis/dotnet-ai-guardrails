@@ -1,4 +1,4 @@
-﻿# Release Readiness Audit — Checklist
+# Release Readiness Audit — Checklist
 
 ## Before Starting
 - [ ] Release / beta date is defined

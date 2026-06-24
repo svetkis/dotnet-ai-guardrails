@@ -20,12 +20,14 @@ namespace Tests.Patterns;
 
 public class ComplexityRatchetTests
 {
+    private static readonly string RepoRoot = FindRepoRoot();
+
     // TRAP: Агент написал метод с 5 уровнями вложенности if/switch/foreach.
     // GUARDRAIL: Фиксируем baseline нарушений и не даём ему расти.
     [Test]
     public void SonarComplexityViolations_ShouldNotIncrease()
     {
-        var violationCount = CountSonarComplexityViolations("..");
+        var violationCount = CountSonarComplexityViolations(RepoRoot);
         var baseline = GetBaselineOrSet(violationCount, "complexity-baseline.txt");
 
         Assert.That(violationCount)
@@ -39,7 +41,7 @@ public class ComplexityRatchetTests
     [Test]
     public void TopHotspotComplexity_ShouldNotIncrease()
     {
-        var hotspots = GetTopComplexityHotspots("..", topN: 10);
+        var hotspots = GetTopComplexityHotspots(RepoRoot, topN: 10);
         var currentMax = hotspots.Any() ? hotspots.Max(h => h.Complexity) : 0;
         var baselineMax = GetBaselineOrSet(currentMax, "complexity-hotspot-baseline.txt");
 
@@ -152,12 +154,30 @@ public class ComplexityRatchetTests
 
     private static int GetBaselineOrSet(int current, string baselineFile)
     {
-        var path = Path.Combine("..", baselineFile);
+        var path = Path.Combine(RepoRoot, baselineFile);
         if (File.Exists(path) && int.TryParse(File.ReadAllText(path), out var baseline))
             return baseline;
 
         File.WriteAllText(path, current.ToString());
         return current;
+    }
+
+    private static string FindRepoRoot()
+    {
+        var dir = AppContext.BaseDirectory;
+        while (!string.IsNullOrEmpty(dir))
+        {
+            if (Directory.Exists(Path.Combine(dir, ".git"))
+                || Directory.GetFiles(dir, "*.sln", SearchOption.TopDirectoryOnly).Any()
+                || Directory.GetFiles(dir, "*.slnx", SearchOption.TopDirectoryOnly).Any())
+            {
+                return dir;
+            }
+
+            dir = Directory.GetParent(dir)?.FullName;
+        }
+
+        throw new InvalidOperationException("Could not find repository root. Ensure .git, .sln or .slnx exists.");
     }
 
     private readonly record struct Hotspot(string MethodName, int Complexity);

@@ -10,8 +10,8 @@ description: >
 
 ## Context Marker
 
-Когда этот скилл активен, добавь `⚡` к своему STARTER_CHARACTER.
-Пример: `🍀 ⚡` = базовые правила + роль Allocation Budget Audit активна.
+Когда этот скилл активен, добавь `💸` к своему STARTER_CHARACTER.
+Пример: `🍀 💸` = базовые правила + роль Allocation Budget Audit активна.
 При перечитывании (re-read) добавь `♻️` перед маркером скилла.
 
 ## Роль

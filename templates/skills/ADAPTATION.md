@@ -76,13 +76,13 @@
 
 | Скилл | Маркер |
 |---|---|
-| `allocation-budget-audit` | ⚡ |
-| `analyzer-tests-audit` | 🔍 |
+| `allocation-budget-audit` | 💸 |
+| `analyzer-tests-audit` | 🔬 |
 | `api-design-audit` | 🎨 |
 | `backlog-hygiene` | 📋 |
 | `complexity-audit` | 🧠 |
 | `mutation-audit` | 🧬 |
-| `release-readiness-audit` | 🚀 |
+| `release-readiness-audit` | 📦 |
 | `spellcheck-audit` | 🔤 |
 | `bot-audit` | 🤖 |
 | `code-review` | 🔍 |

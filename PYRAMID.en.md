@@ -37,6 +37,8 @@ Everything that runs in seconds and minutes — while the developer (or agent) i
 - **Strongly Typed IDs** — `BookingId` instead of `Guid`, `CustomerId` instead of `string`. The compiler catches wrong-ID substitution before tests run. See `examples/DemoProject/src/DemoProject.Domain/BookingId.cs`
 - **Roslyn-first for C# guardrails** — source-level C# rules should live in analyzers when they need language meaning, types or symbols. `SAE001` catches `Guid Id` in Domain entities, `SAE002` catches `Guid somethingId` parameters right in the IDE, before `dotnet build`. See `examples/DemoProject/src/DemoProject.Analyzers/`
 - **[HotPath] guardrails (SAE003/004/005)** — catches `new`, `async` state machine and boxing in `[HotPath]` methods right in the IDE. Performance degradation is prevented before commit, not by a profiler in production. See `examples/DemoProject/src/DemoProject.Analyzers/HotPathAnalyzer.cs`
+- **Complexity analyzers** — `SonarAnalyzer.CSharp` (`S3776` cognitive / `S1541` cyclomatic) prevents the agent from quietly turning a method into a knot of branches. For new projects — `error` with thresholds 15/10; for legacy — baseline + ratchet. See `tests/patterns/ComplexityRatchetTest.cs`
+- **Analyzer tests** — custom Roslyn analyzers have positive/negative unit tests, so a Roslyn update does not silently break guardrails. See `tests/patterns/AnalyzerTests.cs`
 
 #### Frontend
 - `tsc --noEmit` (strict mode) + `noUnusedLocals`
@@ -58,12 +60,14 @@ Everything that runs in seconds and minutes — while the developer (or agent) i
 | Layers (Clean Architecture) | 10 |
 | Naming | 3 |
 | Structure and anti-patterns | 12 |
+| Complexity | 1 | Number of methods violating `S3776`/`S1541` must not grow (baseline + ratchet) |
+| Allocation budget | 1 | Every `[HotPath]` method has a `{MethodName}_AllocationBudget` test; allocations stay within baseline + 10% |
 | Performance | 1 |
 | Test inventory | 1 |
 
 ### Failing demo
 
-See the live example of broken guardrails: [`examples/DemoProject.Traps/`](examples/DemoProject.Traps/) — 5 intentionally broken tests with `IType.Explanation` and ArchUnitNET. Run `dotnet run --project tests/DemoProject.Traps.Tests` to see what a failure looks like for each violated rule.
+See the live example of broken guardrails: [`examples/DemoProject.Traps/`](examples/DemoProject.Traps/) — 7 intentionally broken tests with `IType.Explanation` and ArchUnitNET. Run `dotnet run --project tests/DemoProject.Traps.Tests` to see what a failure looks like for each violated rule.
 
 ### Roslyn-first, regex-last
 
@@ -82,7 +86,7 @@ Use tools by meaning:
 
 Whitelist for exceptions (write-path) self-validates: if a file from the whitelist no longer contains the pattern — the test fails.
 
-**Pattern:** `tests/patterns/ArchitectureRules.cs`, `tests/patterns/RatchetTest.cs`, `tests/patterns/DependencyDriftTest.cs`, `tests/patterns/EntityLeakTest.cs`, `tests/patterns/StronglyTypedIds.cs`, `tests/patterns/ArchUnitNetSliceTest.cs`
+**Pattern:** `tests/patterns/ArchitectureRules.cs`, `tests/patterns/RatchetTest.cs`, `tests/patterns/DependencyDriftTest.cs`, `tests/patterns/EntityLeakTest.cs`, `tests/patterns/StronglyTypedIds.cs`, `tests/patterns/ArchUnitNetSliceTest.cs`, `tests/patterns/ComplexityRatchetTest.cs`, `tests/patterns/AllocationBudgetTest.cs`
 
 ---
 
@@ -201,6 +205,12 @@ This is not a "feedback level" — it's a **repeatable persona**. Without skills
 | UX Flow | `templates/skills/ux-audit/` |
 | Simplicity | `templates/skills/simplicity-audit/` |
 | Version | `templates/skills/version-audit/` |
+| Complexity | `templates/skills/complexity-audit/` |
+| Allocation Budget | `templates/skills/allocation-budget-audit/` |
+| Spellcheck | `templates/skills/spellcheck-audit/` |
+| Release Readiness | `templates/skills/release-readiness-audit/` |
+| Mutation Testing | `templates/skills/mutation-audit/` |
+| Analyzer Tests | `templates/skills/analyzer-tests-audit/` |
 
 **Schedule:** once per sprint or ad-hoc when you smell danger.
 
@@ -215,7 +225,9 @@ This is not a "feedback level" — it's a **repeatable persona**. Without skills
 
 Scenarios: read + write mix, spike, concurrent booking.
 
-**Pattern:** `tests/patterns/LoadTest.cs`
+Addendum: **allocation budget tests** for `[HotPath]` methods catch allocation regressions before the load lab — cheaper and faster than a profiler in production.
+
+**Patterns:** `tests/patterns/LoadTest.cs`, `tests/patterns/AllocationBudgetTest.cs`
 
 ---
 

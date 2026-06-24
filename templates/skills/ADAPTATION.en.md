@@ -1,4 +1,4 @@
-﻿# Skill Adaptation Guide
+# Skill Adaptation Guide
 
 > Copying skills is easy. Adapting them is important.
 > This guide will help you strike out inapplicable checks before the first run.
@@ -86,27 +86,29 @@ See `templates/skills/skeptical-ai-bootstrap/SKILL-ARCHITECTURE.md`
 
 | Skill | Marker |
 |---|---|
-| `allocation-budget-audit` | ⚡ |
-| `analyzer-tests-audit` | 🔍 |
+| `allocation-budget-audit` | 💸 |
+| `analyzer-tests-audit` | 🔬 |
 | `api-design-audit` | 🎨 |
 | `backlog-hygiene` | 📋 |
 | `bot-audit` | 🤖 |
 | `code-review` | 🔍 |
 | `complexity-audit` | 🧠 |
 | `dba-audit` | 🗄️ |
-| `doc-hygiene` | 🧹 |
-| `frontend-code-review` | 🎯 |
-| `i18n-audit` | 🌍 |
-| `memory-hygiene` | 🧠 |
+| `dba-audit-dapper` | 🧵 |
+| `doc-hygiene` | 📝 |
+| `frontend-code-review` | ⚛️ |
+| `i18n-audit` | 🌐 |
+| `memory-hygiene` | 🧹 |
 | `mutation-audit` | 🧬 |
-| `performance-audit` | 🚀 |
-| `release-readiness-audit` | 🚀 |
+| `performance-audit` | ⚡ |
+| `release-readiness-audit` | 📦 |
 | `security-audit` | 🔒 |
 | `simplicity-audit` | ✂️ |
 | `spellcheck-audit` | 🔤 |
-| `task-compliance` | ✅ |
-| `tech-debt-audit` | 🧱 |
+| `skeptical-ai-bootstrap` | 🚀 |
+| `task-compliance` | 📌 |
+| `tech-debt-audit` | 🔧 |
 | `test-audit` | 🧪 |
-| `type-safety` | 🧷 |
-| `ux-audit` | 🎨 |
-| `version-audit` | 📦 |
+| `type-safety` | 🏷️ |
+| `ux-audit` | 🎯 |
+| `version-audit` | 🔢 |

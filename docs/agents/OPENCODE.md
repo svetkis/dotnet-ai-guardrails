@@ -76,6 +76,8 @@ OpenCode обычно использует один из форматов:
     ├── onboarding.md              # Сканирование проекта
     ├── code-review.md             # Review PR
     ├── security-audit.md          # Аудит безопасности
+    ├── complexity-audit.md        # Аудит сложности
+    ├── allocation-budget-audit.md # Аудит аллокаций hot path
     └── architecture-audit.md      # Аудит архитектуры
 ```
 

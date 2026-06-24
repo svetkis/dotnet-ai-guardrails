@@ -16,6 +16,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `templates/skills/version-audit/` — новый скилл аудита актуальности стека (SDK, NuGet, frontend, CI actions).
 - `tests/patterns/VersionAuditTest.cs` — тест-паттерн: regex-сканирование `global.json`, `*.csproj`, `package.json` на preview-флаги и рассогласование версий.
 - `tests/patterns/PiiGuardTest.cs` — тест-паттерн: `[SensitiveData]` attribute + ratchet + regex-сканирование Log* вызовов на PII.
+- `tests/patterns/ComplexityRatchetTest.cs` — тест-паттерн: ratchet на рост нарушений `S3776`/`S1541`.
+- `tests/patterns/AllocationBudgetTest.cs` — тест-паттерн: аллокации `[HotPath]` методов не превышают baseline + 10%.
+- `tests/patterns/SpellcheckGuardTest.cs` — тест-паттерн: CSpell + baseline для публичных символов и документации.
+- `tests/patterns/ReleaseReadinessTest.cs` — тест-паттерн: проверка обязательных артефактов перед релизом.
+- `tests/patterns/MutationGuardTest.cs` — тест-паттерн: mutation score не падает (Stryker.NET).
+- `tests/patterns/AnalyzerTests.cs` — тест-паттерн: positive/negative тесты для кастомных Roslyn-анализаторов.
+- `templates/skills/complexity-audit/` — скилл аудита когнитивной / цикломатической сложности.
+- `templates/skills/allocation-budget-audit/` — скилл аудита аллокаций hot path.
+- `templates/skills/spellcheck-audit/` — скилл аудита орфографии публичных символов и документации.
+- `templates/skills/release-readiness-audit/` — скилл аудита готовности к релизу.
+- `templates/skills/mutation-audit/` — скилл аудита mutation testing.
+- `templates/skills/analyzer-tests-audit/` — скилл аудита тестов кастомных анализаторов.
+- `examples/DemoProject/src/DemoProject.Analyzers/HotPathAnalyzer.cs` — Roslyn-анализатор SAE003/004/005 для `[HotPath]` методов.
 - `docs/solutions/ai-patterns.md` — паттерн #9: Attribute-driven PII redaction (compile-time + runtime).
 - `rules/AGENTS_TEMPLATE.md` — перевод на английский, добавлены Semantic Anchors, Permission to Push Back, Context Markers.
 - `docs/TRANSLATION_PLAN.md` — план перевода документации на два языка.
