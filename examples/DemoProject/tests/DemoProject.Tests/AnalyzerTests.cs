@@ -31,6 +31,8 @@ public class AnalyzerTests
     public async Task StrongTypedIdAnalyzer_FlagsRawGuidParameterInDomainMethod()
     {
         const string code = """
+            using System;
+
             namespace DemoProject.Domain;
 
             public class BookingService
@@ -65,6 +67,8 @@ public class AnalyzerTests
     public async Task StrongTypedIdAnalyzer_IgnoresTypedIdParameter()
     {
         const string code = """
+            using System;
+
             namespace DemoProject.Domain;
 
             public readonly record struct BookingId(Guid Value);
