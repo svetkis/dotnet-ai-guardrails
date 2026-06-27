@@ -34,10 +34,10 @@
 ```markdown
 # AGENTS.md — {ProjectName}
 
-> Этот файл читается ЛЮБЫМ AI-агентом, работающим в проекте.
+> This file is read by ANY AI agent working in the project.
 
-## Правила (универсальные)
-1. Не добавляй зависимости без explicit запроса
+## Rules (universal)
+1. Do not add dependencies without explicit request
 2. ...
 
 ## Stack

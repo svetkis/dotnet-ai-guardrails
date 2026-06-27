@@ -102,7 +102,7 @@ Conduct code review of current changes.
 claude
 
 # Inside the session:
-> Scan this .NET project. Evaluate guardrails against the 5 pyramid layers.
+> Scan this .NET project. Evaluate guardrails against the pyramid layers.
 > Output an implementation backlog. Consider that we use {stack}.
 ```
 
@@ -116,12 +116,15 @@ Scan the project and output a guardrails implementation backlog.
 
 ## Instructions
 1. Find all `.csproj` and determine the stack
-2. Evaluate 5 pyramid layers:
-   - Compiler: TreatWarningsAsErrors? Nullable?
-   - Architecture: any arch tests?
-   - Tests: framework, coverage, "0 ran"?
-   - Code Review: any rules?
-   - E2E: any integration tests?
+2. Evaluate layers 1.1→2.3:
+   - 1.1 Compiler: TreatWarningsAsErrors? Nullable?
+   - 1.2 Architecture: any arch tests?
+   - 1.3 Tests: framework, coverage, "0 ran"?
+   - 1.4 Code Review: any rules?
+   - 1.5 Smoke: any critical scenario runs?
+   - 2.1 E2E / MCP: any integration tests?
+   - 2.2 Audits: have any been run?
+   - 2.3 Load: any load tests?
 3. For each layer: Adapt / Create / Skip
 4. Output a report in markdown format
 ```

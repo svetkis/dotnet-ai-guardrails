@@ -134,17 +134,17 @@ Check files for data leaks:
 ### Option A: Chat mode (Ctrl+L)
 
 ```
-Scan this .NET project. Evaluate guardrails against the 5 pyramid layers.
+Scan this .NET project. Evaluate guardrails against the pyramid layers.
 Output an implementation backlog. Consider that we use {stack}.
 ```
 
 ### Option B: Composer mode (Ctrl+I)
 
 ```
-Create architecture tests for this project:
-1. Check dependencies between layers (Domain → Application → Infrastructure)
-2. Find all services and check that they have interfaces
-3. Create a ratchet test to control public types in the Application layer and test count
+Scan this .NET project as a multi-step onboarding:
+1. Find all `.csproj` and determine the stack
+2. Assess guardrails for layers 1.1→2.3
+3. Output an implementation backlog with Adapt / Create / Skip decisions
 ```
 
 ## What Onboarding Creates for Review

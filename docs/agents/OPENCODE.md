@@ -171,30 +171,7 @@ opencode --prompt .opencode/prompts/onboarding.md
 
 ### Универсальная конституция `AGENTS.md`
 
-```markdown
-# AGENTS.md — {ProjectName}
-
-> This file is read by ANY AI agent working in the project.
-> Format: Markdown, tool-independent.
-
-## Rules (universal)
-1. Do not add dependencies without explicit request
-2. Do not change folder structure
-3. Do not delete tests
-4. Every bug fix comes with a regression test `BUG###_`
-
-## Stack
-- .NET {version}
-- {EF Core / Dapper}
-- {TUnit / xUnit}
-
-## Architecture
-- {Clean / Vertical Slice / etc.}
-- Layer boundaries: ...
-
-## Conventions
-- ...
-```
+Используй [`rules/AGENTS_TEMPLATE.md`](../../rules/AGENTS_TEMPLATE.md) как базу. Для OpenCode важно не дублировать её в `.opencode/instructions.md`, а оставить там только специфичные для формата дополнения.
 
 ## Онбординг для OpenCode
 

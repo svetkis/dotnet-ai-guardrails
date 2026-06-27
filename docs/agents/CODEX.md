@@ -121,81 +121,9 @@ codex
 
 4. **Прямой доступ к терминалу.** Codex может выполнять команды через `!bash` или прямо в CLI.
 
-### Рекомендуемая структура instructions.md
+### Формат instructions.md
 
-```markdown
-# {ProjectName} — Guardrails
-
-## Role
-You are a senior .NET developer. You write production-ready code.
-
-## Rules (DO NOT break)
-1. Do not add NuGet packages without asking
-2. Do not change folder structure
-3. Do not delete tests
-4. Always pass CancellationToken
-5. Respect nullable (string? vs string)
-
-## Code Review Protocol
-Before saying "done", check:
-- [ ] All new public methods are async with CancellationToken
-- [ ] No SQL injection
-- [ ] No PII leak in logs/responses
-- [ ] Tests exist
-- [ ] Architecture boundaries are not violated
-
-## Stack Context
-- .NET 10
-- TUnit
-- EF Core + PostgreSQL
-- Minimal API
-- Clean Architecture
-
-## Conventions
-- ...
-```
-
-## Онбординг для Codex
-
-Поскольку Codex не имеет "скиллов", онбординг — это **генерация `instructions.md`** + **чеклистов**.
-
-### Что делает агент при онбординге:
-
-1. Сканирует проект (стек, архитектура, тесты)
-2. Генерирует `.codex/instructions.md` с:
-   - Ролью агента
-   - Правилами (основанными на стеке)
-   - Code Review Protocol
-   - Stack Context
-3. Генерирует `docs/guardrails-checklist.md` для human-разработчика
-4. Генерирует `.github/workflows/codex-guard.yml` (CI pipeline)
-
-### Пример CI для Codex-проекта
-
-```yaml
-# .github/workflows/codex-guard.yml
-name: Codex Guardrails
-
-on: [pull_request]
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '10.0.x'
-      - run: dotnet build --configuration Release /p:TreatWarningsAsErrors=true
-
-  tests:
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - uses: actions/checkout@v4
-      - run: dotnet run --project tests/UnitTests/
-      - run: ./ci/scripts/verify-tests.sh
-```
+Codex использует один файл `.codex/instructions.md`. Содержание — адаптированная версия `rules/AGENTS_TEMPLATE.md`: роль, запрещённые действия, стек, архитектурные границы и review-протокол. Не копируйте шаблон целиком — оставьте только проверки, актуальные для проекта.
 
 ## Ограничения
 

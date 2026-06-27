@@ -121,81 +121,9 @@ Onboarding first assembles the project-specific review protocol. Only after that
 
 4. **Direct terminal access.** Codex can execute commands via `!bash` or directly in CLI.
 
-### Recommended instructions.md Structure
+### instructions.md Format
 
-```markdown
-# {ProjectName} — Guardrails
-
-## Role
-You are a senior .NET developer. You write production-ready code.
-
-## Rules (DO NOT break)
-1. Do not add NuGet packages without asking
-2. Do not change folder structure
-3. Do not delete tests
-4. Always pass CancellationToken
-5. Respect nullable (string? vs string)
-
-## Code Review Protocol
-Before saying "done", check:
-- [ ] All new public methods are async with CancellationToken
-- [ ] No SQL injection
-- [ ] No PII leak in logs/responses
-- [ ] Tests exist
-- [ ] Architecture boundaries are not violated
-
-## Stack Context
-- .NET 10
-- TUnit
-- EF Core + PostgreSQL
-- Minimal API
-- Clean Architecture
-
-## Conventions
-- ...
-```
-
-## Onboarding for Codex
-
-Since Codex has no "skills", onboarding is **generating `instructions.md`** + **checklists**.
-
-### What the agent does during onboarding:
-
-1. Scans the project (stack, architecture, tests)
-2. Generates `.codex/instructions.md` with:
-   - Agent role
-   - Rules (based on stack)
-   - Code Review Protocol
-   - Stack Context
-3. Generates `docs/guardrails-checklist.md` for the human developer
-4. Generates `.github/workflows/codex-guard.yml` (CI pipeline)
-
-### Example CI for a Codex Project
-
-```yaml
-# .github/workflows/codex-guard.yml
-name: Codex Guardrails
-
-on: [pull_request]
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '10.0.x'
-      - run: dotnet build --configuration Release /p:TreatWarningsAsErrors=true
-
-  tests:
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - uses: actions/checkout@v4
-      - run: dotnet run --project tests/UnitTests/
-      - run: ./ci/scripts/verify-tests.sh
-```
+Codex uses a single `.codex/instructions.md`. It should contain an adapted version of `rules/AGENTS_TEMPLATE.md`: role, forbidden actions, stack, architecture boundaries, and a review protocol. Do not copy the template verbatim — keep only the checks relevant to the project.
 
 ## Limitations
 
