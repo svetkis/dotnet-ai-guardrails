@@ -48,7 +48,7 @@ kimi run skeptical-ai-bootstrap
 
 ## Что онбординг создаёт для код-ревью
 
-**Цель:** после первого сканирования получить не абстрактную схему проверки, а скилл ревью под ваш стек.
+**Цель:** после первого сканирования выбрать или создать скилл ревью под ваш стек.
 
 ### 1. Что решает онбординг
 
@@ -129,8 +129,8 @@ for skill in code-review task-compliance security-audit dba-audit performance-au
     cp -r /path/to/dotnet-ai-guardrails/templates/skills/$skill ./.kimi/skills/
 done
 
-# Generate skills README
-kimi skills list
+# Generate skills README from the onboarding report
+# See templates/skills/skeptical-ai-bootstrap/ECOSYSTEM-MAP-TEMPLATE.md
 ```
 
 ## Структура `.kimi/skills/README.md` (рекомендуется)

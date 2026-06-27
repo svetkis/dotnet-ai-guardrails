@@ -95,6 +95,7 @@ description: >
 4. Определить **тип AI-агента**, используемого в проекте:
    - **Kimi Code CLI** → `.kimi/skills/` существует?
    - **Claude Code** → `.claude/CLAUDE.md` существует?
+   - **Cursor** → `.cursorrules` или `.cursor/rules/` существуют?
    - **Codex (OpenAI)** → `.codex/instructions.md` существует?
    - **OpenCode** → `.opencode/` существует?
    - **Несколько агентов** → нужна универсальная конфигурация
@@ -224,6 +225,7 @@ description: >
 |-------|-------------|----------------|---------------|
 | **Kimi** | `AGENTS.md` + `.kimi/skills/README.md` | `.kimi/skills/{name}/SKILL.md` | `kimi run {name}` |
 | **Claude Code** | `.claude/CLAUDE.md` | `.claude/commands/{name}.md` | `/{command}` в чате |
+| **Cursor** | `.cursorrules` + `.cursor/rules/` | `.cursor/rules/{context}.md`, notepads/prompts | IDE-integrated, manual trigger |
 | **Codex** | `.codex/instructions.md` | Встроены в instructions | Прямой prompt |
 | **OpenCode** | `AGENTS.md` + `.opencode/instructions.md` | `.opencode/prompts/{name}.md` | Зависит от реализации |
 | **Несколько** | `AGENTS.md` (универсальный) | Отдельно под каждый агент | Смешанная |

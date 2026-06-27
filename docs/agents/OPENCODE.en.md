@@ -95,20 +95,20 @@ opencode --prompt .opencode/prompts/onboarding.md
 
 ## What Onboarding Creates for Review
 
-**Goal:** after project assessment, get a review artifact for your concrete OpenCode setup instead of a forced generic loop.
+**Goal:** after project assessment, define a review artifact for your OpenCode setup.
 
 ### 1. What onboarding decides
 
 Onboarding should determine:
 
-- where review instructions should live in your fork: `AGENTS.md`, `.opencode/instructions.md`, or a prompt file
+- how to split review instructions: `AGENTS.md` for the universal constitution, `.opencode/instructions.md` for OpenCode behavior, prompt files for concrete review tasks
 - whether a dedicated `code-review.md` prompt is required
 - which checks must be adapted to the stack and to the limits of the specific model
 
 ### 2. What should appear in the project
 
-- `.opencode/prompts/code-review.md` or the equivalent file format for your fork
-- base review rules in `.opencode/instructions.md` and/or `AGENTS.md`
+- `.opencode/prompts/code-review.md` or the equivalent file for a concrete review task
+- base review rules in `.opencode/instructions.md`; universal prohibitions in `AGENTS.md`
 - explicit documentation of what was adapted and what was declared not applicable
 
 ### 3. When the scenario is successful

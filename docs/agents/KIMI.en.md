@@ -48,7 +48,7 @@ kimi run skeptical-ai-bootstrap
 
 ## What Onboarding Creates for Review
 
-**Goal:** after the first scan, get a project-specific review skill for your stack instead of an abstract review workflow.
+**Goal:** after the first scan, choose or create a review skill for your stack.
 
 ### 1. What onboarding decides
 
@@ -129,8 +129,8 @@ for skill in code-review task-compliance security-audit dba-audit performance-au
     cp -r /path/to/dotnet-ai-guardrails/templates/skills/$skill ./.kimi/skills/
 done
 
-# Generate skills README
-kimi skills list
+# Generate skills README from the onboarding report
+# See templates/skills/skeptical-ai-bootstrap/ECOSYSTEM-MAP-TEMPLATE.md
 ```
 
 ## Structure of `.kimi/skills/README.md` (recommended)

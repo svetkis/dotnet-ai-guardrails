@@ -95,6 +95,7 @@ Final human validation, business and product decisions.
 4. Determine the **type of AI agent** used in the project:
    - **Kimi Code CLI** → does `.kimi/skills/` exist?
    - **Claude Code** → does `.claude/CLAUDE.md` exist?
+   - **Cursor** → does `.cursorrules` or `.cursor/rules/` exist?
    - **Codex (OpenAI)** → does `.codex/instructions.md` exist?
    - **OpenCode** → does `.opencode/` exist?
    - **Multiple agents** → universal configuration needed
@@ -221,6 +222,7 @@ The output artifact format depends on the agent type:
 |-------|--------------|-----------------|----------------|
 | **Kimi** | `AGENTS.md` + `.kimi/skills/README.md` | `.kimi/skills/{name}/SKILL.md` | `kimi run {name}` |
 | **Claude Code** | `.claude/CLAUDE.md` | `.claude/commands/{name}.md` | `/{command}` in chat |
+| **Cursor** | `.cursorrules` + `.cursor/rules/` | `.cursor/rules/{context}.md`, notepads/prompts | IDE-integrated, manual trigger |
 | **Codex** | `.codex/instructions.md` | Embedded in instructions | Direct prompt |
 | **OpenCode** | `AGENTS.md` + `.opencode/instructions.md` | `.opencode/prompts/{name}.md` | Depends on implementation |
 | **Multiple** | `AGENTS.md` (universal) | Separate for each agent | Mixed |

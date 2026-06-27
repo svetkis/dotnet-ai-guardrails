@@ -131,7 +131,7 @@ Scan the project and output a guardrails implementation backlog.
 
 ## What Onboarding Creates for Review
 
-**Goal:** after project assessment, get a concrete Claude review command for your stack instead of an invented “daily loop.”
+**Goal:** after project assessment, define a concrete Claude review command for your stack.
 
 ### 1. What onboarding decides
 
