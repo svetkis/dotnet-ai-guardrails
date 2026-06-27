@@ -149,7 +149,7 @@ Scan this .NET project as a multi-step onboarding:
 
 ## What Onboarding Creates for Review
 
-**Goal:** after the initial assessment, get a project-specific review artifact for Cursor instead of an invented universal loop.
+**Goal:** after the initial assessment, get a project-specific review artifact for Cursor instead of an abstract universal loop.
 
 ### 1. What onboarding decides
 
