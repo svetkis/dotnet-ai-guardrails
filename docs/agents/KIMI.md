@@ -1,7 +1,7 @@
 # Kimi Code CLI — Guardrails Integration
 
 > Kimi Code CLI использует систему скиллов в `.kimi/skills/`.
-> Это нативный формат для репозитория `dotnet-skeptical-ai`.
+> Это нативный формат для репозитория `dotnet-ai-guardrails`.
 
 ## Структура интеграции
 
@@ -39,8 +39,8 @@
 ```bash
 # Установить скилл онбординга
 mkdir -p ./.kimi/skills/skeptical-ai-bootstrap
-cp /path/to/dotnet-skeptical-ai/.agents/skills/skeptical-ai-bootstrap/SKILL.md ./.kimi/skills/skeptical-ai-bootstrap/
-cp -r /path/to/dotnet-skeptical-ai/templates/skills/skeptical-ai-bootstrap/* ./.kimi/skills/skeptical-ai-bootstrap/
+cp /path/to/dotnet-ai-guardrails/.agents/skills/skeptical-ai-bootstrap/SKILL.md ./.kimi/skills/skeptical-ai-bootstrap/
+cp -r /path/to/dotnet-ai-guardrails/templates/skills/skeptical-ai-bootstrap/* ./.kimi/skills/skeptical-ai-bootstrap/
 
 # Запустить
 kimi run skeptical-ai-bootstrap
@@ -98,7 +98,7 @@ kimi run backlog-hygiene
 ```bash
 # Скопировать все аудит-скиллы
 for skill in code-review task-compliance security-audit dba-audit performance-audit; do
-    cp -r /path/to/dotnet-skeptical-ai/templates/skills/$skill ./.kimi/skills/
+    cp -r /path/to/dotnet-ai-guardrails/templates/skills/$skill ./.kimi/skills/
 done
 
 # Сгенерировать README скиллов

@@ -8,13 +8,13 @@ This skill is installed into **your** .NET project so that Kimi Code CLI can sca
 
 ### 1. Copy the skill into your project
 
-From the `dotnet-skeptical-ai` repository, copy the executable skill and supporting templates into your project:
+From the `dotnet-ai-guardrails` repository, copy the executable skill and supporting templates into your project:
 
 ```bash
 # From the root of YOUR .NET project
 mkdir -p ./.kimi/skills/skeptical-ai-bootstrap
-cp /path/to/dotnet-skeptical-ai/.agents/skills/skeptical-ai-bootstrap/SKILL.md ./.kimi/skills/skeptical-ai-bootstrap/
-cp -r /path/to/dotnet-skeptical-ai/templates/skills/skeptical-ai-bootstrap/* ./.kimi/skills/skeptical-ai-bootstrap/
+cp /path/to/dotnet-ai-guardrails/.agents/skills/skeptical-ai-bootstrap/SKILL.md ./.kimi/skills/skeptical-ai-bootstrap/
+cp -r /path/to/dotnet-ai-guardrails/templates/skills/skeptical-ai-bootstrap/* ./.kimi/skills/skeptical-ai-bootstrap/
 ```
 
 Or manually:
@@ -54,7 +54,7 @@ The agent will generate a `.backlog/onboarding-{date}.md` file in your project +
 If you don't want to install the skill, simply open your project in Kimi Code CLI and ask:
 
 ```
-Scan this .NET project using the 5-layer pyramid methodology from dotnet-skeptical-ai.
+Scan this .NET project using the 5-layer pyramid methodology from dotnet-ai-guardrails.
 Produce a guardrail implementation backlog.
 ```
 
@@ -62,20 +62,20 @@ The agent will find `.csproj`, assess layers, and propose a plan.
 
 ## After Onboarding
 
-The report contains links to artifacts from `dotnet-skeptical-ai`:
+The report contains links to artifacts from `dotnet-ai-guardrails`:
 
 | Artifact | Where to get |
 |----------|--------------|
-| `rules/AGENTS_TEMPLATE.md` | `dotnet-skeptical-ai/rules/AGENTS_TEMPLATE.md` |
-| `rules/CONVENTIONS.md` | `dotnet-skeptical-ai/rules/CONVENTIONS.md` |
-| Architecture tests | `dotnet-skeptical-ai/tests/patterns/ArchitectureRules.cs` |
-| Ratchet tests | `dotnet-skeptical-ai/tests/patterns/RatchetTest.cs` |
-| CI workflow | `dotnet-skeptical-ai/ci/github-actions/safe-ci.yml` |
-| Code review skill | `dotnet-skeptical-ai/templates/skills/code-review/` (RU or EN — one language) |
-| Audits | `dotnet-skeptical-ai/templates/skills/*-audit/` (RU or EN — one language) |
-| Grooming | `dotnet-skeptical-ai/templates/skills/memory-hygiene/`, `doc-hygiene/`, `backlog-hygiene/` (RU or EN — one language) |
+| `rules/AGENTS_TEMPLATE.md` | `dotnet-ai-guardrails/rules/AGENTS_TEMPLATE.md` |
+| `rules/CONVENTIONS.md` | `dotnet-ai-guardrails/rules/CONVENTIONS.md` |
+| Architecture tests | `dotnet-ai-guardrails/tests/patterns/ArchitectureRules.cs` |
+| Ratchet tests | `dotnet-ai-guardrails/tests/patterns/RatchetTest.cs` |
+| CI workflow | `dotnet-ai-guardrails/ci/github-actions/safe-ci.yml` |
+| Code review skill | `dotnet-ai-guardrails/templates/skills/code-review/` (RU or EN — one language) |
+| Audits | `dotnet-ai-guardrails/templates/skills/*-audit/` (RU or EN — one language) |
+| Grooming | `dotnet-ai-guardrails/templates/skills/memory-hygiene/`, `doc-hygiene/`, `backlog-hygiene/` (RU or EN — one language) |
 
-**Recommendation:** fork `dotnet-skeptical-ai` and reference artifacts from your fork — this way you control versions.
+**Recommendation:** fork `dotnet-ai-guardrails` and reference artifacts from your fork — this way you control versions.
 
 ## Agent Selection
 

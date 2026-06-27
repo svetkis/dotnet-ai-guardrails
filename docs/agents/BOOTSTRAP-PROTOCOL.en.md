@@ -1,16 +1,16 @@
 # Bootstrap Protocol — Agent Mode Boundary
 
-> **Purpose:** Prevent situations where an agent, having received context from `dotnet-skeptical-ai`, starts creating a `DemoProject` in the target repo.
+> **Purpose:** Prevent situations where an agent, having received context from `dotnet-ai-guardrails`, starts creating a `DemoProject` in the target repo.
 > **Audience:** AI agent (Kimi / Claude / Codex / OpenCode).
 
 ---
 
 ## 1. Two Modes — Pick Yours
 
-When you see files from `dotnet-skeptical-ai`, determine the mode **BEFORE** any actions.
+When you see files from `dotnet-ai-guardrails`, determine the mode **BEFORE** any actions.
 
 ```
-If the current directory path contains "dotnet-skeptical-ai":
+If the current directory path contains "dotnet-ai-guardrails":
     → SOURCE MODE
 Else if there is a .sln or .csproj in the current directory:
     → TARGET MODE
@@ -74,7 +74,7 @@ Else:
 User asks: "Assess my project using SAE methodology"
     │
     ▼
-Are you in dotnet-skeptical-ai?
+Are you in dotnet-ai-guardrails?
     ├── YES → "I cannot assess a project from inside the methodology repository. Please provide the path to the target project."
     └── NO → Is there a .sln in cwd?
             ├── YES → Run skeptical-ai-bootstrap skill (assess existing codebase)
@@ -83,7 +83,7 @@ Are you in dotnet-skeptical-ai?
 User asks: "Show me an example of an architecture test"
     │
     ▼
-Are you in dotnet-skeptical-ai?
+Are you in dotnet-ai-guardrails?
     ├── YES → Read examples/DemoProject/tests/... and explain
     └── NO → "Examples are in the methodology repository: examples/DemoProject/tests/..."
               Do NOT create these files in the target project.
@@ -92,7 +92,7 @@ User asks: "Adapt the code-review skill for my stack"
     │
     ▼
 Are you in the target project?
-    ├── YES → Read templates/skills/code-review/SKILL.md from dotnet-skeptical-ai (if available) →
+    ├── YES → Read templates/skills/code-review/SKILL.md from dotnet-ai-guardrails (if available) →
     │        Adapt text → Save to .kimi/skills/code-review/SKILL.md (markdown only!)
     └── NO → "Install me in the target project or provide its path."
 ```
@@ -106,7 +106,7 @@ Before creating ANY file, ask yourself:
 - [ ] Is it `.md`, `.yml`, `.editorconfig`, or `.props`? (If `.cs`/`.csproj`/`.sln` — stop)
 - [ ] Does this file already exist in the target repo? (If not — is it really needed?)
 - [ ] Am I creating `examples/`, `DemoProject/`, or any demo project (`Traps`, `MinimalApi`)? (If yes — stop, this is a trap)
-- [ ] Am I copying the structure of `dotnet-skeptical-ai`? (If yes — stop)
+- [ ] Am I copying the structure of `dotnet-ai-guardrails`? (If yes — stop)
 - [ ] Is my task to assess or to create? (Assess only → reports only)
 
 ---
@@ -120,8 +120,8 @@ If the skill is installed in `.kimi/skills/skeptical-ai-bootstrap/`:
 $ cd /path/to/target-project
 $ kimi run skeptical-ai-bootstrap
 
-# Incorrect launch — from inside dotnet-skeptical-ai
-$ cd /path/to/dotnet-skeptical-ai
+# Incorrect launch — from inside dotnet-ai-guardrails
+$ cd /path/to/dotnet-ai-guardrails
 $ kimi run skeptical-ai-bootstrap  # ← agent must refuse and ask for path
 ```
 

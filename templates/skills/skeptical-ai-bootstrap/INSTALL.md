@@ -8,13 +8,13 @@
 
 ### 1. Скопируй скилл в свой проект
 
-Из репозитория `dotnet-skeptical-ai` скопируй исполняемый скилл и supporting templates в свой проект:
+Из репозитория `dotnet-ai-guardrails` скопируй исполняемый скилл и supporting templates в свой проект:
 
 ```bash
 # Находясь в корне ТВОЕГО .NET-проекта
 mkdir -p ./.kimi/skills/skeptical-ai-bootstrap
-cp /path/to/dotnet-skeptical-ai/.agents/skills/skeptical-ai-bootstrap/SKILL.md ./.kimi/skills/skeptical-ai-bootstrap/
-cp -r /path/to/dotnet-skeptical-ai/templates/skills/skeptical-ai-bootstrap/* ./.kimi/skills/skeptical-ai-bootstrap/
+cp /path/to/dotnet-ai-guardrails/.agents/skills/skeptical-ai-bootstrap/SKILL.md ./.kimi/skills/skeptical-ai-bootstrap/
+cp -r /path/to/dotnet-ai-guardrails/templates/skills/skeptical-ai-bootstrap/* ./.kimi/skills/skeptical-ai-bootstrap/
 ```
 
 Или вручную:
@@ -54,7 +54,7 @@ kimi run skeptical-ai-bootstrap
 Если не хочешь ставить скилл, просто открой свой проект в Kimi Code CLI и попроси:
 
 ```
-Просканируй этот .NET-проект по методологии пирамиды из dotnet-skeptical-ai.
+Просканируй этот .NET-проект по методологии пирамиды из dotnet-ai-guardrails.
 Выдай бэклог внедрения guardrails.
 ```
 
@@ -62,20 +62,20 @@ kimi run skeptical-ai-bootstrap
 
 ## После онбординга
 
-Отчёт содержит ссылки на артефакты из `dotnet-skeptical-ai`:
+Отчёт содержит ссылки на артефакты из `dotnet-ai-guardrails`:
 
 | Артефакт | Откуда взять |
 |----------|--------------|
-| `rules/AGENTS_TEMPLATE.md` | `dotnet-skeptical-ai/rules/AGENTS_TEMPLATE.md` |
-| `rules/CONVENTIONS.md` | `dotnet-skeptical-ai/rules/CONVENTIONS.md` |
-| Архитектурные тесты | `dotnet-skeptical-ai/tests/patterns/ArchitectureRules.cs` |
-| Ratchet тесты | `dotnet-skeptical-ai/tests/patterns/RatchetTest.cs` |
-| CI воркфлоу | `dotnet-skeptical-ai/ci/github-actions/safe-ci.yml` |
-| Code review скилл | `dotnet-skeptical-ai/templates/skills/code-review/` (RU или EN — один язык) |
-| Аудиты | `dotnet-skeptical-ai/templates/skills/*-audit/` (RU или EN — один язык) |
-| Груминг | `dotnet-skeptical-ai/templates/skills/memory-hygiene/`, `doc-hygiene/`, `backlog-hygiene/` (RU или EN — один язык) |
+| `rules/AGENTS_TEMPLATE.md` | `dotnet-ai-guardrails/rules/AGENTS_TEMPLATE.md` |
+| `rules/CONVENTIONS.md` | `dotnet-ai-guardrails/rules/CONVENTIONS.md` |
+| Архитектурные тесты | `dotnet-ai-guardrails/tests/patterns/ArchitectureRules.cs` |
+| Ratchet тесты | `dotnet-ai-guardrails/tests/patterns/RatchetTest.cs` |
+| CI воркфлоу | `dotnet-ai-guardrails/ci/github-actions/safe-ci.yml` |
+| Code review скилл | `dotnet-ai-guardrails/templates/skills/code-review/` (RU или EN — один язык) |
+| Аудиты | `dotnet-ai-guardrails/templates/skills/*-audit/` (RU или EN — один язык) |
+| Груминг | `dotnet-ai-guardrails/templates/skills/memory-hygiene/`, `doc-hygiene/`, `backlog-hygiene/` (RU или EN — один язык) |
 
-**Рекомендация:** форкни `dotnet-skeptical-ai` и указывай артефакты из своего форка — так контролируешь версии.
+**Рекомендация:** форкни `dotnet-ai-guardrails` и указывай артефакты из своего форка — так контролируешь версии.
 
 ## Выбор агента
 

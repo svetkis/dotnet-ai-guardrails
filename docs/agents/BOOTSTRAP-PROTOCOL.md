@@ -1,16 +1,16 @@
 # Bootstrap Protocol — Agent Mode Boundary
 
-> **Назначение:** Предотвратить ситуацию, когда агент, получив контекст `dotnet-skeptical-ai`, начинает создавать `DemoProject` в целевом репо.
+> **Назначение:** Предотвратить ситуацию, когда агент, получив контекст `dotnet-ai-guardrails`, начинает создавать `DemoProject` в целевом репо.
 > **Аудитория:** AI-агент (Kimi / Claude / Codex / OpenCode).
 
 ---
 
 ## 1. Два режима — выбери свой
 
-Когда ты видишь файлы из `dotnet-skeptical-ai`, определи режим **ДО** любых действий.
+Когда ты видишь файлы из `dotnet-ai-guardrails`, определи режим **ДО** любых действий.
 
 ```
-Если путь текущей директории содержит "dotnet-skeptical-ai":
+Если путь текущей директории содержит "dotnet-ai-guardrails":
     → РЕЖИМ ИСТОЧНИК (Source Mode)
 Иначе если в текущей директории есть .sln или .csproj:
     → РЕЖИМ ЦЕЛЬ (Target Mode)
@@ -74,7 +74,7 @@
 Пользователь просит: "Оцени мой проект по методологии SAE"
     │
     ▼
-Ты в dotnet-skeptical-ai?
+Ты в dotnet-ai-guardrails?
     ├── ДА → "Я не могу оценить проект изнутри репозитория методологии. Укажи путь к целевому проекту."
     └── НЕТ → Есть .sln в cwd?
             ├── ДА → Запускаем skeptical-ai-bootstrap скилл (оценка существующей кодбазы)
@@ -83,7 +83,7 @@
 Пользователь просит: "Покажи пример архитектурного теста"
     │
     ▼
-Ты в dotnet-skeptical-ai?
+Ты в dotnet-ai-guardrails?
     ├── ДА → Читаем examples/DemoProject/tests/... и объясняем
     └── НЕТ → "Примеры находятся в репозитории методологии: examples/DemoProject/tests/..."
               НЕ создаём эти файлы в целевом проекте.
@@ -92,7 +92,7 @@
     │
     ▼
 Ты в целевом проекте?
-    ├── ДА → Читаем templates/skills/code-review/SKILL.md из dotnet-skeptical-ai (если доступен) →
+    ├── ДА → Читаем templates/skills/code-review/SKILL.md из dotnet-ai-guardrails (если доступен) →
     │        Адаптируем текст → Сохраняем в .kimi/skills/code-review/SKILL.md (только .md!)
     └── НЕТ → "Установи меня в целевой проект или укажи его путь."
 ```
@@ -106,7 +106,7 @@
 - [ ] Это `.md`, `.yml`, `.editorconfig`, или `.props`? (Если `.cs`/`.csproj`/`.sln` — остановись)
 - [ ] Этот файл уже существует в целевом репо? (Если нет — точно ли он нужен?)
 - [ ] Я создаю `examples/`, `DemoProject/` или любой из демо-проектов (`Traps`, `MinimalApi`)? (Если да — остановись, это ловушка)
-- [ ] Я копирую структуру `dotnet-skeptical-ai`? (Если да — остановись)
+- [ ] Я копирую структуру `dotnet-ai-guardrails`? (Если да — остановись)
 - [ ] Моя задача — оценить или создать? (Только оценить → только отчёты)
 
 ---
@@ -120,8 +120,8 @@
 $ cd /path/to/target-project
 $ kimi run skeptical-ai-bootstrap
 
-# Неправильный запуск — изнутри dotnet-skeptical-ai
-$ cd /path/to/dotnet-skeptical-ai
+# Неправильный запуск — изнутри dotnet-ai-guardrails
+$ cd /path/to/dotnet-ai-guardrails
 $ kimi run skeptical-ai-bootstrap  # ← агент должен отказаться и попросить путь
 ```
 

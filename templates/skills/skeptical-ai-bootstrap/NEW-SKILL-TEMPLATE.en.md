@@ -1,6 +1,6 @@
 # New Skill Template
 
-> Use this template when ready-made artifacts from `dotnet-skeptical-ai`
+> Use this template when ready-made artifacts from `dotnet-ai-guardrails`
 > don't fit the project stack or architecture.
 
 ---

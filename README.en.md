@@ -6,7 +6,7 @@ AI-accelerated quality control methodology for .NET teams. Extending DORA practi
 
 ![.NET 10](https://img.shields.io/badge/.NET-10-512BD4?logo=dotnet)
 ![License MIT](https://img.shields.io/badge/License-MIT-green.svg)
-![CI](https://github.com/svetkis/dotnet-skeptical-ai/workflows/Examples%20CI/badge.svg)
+![CI](https://github.com/svetkis/dotnet-ai-guardrails/workflows/Examples%20CI/badge.svg)
 
 > Although examples and tests are implemented in .NET, the methodology itself — Decision Guards, three-layer verification loops, and prompt hygiene — applies to any stack.
 
@@ -63,7 +63,7 @@ Agent artifacts degrade: AGENTS.md drifts from code, Auto Memory accumulates dup
 
 ```bash
 # 1. Clone
-git clone https://github.com/svetkis/dotnet-skeptical-ai.git
+git clone https://github.com/svetkis/dotnet-ai-guardrails.git
 
 # 2. Run DemoProject
 cd examples/DemoProject

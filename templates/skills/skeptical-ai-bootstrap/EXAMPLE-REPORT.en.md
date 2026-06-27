@@ -259,7 +259,7 @@ The agent designed each new skill fully — not just a name, but role, mechanism
 
 1. **4 new skills** — this is 2-3 days of work just to describe the rules. But without them, guardrails will be useless.
 2. **xUnit remains** — we do not migrate to TUnit because 340 tests + infrastructure. verify-tests.sh solves the "0 ran" problem.
-3. **Vertical Slice + Dapper** — no ready-made patterns in `dotnet-skeptical-ai`. But the principles are the same: auto-check, ratchet, code review.
+3. **Vertical Slice + Dapper** — no ready-made patterns in `dotnet-ai-guardrails`. But the principles are the same: auto-check, ratchet, code review.
 
 ---
 

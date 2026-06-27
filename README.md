@@ -6,7 +6,7 @@
 
 ![.NET 10](https://img.shields.io/badge/.NET-10-512BD4?logo=dotnet)
 ![License MIT](https://img.shields.io/badge/License-MIT-green.svg)
-![CI](https://github.com/svetkis/dotnet-skeptical-ai/workflows/Examples%20CI/badge.svg)
+![CI](https://github.com/svetkis/dotnet-ai-guardrails/workflows/Examples%20CI/badge.svg)
 
 > Хотя примеры и тесты реализованы на .NET, сама методология Decision Guards, трёхуровневых циклов проверок и гигиены промптов применима к любому стеку.
 
@@ -63,7 +63,7 @@ AI-агенты (Cursor, Claude, Copilot) ускоряют написание к
 
 ```bash
 # 1. Клонируй
-git clone https://github.com/svetkis/dotnet-skeptical-ai.git
+git clone https://github.com/svetkis/dotnet-ai-guardrails.git
 
 # 2. Запусти DemoProject
 cd examples/DemoProject
