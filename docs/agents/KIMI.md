@@ -8,23 +8,23 @@
 ```
 .kimi/
 └── skills/
-    ├── skeptical-ai-bootstrap/          # Сканирование + бэклог
-    ├── code-review/                 # Review на каждый PR / pre-commit (.NET)
-    ├── frontend-code-review/        # Review на каждый PR / pre-commit (React + TS)
-    ├── task-compliance/             # Проверка scope
-    ├── security-audit/              # Аудит безопасности
-    ├── dba-audit/                   # Аудит БД
-    ├── performance-audit/           # Аудит производительности
-    ├── api-design-audit/            # Аудит дизайна API
-    ├── bot-audit/                   # Аудит Telegram-ботов
-    ├── i18n-audit/                  # Аудит локализации
-    ├── complexity-audit/            # Аудит сложности методов
-    ├── allocation-budget-audit/     # Аудит аллокаций hot path
-    ├── spellcheck-audit/            # Аудит орфографии
-    ├── release-readiness-audit/     # Аудит готовности к релизу
-    ├── mutation-audit/              # Аудит mutation testing
-    ├── analyzer-tests-audit/        # Аудит тестов Roslyn-анализаторов
-    └── {project-specific}/          # Кастомные скиллы
+    ├── skeptical-ai-bootstrap/          # Scanning + backlog
+    ├── code-review/                 # Review on every PR / pre-commit (.NET)
+    ├── frontend-code-review/        # Review on every PR / pre-commit (React + TS)
+    ├── task-compliance/             # Scope check
+    ├── security-audit/              # Security audit
+    ├── dba-audit/                   # DB audit
+    ├── performance-audit/           # Performance audit
+    ├── api-design-audit/            # API design audit
+    ├── bot-audit/                   # Telegram bot audit
+    ├── i18n-audit/                  # Localization audit
+    ├── complexity-audit/            # Method complexity audit
+    ├── allocation-budget-audit/     # Hot path allocation audit
+    ├── spellcheck-audit/            # Spellcheck audit
+    ├── release-readiness-audit/     # Release readiness audit
+    ├── mutation-audit/              # Mutation testing audit
+    ├── analyzer-tests-audit/        # Roslyn analyzer tests audit
+    └── {project-specific}/          # Custom skills
 ```
 
 ## Конфигурация проекта
@@ -37,14 +37,42 @@
 ## Запуск онбординга
 
 ```bash
-# Установить скилл онбординга
+# Install the onboarding skill
 mkdir -p ./.kimi/skills/skeptical-ai-bootstrap
 cp /path/to/dotnet-ai-guardrails/.agents/skills/skeptical-ai-bootstrap/SKILL.md ./.kimi/skills/skeptical-ai-bootstrap/
 cp -r /path/to/dotnet-ai-guardrails/templates/skills/skeptical-ai-bootstrap/* ./.kimi/skills/skeptical-ai-bootstrap/
 
-# Запустить
+# Run
 kimi run skeptical-ai-bootstrap
 ```
+
+## Что онбординг создаёт для код-ревью
+
+**Цель:** после первого сканирования получить не абстрактную схему проверки, а скилл ревью под ваш стек.
+
+### 1. Что решает онбординг
+
+Онбординг должен определить один из трёх исходов:
+
+- готовый `code-review` подходит и его можно адаптировать по именам и соглашениям проекта
+- готовый `code-review` не подходит целиком, но его можно существенно переписать под стек
+- нужен новый скилл ревью: например `code-review-dapper`, `code-review-razor`, `code-review-netframework`
+
+### 2. Что должно появиться в проекте
+
+- скилл ревью в `.kimi/skills/code-review/` или `.kimi/skills/code-review-{context}/`
+- зафиксированная причина, почему взяли стандартный скилл или почему создали новый
+- обновлённая карта `.kimi/skills/README.md`, если вы её ведёте через onboarding
+
+### 3. Когда сценарий считается успешным
+
+- команда знает точное имя скилла ревью для PR/commit-проверки
+- в скилле уже убраны очевидные ложные срабатывания под ваш стек
+- если стандартный `code-review` не подошёл, это отражено в отчёте, а не потеряно в устной договорённости
+
+### 4. Важная граница
+
+Сначала онбординг определяет и адаптирует скилл ревью под проект. Только потом этот скилл начинает жить в pre-commit / PR-потоке.
 
 ## Конкретные команды (ежедневный workflow)
 
@@ -58,30 +86,30 @@ kimi run skeptical-ai-bootstrap
 автоматически перед коммитом (через триггер в `SKILL.md`) или явно через `/skill:code-review`.
 
 ```bash
-# Review staged-изменений перед коммитом
-# (скилл сам читает git diff --cached)
+# Review staged changes before commit
+# (the skill reads git diff --cached itself)
 kimi run code-review
 
-# Review последнего коммита
+# Review the last commit
 kimi run code-review --git-diff HEAD~1
 
-# Review текущих unstaged изменений
+# Review current unstaged changes
 kimi run code-review --git-diff
 
-# Review PR (ветка vs main)
+# Review a PR (branch vs main)
 kimi run code-review --git-diff main...feature/my-branch
 ```
 
 ### Аудиты по расписанию
 
 ```bash
-# Security audit на diff
+# Security audit on diff
 kimi run security-audit --git-diff HEAD~5
 
-# DBA audit при изменениях в миграциях
+# DBA audit when migrations change
 kimi run dba-audit --git-diff --paths "src/*/Infrastructure/Migrations/"
 
-# Performance audit перед релизом
+# Performance audit before release
 kimi run performance-audit --mode pre-release
 ```
 
@@ -96,12 +124,12 @@ kimi run backlog-hygiene
 ### Установка всех скиллов разом
 
 ```bash
-# Скопировать все аудит-скиллы
+# Copy all audit skills
 for skill in code-review task-compliance security-audit dba-audit performance-audit; do
     cp -r /path/to/dotnet-ai-guardrails/templates/skills/$skill ./.kimi/skills/
 done
 
-# Сгенерировать README скиллов
+# Generate skills README
 kimi skills list
 ```
 
@@ -110,24 +138,24 @@ kimi skills list
 ```markdown
 # Project Skills
 
-## Inner Loop (на каждый PR)
+## Inner Loop (on every PR)
 - `code-review` — diff-based review
-- `task-compliance` — проверка scope
+- `task-compliance` — scope check
 
-## Outer Loop (аудиты)
-- `security-audit` — раз в спринт
-- `dba-audit` — при миграциях
-- `dba-audit-dapper` — если стек Dapper
+## Outer Loop (audits)
+- `security-audit` — once per sprint
+- `dba-audit` — on migrations
+- `dba-audit-dapper` — if the stack is Dapper
 
-## Grooming (раз в спринт)
+## Grooming (once per sprint)
 - `memory-hygiene`
 - `doc-hygiene`
 
-## Статусы
-| Скилл | Статус | Адаптирован |
-|-------|--------|-------------|
+## Statuses
+| Skill | Status | Adapted |
+|-------|--------|---------|
 | code-review | Active | ✅ |
-| dba-audit | Backlog | ❌ (у нас Dapper) |
+| dba-audit | Backlog | ❌ (we use Dapper) |
 ```
 
 ## Нюансы

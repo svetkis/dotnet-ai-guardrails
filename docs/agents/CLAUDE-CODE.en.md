@@ -126,6 +126,34 @@ Scan the project and output a guardrails implementation backlog.
 4. Output a report in markdown format
 ```
 
+## What Onboarding Creates for Review
+
+**Goal:** after project assessment, get a concrete Claude review command for your stack instead of an invented “daily loop.”
+
+### 1. What onboarding decides
+
+Onboarding should determine:
+
+- whether the standard `code-review` command is enough
+- whether the template must be adapted for the project stack
+- whether a separate review command is needed, such as `code-review-dapper` or `code-review-razor`
+
+### 2. What should appear in the project
+
+- `.claude/commands/code-review.md` or `.claude/commands/code-review-{context}.md`
+- an updated `CLAUDE.md` if review rules also need to be captured in the shared constitution
+- a report or backlog item explaining what was adapted and what did not fit from the ready-made artifacts
+
+### 3. When the scenario is successful
+
+- the team has an exact slash command for review in this project
+- the team knows why it is this command and not some other variant
+- if the standard template does not fit, that is reflected in an explicit project-specific command rather than informal adaptation
+
+### 4. Important boundary
+
+Onboarding first creates or adapts the review command for the project. Only after that does the command become part of the PR flow.
+
 ## Claude Code Specifics
 
 ### What Differs from Kimi

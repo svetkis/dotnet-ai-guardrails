@@ -8,14 +8,14 @@
 
 ```
 .cursor/
-├── .cursorrules              # Главная конституция (аналог AGENTS.md)
-└── rules/                    # Контекстно-зависимые правила (новый формат)
-    ├── 001-general.md        # Общие правила для всего проекта
-    ├── 002-domain.md         # Правила для Domain слоя
-    ├── 003-infrastructure.md # Правила для Infrastructure
-    ├── 004-api.md            # Правила для API слоя
-    ├── 005-tests.md          # Правила для тестов
-    └── 006-audits.md         # Prompt-шаблоны для аудитов
+├── .cursorrules              # Main constitution (analog of AGENTS.md)
+└── rules/                    # Context-dependent rules (new format)
+    ├── 001-general.md        # General rules for the entire project
+    ├── 002-domain.md         # Rules for Domain layer
+    ├── 003-infrastructure.md # Rules for Infrastructure
+    ├── 004-api.md            # Rules for API layer
+    ├── 005-tests.md          # Rules for tests
+    └── 006-audits.md         # Prompt templates for audits
 ```
 
 ## Конфигурация проекта
@@ -27,21 +27,21 @@
 ```markdown
 # Project Guardrails — {ProjectName}
 
-## Миссия
-{описание проекта}
+## Mission
+{project description}
 
-## Правила для AI
-- Не добавляй зависимости без явного запроса
-- Не меняй структуру папок без согласования
-- Каждый баг-фикс — с regression тестом (BUG###_DescriptiveName.cs)
-- Все публичные async методы принимают CancellationToken
-- Не используй preview-версии SDK и NuGet-пакетов
+## Rules for AI
+- Do not add dependencies without explicit request
+- Do not change folder structure without agreement
+- Every bug fix comes with a regression test (BUG###_DescriptiveName.cs)
+- All public async methods accept CancellationToken
+- Do not use preview versions of SDK and NuGet packages
 - ...
 
-## Архитектура
+## Architecture
 - {Clean / Vertical Slice / etc.}
-- Зависимости между слоями: Domain → Application → Infrastructure
-- Domain не зависит от Infrastructure
+- Dependencies between layers: Domain → Application → Infrastructure
+- Domain does not depend on Infrastructure
 
 ## Stack
 - .NET {version}
@@ -52,7 +52,7 @@
 ## Conventions
 - Naming: ...
 - Commits: ...
-- Tests: `dotnet run --project`, не `dotnet test`
+- Tests: `dotnet run --project`, not `dotnet test`
 ```
 
 ### 2. Создать `.cursor/rules/` (рекомендуется для проектов 50k+ LOC)
@@ -68,10 +68,10 @@ alwaysApply: false
 
 # Domain Layer Rules
 
-- Нулевые внешние зависимости (кроме стандартной библиотеки)
-- Все сущности — immutable records или с private setters
-- Миграция обязательна при изменении модели
-- Нет прямых вызовов DB, HTTP, File IO
+- Zero external dependencies (except standard library)
+- All entities are immutable records or have private setters
+- Migration is mandatory when changing the model
+- No direct DB, HTTP, File IO calls
 ```
 
 ```markdown
@@ -83,10 +83,10 @@ alwaysApply: false
 
 # Infrastructure Layer Rules
 
-- Select() обязателен в read-path (запрещен .Include())
-- FindAsync() только в write-path (Command handlers)
-- Каждый cache.Set() — с указанием размера
-- Все сервисы реализуют интерфейс из Application
+- Select() is mandatory in read-path (.Include() forbidden)
+- FindAsync() only in write-path (Command handlers)
+- Every cache.Set() — with size specified
+- All services implement an interface from Application
 ```
 
 ```markdown
@@ -99,9 +99,9 @@ alwaysApply: false
 # Test Conventions
 
 - TUnit + `dotnet run --project`
-- Каждый баг — файл BUG###_DescriptiveName.cs
-- Архитектурные тесты: NetArchTest
-- Не использовать `dotnet test` (ловушка "0 tests ran")
+- Every bug is a file BUG###_DescriptiveName.cs
+- Architecture tests: NetArchTest
+- Do not use `dotnet test` ("0 tests ran" trap)
 ```
 
 ```markdown
@@ -114,19 +114,19 @@ alwaysApply: false
 # Audit Prompts
 
 ## Code Review
-Проведи code review текущих изменений:
-1. Получи diff: git diff origin/main
-2. Проверь только + строки
-3. Ищи: SQL injection, missing await, XSS, data leak
-4. Для каждой находки укажи файл:строка + цитату кода
-5. Выдай вердикт: APPROVED / CHANGES_REQUESTED
+Conduct code review of current changes:
+1. Get diff: git diff origin/main
+2. Check only + lines
+3. Look for: SQL injection, missing await, XSS, data leak
+4. For each finding specify file:line + code quote
+5. Issue verdict: APPROVED / CHANGES_REQUESTED
 
 ## Security Audit
-Проверь файлы на утечки данных:
-- Логи: нет PII, токенов, connection strings
-- API ответы: нет лишних полей
-- Exception messages: нет SQL, нет путей ФС
-- Все новые endpoints покрыты авторизацией
+Check files for data leaks:
+- Logs: no PII, tokens, connection strings
+- API responses: no extra fields
+- Exception messages: no SQL, no FS paths
+- All new endpoints are covered by authorization
 ```
 
 ## Запуск онбординга
@@ -134,18 +134,46 @@ alwaysApply: false
 ### Вариант A: Chat mode (Ctrl+L)
 
 ```
-Просканируй этот .NET-проект. Оцени guardrails по 5 слоям пирамиды.
-Выдай бэклог внедрения. Учитывай, что мы используем {стек}.
+Scan this .NET project. Evaluate guardrails against the 5 pyramid layers.
+Output an implementation backlog. Consider that we use {stack}.
 ```
 
 ### Вариант B: Composer mode (Ctrl+I)
 
 ```
-Создай архитектурные тесты для этого проекта:
-1. Проверь зависимости между слоями (Domain → Application → Infrastructure)
-2. Найди все сервисы и проверь что они имеют интерфейсы
-3. Создай ratchet-тест для контроля публичных типов в Application-слое и количества тестов
+Create architecture tests for this project:
+1. Check dependencies between layers (Domain → Application → Infrastructure)
+2. Find all services and check that they have interfaces
+3. Create a ratchet test to control public types in the Application layer and test count
 ```
+
+## Что онбординг создаёт для код-ревью
+
+**Цель:** после первичной оценки получить артефакт для код-ревью именно этого проекта, а не выдуманный универсальный цикл.
+
+### 1. Что решает онбординг
+
+Онбординг должен определить:
+
+- достаточно ли общих review-правил в `.cursorrules`
+- нужно ли вынести review-проверки в `.cursor/rules/` по слоям или контекстам
+- нужен ли отдельный запрос или notepad для ревью под проект
+
+### 2. Что должно появиться в проекте
+
+- review-правила в `.cursorrules` и/или `.cursor/rules/`
+- при необходимости отдельный review prompt / notepad под ваш стек
+- явная фиксация, какие проверки вычеркнуты как N/A и что добавлено специально под проект
+
+### 3. Когда сценарий считается успешным
+
+- Cursor получает review-контекст из проектных файлов, а не из случайного чата
+- команда понимает, где лежит основной запрос для ревью в этом проекте
+- если базовые правила не подходят, это отражено в правилах именно этого проекта, а не “додумывается” каждым разработчиком отдельно
+
+### 4. Важная граница
+
+Онбординг сначала фиксирует правила и запросы для ревью в проекте. Уже потом команда использует их на PR и задачах по рефакторингу.
 
 ## Специфика Cursor
 

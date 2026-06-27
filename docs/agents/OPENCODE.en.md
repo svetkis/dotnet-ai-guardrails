@@ -93,6 +93,34 @@ opencode --prompt .opencode/prompts/onboarding.md
 # Open Command Palette → OpenCode: Run Prompt → onboarding
 ```
 
+## What Onboarding Creates for Review
+
+**Goal:** after project assessment, get a review artifact for your concrete OpenCode setup instead of a forced generic loop.
+
+### 1. What onboarding decides
+
+Onboarding should determine:
+
+- where review instructions should live in your fork: `AGENTS.md`, `.opencode/instructions.md`, or a prompt file
+- whether a dedicated `code-review.md` prompt is required
+- which checks must be adapted to the stack and to the limits of the specific model
+
+### 2. What should appear in the project
+
+- `.opencode/prompts/code-review.md` or the equivalent file format for your fork
+- base review rules in `.opencode/instructions.md` and/or `AGENTS.md`
+- explicit documentation of what was adapted and what was declared not applicable
+
+### 3. When the scenario is successful
+
+- the team has one clear review prompt for this OpenCode setup
+- project-specific constraints and N/A checks are already reflected in artifacts
+- review no longer depends on who in the team happens to remember the right prompt
+
+### 4. Important boundary
+
+Onboarding first builds the review artifact for your OpenCode setup. Only after that is the artifact used on PRs and in manual review.
+
 ## OpenCode Specifics
 
 ### What Differs from Proprietary Agents

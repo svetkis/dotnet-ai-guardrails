@@ -147,6 +147,34 @@ Create architecture tests for this project:
 3. Create a ratchet test to control public types in the Application layer and test count
 ```
 
+## What Onboarding Creates for Review
+
+**Goal:** after the initial assessment, get a project-specific review artifact for Cursor instead of an invented universal loop.
+
+### 1. What onboarding decides
+
+Onboarding should determine:
+
+- whether general review rules in `.cursorrules` are enough
+- whether review checks should be moved into `.cursor/rules/` by layer or context
+- whether a dedicated project-specific review prompt / notepad is needed for PR review
+
+### 2. What should appear in the project
+
+- review rules in `.cursorrules` and/or `.cursor/rules/`
+- a dedicated review prompt / notepad when the stack needs one
+- explicit documentation of which checks were struck out as N/A and which were added as project-specific
+
+### 3. When the scenario is successful
+
+- Cursor receives review context from project files instead of a random chat prompt
+- the team knows where the canonical review prompt for this project lives
+- if the base rules do not fit, that is reflected in project-specific rules instead of being reinvented by each developer
+
+### 4. Important boundary
+
+Onboarding first fixes review rules and prompts in the project. Only after that does the team use them for PR review and refactoring tasks.
+
 ## Cursor Specifics
 
 ### What Differs from Kimi / Claude Code

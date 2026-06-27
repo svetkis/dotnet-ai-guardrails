@@ -46,6 +46,34 @@ cp -r /path/to/dotnet-ai-guardrails/templates/skills/skeptical-ai-bootstrap/* ./
 kimi run skeptical-ai-bootstrap
 ```
 
+## What Onboarding Creates for Review
+
+**Goal:** after the first scan, get a project-specific review skill for your stack instead of an abstract review workflow.
+
+### 1. What onboarding decides
+
+Onboarding should determine one of three outcomes:
+
+- the ready-made `code-review` fits and only needs adaptation for naming/conventions
+- the ready-made `code-review` does not fit as-is, but can be substantially rewritten for the stack
+- a new review skill is required: for example `code-review-dapper`, `code-review-razor`, or `code-review-netframework`
+
+### 2. What should appear in the project
+
+- a review skill in `.kimi/skills/code-review/` or `.kimi/skills/code-review-{context}/`
+- a recorded reason why the standard skill was used or why a new one was created
+- an updated `.kimi/skills/README.md` map if you maintain it through onboarding
+
+### 3. When the scenario is successful
+
+- the team knows the exact review-skill name used for PR/commit checks
+- obvious stack-specific false positives are already removed from the skill
+- if the standard `code-review` did not fit, that is documented in the report instead of being left as tribal knowledge
+
+### 4. Important boundary
+
+Onboarding first determines and adapts the review skill for the project. Only after that does the skill become part of the pre-commit / PR flow.
+
 ## Concrete commands (daily workflow)
 
 > **Note:** Flags (`--git-diff`, `--paths`, `--mode`) are **pseudo-commands** for workflow illustration.

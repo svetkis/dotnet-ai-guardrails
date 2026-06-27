@@ -21,6 +21,11 @@ It prevents situations where an agent tries to create a `DemoProject` in the tar
 | **Codex (OpenAI)** | [CODEX.md](CODEX.md) | `.codex/instructions.md` | Single file, git integration |
 | **OpenCode** | [OPENCODE.md](OPENCODE.md) | `.opencode/instructions.md` | Open-source, self-hosted |
 
+## How to Read These Guides
+
+Each guide focuses on one practical question: **what onboarding should create for review**.
+Run onboarding first, then read the "What Onboarding Creates for Review" section.
+
 ## Universal Approach
 
 If multiple agents are used in the project or the agent is unknown —

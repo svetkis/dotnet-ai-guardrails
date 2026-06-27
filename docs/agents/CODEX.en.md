@@ -69,6 +69,34 @@ codex
 > Output an implementation backlog. Consider that we use {stack}.
 ```
 
+## What Onboarding Creates for Review
+
+**Goal:** after the first scan, get a project-specific review protocol for Codex instead of an abstract workflow.
+
+### 1. What onboarding decides
+
+Onboarding should determine:
+
+- whether the review protocol inside `.codex/instructions.md` is sufficient
+- whether a separate markdown review-prompt template is needed in the repo
+- which checks must be removed or added for the real project stack
+
+### 2. What should appear in the project
+
+- an updated `.codex/instructions.md` with review rules for this specific project
+- optionally `docs/guardrails-checklist.md` or a similar file containing the canonical review prompt
+- a report explaining what was adapted from ready-made guardrails and what had to become project-specific
+
+### 3. When the scenario is successful
+
+- the team has one canonical review prompt for this project
+- review rules already reflect the stack and architecture boundaries instead of staying generic
+- if standard checks do not fit, that is explicitly documented in the project instructions
+
+### 4. Important boundary
+
+Onboarding first assembles the project-specific review protocol. Only after that does the team use the protocol in PR checks.
+
 ## Codex Specifics
 
 ### What Differs from Kimi / Claude

@@ -8,15 +8,15 @@
 
 ```
 .claude/
-├── CLAUDE.md                      # Главная конституция (аналог AGENTS.md)
-├── settings.json                  # Настройки проекта
+├── CLAUDE.md                      # Main constitution (analog of AGENTS.md)
+├── settings.json                  # Project settings
 └── commands/                      # Custom slash commands
     ├── code-review.md             # /code-review
     ├── task-compliance.md         # /task-compliance
     ├── security-audit.md          # /security-audit
     ├── complexity-audit.md        # /complexity-audit
     ├── allocation-budget-audit.md # /allocation-budget-audit
-    └── {project-specific}.md      # Кастомные команды
+    └── {project-specific}.md      # Custom commands
 ```
 
 ## Конфигурация проекта
@@ -28,19 +28,19 @@
 ```markdown
 # Project Guardrails — {ProjectName}
 
-## Миссия
-{описание проекта}
+## Mission
+{project description}
 
-## Правила для Claude
-- Не добавляй зависимости без явного запроса
-- Не меняй структуру папок без согласования
-- Каждый баг-фикс — с regression тестом
-- Все публичные async методы принимают CancellationToken
+## Rules for Claude
+- Do not add dependencies without explicit request
+- Do not change folder structure without agreement
+- Every bug fix comes with a regression test
+- All public async methods accept CancellationToken
 - ...
 
-## Архитектура
+## Architecture
 - {Clean / Vertical Slice / etc.}
-- Зависимости между слоями: ...
+- Dependencies between layers: ...
 
 ## Stack
 - .NET {version}
@@ -76,15 +76,15 @@
 ```markdown
 # code-review
 
-## Описание
-Провести code review текущих изменений.
+## Description
+Conduct code review of current changes.
 
-## Инструкции
-1. Получи diff: `git diff origin/main`
-2. Проверь только `+` строки
-3. Ищи: SQL injection, missing await, XSS, data leak
-4. Для каждой находки укажи файл:строку + цитату кода
-5. Выдай вердикт: APPROVED / CHANGES_REQUESTED
+## Instructions
+1. Get diff: `git diff origin/main`
+2. Check only `+` lines
+3. Look for: SQL injection, missing await, XSS, data leak
+4. For each finding specify file:line + code quote
+5. Issue verdict: APPROVED / CHANGES_REQUESTED
 
 ## Severity
 - BLOCKER: Security, data loss, compilation error
@@ -98,12 +98,12 @@
 ## Запуск онбординга
 
 ```bash
-# Запустить Claude Code в проекте
+# Launch Claude Code in the project
 claude
 
-# Внутри сессии:
-> Просканируй этот .NET-проект. Оцени guardrails по 5 слоям пирамиды.
-> Выдай бэклог внедрения. Учитывай, что мы используем {стек}.
+# Inside the session:
+> Scan this .NET project. Evaluate guardrails against the 5 pyramid layers.
+> Output an implementation backlog. Consider that we use {stack}.
 ```
 
 Или создать custom command:
@@ -111,23 +111,48 @@ claude
 ```markdown
 # .claude/commands/onboarding.md
 
-## Описание
-Просканировать проект и выдать бэклог внедрения guardrails.
+## Description
+Scan the project and output a guardrails implementation backlog.
 
-## Инструкции
-1. Найди все `.csproj` и определи стек
-2. Оцени слои пирамиды:
-   - Слой 1.1 Компилятор: TreatWarningsAsErrors? Nullable?
-   - Слой 1.2 Архитектура: есть ли арх. тесты?
-   - Слой 1.3 Тесты: фреймворк, coverage, "0 ran"?
-   - Слой 1.4 Code Review: есть ли правила?
-   - Слой 1.5 Smoke: есть ли прогон критичных сценариев?
-   - Слой 2.1 E2E: есть ли интеграционные тесты?
-   - Слой 2.2 Аудиты: проводились ли?
-   - Слой 2.3 Нагрузка: есть ли нагрузочные тесты?
-3. Для каждого слоя: Адаптировать / Создать / Пропустить
-4. Выдай отчёт в формате markdown
+## Instructions
+1. Find all `.csproj` and determine the stack
+2. Evaluate 5 pyramid layers:
+   - Compiler: TreatWarningsAsErrors? Nullable?
+   - Architecture: any arch tests?
+   - Tests: framework, coverage, "0 ran"?
+   - Code Review: any rules?
+   - E2E: any integration tests?
+3. For each layer: Adapt / Create / Skip
+4. Output a report in markdown format
 ```
+
+## Что онбординг создаёт для код-ревью
+
+**Цель:** после оценки проекта получить не абстрактный “ежедневный цикл”, а конкретную Claude-команду для код-ревью под ваш стек.
+
+### 1. Что решает онбординг
+
+Онбординг должен определить:
+
+- хватит ли стандартной команды `code-review`
+- нужно ли адаптировать шаблон под стек проекта
+- нужна ли отдельная команда для ревью: например `code-review-dapper` или `code-review-razor`
+
+### 2. Что должно появиться в проекте
+
+- `.claude/commands/code-review.md` или `.claude/commands/code-review-{context}.md`
+- обновлённый `CLAUDE.md`, если review-правила надо зафиксировать и в общей конституции
+- отчёт или backlog-пункт с объяснением, что адаптировали и что не подошло из готовых артефактов
+
+### 3. Когда сценарий считается успешным
+
+- у команды есть точная команда `/...` для ревью в этом проекте
+- команда знает, почему это именно `code-review`, а не другой вариант
+- если стандартный шаблон не подходит, это отражено в явной отдельной команде под проект, а не в устной адаптации
+
+### 4. Важная граница
+
+Онбординг сначала создаёт или адаптирует команду для ревью под проект. Только потом эта команда становится частью PR-потока.
 
 ## Специфика Claude Code
 
