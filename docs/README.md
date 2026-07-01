@@ -49,7 +49,7 @@
 | **SnapshotTest** | Контракт JSON-сериализации, OpenAPI | [tests/patterns/SnapshotTest.cs](../tests/patterns/SnapshotTest.cs) | `examples/DemoProject/tests/DemoProject.Tests/SnapshotTests.cs` |
 | **LoadTest** | Silent breakdown под нагрузкой: read-оптимизации, которые ломают write | [tests/patterns/LoadTest.cs](../tests/patterns/LoadTest.cs) | `examples/DemoProject/tests/DemoProject.Tests/LoadTests.cs` |
 | **ComplexityRatchetTest** | Методы с `S3776`/`S1541` нарушениями не растут (baseline + ratchet) | [tests/patterns/ComplexityRatchetTest.cs](../tests/patterns/ComplexityRatchetTest.cs) | — |
-| **AllocationBudgetTest** | Аллокации `[HotPath]` методов не превышают baseline + 10% | [tests/patterns/AllocationBudgetTest.cs](../tests/patterns/AllocationBudgetTest.cs) | — |
+| **AllocationBudgetTest** | Аллокации `[HotPath]` методов не превышают baseline + 10% | [tests/patterns/AllocationBudgetTest.cs](../tests/patterns/AllocationBudgetTest.cs) | `examples/DemoProject/tests/DemoProject.Tests/AllocationBudgetTests.cs` (green) / `examples/DemoProject.Traps/src/DemoProject.Traps/AllocationBudgetHotspot.cs` + `tests/DemoProject.Traps.Tests/AllocationBudgetTests.cs` (red) |
 | **SpellcheckGuardTest** | Новых опечаток в публичных символах/docs не появляется | [tests/patterns/SpellcheckGuardTest.cs](../tests/patterns/SpellcheckGuardTest.cs) | — |
 | **ReleaseReadinessTest** | Наличие критичных артефактов и runtime guardrails перед релизом | [tests/patterns/ReleaseReadinessTest.cs](../tests/patterns/ReleaseReadinessTest.cs) | — |
 | **MutationGuardTest** | Mutation score не падает (Stryker.NET) | [tests/patterns/MutationGuardTest.cs](../tests/patterns/MutationGuardTest.cs) | — |

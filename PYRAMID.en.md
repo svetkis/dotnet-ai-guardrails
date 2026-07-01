@@ -61,7 +61,7 @@ Everything that runs in seconds and minutes — while the developer (or agent) i
 | Naming | 3 |
 | Structure and anti-patterns | 12 |
 | Complexity | 1 | Number of methods violating `S3776`/`S1541` must not grow (baseline + ratchet) |
-| Allocation budget | 1 | Every `[HotPath]` method has a `{MethodName}_AllocationBudget` test; allocations stay within baseline + 10% |
+| Allocation budget | 1 | Every `[HotPath]` method has a `{MethodName}_AllocationBudget` test; allocations stay within baseline + 10%. Green: [`examples/DemoProject/tests/DemoProject.Tests/AllocationBudgetTests.cs`](examples/DemoProject/tests/DemoProject.Tests/AllocationBudgetTests.cs). Red: [`examples/DemoProject.Traps/src/DemoProject.Traps/AllocationBudgetHotspot.cs`](examples/DemoProject.Traps/src/DemoProject.Traps/AllocationBudgetHotspot.cs) + [`tests/DemoProject.Traps.Tests/AllocationBudgetTests.cs`](examples/DemoProject.Traps/tests/DemoProject.Traps.Tests/AllocationBudgetTests.cs) — `new List<int>` in a hot path exceeds the budget |
 | Performance | 1 |
 | Test inventory | 1 |
 

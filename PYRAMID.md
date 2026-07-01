@@ -61,7 +61,7 @@
 | Именование | 3 | Job-классы заканчиваются на `Job` |
 | Структура и антипаттерны | 12 | Запрет `.FindAsync()` и `.Include()` в read-path; запрет дублирования бизнес-логики; запрет циклических зависимостей; Entity leak guard; запрет голых Guid/string/int для идентификаторов в Domain |
 | Complexity | 1 | Количество методов с нарушениями `S3776`/`S1541` не растёт (baseline + ratchet) |
-| Allocation budget | 1 | Каждый `[HotPath]` метод имеет `{MethodName}_AllocationBudget` тест; аллокации не превышают baseline + 10% |
+| Allocation budget | 1 | Каждый `[HotPath]` метод имеет `{MethodName}_AllocationBudget` тест; аллокации не превышают baseline + 10%. Green: [`examples/DemoProject/tests/DemoProject.Tests/AllocationBudgetTests.cs`](examples/DemoProject/tests/DemoProject.Tests/AllocationBudgetTests.cs). Red: [`examples/DemoProject.Traps/src/DemoProject.Traps/AllocationBudgetHotspot.cs`](examples/DemoProject.Traps/src/DemoProject.Traps/AllocationBudgetHotspot.cs) + [`tests/DemoProject.Traps.Tests/AllocationBudgetTests.cs`](examples/DemoProject.Traps/tests/DemoProject.Traps.Tests/AllocationBudgetTests.cs) — `new List<int>` в hot path превышает бюджет |
 | Performance | 1 | Количество публичных типов и тестов не уменьшается |
 | Тестовый инвентарь | 1 | Количество тестов не уменьшается (страховка от "0 tests ran") |
 
