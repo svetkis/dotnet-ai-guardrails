@@ -56,7 +56,7 @@
 3. Get the report `.backlog/onboarding-{date}.md`
 
 **Option B — manual assessment:**
-1. Open [`PYRAMID.md`](../PYRAMID.md)
+1. Open [`PYRAMID.en.md`](../PYRAMID.en.md)
 2. For each sub-layer (1.1→2.3) answer:
    - Is the principle followed? (Yes / Partially / No)
    - What is implemented now?
@@ -316,7 +316,7 @@ A: Layers 0 + 1.1–1.2 are "set and forget" (minimal maintenance). Audits — 1
 | I don't understand our architecture | [`ARCHITECTURE-INVENTORY.md`](../templates/skills/skeptical-ai-bootstrap/ARCHITECTURE-INVENTORY.md) |
 | I don't know which skills to choose | [`ADAPTATION.md`](../templates/skills/ADAPTATION.md) |
 | I don't know how to configure the agent | [`docs/agents/`](agents/) → choose yours |
-| I don't understand how a layer works | [`PYRAMID.md`](../PYRAMID.md) |
+| I don't understand how a layer works | [`PYRAMID.en.md`](../PYRAMID.en.md) |
 | I want to perform an audit manually | [`human-audit-bridge.md`](solutions/human-audit-bridge.md) |
 | The agent does not find skills | [`INSTALL.md`](../templates/skills/skeptical-ai-bootstrap/INSTALL.md) |
 | Ready-made artifacts do not fit | [`NEW-SKILL-TEMPLATE.md`](../templates/skills/skeptical-ai-bootstrap/NEW-SKILL-TEMPLATE.md) + [`SKILL-ARCHITECTURE.md`](../templates/skills/skeptical-ai-bootstrap/SKILL-ARCHITECTURE.md) |

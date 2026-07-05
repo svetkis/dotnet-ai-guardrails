@@ -91,7 +91,8 @@ guardrails do not contradict each other and match the code.
 3. Do `GLOSSARY.md` / `GLOSSARY.en.md` define the same terms and link to existing files?
 4. Do `docs/ONBOARDING.md` / `docs/ONBOARDING.en.md` reference existing skills, patterns, and agent docs?
 5. Is the bilingual surface consistent: every link from `AGENTS.en.md` / `docs/README.en.md` to an English entry doc resolves, and the Russian counterpart exists where expected?
-6. No links to deleted sections/skills?
+6. Cross-language link hygiene: links inside `*.en.md` files target the `*.en.md` counterpart when one exists (e.g., `PYRAMID.en.md` rather than `PYRAMID.md`); links inside Russian files target the `.md` counterpart.
+7. No links to deleted sections/skills?
 
 ### Phase 5: Size Budget
 

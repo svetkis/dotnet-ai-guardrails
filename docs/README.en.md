@@ -11,7 +11,7 @@
 
 | I am a ... | Where to start |
 |------------|----------------|
-| **Newcomer** to agentic development | [GLOSSARY.en.md](../GLOSSARY.en.md) → [PYRAMID.md](../PYRAMID.md) → `examples/DemoProject/` |
+| **Newcomer** to agentic development | [GLOSSARY.en.md](../GLOSSARY.en.md) → [PYRAMID.en.md](../PYRAMID.en.md) → `examples/DemoProject/` |
 | **Tech Lead** implementing guardrails | [ONBOARDING.en.md](ONBOARDING.en.md) → [.agents/skills/skeptical-ai-bootstrap/SKILL.md](../.agents/skills/skeptical-ai-bootstrap/SKILL.md) → [ADAPTATION.md](../templates/skills/ADAPTATION.md) → "Outer Loop" section below |
 | **Developer** looking for a test pattern | [tests/patterns/](#test-patterns) → copy into your project |
 | **Implementing SAE from scratch** | [ONBOARDING.en.md](ONBOARDING.en.md) → step-by-step guide with checkpoints |
@@ -24,16 +24,16 @@
 
 | Layer | Sub-layer | What it is | Main document | Artifacts |
 |-------|-----------|------------|---------------|-----------|
-| **0** | — | Instructions for the agent before code | [PYRAMID.md §Layer 0](../PYRAMID.md#layer-0) | `rules/AGENTS_TEMPLATE.md` + Decision Guards (ADR) |
-| **1** | 1.1 Compiler | Fast feedback from types | [PYRAMID.md §1.1](../PYRAMID.md#layer-1-compiler) | `.editorconfig`, `Directory.Build.props`, `DemoProject.Analyzers` (custom Roslyn analyzer) |
-| **1** | 1.2 Architecture | Auto-check of layers and anti-patterns | [PYRAMID.md §1.2](../PYRAMID.md#layer-1-architecture) | [tests/patterns/ArchitectureRules.cs](../tests/patterns/ArchitectureRules.cs), [RatchetTest.cs](../tests/patterns/RatchetTest.cs), [ArchUnitNetSliceTest.cs](../tests/patterns/ArchUnitNetSliceTest.cs) |
-| **1** | 1.3 Tests | Regressions, snapshot, vibe-refactoring, API contracts | [PYRAMID.md §1.3](../PYRAMID.md#layer-1-tests) | [tests/patterns/](#test-patterns) |
-| **1** | 1.4 Code Review | Agent checks agent (pre-commit / PR) | [PYRAMID.md §1.4](../PYRAMID.md#layer-1-code-review) | [templates/skills/code-review/SKILL.md](../templates/skills/code-review/SKILL.md), [templates/skills/frontend-code-review/SKILL.md](../templates/skills/frontend-code-review/SKILL.md) |
-| **1** | 1.5 Smoke | Fast run of critical scenarios | [PYRAMID.md §1.5](../PYRAMID.md#layer-1-smoke) | — |
-| **2** | 2.1 E2E / MCP | Full scenarios through external systems | [PYRAMID.md §2.1](../PYRAMID.md#layer-2-e2e) | [tests/patterns/SnapshotTest.cs](../tests/patterns/SnapshotTest.cs) |
-| **2** | 2.2 Audits | Deep checks on schedule | [PYRAMID.md §2.2](../PYRAMID.md#layer-2-audits) | [templates/skills/](#skills-audits) |
-| **2** | 2.3 Load | Silent breakdown under load (NBomber) | [PYRAMID.md §2.3](../PYRAMID.md#layer-2-load) | [tests/patterns/LoadTest.cs](../tests/patterns/LoadTest.cs) |
-| **Outer Loop** | — | Final human validation, business and product decisions | [PYRAMID.md §Outer Loop](../PYRAMID.md#outer-loop) | — |
+| **0** | — | Instructions for the agent before code | [PYRAMID.en.md §Layer 0](../PYRAMID.en.md#layer-0) | `rules/AGENTS_TEMPLATE.md` + Decision Guards (ADR) |
+| **1** | 1.1 Compiler | Fast feedback from types | [PYRAMID.en.md §1.1](../PYRAMID.en.md#layer-1-compiler) | `.editorconfig`, `Directory.Build.props`, `DemoProject.Analyzers` (custom Roslyn analyzer) |
+| **1** | 1.2 Architecture | Auto-check of layers and anti-patterns | [PYRAMID.en.md §1.2](../PYRAMID.en.md#layer-1-architecture) | [tests/patterns/ArchitectureRules.cs](../tests/patterns/ArchitectureRules.cs), [RatchetTest.cs](../tests/patterns/RatchetTest.cs), [ArchUnitNetSliceTest.cs](../tests/patterns/ArchUnitNetSliceTest.cs) |
+| **1** | 1.3 Tests | Regressions, snapshot, vibe-refactoring, API contracts | [PYRAMID.en.md §1.3](../PYRAMID.en.md#layer-1-tests) | [tests/patterns/](#test-patterns) |
+| **1** | 1.4 Code Review | Agent checks agent (pre-commit / PR) | [PYRAMID.en.md §1.4](../PYRAMID.en.md#layer-1-code-review) | [templates/skills/code-review/SKILL.md](../templates/skills/code-review/SKILL.md), [templates/skills/frontend-code-review/SKILL.md](../templates/skills/frontend-code-review/SKILL.md) |
+| **1** | 1.5 Smoke | Fast run of critical scenarios | [PYRAMID.en.md §1.5](../PYRAMID.en.md#layer-1-smoke) | — |
+| **2** | 2.1 E2E / MCP | Full scenarios through external systems | [PYRAMID.en.md §2.1](../PYRAMID.en.md#layer-2-e2e) | [tests/patterns/SnapshotTest.cs](../tests/patterns/SnapshotTest.cs) |
+| **2** | 2.2 Audits | Deep checks on schedule | [PYRAMID.en.md §2.2](../PYRAMID.en.md#layer-2-audits) | [templates/skills/](#skills-audits) |
+| **2** | 2.3 Load | Silent breakdown under load (NBomber) | [PYRAMID.en.md §2.3](../PYRAMID.en.md#layer-2-load) | [tests/patterns/LoadTest.cs](../tests/patterns/LoadTest.cs) |
+| **Outer Loop** | — | Final human validation, business and product decisions | [PYRAMID.en.md §Outer Loop](../PYRAMID.en.md#outer-loop) | — |
 
 ---
 
@@ -191,4 +191,4 @@ Read before implementation — each trap explains **why** a guardrail exists.
 When adding a new artifact:
 1. Add a row to the corresponding table
 2. Provide a link to the pattern/solution
-3. If it's a new pyramid layer — update [PYRAMID.md](../PYRAMID.md)
+3. If it's a new pyramid layer — update [PYRAMID.en.md](../PYRAMID.en.md)
