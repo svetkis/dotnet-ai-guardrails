@@ -49,7 +49,7 @@
 - [ ] Если добавлял паттерн — есть комментарии `// TRAP:` и `// GUARDRAIL:`
 - [ ] Если менял пирамиду — обновил `PYRAMID.md`
 - [ ] Если добавлял агента — обновил `docs/agents/`
-- [ ] Если добавлял артефакт (скилл, паттерн, ловушку) — обновил `docs/README.md` (карта знаний) и корневые `README.md` / `README.en.md`
+- [ ] Если добавлял артефакт (скилл, паттерн, ловушку) — обновил `docs/README.md` / `docs/README.en.md` (карта знаний), корневые `README.md` / `README.en.md`, а также `docs/ONBOARDING.md` / `docs/ONBOARDING.en.md` и `GLOSSARY.md` / `GLOSSARY.en.md` при изменении терминов или шагов
 - [ ] `dotnet build` проходит без warning'ов (если применимо)
 - [ ] Коммиты следуют Conventional Commits (`feat:`, `fix:`, `docs:`, `test:`)
 
@@ -120,7 +120,7 @@ Thank you for your interest! This repository contains defensive artifacts for .N
 - [ ] If adding a pattern — comments `// TRAP:` and `// GUARDRAIL:` are present
 - [ ] If changing the pyramid — `PYRAMID.md` is updated
 - [ ] If adding an agent — `docs/agents/` is updated
-- [ ] If adding an artifact (skill, pattern, trap) — `docs/README.md` (knowledge map) and root `README.md` / `README.en.md` are updated
+- [ ] If adding an artifact (skill, pattern, trap) — `docs/README.md` / `docs/README.en.md` (knowledge map), root `README.md` / `README.en.md`, and `docs/ONBOARDING.md` / `docs/ONBOARDING.en.md` and `GLOSSARY.md` / `GLOSSARY.en.md` are updated when terms or steps change
 - [ ] `dotnet build` passes without warnings (if applicable)
 - [ ] Commits follow Conventional Commits (`feat:`, `fix:`, `docs:`, `test:`)
 

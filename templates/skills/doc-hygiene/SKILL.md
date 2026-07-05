@@ -24,10 +24,15 @@ guardrails do not contradict each other and match the code.
 
 ## Scope
 
-- `AGENTS.md` (root and subfolders)
-- `README.md`, `README.en.md`
+- `AGENTS.md` / `AGENTS.en.md` (root and subfolders)
+- `README.md` / `README.en.md`
+- `PYRAMID.md` / `PYRAMID.en.md`
+- `GLOSSARY.md` / `GLOSSARY.en.md`
+- `docs/README.md` / `docs/README.en.md`
+- `docs/ONBOARDING.md` / `docs/ONBOARDING.en.md`
 - `docs/agents/*.md`
 - `docs/solutions/*.md`
+- `examples/README.md`
 - `CONTRIBUTING.md`
 - `CHANGELOG.md`
 
@@ -80,10 +85,13 @@ guardrails do not contradict each other and match the code.
 2. No divergence in pipeline description between `docs/agents/CLAUDE-CODE.md` and `docs/agents/OPENCODE.md`?
 3. Do all agents describe the same stack/versions?
 
-### Phase 4: README & CHANGELOG
-1. Does `README.md` contain current build commands?
+### Phase 4: README, GLOSSARY, ONBOARDING & CHANGELOG
+1. Does `README.md` / `README.en.md` contain current build commands?
 2. Does `CHANGELOG.md` cover the latest release?
-3. No links to deleted sections/skills?
+3. Do `GLOSSARY.md` / `GLOSSARY.en.md` define the same terms and link to existing files?
+4. Do `docs/ONBOARDING.md` / `docs/ONBOARDING.en.md` reference existing skills, patterns, and agent docs?
+5. Is the bilingual surface consistent: every link from `AGENTS.en.md` / `docs/README.en.md` to an English entry doc resolves, and the Russian counterpart exists where expected?
+6. No links to deleted sections/skills?
 
 ### Phase 5: Size Budget
 
