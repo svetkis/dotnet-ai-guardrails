@@ -1,76 +1,76 @@
-# Ловушка: Дублирование бизнес-логики (Code Duplication)
+# Trap: Code Duplication
 
-## Сценарий
+## Scenario
 
-Агент реализует новую фичу, не замечая, что похожая логика уже существует:
+The agent implements a new feature without noticing that similar logic already exists:
 
-- Копирует валидацию из одного сервиса в другой
-- Дублирует расчёт скидки/комиссии в API-контроллере
-- Вставляет проверку статуса заказа в 3 разных обработчика
+- Copies validation from one service to another
+- Duplicates discount/fee calculation in an API controller
+- Inserts an order status check into 3 different handlers
 
 ```csharp
-// Агент: "Мне нужно проверить, что заказ подтверждён"
-// Сервис 1:
+// Agent: "I need to check that the order is confirmed"
+// Service 1:
 if (order.Status == BookingStatus.Confirmed && order.Total > 0)
 
-// Сервис 2 (скопировано):
+// Service 2 (copied):
 if (order.Status == BookingStatus.Confirmed && order.Total > 0)
 
-// Сервис 3 (скопировано):
+// Service 3 (copied):
 if (order.Status == BookingStatus.Confirmed && order.Total > 0)
 ```
 
-## Последствия
+## Consequences
 
-- Исправление бага в одном месте не чинит его в других
-- Агент меняет логику в одном сервисе, но не знает о дублях
-- Compliance-правила разъезжаются (в одном месте `>= 100`, в другом `> 100`)
-- Регрессии после рефакторинга — "я же поправил" (но только в одном месте)
+- Fixing a bug in one place does not fix it in others
+- The agent changes logic in one service but is unaware of the duplicates
+- Compliance rules diverge (in one place `>= 100`, in another `> 100`)
+- Refactoring regressions — "I fixed it" (but only in one place)
 
-## Почему агент дублирует
+## Why the agent duplicates
 
-- Агент смотрит diff, а не всю кодбазу
-- Context window не хватает на поиск похожих фрагментов
-- "Вайб-кодинг" — быстрее скопировать, чем найти общий abstraction
+- The agent looks at the diff, not the whole codebase
+- Context window is insufficient to search for similar fragments
+- "Vibe coding" — faster to copy than to find a shared abstraction
 
-## Почему автотеста недостаточно
+## Why automated tests are not enough
 
-Regex-сканирование ловит только **буквальное** дублирование. Реальность хуже:
+Regex scanning only catches **literal** duplication. Reality is worse:
 
 ```csharp
-// Сервис 1
+// Service 1
 if (order.Status == BookingStatus.Confirmed)
 
-// Сервис 2
+// Service 2
 if (order.IsConfirmed())
 
-// Сервис 3
+// Service 3
 order.EnsureConfirmed();
 ```
 
-Это одно и то же бизнес-правило, но автотест его **не увидит**.
+This is the same business rule, but the automated test **will not see it**.
 
-## Решение
+## Solution
 
-### 1. Автотест: Literal Duplication Guard
-Regex-сканирование на буквальное копирование. Ловит копипасту агента. См. `tests/patterns/DuplicationGuardTest.cs`.
+### 1. Automated test: Literal Duplication Guard
+Regex scanning for literal copying. Catches agent copy-paste. See `tests/patterns/DuplicationGuardTest.cs`.
 
-### 2. Code Review: Semantic Duplication в diff
-Агент-ревьюер проверяет: если в PR добавлена валидация/расчёт — есть ли похожая логика в других сервисах? См. `templates/skills/code-review/CHECKLIST.md`.
+### 2. Code Review: Semantic Duplication in diff
+The reviewer agent checks: if validation/calculation was added in the PR — does similar logic already exist in other services? See `templates/skills/code-review/CHECKLIST.md`.
 
-### 3. Tech Debt Audit: Semantic Duplication по кодбазе
-Агент (и regex) не способны распознать **семантическое** дублирование по всей кодбазе. Это задача персоно-аудита техлида, который запускается раз в спринт. См. `templates/skills/tech-debt-audit/SKILL.md`.
+### 3. Tech Debt Audit: Semantic Duplication across codebase
+An agent (and regex) cannot recognize **semantic** duplication across the entire codebase. This is the task of the Tech Lead persona-audit, run once per sprint. See `templates/skills/tech-debt-audit/SKILL.md`.
 
-Чеклист аудита:
-- [ ] Новая валидация/расчёт статуса — нет ли похожей логики в других сервисах?
-- [ ] Правило можно вынести в Domain Service / Value Object?
-- [ ] Есть ли `BR-###` (нумерованное бизнес-правило), которое уже покрывает этот кейс?
+Audit checklist:
+- [ ] New validation/status calculation — does similar logic exist in other services?
+- [ ] Can the rule be extracted into a Domain Service / Value Object?
+- [ ] Is there an existing `BR-###` (numbered business rule) that covers this case?
 
-### 4. Нумерованные бизнес-правила `BR-###`
-Как `PERF-###` / `DB-###`, но для бизнес-логики:
+### 4. Numbered business rules `BR-###`
+Like `PERF-###` / `DB-###`, but for business logic:
 
 ```csharp
-// BR-001: Заказ считается подтверждённым только при статусе Confirmed и ненулевой сумме
+// BR-001: An order is considered confirmed only at Confirmed status and non-zero total
 public static class BookingRules
 {
     public static bool IsConfirmed(this Booking b) =>
@@ -78,11 +78,11 @@ public static class BookingRules
 }
 ```
 
-Если агент встречает `BR-###` в коде — он должен использовать существующий метод, а не писать новую проверку.
+If an agent encounters `BR-###` in code — it must use the existing method rather than writing a new check.
 
 ### 5. Domain Services
-Вынести бизнес-правила в домен, запретить хардкод в Application/API.
+Move business rules into the domain; prohibit hardcoding in Application/API.
 
-## Паттерн
+## Pattern
 
-См. `tests/patterns/DuplicationGuardTest.cs`
+See `tests/patterns/DuplicationGuardTest.cs`

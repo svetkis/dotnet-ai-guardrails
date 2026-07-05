@@ -21,18 +21,18 @@ invocation:
 version: 1.0.0
 ---
 
-## Версионность и стек
+## Versioning and Stack
 
-Этот скилл ориентирован на **React 18+ / React 19 + TypeScript 4.8+**.
+This skill targets **React 18+ / React 19 + TypeScript 4.8+**.
 
-Если в проекте используется React 17 или старше, класс-компоненты, легаси-стейт (Redux без RTK Query), Razor/Blazor, или другой фреймворк (Vue/Svelte) — отметь соответствующие проверки как **N/A** и адаптируй скилл. Для Razor/Blazor лучше завести отдельный скилл.
+If the project uses React 17 or older, class components, legacy state (Redux without RTK Query), Razor/Blazor, or another framework (Vue/Svelte), mark the relevant checks as **N/A** and adapt the skill. For Razor/Blazor, create a separate skill.
 
-| Технология | Целевая версия | Примечание |
-|------------|---------------|------------|
+| Technology | Target version | Note |
+|------------|---------------|------|
 | React | >= 18.0.0 | Hooks, concurrent features, Strict Mode |
 | TypeScript | >= 4.8.0 | strict: true, satisfies, inferred types |
-| JSX/TSX | — | .tsx предпочтительнее .jsx |
-| Build tool | Vite / Next.js / Remix | Адаптируй правила под CLI-специфику |
+| JSX/TSX | — | .tsx preferred over .jsx |
+| Build tool | Vite / Next.js / Remix | Adapt rules to CLI specifics |
 
 ---
 
@@ -40,31 +40,30 @@ version: 1.0.0
 
 ## Context Marker
 
-Когда этот скилл активен, добавь `⚛️` к своему STARTER_CHARACTER.
-Пример: `🍀 ⚛️` = базовые правила + роль Frontend Code Review активна.
-При перечитывании (re-read) добавь `♻️` перед маркером скилла.
+When this skill is active, add `⚛️` to your STARTER_CHARACTER stack.
+Example: `🍀 ⚛️` = base rules + Frontend Code Review role active.
+When re-reading this skill, prepend `♻️` to the skill marker.
 
 ## Trigger / When to invoke
 
-Автоматически активируй этот скилл **перед каждым `git commit`**, если в staged-изменениях есть frontend-файлы.
-Явный вызов: `/skill:frontend-code-review` или фразы:
+Automatically activate this skill **right before every `git commit`** when staged changes include frontend files.
+Explicit invocation: `/skill:frontend-code-review` or phrases:
 - "frontend pre-commit review"
 - "review my React changes"
 - "check the frontend diff"
 - "review TSX"
-- "фронтенд ревью"
 
-Не активируй скилл, если:
-- Изменения только в backend (.cs, .csproj) — используй `code-review`.
-- Нет staged-изменений.
-- Пользователь просит ревью всего файла без diff.
+Do NOT activate the skill when:
+- Changes are backend-only (.cs, .csproj) — use `code-review`.
+- There are no staged changes.
+- The user asks for a full-file review without a diff.
 
 ## Why a Second Agent
 
-Этот скилл реализует два принципа:
+This skill implements two principles:
 
-- **Focused Agent**: отдельный агент-ревьюер смотрит только на guardrails фронтенда, не отвлекаясь на бизнес-логику и отладку.
-- **Silent Misalignment**: агент, писавший код, мог молча ошибиться в правилах хуков или типизации. Ревьюер ловит это до попадания в `main`.
+- **Focused Agent**: a dedicated reviewer focuses only on frontend guardrails, not business logic or debugging.
+- **Silent Misalignment**: the agent that wrote the code may have silently misunderstood hook rules or typing. The reviewer catches it before it reaches `main`.
 
 ## Scope
 - Review ONLY staged changes (`git diff --cached`).
@@ -179,8 +178,8 @@ If you cannot satisfy 1-4, you MUST NOT report the finding.
 ```
 
 **Confidence Level:**
-- **CERTAIN** — точно баг, требует исправления.
-- **REVIEW** — возможен false positive, требует human judgment.
+- **CERTAIN** — definitely a bug, requires fixing.
+- **REVIEW** — possible false positive, requires human judgment.
 
 ## Verdict
 - **APPROVED**: 0 BLOCKER/CRITICAL/MAJOR

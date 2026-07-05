@@ -1,35 +1,35 @@
-# Конвенции проекта
+# Project Conventions
 
-> ⚠️ **ШАБЛОН** — Адаптируйте под свой стек. Замените `[ADAPT]` на ваши конвенции.
+> ⚠️ **TEMPLATE** — Adapt to your stack. Replace `[ADAPT]` with your conventions.
 
-## Именование тестов
+## Test Naming
 
-### Регрессионные тесты (обязательно)
+### Regression tests (mandatory)
 ```csharp
-// Формат: BUG{номер}_{КраткоеОписание}
-// [ADAPT] — замените [Test] на атрибут вашего фреймворка
+// Format: BUG{number}_{ShortDescription}
+// [ADAPT] — replace [Test] with your framework attribute
 [Test]
 public async Task BUG055_NewMaster_ShouldGenerateSlots()
 {
-    // Arrange: воспроизводим баг
+    // Arrange: reproduce the bug
     // Act
-    // Assert: баг не воспроизводится
+    // Assert: bug no longer reproduces
 }
 ```
 
-### Ratchet-тесты
+### Ratchet tests
 ```csharp
-// Формат: {Metric}_ShouldNotDecrease
+// Format: {Metric}_ShouldNotDecrease
 [Test]
 public void PublicTypeCount_ShouldNotDecrease()
 {
-    // Проверяем, что агент не удалил публичные типы при рефакторинге
+    // Ensure the agent did not delete public types during refactoring
 }
 ```
 
-### Архитектурные тесты
+### Architecture tests
 ```csharp
-// Формат: {RuleName}_Should{Satisfy}
+// Format: {RuleName}_Should{Satisfy}
 [Test]
 public void FindAsync_ShouldNotBeUsedInReadPath()
 {
@@ -39,17 +39,17 @@ public void FindAsync_ShouldNotBeUsedInReadPath()
 
 ### Complexity ratchet
 ```csharp
-// Формат: {Metric}_ShouldNotIncrease
+// Format: {Metric}_ShouldNotIncrease
 [Test]
 public void SonarComplexityViolations_ShouldNotIncrease()
 {
-    // Бaseline + ratchet для S3776/S1541
+    // Baseline + ratchet for S3776/S1541
 }
 ```
 
 ### Allocation budget
 ```csharp
-// Формат: {HotPathMethod}_AllocationBudget
+// Format: {HotPathMethod}_AllocationBudget
 [Test]
 public void GetAvailableSlots_AllocationBudget()
 {
@@ -59,7 +59,7 @@ public void GetAvailableSlots_AllocationBudget()
 
 ### Spellcheck / Release readiness / Mutation / Analyzer tests
 ```csharp
-// Формат: {Guard}_Should{Condition}
+// Format: {Guard}_Should{Condition}
 [Test]
 public void CSpell_ShouldNotFindNewMisspellings() { }
 
@@ -73,34 +73,34 @@ public void StrykerMutationScore_ShouldMeetBaseline() { }
 public void StrongTypedIdAnalyzer_FlagsPrimitiveIdInDomainEntity() { }
 ```
 
-> Справочные шаблоны в этом репозитории:
-> - [`tests/conventions/BUG_TEMPLATE.cs`](../tests/conventions/BUG_TEMPLATE.cs) — формат regression-теста
-> - [`tests/conventions/TUnit_Guide.md`](../tests/conventions/TUnit_Guide.md) — соглашения по TUnit
+> Reference templates in this repository:
+> - [`tests/conventions/BUG_TEMPLATE.cs`](../tests/conventions/BUG_TEMPLATE.cs) — regression test format
+> - [`tests/conventions/TUnit_Guide.md`](../tests/conventions/TUnit_Guide.md) — TUnit conventions
 
-## Workflow после изменений
+## Post-change Workflow
 
 ```
-код → dotnet build → тесты ([ADAPT]: для TUnit используй dotnet run --project; для другого фреймворка зафиксируй команду явно) → docs → коммит
+code → dotnet build → tests ([ADAPT]: use `dotnet run --project` for TUnit; for other frameworks, document the command explicitly) → docs → commit
 ```
 
-## Code Review агентом
+## Code Review by Agent
 
-Перед коммитом **обязательно** запустить отдельного агента для ревью:
-- Проверка соответствия diff спекам
+Before commit, **always** run a separate agent for review:
+- Diff compliance with specs
 - Scope creep detection
 - Regression risk assessment
 
 ## CI Guardrails
 
-- `dotnet build` — должен падать при warning как error
-- `[ADAPT]` — тесты должны реально бежать (не 0 ran)
-- `[ADAPT]` — контрактные проверки (OpenAPI snapshot / DTO snapshot / etc.)
-- `[ADAPT]` — нагрузочные метрики не должны деградировать (если применимо)
-- `[ADAPT]` — complexity violations не должны расти (baseline + ratchet)
-- `[ADAPT]` — allocation budget tests для `[HotPath]` методов
-- `[ADAPT]` — spellcheck для markdown/public API (если применимо)
-- `[ADAPT]` — mutation testing перед релизом (если применимо)
-- `[ADAPT]` — analyzer tests для кастомных Roslyn-анализаторов (если применимо)
+- `dotnet build` must fail on warning as error
+- `[ADAPT]` — tests must actually run (not 0 ran)
+- `[ADAPT]` — contract checks (OpenAPI snapshot / DTO snapshot / etc.)
+- `[ADAPT]` — load metrics must not degrade (if applicable)
+- `[ADAPT]` — complexity violations must not grow (baseline + ratchet)
+- `[ADAPT]` — allocation budget tests for `[HotPath]` methods
+- `[ADAPT]` — spellcheck for markdown / public API (if applicable)
+- `[ADAPT]` — mutation testing before release (if applicable)
+- `[ADAPT]` — analyzer tests for custom Roslyn analyzers (if applicable)
 
 ## Decision Guard IDs
 

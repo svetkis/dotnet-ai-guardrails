@@ -1,49 +1,41 @@
-# UX Audit — Чеклист
+# UX Audit — Checklist
 
-## Перед началом
-- [ ] Известны ключевые сценарии (онбординг, запись, оплата, отмена)
-- [ ] Получен доступ к коду фронтенда / бота / API responses
+## Before Start
+- [ ] Key scenarios known (onboarding, reservation, payment, cancellation)
+- [ ] Access to frontend / bot / API response code obtained
 
-## Сценарий: Новый пользователь
-- [ ] Прерывание на каждом шаге — что происходит?
-- [ ] Валидация — конкретные ошибки (не generic)
-- [ ] Пустые состояния — есть CTA?
+## Scenario: New user
+- [ ] Interruption at each step — what happens?
+- [ ] Validation — specific errors (not generic)
+- [ ] Empty states — has CTA?
 
-## Сценарий: Основное действие
-- [ ] Пустой список / нет данных — объяснение + CTA
-- [ ] Устаревшие данные — защита (ресурс занят, цена изменилась)
-- [ ] Двойное подтверждение — предотвращает accidental action
+## Scenario: Core action
+- [ ] Empty list / no data — explanation + CTA
+- [ ] Stale data — protected (item/resource taken, price changed)
+- [ ] Double confirmation — prevents accidental action
 
-## Сценарий: Отмена / изменение
-- [ ] Уже прошло / уже отменено — конкретная обратная связь
-- [ ] Есть альтернативы (перенос вместо отмены)
+## Scenario: Cancel / modify
+- [ ] Already passed / already cancelled — specific feedback
+- [ ] Alternatives exist (modify instead of cancel)
 
-## Сценарий: Оплата
-- [ ] Неудачная оплата — конкретная ошибка + retry
-- [ ] Двойной платёж / webhook — защищено
-- [ ] Истёкшая подписка / trial — пользователь видит объяснение
+## Scenario: Payment
+- [ ] Failed payment — specific error + retry
+- [ ] Double payment / webhook — protected
+- [ ] Expired subscription / trial — user sees explanation
 
-## Состояния и feedback
-- [ ] Empty states — CTA или объяснение
-- [ ] Loading states — индикатор при >1 сек
-- [ ] Error states — конкретная ошибка + действие (Retry)
-- [ ] Success states — пользователь видит результат
-- [ ] Dead ends — всегда есть выход (отмена, назад, меню)
+## States and feedback
+- [ ] Empty states — CTA or explanation
+- [ ] Loading states — indicator at >1 sec
+- [ ] Error states — specific error + action (Retry)
+- [ ] Success states — user sees result
+- [ ] Dead ends — always an exit (cancel, back, menu)
 
-## Race conditions в UI
-- [ ] Двойное нажатие — не создаёт дубль
-- [ ] Быстрый ввод + submit — не отправляет старые данные
-- [ ] Polling / refresh — не затирает новый результат
+## UI race conditions
+- [ ] Double press — does not create duplicate
+- [ ] Fast input + submit — does not send old data
+- [ ] Polling / refresh — does not overwrite new result
 
 ## API → Frontend contract
-- [ ] API возвращает данные для всех UI-состояний
-- [ ] Есть флаги специальных состояний (`OperationPaused`, `TrialExpired`)
-- [ ] Ошибки имеют machine-readable коды, не только текст
-
-## Cross-Layer Invariants
-- [ ] Прерванный flow не воскрешает устаревшее состояние из sessionStorage / local state / cache
-- [ ] Update / изменение проходит корректно через UI → API → DB → cache
-- [ ] Frontend state / cache не переиспользует данные, устаревшие после write или background job
-- [ ] Флаги специальных состояний доходят до UI и влияют на доступность действий
-- [ ] Фоновая операция сообщает пользователю о результате (push / polling / refresh)
-- [ ] Каждая находка оценена на вопрос: «что пойдёт тихо не так для реального пользователя?»
+- [ ] API returns data for all UI states
+- [ ] Flags for special states (`OperationPaused`, `TrialExpired`)
+- [ ] Errors have machine-readable codes, not just text

@@ -1,10 +1,10 @@
 # Cursor — Guardrails Integration
 
-> Cursor IDE использует `.cursorrules` (project rules) и `.cursor/rules/` для
-> контекстно-зависимых инструкций. Это VS Code-based редактор с AI-чатом
-> и Composer mode.
+> Cursor IDE uses `.cursorrules` (project rules) and `.cursor/rules/` for
+> context-dependent instructions. This is a VS Code-based editor with AI chat
+> and Composer mode.
 
-## Структура интеграции
+## Integration Structure
 
 ```
 .cursor/
@@ -18,11 +18,11 @@
     └── 006-audits.md         # Prompt templates for audits
 ```
 
-## Конфигурация проекта
+## Project Configuration
 
-### 1. Создать `.cursorrules`
+### 1. Create `.cursorrules`
 
-Это аналог корневого `AGENTS.md` — единый файл с конституцией проекта:
+This is the analog of the root `AGENTS.md` — a single file with the project constitution:
 
 ```markdown
 # Project Guardrails — {ProjectName}
@@ -55,9 +55,9 @@
 - Tests: `dotnet run --project`, not `dotnet test`
 ```
 
-### 2. Создать `.cursor/rules/` (рекомендуется для проектов 50k+ LOC)
+### 2. Create `.cursor/rules/` (recommended for projects 50k+ LOC)
 
-Разбивать `.cursorrules` на контекстно-зависимые файлы:
+Split `.cursorrules` into context-dependent files:
 
 ```markdown
 ---
@@ -129,16 +129,16 @@ Check files for data leaks:
 - All new endpoints are covered by authorization
 ```
 
-## Запуск онбординга
+## Running Onboarding
 
-### Вариант A: Chat mode (Ctrl+L)
+### Option A: Chat mode (Ctrl+L)
 
 ```
 Scan this .NET project. Evaluate guardrails against the pyramid layers.
 Output an implementation backlog. Consider that we use {stack}.
 ```
 
-### Вариант B: Composer mode (Ctrl+I)
+### Option B: Composer mode (Ctrl+I)
 
 ```
 Scan this .NET project as a multi-step onboarding:
@@ -147,67 +147,67 @@ Scan this .NET project as a multi-step onboarding:
 3. Output an implementation backlog with Adapt / Create / Skip decisions
 ```
 
-## Что онбординг создаёт для код-ревью
+## What Onboarding Creates for Review
 
-**Цель:** после первичной оценки зафиксировать Cursor-артефакт для код-ревью именно этого проекта.
+**Goal:** after the initial assessment, define a Cursor-specific review artifact for this project.
 
-### 1. Что решает онбординг
+### 1. What onboarding decides
 
-Онбординг должен определить:
+Onboarding should determine:
 
-- достаточно ли общих review-правил в `.cursorrules`
-- нужно ли вынести review-проверки в `.cursor/rules/` по слоям или контекстам
-- нужен ли отдельный запрос или notepad для ревью под проект
+- whether general review rules in `.cursorrules` are enough
+- whether review checks should be moved into `.cursor/rules/` by layer or context
+- whether a dedicated project-specific review prompt / notepad is needed for PR review
 
-### 2. Что должно появиться в проекте
+### 2. What should appear in the project
 
-- review-правила в `.cursorrules` и/или `.cursor/rules/`
-- при необходимости отдельный review prompt / notepad под ваш стек
-- явная фиксация, какие проверки вычеркнуты как N/A и что добавлено специально под проект
+- review rules in `.cursorrules` and/or `.cursor/rules/`
+- a dedicated review prompt / notepad when the stack needs one
+- explicit documentation of which checks were struck out as N/A and which were added as project-specific
 
-### 3. Когда сценарий считается успешным
+### 3. When the scenario is successful
 
-- Cursor получает review-контекст из проектных файлов, а не из случайного чата
-- команда понимает, где лежит основной запрос для ревью в этом проекте
-- если базовые правила не подходят, это отражено в правилах именно этого проекта, а не “додумывается” каждым разработчиком отдельно
+- Cursor receives review context from project files instead of a random chat prompt
+- the team knows where the canonical review prompt for this project lives
+- if the base rules do not fit, that is reflected in project-specific rules instead of being reinvented by each developer
 
-### 4. Важная граница
+### 4. Important boundary
 
-Онбординг сначала фиксирует правила и запросы для ревью в проекте. Уже потом команда использует их на PR и задачах по рефакторингу.
+Onboarding first fixes review rules and prompts in the project. Only after that does the team use them for PR review and refactoring tasks.
 
-## Специфика Cursor
+## Cursor Specifics
 
-### Что отличается от Kimi / Claude Code
+### What Differs from Kimi / Claude Code
 
-| Аспект | Kimi | Claude Code | Cursor |
+| Aspect | Kimi | Claude Code | Cursor |
 |--------|------|-------------|--------|
-| Формат правил | `.kimi/skills/{name}/SKILL.md` | `.claude/CLAUDE.md` + commands | `.cursorrules` + `.cursor/rules/*.md` |
-| Контекст правил | Ручной выбор скилла | Project-wide + commands | Автоматический по glob-маске |
-| Запуск | `kimi run {name}` | `/{command}` в чате | Chat / Composer / Tab |
+| Rules format | `.kimi/skills/{name}/SKILL.md` | `.claude/CLAUDE.md` | `.cursorrules` + `.cursor/rules/*.md` |
+| Rule context | Manual skill selection | Project-wide + commands | Automatic by glob mask |
+| Launch | `kimi run {name}` | `/{command}` in chat | Chat / Composer / Tab |
 | IDE | CLI | CLI | VS Code-based GUI |
-| Tools | Ограниченно | Bash, edit, read | Inline edits, chat, composer |
+| Tools | Limited | Bash, edit, read | Inline edits, chat, composer |
 | Context | ~200k tokens | ~200k tokens | ~200k tokens |
 
-### Нюансы Cursor
+### Cursor Nuances
 
-1. **Context-aware rules.** Cursor автоматически подключает правила из `.cursor/rules/` на основе `glob` файла, над которым работаешь. Это ближе всего к иерархическим `AGENTS.md` — правила Domain слоя подключаются только когда редактируешь Domain.
+1. **Context-aware rules.** Cursor automatically connects rules from `.cursor/rules/` based on the `glob` of the file you are working on. This is the closest to hierarchical `AGENTS.md` — Domain layer rules connect only when editing Domain.
 
 2. **`.cursorrules` vs `.cursor/rules/`.**
-   - `.cursorrules` — legacy формат, один файл на проект
-   - `.cursor/rules/` — новый формат, поддерживает multiple files с YAML frontmatter
-   - Рекомендуется использовать `.cursor/rules/` для больших проектов
+   - `.cursorrules` — legacy format, one file per project
+   - `.cursor/rules/` — new format, supports multiple files with YAML frontmatter
+   - It is recommended to use `.cursor/rules/` for large projects
 
-3. **Inline edits.** Cursor умеет редактировать код прямо в редакторе (Tab completion, Cmd+K). Это меняет формат anti-hallucination protocol: агент видит контекст открытого файла.
+3. **Inline edits.** Cursor can edit code directly in the editor (Tab completion, Cmd+K). This changes the anti-hallucination protocol format: the agent sees the context of the open file.
 
-4. **Composer mode.** Многошаговые задачи (создание фичи end-to-end) лучше делать в Composer, а не в Chat. Composer помнит контекст между шагами.
+4. **Composer mode.** Multi-step tasks (creating a feature end-to-end) are better done in Composer, not Chat. Composer remembers context between steps.
 
-5. **Notepads.** Cursor поддерживает Notepads — markdown-файлы с контекстом, которые можно прикреплять к чату. Это аналог скиллов Kimi.
+5. **Notepads.** Cursor supports Notepads — markdown files with context that can be attached to chat. This is an analog of Kimi skills.
 
-## Ограничения
+## Limitations
 
-- Нет встроенной системы "скиллов" как у Kimi — только project rules + notepads
-- Нет marketplace скиллов
-- Нет CLI-интерфейса для автоматического запуска (в отличие от `kimi run` или `claude`)
-- Rules не автозапускаются — нужно явно работать с файлом, чтобы правило подключилось
-- Контекст ограничен окном модели (~200k tokens)
-- Не умеет выполнять bash-команды в отличие от Claude Code
+- No built-in "skill" system like Kimi — only project rules + notepads
+- No skill marketplace
+- No CLI interface for automatic launch (unlike `kimi run` or `claude`)
+- Rules do not auto-launch — you need to explicitly work with the file for the rule to connect
+- Context is limited by the model window (~200k tokens)
+- Cannot execute bash commands unlike Claude Code

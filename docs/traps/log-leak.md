@@ -1,48 +1,48 @@
-# Ловушка: Утечка данных в логи (Log Leak)
+# Trap: Log Leak
 
-## Сценарий
+## Scenario
 
-Агент добавляет логирование для дебага и не думает о чувствительных данных:
+The agent adds logging for debugging and doesn't think about sensitive data:
 
 ```csharp
-// Агент: "Добавлю лог, чтобы видеть почему падает"
+// Agent: "I'll add a log to see why it fails"
 _logger.LogInformation("User {Email} failed login from {Ip}", user.Email, ip);
 
-// Или ещё хуже — string interpolation:
+// Or even worse — string interpolation:
 _logger.LogError($"Payment failed for {order.Phone}, card: {order.CardLast4}");
 ```
 
-## Последствия
+## Consequences
 
-- Email, телефоны, IP-адреса утекают в лог-систему (Elastic, Kibana, Seq)
-- Логи часто доступны шире, чем БД (SRE, поддержка, внешние системы)
-- GDPR / compliance нарушение — штрафы
-- Токены и session ID в логах = потенциальная компрометация сессий
+- Emails, phones, IP addresses leak into the logging system (Elastic, Kibana, Seq)
+- Logs are often more widely accessible than the DB (SRE, support, external systems)
+- GDPR / compliance violation — fines
+- Tokens and session IDs in logs = potential session compromise
 
-## Почему стандартные слои не ловят
+## Why Standard Layers Don't Catch It
 
-| Слой | Почему не ловит |
-|------|-----------------|
-| Компилятор | `LogInformation(string, object[])` — валидная сигнатура |
-| Архитектура | NetArchTest не видит содержимое строковых аргументов |
-| Тесты | Юнит-тесты проверяют логику, не проверяют что пишется в `ILogger` |
-| Code Review | Агент-ревьюер видит "логирование добавлено" и не смотрит аргументы |
-| E2E | Приложение работает, логи пишутся |
+| Layer | Why it doesn't catch |
+|-------|----------------------|
+| Compiler | `LogInformation(string, object[])` — valid signature |
+| Architecture | NetArchTest doesn't see string argument contents |
+| Tests | Unit tests check logic, not what goes into `ILogger` |
+| Code Review | The agent-reviewer sees "logging added" and doesn't check arguments |
+| E2E | Application works, logs are written |
 
-## Решение
+## Solution
 
-### Уровень 1. Compile-time guard (Roslyn / Analyzer)
+### Level 1. Compile-time guard (Roslyn / Analyzer)
 
-Custom `DiagnosticAnalyzer` запрещает `Log*` с interpolation (`$"..."`) и маркированными типами:
+Custom `DiagnosticAnalyzer` forbids `Log*` with interpolation (`$"..."`) and marked types:
 
 ```csharp
-// Анализатор выдаёт warning/error:
+// Analyzer emits warning/error:
 _logger.LogError($"Failed for {user.Email}"); // ERROR: interpolated string in logging
 ```
 
-### Уровень 2. Attribute-driven inventory (Ratchet)
+### Level 2. Attribute-driven inventory (Ratchet)
 
-Все PII-поля маркируются `[SensitiveData]`:
+All PII fields are marked with `[SensitiveData]`:
 
 ```csharp
 public record UserDto(
@@ -52,12 +52,12 @@ public record UserDto(
 );
 ```
 
-Арх-тест проверяет:
-1. Все свойства с `*Email*`, `*Phone*`, `*Password*` в имени имеют `[SensitiveData]`
-2. Количество `[SensitiveData]` свойств не уменьшается (ratchet)
-3. `Log*` вызовы не передают параметры типов, содержащих `[SensitiveData]`
+Arch test checks:
+1. All properties with `*Email*`, `*Phone*`, `*Password*` in the name have `[SensitiveData]`
+2. The number of `[SensitiveData]` properties does not decrease (ratchet)
+3. `Log*` calls do not pass parameters of types containing `[SensitiveData]`
 
-### Уровень 3. Runtime redaction (Serilog / Middleware)
+### Level 3. Runtime redaction (Serilog / Middleware)
 
 ```csharp
 // Serilog destructuring policy
@@ -76,6 +76,6 @@ public class SensitiveDataDestructuringPolicy : IDestructuringPolicy
 }
 ```
 
-## Паттерн
+## Pattern
 
-См. `tests/patterns/PiiGuardTest.cs` и `docs/solutions/ai-patterns.md` (паттерн #9)
+See `tests/patterns/PiiGuardTest.cs` and `docs/solutions/ai-patterns.md` (pattern #9)

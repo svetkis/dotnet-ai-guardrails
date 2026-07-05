@@ -1,47 +1,47 @@
-# Ловушка: Овер-инжиниринг (Over-Engineering)
+# Trap: Over-Engineering
 
-## Сценарий
+## Scenario
 
-Агент реализует фичу, но вместо простого решения строит архитектурный собор:
+The agent implements a feature but builds an architectural cathedral instead of a simple solution:
 
-- Для валидации 2 полей создаёт `IValidationStrategy<T>` с 3 реализациями
-- Для списка заказов из 5 колонок внедряет CQRS + Read Model + Projection
-- Для вызова внешнего API оборачивает `HttpClient` в 4 слоя: `Factory` → `Provider` → `Service` → `Manager`
-- Для хранения `User` с `Id`, `Name`, `Email` создаёт `BaseEntity<TId>` с 8 generic-ограничениями
+- Creates `IValidationStrategy<T>` with 3 implementations to validate 2 fields
+- Introduces CQRS + Read Model + Projection for an order list with 5 columns
+- Wraps `HttpClient` in 4 layers for an external API call: `Factory` → `Provider` → `Service` → `Manager`
+- Creates `BaseEntity<TId>` with 8 generic constraints for a `User` with `Id`, `Name`, `Email`
 
 ```csharp
-// Агент: "Нужно получить заказ по id"
-// Было (простое):
+// Agent: "Need to get order by id"
+// Before (simple):
 var order = await db.Orders.FindAsync(id);
 
-// Стало (архитектурный собор):
+// After (architectural cathedral):
 var query = new GetOrderByIdQuery(id);
 var handler = _mediator.Send(query);
 var result = await _pipelineBehavior.Handle(handler, CancellationToken.None);
 var dto = _mapper.Map<OrderResponseDto>(result.Value);
 ```
 
-## Последствия
+## Consequences
 
-- **Время чтения:** junior разработчик тратит день, чтобы понять, как работает `FindAsync`
-- **Время отладки:** баг в валидации прячется за 3 интерфейса и 2 фабрики
-- **Время компиляции:** generic-вложенность замедляет IntelliSense и сборку
-- **Время тестирования:** для проверки `a + b > 0` нужно мокнуть 5 зависимостей
-- **AI-деградация:** следующий агент, видя "красивый" код, добавляет ещё один слой абстракции
+- **Reading time:** a junior developer spends a day to understand how `FindAsync` works
+- **Debugging time:** a validation bug hides behind 3 interfaces and 2 factories
+- **Compilation time:** generic nesting slows down IntelliSense and build
+- **Testing time:** to check `a + b > 0`, you need to mock 5 dependencies
+- **AI degradation:** the next agent, seeing "beautiful" code, adds yet another abstraction layer
 
-## Почему агент овер-инжинирит
+## Why Agents Over-Engineer
 
-- **Training data:** в обучающих данных больше "правильных" примеров с Clean Architecture, чем простых скриптов
-- **Pattern recognition:** агент видит `Order` → автоматически генерирует `IOrderRepository`, `OrderService`, `OrderManager`
-- **Hallucination of scale:** агент не знает, что у проекта 10 пользователей, и внедряет Event Sourcing "на вырост"
-- **Lack of context:** агент не видит, что соседняя фича сделана в 5 строк, и делает свою в 500
+- **Training data:** training corpora contain more "correct" Clean Architecture examples than simple scripts
+- **Pattern recognition:** the agent sees `Order` → automatically generates `IOrderRepository`, `OrderService`, `OrderManager`
+- **Hallucination of scale:** the agent doesn't know the project has 10 users and introduces Event Sourcing "for growth"
+- **Lack of context:** the agent doesn't see that the neighboring feature was done in 5 lines and does its own in 500
 
-## Почему автотеста недостаточно
+## Why Automated Tests Are Not Enough
 
-Можно измерить количество интерфейсов или глубину generic-вложенности, но **сложность — это семантика, а не синтаксис**:
+You can count interfaces or generic nesting depth, but **complexity is semantics, not syntax**:
 
 ```csharp
-// Автотест не поймёт, что это перебор:
+// An automated test won't understand this is overkill:
 public interface IBookingValidationStrategy<TRequest, TResult, TContext>
     where TRequest : class, IRequest<TResult>
     where TResult : class
@@ -51,77 +51,77 @@ public interface IBookingValidationStrategy<TRequest, TResult, TContext>
 }
 ```
 
-Автотест скажет "много generic-параметров", но не скажет, зачем они на самом деле.
+The test will say "many generic parameters" but won't explain why they exist.
 
-## Решение
+## Solution
 
-### 1. Simplicity Audit — персона-аудитор
-Агент запускается раз в спринт с чеклистом простоты. См. `templates/skills/simplicity-audit/SKILL.md`.
+### 1. Simplicity Audit — Persona Auditor
+An agent runs once per sprint with a simplicity checklist. See `templates/skills/simplicity-audit/SKILL.md`.
 
-Чеклист:
-- [ ] Интерфейс с одной реализацией — можно заменить на класс?
-- [ ] CQRS/Event Sourcing — есть ли требование на read/write разделение или аудит?
-- [ ] Generic-конвейер — сколько параметров? Можно ли свернуть?
-- [ ] DTO-вложенность — сколько уровней? Клиент использует все поля?
-- [ ] async void — есть ли в коде? Заменить на Task?
-- [ ] Методы с > 5 параметрами — вынести в DTO?
+Checklist:
+- [ ] Interface with one implementation — can it be replaced with a class?
+- [ ] CQRS/Event Sourcing — is there a requirement for read/write separation or audit?
+- [ ] Generic pipeline — how many parameters? Can it be collapsed?
+- [ ] DTO nesting — how many levels? Does the client use all fields?
+- [ ] async void — does any exist? Replace with Task?
+- [ ] Methods with > 5 parameters — extract into a DTO?
 
-### 2. Code Review: "Объясни junior'у" `[ADAPT]`
-Добавь в свой `templates/skills/code-review/CHECKLIST.md`:
-> Если решение нельзя объяснить junior-разработчику за 5 минут — оно слишком сложное.
+### 2. Code Review: "Explain to a Junior" `[ADAPT]`
+Add to your `templates/skills/code-review/CHECKLIST.md`:
+> If a solution cannot be explained to a junior developer in 5 minutes, it is too complex.
 
-### 3. AGENTS.md: Правило «Простота > Паттерн» `[ADAPT]`
-Добавь в корневой `AGENTS.md` проекта:
+### 3. AGENTS.md: "Simplicity > Pattern" Rule `[ADAPT]`
+Add to your project's root `AGENTS.md`:
 
 ```markdown
-## Простота vs Паттерн
-- Предпочитай `if/else` `IStrategy`, пока ветвлений < 3
-- Предпочитай `db.Orders.Where(...)` `IRepository<Order>`, пока нет тестов на замену БД
-- Предпочитай record/DTO `IResponseMapper<TDomain, TDto>`, пока маппинг тривиален
-- Любая абстракция должна иметь **две** реализации или **одну** вескую причину (тестирование, DI)
-- Запрещён `async void` вне event-handlers фреймворка
-- Метод с > 5 параметрами → выноси в параметр-объект
+## Simplicity vs Pattern
+- Prefer `if/else` over `IStrategy` while branches < 3
+- Prefer `db.Orders.Where(...)` over `IRepository<Order>` while there are no tests for DB replacement
+- Prefer record/DTO over `IResponseMapper<TDomain, TDto>` while mapping is trivial
+- Any abstraction must have **two** implementations or **one** compelling reason (testing, DI)
+- async void is forbidden outside framework event handlers
+- Method with > 5 parameters → extract into a parameter object
 ```
 
-### 4. Метрика: Interface-to-Class Ratio
-Архитектурный тест считает отношение интерфейсов к классам в слое:
+### 4. Metric: Interface-to-Class Ratio
+An architectural test counts the interface-to-class ratio in a layer:
 
 ```csharp
-// Если в Application > 0.8 — тревога
+// If Application > 0.8 — alert
 var interfaces = assembly.GetTypes().Count(t => t.IsInterface);
 var classes = assembly.GetTypes().Count(t => t.IsClass && !t.IsAbstract);
 var ratio = (double)interfaces / classes;
 ```
 
-### 5. Objective метрики + мёртвый guardrail
-Автотесты ловят измеримое **только если этот паттерн реально возникает в твоей кодбазе**:
+### 5. Objective Metrics + Dead Guardrail
+Automated tests catch measurable complexity **only if that pattern actually occurs in your codebase**:
 
-- `GenericParameters_ShouldNotExceed_3` — public типы с > 3 generic-параметрами
-- `MethodNames_ShouldNotExceed_40Chars` — имена методов > 40 символов
-- `MethodParameters_ShouldNotExceed_5` — методы с > 5 параметрами
-- `AsyncVoid_ShouldNotExist` — async void в production-коде
-- `FileLength_ShouldNotExceed_300Lines` — файлы > 300 effective lines
+- `GenericParameters_ShouldNotExceed_3` — public types with > 3 generic parameters
+- `MethodNames_ShouldNotExceed_40Chars` — method names > 40 characters
+- `MethodParameters_ShouldNotExceed_5` — methods with > 5 parameters
+- `AsyncVoid_ShouldNotExist` — async void in production code
+- `FileLength_ShouldNotExceed_300Lines` — files > 300 effective lines
 
-> **Но:** если в проекте generic > 3, inheritance > 3 или nested Func **никогда не возникают**, то эти проверки — **мёртвый guardrail**. Он создаёт ложное ощущение защиты, тратит время CI и размывает внимание.
+> **But:** if generic > 3, inheritance > 3, or nested Func **never occur** in your project, these checks are a **dead guardrail**. It creates a false sense of security, wastes CI time, and dilutes attention.
 >
 > ```csharp
-> // Ты добавил SimplicityGuardTest с 8 проверками
-> // Но в твоём проекте:
-> // - Generic > 3 parameters — никогда не было
-> // - Inheritance depth > 3 — никогда не было
-> // - Nested Func — никогда не было
+> // You added SimplicityGuardTest with 8 checks
+> // But in your project:
+> // - Generic > 3 parameters — never happened
+> // - Inheritance depth > 3 — never happened
+> // - Nested Func — never happened
 > // 
-> // Результат: 27 тестов, 0 падений, 0 ценности.
-> // Это архитектурный dead code — ровно то, что guardrail должен ловить.
+> // Result: 27 tests, 0 failures, 0 value.
+> // This is architectural dead code — exactly what the guardrail should catch.
 > ```
 >
-> **Правило:** оставляй guardrail только если он хотя бы раз поймал реальный баг. Иначе — удали.
+> **Rule:** keep a guardrail only if it has caught at least one real bug. Otherwise — delete it.
 
-### 6. Правило «No abstraction without pain»
-В проекте фиксируется принцип: абстракция вводится только тогда, когда **уже** есть боль от её отсутствия (тесты ломаются, код дублируется, замена реализации нужна).
+### 6. "No Abstraction Without Pain" Rule
+The project adopts the principle: an abstraction is introduced only when there is **already** pain from its absence (tests break, code duplicates, implementation replacement is needed).
 
-Не: "наверняка пригодится". Только: "уже больно без этого".
+Not: "might come in handy". Only: "already hurts without it".
 
-## Паттерн
+## Pattern
 
-См. `templates/skills/simplicity-audit/SKILL.md` и `templates/skills/simplicity-audit/CHECKLIST.md`
+See `templates/skills/simplicity-audit/SKILL.md` and `templates/skills/simplicity-audit/CHECKLIST.md`

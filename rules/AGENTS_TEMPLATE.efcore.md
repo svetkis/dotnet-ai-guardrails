@@ -1,8 +1,8 @@
 # AGENTS.md — EF Core Add-on
 
-> Дополнение к `AGENTS_TEMPLATE.md` для проектов с **Entity Framework Core**.
-> Скопируйте содержимое этого файла в конец вашего `AGENTS.md`.
-> Архитектурные guardrails: [`tests/patterns/EfCoreGuardRules.cs`](../tests/patterns/EfCoreGuardRules.cs)
+> Add-on to `AGENTS_TEMPLATE.md` for projects using **Entity Framework Core**.
+> Copy the contents of this file to the end of your `AGENTS.md`.
+> Architecture guardrails: [`tests/patterns/EfCoreGuardRules.cs`](../tests/patterns/EfCoreGuardRules.cs)
 
 ## Semantic Anchors (EF Core)
 
@@ -26,9 +26,9 @@
 - ❌ `.AsNoTracking()` in write-path — **FORBIDDEN**
 
 ### Raw SQL in EF
-- ✅ `FromSqlInterpolated` — **MANDATORY** для параметризованного SQL
-- ❌ `FromSqlRaw` с `$"..."` интерполяцией — **FORBIDDEN**
-- ✅ `ExecuteSqlRaw` только со статическими строками или параметрами
+- ✅ `FromSqlInterpolated` — **MANDATORY** for parameterized SQL
+- ❌ `FromSqlRaw` with `$"..."` interpolation — **FORBIDDEN**
+- ✅ `ExecuteSqlRaw` only with static strings or parameters
 
 ## Hard Prohibitions (EF Core)
 

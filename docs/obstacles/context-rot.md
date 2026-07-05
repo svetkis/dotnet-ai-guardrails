@@ -1,47 +1,47 @@
-# Деградация контекста (Context Rot)
+# Context Rot
 
-> Врождённое ограничение LLM. Нельзя устранить — только компенсировать.
+> An inherent limitation of LLMs. Cannot be eliminated — only compensated.
 >
 > Adapted from [Context Rot](https://github.com/lexler/augmented-coding-patterns/blob/main/documents/obstacles/context-rot.md) in Augmented Coding Patterns.
 
-## Описание
+## Description
 
-Контекст деградирует по мере роста разговора. Модель перестаёт следовать ранним инструкциям, а производительность непредсказуемо падает. Это происходит задолго до исчерпания лимита контекстного окна.
+Context degrades as the conversation grows. The model stops following early instructions, and performance unpredictably drops. This happens long before the context window limit is exhausted.
 
-Контекст угасает неравномерно, а зонами:
+Context fades unevenly, in zones:
 
-- **Focus zone** (~первые 5–10 сообщений): Инструкции выполняются надёжно. Агент помнит требование `.Select()`, конвенцию `BUG###`, правила UTC.
-- **Effective context** (~сообщения 10–30): Ещё работает, но ослабевает. Агент кажется продуктивным, но ранние указания начинают игнорироваться. Может «забыть» добавить `AsNoTracking()` или пропустить `CancellationToken`.
-- **Red zone** (~сообщение 30+): Прошлые инструкции систематически теряются или противоречатся. Агент добавляет `.FindAsync()` в read-path, использует `DateTime.Now` вместо `UtcNow`, не ставит `[SensitiveData]` на новые PII-поля.
+- **Focus zone** (~first 5–10 messages): Instructions are executed reliably. The agent remembers the `.Select()` requirement, the `BUG###` convention, UTC rules.
+- **Effective context** (~messages 10–30): Still works, but weakens. The agent seems productive, but early directives start being ignored. May "forget" to add `AsNoTracking()` or skip `CancellationToken`.
+- **Red zone** (~message 30+): Past instructions are systematically lost or contradicted. The agent adds `.FindAsync()` to read-path, uses `DateTime.Now` instead of `UtcNow`, does not put `[SensitiveData]` on new PII fields.
 
-## Влияние
+## Impact
 
-| Зона | Симптом | Что ломается |
+| Zone | Symptom | What breaks |
 |------|---------|-------------|
-| Focus | Нет | — |
-| Effective | Незначительный дрейф правил | Пропущен `CancellationToken`, непоследовательный нейминг |
-| Red | Систематическое нарушение правил | `AsNoTracking()` в write-path, отсутствие `BUG###`, утечки в DTO |
+| Focus | None | — |
+| Effective | Minor rule drift | Missed `CancellationToken`, inconsistent naming |
+| Red | Systematic rule violation | `AsNoTracking()` in write-path, missing `BUG###`, leaks in DTO |
 
-- Тот же вопрос может дать совершенно разные результаты позже в треде
-- Агент «оптимизирует» read-path и молча ломает write-path (см. `docs/traps/silent-breakdown.md`)
-- Агент добавляет новые PII-поля без `[SensitiveData]`, потому что правило атрибута угасло
-- Агент использует preview SDK, потому что инструкция «use latest» из более позднего сообщения переопределила «stable only» из сообщения 3
+- The same question may produce completely different results later in the thread
+- The agent "optimizes" read-path and silently breaks write-path (see `docs/traps/silent-breakdown.md`)
+- The agent adds new PII fields without `[SensitiveData]`, because the attribute rule faded
+- The agent uses preview SDK, because the "use latest" instruction from a later message overrode "stable only" from message 3
 
-## Почему это obstacle, а не trap
+## Why this is an obstacle, not a trap
 
-Невозможно «натренировать» агента никогда не забывать. Невозможно «напомнить» достаточно часто. Деградация контекста — физическое свойство того, как LLM распределяет attention по токенам. Единственная стратегия — **компенсация**: сделать правила независимыми от памяти агента.
+It is impossible to "train" an agent to never forget. It is impossible to "remind" often enough. Context degradation is a physical property of how LLM distributes attention across tokens. The only strategy is **compensation**: make rules independent of the agent's memory.
 
-## Компенсация в нашей пирамиде
+## Compensation in our pyramid
 
-Наши guardrails спроектированы как **stateless компенсаторы** деградации контекста:
+Our guardrails are designed as **stateless compensators** of context degradation:
 
-| Guardrail | Компенсирует | Почему работает |
-|-----------|--------------|-----------------|
-| Roslyn analyzer / `ArchitectureRules.cs` | Red zone — нарушение правил | Агент может забыть правило `.Select()`, но compiler/arch guardrail не имеет памяти — проверяет каждый билд |
-| `RatchetTest.cs` | Red zone — утрата атрибутов | Агент может забыть добавить `[SensitiveData]`, но ratchet падает на билде |
-| `Decision Guards (ADR)` (`PERF-###`) | Агент «чистит» старый код | Агент видит «странный» код и «исправляет» его — пронумерованный комментарий останавляет |
-| Roslyn analyzer / `PiiGuardTest.cs` | Забытый `[SensitiveData]` | Compile-time/static guardrail не зависит от того, помнит ли агент правило из сообщения 2 |
-| `VersionAuditTest.cs` | Забытое «stable SDK only» | Агент думает, что preview — это «latest» — сканер ловит `preview` в `global.json` |
-| `Hierarchical AGENTS.md` | Дилуция контекста | Короткие файлы с layer-specific правилами уменьшают площадь деградации |
+| Guardrail | Compensates | Why it works |
+|-----------|-------------|--------------|
+| Roslyn analyzer / `ArchitectureRules.cs` | Red zone — rule violation | The agent may forget the `.Select()` rule, but the compiler/architecture guardrail has no memory — it checks every build |
+| `RatchetTest.cs` | Red zone — attribute loss | The agent may forget to add `[SensitiveData]`, but the ratchet fails on build |
+| `Decision Guards (ADR)` (`PERF-###`) | Agent "cleans up" old code | The agent sees "strange" code and "fixes" it — a numbered ADR comment stops it |
+| Roslyn analyzer / `PiiGuardTest.cs` | Forgotten `[SensitiveData]` | The compile-time/static guardrail does not depend on whether the agent remembers the rule from message 2 |
+| `VersionAuditTest.cs` | Forgotten "stable SDK only" | The agent thinks preview is "latest" — the scanner catches `preview` in `global.json` |
+| `Hierarchical AGENTS.md` | Context dilution | Short files with layer-specific rules reduce the degradation surface |
 
-> **Ключевой инсайт:** Компилятор, Roslyn-анализаторы, архитектурные проверки и ratchet-тесты — наша «внешняя память». Они не угасают. Агент рано или поздно войдёт в Red zone — наша задача, чтобы билд упал раньше, чем сломанный код попадёт в `main`.
+> **Key insight:** The compiler, Roslyn analyzers, architecture checks, and ratchet tests are our "external memory". They do not fade. The agent will eventually enter the Red zone — our job is to make the build fail before the broken code reaches `main`.

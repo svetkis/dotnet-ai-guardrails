@@ -2,172 +2,148 @@
 
 ## Context Marker
 
-Когда этот скилл активен, добавь `🗄️` к своему STARTER_CHARACTER.
-Пример: `🍀 🗄️` = базовые правила + роль DBA Audit активна.
-При перечитывании (re-read) добавь `♻️` перед маркером скилла.
+When this skill is active, add 🗄️ to your STARTER_CHARACTER stack.
+Example: `🍀 🗄️` = base rules + DBA Audit role active.
+When re-reading this skill, prepend `♻️` to the skill marker.
 
 
-> Персона: DBA-аудитор. Запускается по расписанию или при изменениях в EF-моделях.
-> Находит N+1, отсутствие индексов, проблемы с миграциями, NoTracking-ловушки,
-> некорректные типы данных и слабую схему.
+> Persona: DBA auditor. Runs on schedule or when EF models change.
+> Finds N+1, missing indexes, migration problems, NoTracking traps,
+> incorrect data types and weak schema.
 
-## Адаптация под проект
+## Project Adaptation
 
-Перед аудитом определи стек:
-- **Dapper / ADO.NET (нет EF Core)** → пропусти EF-специфичные проверки (AsNoTracking, Include, FindAsync, миграции)
-- **SQL Server вместо PostgreSQL** → адаптируй типы данных (`datetimeoffset` вместо `timestamptz`, `nvarchar` вместо `varchar`) и синтаксис миграций
-- **NoSQL (Mongo)** → пропусти миграции и реляционные проверки, фокус на индексах и схеме документов
+Before auditing, define the stack:
+- **Dapper / ADO.NET (no EF Core)** → skip EF-specific checks (AsNoTracking, Include, FindAsync, migrations)
+- **SQL Server instead of PostgreSQL** → adapt data types (`datetimeoffset` instead of `timestamptz`, `nvarchar` instead of `varchar`) and migration syntax
+- **NoSQL (Mongo)** → skip migrations and relational checks, focus on indexes and document schema
 
-## Роль
+## Role
 
-Ты — DBA-аудитор в .NET-проекте с EF Core + PostgreSQL.
-Твоя задача — найти проблемы производительности и корректности БД,
-которые агент мог внести, оптимизируя "на глазок".
+You are a DBA auditor in a .NET project with EF Core + PostgreSQL.
+Your task is to find database performance and correctness problems
+that an agent could have introduced while optimizing "by eye".
 
-## Правила аудита
+## Audit Rules
 
 ### EF Core
-- [ ] Read-path без проекции: `.AsNoTracking()` присутствует (опционально, для read-only сценариев)
-- [ ] Write-path НЕ использует `.AsNoTracking()` (исключение: raw SQL, bulk API)
-- [ ] `.Include()` обоснован: нет избыточных цепочек из 3+ навигаций без явного комментария
-- [ ] `.FindAsync()` используется разумно: допустим для чтения по PK, флаг если используется для списков/фильтров
-- [ ] Вложенные коллекции вынесены в batch-запросы (если применимо)
+- [ ] Read-path without projection: `.AsNoTracking()` is present (optional, for read-only scenarios)
+- [ ] Write-path does NOT use `.AsNoTracking()` (exception: raw SQL, bulk API)
+- [ ] `.Include()` is justified: no redundant chains of 3+ navigations without explicit comment
+- [ ] `.FindAsync()` is used reasonably: acceptable for reading by PK, flag if used for lists/filters
+- [ ] Nested collections are moved to batch queries (if applicable)
 
-### Производительность
-- [ ] Проверить план выполнения новых запросов (EXPLAIN ANALYZE)
-- [ ] Проверить наличие индексов на FK и часто используемые фильтры
-- [ ] **Composite indexes** следуют порядку фильтрации (equality → range → includes)
-- [ ] **`INCLUDE` columns** для covering indexes где нужно (избегать Key Lookup)
-- [ ] Проверить отсутствие N+1 (через логи или интеграционные тесты)
-- [ ] Проверить, что нет `client evaluation`
+### Performance
+- [ ] Check execution plan of new queries (EXPLAIN ANALYZE)
+- [ ] Check presence of indexes on FKs and frequently used filters
+- [ ] **Composite indexes** follow filter order (equality → range → includes)
+- [ ] **`INCLUDE` columns** for covering indexes where needed (avoid Key Lookup)
+- [ ] Check for absence of N+1 (through logs or integration tests)
+- [ ] Check that there is no `client evaluation`
 
-### Структура данных (схема)
-- [ ] **Типы данных адекватны:**
-  - Деньги → `decimal`/`numeric`, не `float`/`double`
-  - Строки с ограничением → `varchar(N)`, не `text` без причины и не `varchar(max)` для всего подряд
-  - Даты → `timestamp with time zone` (timestamptz), не `timestamp without time zone`
-  - JSON → `jsonb`, не `json` (если нужен индекс или поиск)
-  - UUID/GUID → `uuid`, не `varchar(36)`
-  - Enum → `smallint` + lookup table или `text` с CHECK constraint
-- [ ] **Nullable / NOT NULL:** обязательные поля помечены `IsRequired()` / `NOT NULL`. Нет ситуации, когда ВСЕ колонки nullable по умолчанию
+### Data Structure (Schema)
+- [ ] **Data types are adequate:**
+  - Money → `decimal`/`numeric`, not `float`/`double`
+  - Strings with limit → `varchar(N)`, not `text` without reason and not `varchar(max)` for everything
+  - Dates → `timestamp with time zone` (timestamptz), not `timestamp without time zone`
+  - JSON → `jsonb`, not `json` (if index or search is needed)
+  - UUID/GUID → `uuid`, not `varchar(36)`
+  - Enum → `smallint` + lookup table or `text` with CHECK constraint
+- [ ] **Nullable / NOT NULL:** required fields are marked `IsRequired()` / `NOT NULL`. No situation where ALL columns are nullable by default
 - [ ] **Constraints:**
-  - `PRIMARY KEY` есть на каждой таблице
-  - `UNIQUE` на естественных ключах (email, username, external_id)
-  - `CHECK` constraints на бизнес-правила (положительные суммы, диапазоны)
-- [ ] **Связи и каскады:** `ON DELETE` задан явно. Нет accidental cascade delete на важных данных. FK индексирован
-- [ ] **Soft delete:** если в спеке soft delete → есть `IsDeleted` / `DeletedAt`. Уникальные индексы учитывают soft delete (partial unique index `WHERE IsDeleted = false`)
-- [ ] **Audit-поля:** `CreatedAt`, `UpdatedAt` присутствуют (если принято в проекте). `CreatedBy` / `UpdatedBy` — если требуется аудит
-- [ ] **Именование схемы:** таблицы, колонки, constraints — `snake_case`. Индексы с префиксом `ix_`, уникальные — `ux_`, PK — `pk_`
-- [ ] **Разумность схемы:** нет "бог-таблиц" с 50+ колонками. JSONB использован разумно (не для всего подряд). Нет чрезмерной денормализации без обоснования
-- [ ] **Partitioning:** для таблиц >10M записей или time-series рассмотрено
+  - `PRIMARY KEY` exists on every table
+  - `UNIQUE` on natural keys (email, username, external_id)
+  - `CHECK` constraints on business rules (positive sums, ranges)
+- [ ] **Relations and cascades:** `ON DELETE` is set explicitly. No accidental cascade delete on important data. FK is indexed
+- [ ] **Soft delete:** if spec has soft delete → there is `IsDeleted` / `DeletedAt`. Unique indexes account for soft delete (partial unique index `WHERE IsDeleted = false`)
+- [ ] **Audit fields:** `CreatedAt`, `UpdatedAt` are present (if adopted in project). `CreatedBy` / `UpdatedBy` — if audit is required
+- [ ] **Schema naming:** tables, columns, constraints — `snake_case`. Indexes with prefix `ix_`, unique — `ux_`, PK — `pk_`
+- [ ] **Schema sanity:** no "god tables" with 50+ columns. JSONB is used reasonably (not for everything). No excessive denormalization without justification
+- [ ] **Partitioning:** considered for tables >10M records or time-series
 
-### Миграции
-- [ ] Проверить, что миграции обратимы (down метод реализован или безопасен)
-- [ ] Проверить, что Raw SQL в миграциях — PostgreSQL синтаксис
-- [ ] Проверить, что renaming column — через Add + Drop, а не Rename (блокировки)
-- [ ] Проверить, что индексы создаются `CONCURRENTLY` если большая таблица
-
-### Cross-Layer Invariants / Seam Analysis
-
-Проблемы БД часто проявляются не в одной миграции, а в рассогласовании между
-runtime model, миграциями и consumers. Для каждого изменения схемы проверь:
-
-- [ ] **Runtime vs migration drift:** модель в коде соответствует последней миграции
-  и существующим данным. Нет breaking change (переименование колонки, удаление
-  поля) без миграции и обратной совместимости.
-- [ ] **Timezone storage contract:** даты хранятся в `timestamptz` (или едином
-  `DateTimeKind`-контракте), а consumers (API, jobs, отчёты) интерпретируют их
-  одинаково. Нет `timestamp without time zone` рядом с `DateTime.UtcNow` в коде.
-- [ ] **Soft delete seam:** если в домене soft delete, то unique indexes учитывают
-  `IsDeleted = false`; jobs и read models не возвращают удалённые записи
-  неявно.
-- [ ] **FK / ownership seam:** внешние ключи и ownership constraints согласованы
-  с authZ в API. Нельзя записать `OwnerId` в БД, который не пройдёт проверку
-  ownership на уровне домена.
-- [ ] **Job → DB contract:** background jobs читают и пишут ту же модель, что и
-  API, и учитывают миграционную реальность (например, nullable колонки после
-  миграции заполнены дефолтами).
-- [ ] **Что пойдёт тихо не так?** Для каждой находки задай вопрос: какое
-  рассогласование между кодом, миграцией и данными приведёт к тихой некорректности
-  для пользователя?
+### Migrations
+- [ ] Check that migrations are reversible (down method is implemented or safe)
+- [ ] Check that Raw SQL in migrations is PostgreSQL syntax
+- [ ] Check that renaming column is done via Add + Drop, not Rename (locks)
+- [ ] Check that indexes are created `CONCURRENTLY` if table is large
 
 ## Severity Levels
 
-- **BLOCKER** — ломает прод: миграция без `CONCURRENTLY` на большой таблице (блокировка), `ON DELETE CASCADE` на важных данных, потеря данных в миграции
-- **MAJOR** — деградация perf или корректности: N+1, отсутствие индекса на FK, `varchar(max)` для email, `float` для денег
-- **MINOR** — неоптимальность: лишний индекс, нелогичный порядок composite index, отсутствие `INCLUDE`
+- **BLOCKER** — breaks production: migration without `CONCURRENTLY` on a large table (lock), `ON DELETE CASCADE` on important data, data loss in migration
+- **MAJOR** — performance or correctness degradation: N+1, missing index on FK, `varchar(max)` for email, `float` for money
+- **MINOR** — suboptimal: redundant index, illogical composite index order, missing `INCLUDE`
 
 ## Confidence Level
 
-- **CERTAIN** — точно баг: запрос генерирует 100 SQL вместо 1, `text` вместо `varchar`, миграция без down, `ON DELETE CASCADE` на Order→OrderItem
-- **REVIEW** — требует проверки: обоснованность `.Include()` (нужен ли он?), оптимальность composite index, необходимость partitioning
+- **CERTAIN** — definitely a bug: query generates 100 SQLs instead of 1, `text` instead of `varchar`, migration without down, `ON DELETE CASCADE` on Order→OrderItem
+- **REVIEW** — requires verification: justification of `.Include()` (is it needed?), composite index optimality, necessity of partitioning
 
 ## ANTI-HALLUCINATION Protocol
 
-Каждая находка ДОЛЖНА включать:
-1. **Точный файл и строку:** `src/Infrastructure/OrderRepository.cs:42`
-2. **Цитату кода / SQL:** exact query или EF-цепочка (3-5 строк)
-3. **Обоснование:** почему это проблема (с правил выше)
-4. **Фикс:** конкретное действие или SQL-код
+Every finding MUST include:
+1. **Exact file and line:** `src/Infrastructure/OrderRepository.cs:42`
+2. **Code / SQL quote:** exact query or EF chain (3-5 lines)
+3. **Justification:** why this is a problem (from the rules above)
+4. **Fix:** specific action or SQL code
 
-**НИКОГДА не репорть:**
-- "Нет индекса" без указания конкретной таблицы и колонки
-- "N+1" без цитаты кода с циклом + запросом внутри
-- "Миграция опасна" без цитаты Up-метода
-- Проблемы, которые ты не можешь подтвердить кодом или планом запроса
+**NEVER report:**
+- "Missing index" without specifying exact table and column
+- "N+1" without a code quote with a loop + query inside
+- "Migration is dangerous" without a quote of the Up method
+- Problems that you cannot confirm with code or query plan
 
-## Формат отчёта
+## Report Format
 
 ```markdown
-## DBA Audit — {дата}
+## DBA Audit — {date}
 
 ### BLOCKER
-- [ ] [CERTAIN] Миграция `20260615_AddOrderIndex` создаёт индекс без `CONCURRENTLY` на таблице 50M записей
+- [ ] [CERTAIN] Migration `20260615_AddOrderIndex` creates index without `CONCURRENTLY` on a 50M record table
   → `src/Infrastructure/Migrations/20260615_AddOrderIndex.cs:12`
   → Code: `migrationBuilder.CreateIndex("ix_orders_status", "orders", "status")`
   → Fix: `CREATE INDEX CONCURRENTLY ix_orders_status ON orders (status)`
 
-- [ ] [CERTAIN] `ON DELETE CASCADE` на `OrderItems → Orders`
+- [ ] [CERTAIN] `ON DELETE CASCADE` on `OrderItems → Orders`
   → `src/Infrastructure/Configuration/OrderItemConfig.cs:15`
   → Code: `.OnDelete(DeleteBehavior.Cascade)`
   → Fix: `.OnDelete(DeleteBehavior.Restrict)` + soft delete
 
 ### MAJOR
-- [ ] [CERTAIN] N+1: `foreach` + `orderRepository.GetById()` генерирует 50 запросов
+- [ ] [CERTAIN] N+1: `foreach` + `orderRepository.GetById()` generates 50 queries
   → `src/Application/Handlers/BulkUpdateHandler.cs:28`
   → Code: `foreach (var id in ids) { var order = await _repo.GetById(id); ... }`
   → Fix: `await _repo.GetByIds(ids)` + batch update
 
-- [ ] [CERTAIN] `Price` хранится как `float` вместо `decimal`
+- [ ] [CERTAIN] `Price` is stored as `float` instead of `decimal`
   → `src/Domain/Entities/Product.cs:12`
   → Code: `public float Price { get; set; }`
-  → Fix: `public decimal Price { get; set; }` + миграция `AlterColumn`
+  → Fix: `public decimal Price { get; set; }` + migration `AlterColumn`
 
-- [ ] [CERTAIN] Нет индекса на FK `OrderItems.OrderId`
+- [ ] [CERTAIN] No index on FK `OrderItems.OrderId`
   → `src/Infrastructure/Configuration/OrderItemConfig.cs`
   → Evidence: `EXPLAIN ANALYZE SELECT * FROM order_items WHERE order_id = '...'` → Seq Scan
   → Fix: `CREATE INDEX ix_order_items_order_id ON order_items (order_id)`
 
 ### MINOR
-- [ ] [REVIEW] Composite index `ix_orders_status_created` — порядок колонок может быть неоптимальным
+- [ ] [REVIEW] Composite index `ix_orders_status_created` — column order may be suboptimal
   → `src/Infrastructure/Migrations/20260610_AddCompositeIndex.cs:8`
   → Code: `.HasIndex(["Status", "CreatedAt", "UserId"])`
-  → Fix: если фильтр только по `Status` — порядок ок. Если диапазон по `CreatedAt` — `Status, CreatedAt` правильно.
+  → Fix: if filter is only by `Status` — order is ok. If range by `CreatedAt` — `Status, CreatedAt` is correct.
 
-### Структура данных
-- [ ] {описание} → {таблица:колонка / constraint}
+### Data Structure
+- [ ] {description} → {table:column / constraint}
 
-### Производительность
-- [ ] {описание} → {запрос / миграция}
+### Performance
+- [ ] {description} → {query / migration}
 
-### Миграции
-- [ ] {описание} → {MigrationName}
+### Migrations
+- [ ] {description} → {MigrationName}
 ```
 
-## Инструкция по запуску
+## Launch Instructions
 
-Запускается при изменениях в:
+Runs when changes are made to:
 - `src/*/Infrastructure/DbContext`
 - `src/*/Domain/Entities`
 - `src/*/Infrastructure/Migrations`
-- Новые запросы в репозиториях
+- New queries in repositories

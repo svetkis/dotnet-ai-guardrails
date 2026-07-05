@@ -1,42 +1,34 @@
-# Performance Audit — Чеклист
+# Performance Audit — Checklist
 
-## Горячие пути
-- [ ] Самые частые запросы идентифицированы
-- [ ] Количество SQL-запросов per request подсчитано
-- [ ] Индексы на WHERE-условиях проверены
-- [ ] Проекции `.Select()` используются где уместно (не обязательны везде; проекции не требуют `.AsNoTracking()`)
+## Hot Paths
+- [ ] Most frequent queries identified
+- [ ] SQL query count per request calculated
+- [ ] Indexes on WHERE conditions checked
+- [ ] Projections `.Select()` used in read-path (projections do not require `.AsNoTracking()`)
 
-## EF Core (если используется)
-- [ ] Read-path без проекции → `.AsNoTracking()`. Проекции `.Select()` — исключение.
-- [ ] Write-path → нет `.AsNoTracking()`. Исключение: raw SQL (`FromSqlRaw`, `ExecuteSqlRaw`, `ExecuteUpdateAsync`).
+## EF Core (if used)
+- [ ] Read-path without projection → `.AsNoTracking()`. Projections `.Select()` — exception.
+- [ ] Write-path → no `.AsNoTracking()`. Exception: raw SQL (`FromSqlRaw`, `ExecuteSqlRaw`, `ExecuteUpdateAsync`).
 
 ## N+1
-- [ ] Проверены циклы с DB-запросами внутри
-- [ ] Проверены Background jobs
+- [ ] Loops with DB queries inside checked
+- [ ] Background jobs checked
 
 ## API
-- [ ] Все endpoints с пагинацией
-- [ ] Summary DTO вместо полных entities
+- [ ] All endpoints with pagination
+- [ ] Summary DTO instead of full entities
 
-## Кэш
-- [ ] Ключи централизованы (CacheKeys.cs)
-- [ ] Размер указан у каждой записи
-- [ ] Нет конфликтов типов под одним ключом
-- [ ] Инвалидация покрывает все write-paths
+## Cache
+- [ ] Keys centralized (CacheKeys.cs)
+- [ ] Size specified for every entry
+- [ ] No type conflicts under one key
+- [ ] Invalidation covers all write-paths
 
 ## Jobs
-- [ ] Интервалы оптимальны
-- [ ] Используются проекции + ExecuteUpdateAsync
+- [ ] Intervals are optimal
+- [ ] Projections + ExecuteUpdateAsync used
 
-## Метрики
-- [ ] P50 / P99 / Max latency измерены
-- [ ] Read + Write mix протестирован
-- [ ] Concurrent load проверен
-
-## Cross-Layer Invariants
-- [ ] Каждый write инвалидирует кэш на всех слоях; чтение после write не возвращает stale данные
-- [ ] Прерванный flow / retry / back button не воскрешают старое состояние в API
-- [ ] Background job обновляет БД и инвалидирует соответствующий кэш / событие
-- [ ] Read-оптимизации не просочились на write-path
-- [ ] Даты фильтруются/сортируются одинаково в БД, API и кэше
-- [ ] Каждая находка оценена на вопрос: «что пойдёт тихо не так для пользователя?»
+## Metrics
+- [ ] P50 / P99 / Max latency measured
+- [ ] Read + Write mix tested
+- [ ] Concurrent load checked

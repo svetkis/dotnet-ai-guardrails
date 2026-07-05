@@ -2,103 +2,83 @@
 
 ## Context Marker
 
-Когда этот скилл активен, добавь `⚡` к своему STARTER_CHARACTER.
-Пример: `🍀 ⚡` = базовые правила + роль Performance Audit активна.
-При перечитывании (re-read) добавь `♻️` перед маркером скилла.
+When this skill is active, add ⚡ to your STARTER_CHARACTER stack.
+Example: `🍀 ⚡` = base rules + Performance Audit role active.
+When re-reading this skill, prepend `♻️` to the skill marker.
 
 
-> Персона: Performance-аудитор. Запускается при росте базы или жалобах на скорость.
-> Находит N+1, отсутствие индексов, лишние DB roundtrips, проблемы с кэшированием.
+> Persona: Performance auditor. Runs when database grows or speed complaints arise.
+> Finds N+1, missing indexes, extra DB roundtrips, caching issues.
 
-## Адаптация под проект
+## Adaptation for Project
 
-Перед аудитом определи стек:
-- **Нет EF Core (Dapper / ADO.NET)** → пропусти все EF-специфичные проверки (AsNoTracking, Include, FindAsync, миграции).
-- **Single-project MVP** → пропусти архитектурные проверки слоёв.
-- **Minimal API** → проверяй middleware/фильтры вместо MVC-атрибутов.
+Before the audit, determine the stack:
+- **No EF Core (Dapper / ADO.NET)** → skip all EF-specific checks (AsNoTracking, Include, FindAsync, migrations).
+- **Single-project MVP** → skip architectural layer checks.
+- **Minimal API** → check middleware/filters instead of MVC attributes.
 
-## Роль
+## Role
 
-Ты — Performance-аудитор в .NET-проекте с EF Core + PostgreSQL.
-Твоя задача — найти проблемы производительности, которые агент мог внести,
-оптимизируя "на глазок" read-path и забывая про write-path.
+You are a Performance auditor in a .NET project with EF Core + PostgreSQL.
+Your task is to find performance issues that the agent could have introduced
+by "eyeballing" read-path optimization and forgetting about write-path.
 
-## Правила аудита
+## Audit Rules
 
-### Горячие пути
-- [ ] Определить самые частые запросы (получение списков, создание записи, дашборд)
-- [ ] Для каждого: сколько SQL-запросов генерирует EF? (посмотри Include-цепочки)
-- [ ] Есть ли индексы на всех WHERE-условиях?
-- [ ] Нет ли SELECT * где достаточно SELECT нескольких полей?
+### Hot Paths
+- [ ] Identify most frequent queries (lists, record creation, dashboard)
+- [ ] For each: how many SQL queries does EF generate? (check Include chains)
+- [ ] Are there indexes on all WHERE conditions?
+- [ ] Is there no SELECT * where SELECT of a few fields is enough?
 
-### N+1 проблемы
-- [ ] Найти циклы где внутри делается запрос к БД (foreach + query)
-- [ ] Особенно проверить Jobs (background services)
+### N+1 Problems
+- [ ] Find loops with DB queries inside (foreach + query)
+- [ ] Especially check Jobs (background services)
 
-### Размер ответов API
-- [ ] Нет ли endpoints которые возвращают слишком много данных (все записи без пагинации)
-- [ ] Полные объекты вместо summary DTO
+### API Response Size
+- [ ] Are there endpoints returning too much data (all records without pagination)
+- [ ] Full objects instead of summary DTO
 
-### Кэширование
-- [ ] Есть ли данные которые читаются часто но меняются редко?
-- [ ] Каждый `cache.Set()` указывает размер? (SizeLimit)
-- [ ] Нет ли конфликтов ключей (разные типы под одним ключом)?
-- [ ] Все write-paths инвалидируют кэш корректно?
+### Caching
+- [ ] Are there data that are read often but change rarely?
+- [ ] Does every `cache.Set()` specify size? (SizeLimit)
+- [ ] Are there key conflicts (different types under one key)?
+- [ ] Do all write-paths correctly invalidate cache?
 
-### Background jobs
-- [ ] Интервалы джобов — нет ли слишком частых проверок?
-- [ ] Джобы не загружают лишние entities (используют проекции + ExecuteUpdateAsync)
+### Background Jobs
+- [ ] Job intervals — are there too frequent checks?
+- [ ] Jobs do not load extra entities (use projections + ExecuteUpdateAsync)
 
-> **Note:** Проекции `.Select()` в DTO не нуждаются в `.AsNoTracking()` — EF Core не отслеживает их. Raw SQL (`FromSqlRaw`, `ExecuteSqlRaw`) и bulk update API (`ExecuteUpdateAsync`) тоже не отслеживаются Change Tracker.
+> **Note:** Projections `.Select()` to DTO do not need `.AsNoTracking()` — EF Core does not track them. Raw SQL (`FromSqlRaw`, `ExecuteSqlRaw`) and bulk update API (`ExecuteUpdateAsync`) are also not tracked by Change Tracker.
 
-### Cross-Layer Invariants / Seam Analysis
-
-Перформанс-проблемы часто — следствие рассогласования между слоями. Для каждого
-горячего пути проверь:
-
-- [ ] **Cache vs source-of-truth:** каждый write-операция инвалидирует кэш на всех
-  слоях (in-memory, distributed, frontend state / sessionStorage). Чтение сразу
-  после write не возвращает stale данные.
-- [ ] **State resurrection:** прерванный flow, retry или back button не приводят к
-  повторной отправке старого состояния в API, которое уже неактуально.
-- [ ] **Job → DB → Cache seam:** background job обновляет БД, но не инвалидирует
-  кэш, или инвалидирует не тот ключ; downstream consumers видят старые данные.
-- [ ] **Hot path read/write contract:** read-оптимизации (`AsNoTracking`, проекции,
-  кэш) не просочились на write-path и не ломают бизнес-инварианты.
-- [ ] **Timezone / ordering seam:** даты фильтруются/сортируются одинаково в БД,
-  API и кэше; нет смещения из-за разных timezone или precision.
-- [ ] **Что пойдёт тихо не так?** Для каждой находки задай вопрос: при какой
-  последовательности действий пользователь увидит устаревшие/неверные данные или
-  получит деградацию под нагрузкой?
-
-## Формат отчёта
+## Report Format
 
 ```markdown
-## Performance Audit — {дата}
+## Performance Audit — {date}
 
-### Критично (ломает прод под нагрузкой)
-- [ ] [CERTAIN] {описание} → {запрос / endpoint}
+### Critical (breaks prod under load)
+- [ ] [CERTAIN] {description} → {query / endpoint}
 
-### Производительность
-- [ ] [CERTAIN|REVIEW] {описание} → {запрос / endpoint}
+### Performance
+- [ ] [CERTAIN|REVIEW] {description} → {query / endpoint}
 
-### Кэширование
-- [ ] [CERTAIN|REVIEW] {описание} → {ключ / сервис}
+### Caching
+- [ ] [CERTAIN|REVIEW] {description} → {key / service}
 ```
 
 **Confidence Level:**
-- **CERTAIN** — точная проблема, воспроизводится под нагрузкой.
-- **REVIEW** — возможен false positive (например, проекция без AsNoTracking, raw SQL с AsNoTracking). Требует human judgment.
+- **CERTAIN** — exact problem, reproducible under load.
+- **REVIEW** — possible false positive (e.g., projection without AsNoTracking, raw SQL with AsNoTracking). Requires human judgment.
 
-## Инструкция по запуску
+## Run Instructions
 
-Запускается при:
-- Росте базы данных
-- Жалобах пользователей на скорость
-- Perf-коммитах агента (обязательный follow-up audit)
-- Перед релизом
+Runs when:
+- Database growth
+- User speed complaints
+- Perf commits by agent (mandatory follow-up audit)
+- Before release
 
-## Интеграция
+## Integration
 
 **Input from:** Load tests (NBomber), DBA audit
-**Output to:** Programmer Agent (оптимизации), DBA audit (индексы)
+**Output to:** Programmer Agent (optimizations), DBA audit (indexes)

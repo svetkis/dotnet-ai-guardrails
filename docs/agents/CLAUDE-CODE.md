@@ -1,10 +1,10 @@
 # Claude Code — Guardrails Integration
 
-> Claude Code (Anthropic) использует `CLAUDE.md` для project instructions
-> и `.claude/commands/` для custom slash commands.
-> У него другая ментальная модель: не "скиллы", а "проектные инструкции + команды".
+> Claude Code (Anthropic) uses `CLAUDE.md` for project instructions
+> and `.claude/commands/` for custom slash commands.
+> It has a different mental model: not "skills", but "project instructions + commands".
 
-## Структура интеграции
+## Integration Structure
 
 ```
 .claude/
@@ -19,11 +19,11 @@
     └── {project-specific}.md      # Custom commands
 ```
 
-## Конфигурация проекта
+## Project Configuration
 
-### 1. Создать `CLAUDE.md`
+### 1. Create `CLAUDE.md`
 
-Это аналог `AGENTS.md` + `CONVENTIONS.md` вместе:
+This is the analog of `AGENTS.md` + `CONVENTIONS.md` combined:
 
 ```markdown
 # Project Guardrails — {ProjectName}
@@ -54,7 +54,7 @@
 - Tests: ...
 ```
 
-### 2. Создать `.claude/settings.json`
+### 2. Create `.claude/settings.json`
 
 ```json
 {
@@ -69,9 +69,9 @@
 }
 ```
 
-### 3. Создать custom commands
+### 3. Create custom commands
 
-Каждая команда — это Markdown-файл в `.claude/commands/`:
+Each command is a Markdown file in `.claude/commands/`:
 
 ```markdown
 # code-review
@@ -93,9 +93,9 @@ Conduct code review of current changes.
 - MINOR: Naming, magic number
 ```
 
-Запуск: `/code-review` внутри Claude Code.
+Launch: `/code-review` inside Claude Code.
 
-## Запуск онбординга
+## Running Onboarding
 
 ```bash
 # Launch Claude Code in the project
@@ -106,7 +106,7 @@ claude
 > Output an implementation backlog. Consider that we use {stack}.
 ```
 
-Или создать custom command:
+Or create a custom command:
 
 ```markdown
 # .claude/commands/onboarding.md
@@ -129,65 +129,65 @@ Scan the project and output a guardrails implementation backlog.
 4. Output a report in markdown format
 ```
 
-## Что онбординг создаёт для код-ревью
+## What Onboarding Creates for Review
 
-**Цель:** после оценки проекта зафиксировать конкретную Claude-команду для код-ревью под ваш стек.
+**Goal:** after project assessment, define a concrete Claude review command for your stack.
 
-### 1. Что решает онбординг
+### 1. What onboarding decides
 
-Онбординг должен определить:
+Onboarding should determine:
 
-- хватит ли стандартной команды `code-review`
-- нужно ли адаптировать шаблон под стек проекта
-- нужна ли отдельная команда для ревью: например `code-review-dapper` или `code-review-razor`
+- whether the standard `code-review` command is enough
+- whether the template must be adapted for the project stack
+- whether a separate review command is needed, such as `code-review-dapper` or `code-review-razor`
 
-### 2. Что должно появиться в проекте
+### 2. What should appear in the project
 
-- `.claude/commands/code-review.md` или `.claude/commands/code-review-{context}.md`
-- обновлённый `CLAUDE.md`, если review-правила надо зафиксировать и в общей конституции
-- отчёт или backlog-пункт с объяснением, что адаптировали и что не подошло из готовых артефактов
+- `.claude/commands/code-review.md` or `.claude/commands/code-review-{context}.md`
+- an updated `CLAUDE.md` if review rules also need to be captured in the shared constitution
+- a report or backlog item explaining what was adapted and what did not fit from the ready-made artifacts
 
-### 3. Когда сценарий считается успешным
+### 3. When the scenario is successful
 
-- у команды есть точная команда `/...` для ревью в этом проекте
-- команда знает, почему это именно `code-review`, а не другой вариант
-- если стандартный шаблон не подходит, это отражено в явной отдельной команде под проект, а не в устной адаптации
+- the team has an exact slash command for review in this project
+- the team knows why it is this command and not some other variant
+- if the standard template does not fit, that is reflected in an explicit project-specific command rather than informal adaptation
 
-### 4. Важная граница
+### 4. Important boundary
 
-Онбординг сначала создаёт или адаптирует команду для ревью под проект. Только потом эта команда становится частью PR-потока.
+Onboarding first creates or adapts the review command for the project. Only after that does the command become part of the PR flow.
 
-## Специфика Claude Code
+## Claude Code Specifics
 
-### Что отличается от Kimi
+### What Differs from Kimi
 
-| Аспект | Kimi | Claude Code |
+| Aspect | Kimi | Claude Code |
 |--------|------|-------------|
-| Формат правил | `.kimi/skills/{name}/SKILL.md` | `.claude/CLAUDE.md` + `.claude/commands/*.md` |
-| Запуск скилла | `kimi run {name}` | `/{command-name}` в чате |
-| Контекст | Ограничен окном | 200k tokens + tools (read, edit, bash) |
-| Интеграция CI | Ручной запуск | Может запускать bash-скрипты |
-| Автозапуск | Нет | Нет (но есть tools) |
+| Rules format | `.kimi/skills/{name}/SKILL.md` | `.claude/CLAUDE.md` + `.claude/commands/*.md` |
+| Skill launch | `kimi run {name}` | `/{command-name}` in chat |
+| Context | Limited by window | 200k tokens + tools (read, edit, bash) |
+| CI integration | Manual launch | Can run bash scripts |
+| Auto-launch | No | No (but has tools) |
 
-### Нюансы Claude Code
+### Claude Code Nuances
 
-1. **CLAUDE.md — единый файл.** Нельзя разбить на 10 отдельных скиллов как в `.kimi/skills/`. Но можно сделать:
-   - Основной `CLAUDE.md` с конституцией
-   - `.claude/commands/` с конкретными задачами (аудит, review)
+1. **CLAUDE.md — single file.** You cannot split into 10 separate skills like in `.kimi/skills/`. But you can do:
+   - Main `CLAUDE.md` with constitution
+   - `.claude/commands/` with specific tasks (audit, review)
 
-2. **Tools.** Claude Code имеет встроенные tools:
-   - `read_file` — читает файлы
-   - `edit_file` — редактирует
-   - `bash` — выполняет команды
-   - Это меняет формат anti-hallucination protocol: агент реально видит файлы
+2. **Tools.** Claude Code has built-in tools:
+   - `read_file` — reads files
+   - `edit_file` — edits files
+   - `bash` — executes commands
+   - This changes the anti-hallucination protocol format: the agent actually sees files
 
-3. **Context management.** Claude умеет `/add` файлы в контекст и `/compact` историю. В скиллах это неявно.
+3. **Context management.** Claude can `/add` files to context and `/compact` history. This is implicit in skills.
 
-4. **Не требует установки скиллов.** Просто создаёшь файлы в `.claude/` — и они работают.
+4. **No skill installation required.** Just create files in `.claude/` — and they work.
 
-## Ограничения
+## Limitations
 
-- Нет встроенной системы "скиллов" как у Kimi — только project instructions + commands
-- Нет marketplace скиллов
-- Каждый новый проект требует ручного создания `.claude/`
-- Не умеет автоматически читать `.claude/commands/` при старте (нужно явно вызывать `/command`)
+- No built-in "skill" system like Kimi — only project instructions + commands
+- No skill marketplace
+- Every new project requires manual creation of `.claude/`
+- Does not automatically read `.claude/commands/` on startup (needs explicit `/command` call)

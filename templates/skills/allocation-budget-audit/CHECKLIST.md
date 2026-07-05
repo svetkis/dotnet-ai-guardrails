@@ -1,31 +1,31 @@
-# Allocation Budget Audit — Чеклист
+# Allocation Budget Audit — Checklist
 
-## Перед началом
-- [ ] Известны критичные пути проекта (latency-sensitive)
-- [ ] Есть маркер `[HotPath]` или аналог
-- [ ] Определена стабильная среда для измерений (OS, runtime, GC mode)
+## Before Starting
+- [ ] Critical project paths are known (latency-sensitive)
+- [ ] Hot path marker or equivalent exists
+- [ ] Stable measurement environment is defined (OS, runtime, GC mode)
 
-## Инвентарь hot paths
-- [ ] Все `[HotPath]` методы найдены рефлексией
-- [ ] Для каждого метода есть `{MethodName}_AllocationBudget` тест
-- [ ] `[HotPath]` не используется для редких операций
+## Hot Path Inventory
+- [ ] All hot path methods are found (via reflection, static analysis, registry)
+- [ ] Every method has an allocation test or equivalent guardrail
+- [ ] Hot path marker is not used for rare operations
 
-## Allocation budget
-- [ ] Baseline зафиксирован для каждого hot path
-- [ ] Порог определён (baseline + 10% или проектный)
-- [ ] Тесты используют warmup + несколько итераций
-- [ ] CI запускает тесты на релевантном железе
+## Allocation Budget
+- [ ] Baseline is recorded for every hot path
+- [ ] Regression threshold is defined (baseline + N% or project-specific)
+- [ ] Tests use warmup + multiple iterations
+- [ ] CI runs tests on relevant hardware
 
-## Регрессии
-- [ ] Методы с превышением бюджета разобраны
-- [ ] Причина регрессии задокументирована
-- [ ] Исправление подтверждено повторным замером
+## Regressions
+- [ ] Methods over budget are reviewed
+- [ ] Regression reason is documented
+- [ ] Fix is confirmed by repeated measurement
 
-## Roslyn-first
-- [ ] `HotPathAnalyzer` ловит new/async/boxing в `[HotPath]`
-- [ ] Анализатор покрыт unit-тестами
+## Compile-time Guardrail
+- [ ] If the project has a hot path analyzer — it catches forbidden patterns
+- [ ] Analyzer is covered by its own unit tests
 
-## Формат отчёта
-- [ ] Сводка по методам с baseline/current
-- [ ] Список регрессий с причинами
-- [ ] Список missing budget tests
+## Report Format
+- [ ] Summary by method with baseline/current values
+- [ ] Regression list with causes
+- [ ] Missing budget tests list

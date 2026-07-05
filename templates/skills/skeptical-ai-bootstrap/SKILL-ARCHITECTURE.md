@@ -1,115 +1,115 @@
-# Архитектура экосистемы скиллов
+# Skill Ecosystem Architecture
 
 ## Context Marker
 
-Когда этот скилл активен, добавь `🏗️` к своему STARTER_CHARACTER.
-Пример: `🍀 🏗️` = базовые правила + роль Architecture Bootstrap активна.
-При перечитывании (re-read) добавь `♻️` перед маркером скилла.
+When this skill is active, add 🏗️ to your STARTER_CHARACTER stack.
+Example: `🍀 🏗️` = base rules + Architecture Bootstrap role active.
+When re-reading this skill, prepend `♻️` to the skill marker.
 
 
-> Этот документ учит агента **проектировать guardrails**, а не копировать их.
-> Когда готовые скиллы не подходят — агент сам решает: что проверять, как, и куда это класть.
-
----
-
-## Принцип: Скилл = роль + контекст + правила + интеграция
-
-Готовые скиллы из `dotnet-ai-guardrails` — это **примеры**. Они показывают:
-- Как формулировать роль
-- Как структурировать правила
-- Как интегрировать с пайплайном
-
-Но конкретный проект может требовать **уникальных ролей**. И агент должен уметь их придумывать.
+> This document teaches the agent to **design guardrails**, not copy them.
+> When ready-made skills do not fit — the agent decides itself: what to check, how, and where to put it.
 
 ---
 
-## Дерево проектирования нового скилла
+## Principle: Skill = Role + Context + Rules + Integration
 
-### Шаг 1: Что ловим? (Threat Model)
+Ready-made skills from `dotnet-ai-guardrails` are **examples**. They show:
+- How to formulate a role
+- How to structure rules
+- How to integrate with the pipeline
 
-Не "какой скилл взять?", а "что агент может сломать в этом проекте?"
+But a specific project may require **unique roles**. And the agent must be able to invent them.
 
-| Тип проекта | Что ломает агент? | Пример находки |
-|-------------|-------------------|----------------|
-| Worker + RabbitMQ | Потеря сообщений, повторная обработка, нет idempotency | Агент убрал `IDeliveryContext.Complete()` |
-| Desktop (WPF) | Blocking UI thread, утечка подписок | Агент сделал `await _service.Get()` в UI thread |
-| gRPC сервис | Несовместимость proto, breaking change | Агент переименовал поле в `.proto` без `reserved` |
-| ML inference | Утечка памяти GPU, неправильный batch size | Агент убрал `using` для Tensor |
-| Game server | Race condition в state, desync | Агент поменял lock на ConcurrentDictionary |
+---
 
-**Правило:** сначала threat model, потом скилл.
+## New Skill Design Tree
 
-### Шаг 2: Кто ловит? (Роль)
+### Step 1: What do we catch? (Threat Model)
 
-Каждый скилл — это роль. Роль зависит от того, КОГДА проверяем:
+Not "which skill to take?", but "what can the agent break in this project?"
 
-| Когда проверяем | Роль | Примеры скиллов |
-|-----------------|------|-----------------|
-| На каждый PR | Code Review Agent | `code-review-dapper`, `code-review-grpc` |
-| На каждый PR | Compliance Agent | `task-compliance`, `api-contract-compliance` |
-| При сборке | Build-time Guard | `ArchitectureRules.cs` (custom), `proto-compatibility-check` |
-| По расписанию | Auditor | `security-audit`, `dba-audit-mongo` |
-| Перед релизом | Release Gate | `load-test-grpc`, `gpu-memory-audit` |
-| По инциденту | Forensics Agent | `post-mortem-analyzer`, `bug-regression-guard` |
+| Project Type | What does the agent break? | Example finding |
+|--------------|---------------------------|-----------------|
+| Worker + RabbitMQ | Message loss, duplicate processing, no idempotency | Agent removed `IDeliveryContext.Complete()` |
+| Desktop (WPF) | Blocking UI thread, subscription leaks | Agent did `await _service.Get()` in UI thread |
+| gRPC service | Proto incompatibility, breaking change | Agent renamed field in `.proto` without `reserved` |
+| ML inference | GPU memory leak, incorrect batch size | Agent removed `using` for Tensor |
+| Game server | Race condition in state, desync | Agent changed lock to ConcurrentDictionary |
 
-**Правило:** одна роль = один скилл. Не смешивай code review и аудит в одном файле.
+**Rule:** threat model first, then skill.
 
-### Шаг 3: Как ловим? (Механизм)
+### Step 2: Who catches? (Role)
 
-Механизм зависит от стека и скорости обратной связи:
+Each skill is a role. The role depends on WHEN we check:
 
-| Механизм | Скорость | Когда использовать | Пример |
-|----------|----------|-------------------|--------|
-| Roslyn Analyzer | Мгновенно (в IDE) | Строгие правила, частые нарушения | `nullable`, `async void` |
-| MSBuild Target | Сборка | Проверка артефактов, regex | `proto diff check`, `localization completeness` |
-| Unit Test | Сборка + тесты | Логика, зависимости, контракты | `architecture rules`, `ratchet tests` |
-| Script (bash/ps) | CI | Внешние тулы, парсинг | `verify-tests.sh`, `openapi diff` |
-| AI Agent (скилл) | PR / ручной | Смысловой анализ, контекст | `code review`, `security audit` |
-| E2E Test | CI / ночь | Интеграция, flow | `worker messaging flow`, `desktop UI flow` |
+| When we check | Role | Skill examples |
+|---------------|------|----------------|
+| On every PR | Code Review Agent | `code-review-dapper`, `code-review-grpc` |
+| On every PR | Compliance Agent | `task-compliance`, `api-contract-compliance` |
+| On build | Build-time Guard | `ArchitectureRules.cs` (custom), `proto-compatibility-check` |
+| On schedule | Auditor | `security-audit`, `dba-audit-mongo` |
+| Before release | Release Gate | `load-test-grpc`, `gpu-memory-audit` |
+| On incident | Forensics Agent | `post-mortem-analyzer`, `bug-regression-guard` |
 
-**Правило:** чем раньше ловим — тем лучше. Roslyn > Tests > AI Agent.
+**Rule:** one role = one skill. Do not mix code review and audit in one file.
 
-### Шаг 4: Куда класть? (Структура)
+### Step 3: How do we catch? (Mechanism)
 
-Все скиллы проекта живут в `.kimi/skills/`:
+Mechanism depends on stack and feedback speed:
+
+| Mechanism | Speed | When to use | Example |
+|-----------|-------|-------------|---------|
+| Roslyn Analyzer | Instant (in IDE) | Strict rules, frequent violations | `nullable`, `async void` |
+| MSBuild Target | Build | Artifact check, regex | `proto diff check`, `localization completeness` |
+| Unit Test | Build + tests | Logic, dependencies, contracts | `architecture rules`, `ratchet tests` |
+| Script (bash/ps) | CI | External tools, parsing | `verify-tests.sh`, `openapi diff` |
+| AI Agent (skill) | PR / manual | Semantic analysis, context | `code review`, `security audit` |
+| E2E Test | CI / nightly | Integration, flow | `worker messaging flow`, `desktop UI flow` |
+
+**Rule:** the earlier we catch — the better. Roslyn > Tests > AI Agent.
+
+### Step 4: Where to put? (Structure)
+
+All project skills live in `.kimi/skills/`:
 
 ```
 .kimi/
 └── skills/
-    ├── skeptical-ai-bootstrap/          # Этот скилл (установлен раз)
+    ├── skeptical-ai-bootstrap/          # This skill (installed once)
     │   └── SKILL.md
     │
-    ├── code-review/                 # Внутренний цикл: каждый PR
+    ├── code-review/                 # Inner loop: every PR
     │   ├── SKILL.md
     │   └── CHECKLIST.md
     │
-    ├── architecture-audit/          # Внутренний цикл: сборка
+    ├── architecture-audit/          # Inner loop: build
     │   └── SKILL.md
     │
-    ├── security-audit/              # Внешний цикл: раз в спринт
+    ├── security-audit/              # Outer loop: once per sprint
     │   ├── SKILL.md
     │   └── CHECKLIST.md
     │
-    └── {project-specific}/          # Уникальные для проекта
-        ├── grpc-contract-guard/     # Проверка proto на breaking changes
+    └── {project-specific}/          # Unique for the project
+        ├── grpc-contract-guard/     # Check proto for breaking changes
         ├── gpu-memory-audit/        # ML-specific
         ├── game-state-sync-check/   # Game-specific
         └── worker-idempotency-guard/# Worker-specific
 ```
 
-**Правило именования:** `{что-проверяем}-{контекст}` — `code-review-dapper`, `dba-audit-mongo`.
+**Naming rule:** `{what-we-check}-{context}` — `code-review-dapper`, `dba-audit-mongo`.
 
-**Правило размещения:**
-- Универсальные скиллы (security, perf) — корень `.kimi/skills/`
-- Проектно-специфичные — подпапка `.kimi/skills/{domain}/`
-- Генерируемые агентом — тот же уровень, что и ручные
+**Placement rule:**
+- Universal skills (security, perf) — root `.kimi/skills/`
+- Project-specific — subfolder `.kimi/skills/{domain}/`
+- Generated by agent — same level as manual ones
 
-### Шаг 5: Как интегрируем? (Пайплайн)
+### Step 5: How do we integrate? (Pipeline)
 
-Скилл не работает изолированно. Он встраивается в пайплайн:
+A skill does not work in isolation. It is embedded into the pipeline:
 
 ```
-PR создан
+PR created
     → Task Compliance Agent (scope check)
         → Code Review Agent (style + bugs)
             → Build (compilation + analyzers + unit tests)
@@ -121,37 +121,37 @@ PR создан
                             → Before Release: Load Tests
 ```
 
-Каждый скилл должен знать:
-- **Input:** от кого получает контекст (diff, spec, metrics)
-- **Output:** куда передаёт результаты (Programmer, QA, Human Gate)
-- **Trigger:** что запускает (PR, schedule, manual, incident)
-- **Gate:** блокирует ли merge (BLOCKER / WARNING / INFO)
+Each skill must know:
+- **Input:** from whom it receives context (diff, spec, metrics)
+- **Output:** where it passes results (Programmer, QA, Human Gate)
+- **Trigger:** what launches it (PR, schedule, manual, incident)
+- **Gate:** does it block merge (BLOCKER / WARNING / INFO)
 
 ---
 
-## Паттерны генерации скиллов
+## Skill Generation Patterns
 
-### Паттерн A: "Спецификация стека"
+### Pattern A: "Stack Specification"
 
-Когда стек уникален, но принцип стандартный.
+When the stack is unique, but the principle is standard.
 
-**Пример:** Проект на gRPC + .NET 8.
-- Принцип: "Не ломать контракты без explicit versioning"
-- Готовый скилл: нет (все про Web API / OpenAPI)
-- Новый скилл: `grpc-contract-guard`
-- Механизм: MSBuild target + unit test
-- Что проверяет:
-  - `reserved` в `.proto` при удалении полей
-  - Нумерация полей не меняется тип
-  - Новые поля — только `optional` или с `default`
+**Example:** Project on gRPC + .NET 8.
+- Principle: "Do not break contracts without explicit versioning"
+- Ready-made skill: none (all are about Web API / OpenAPI)
+- New skill: `grpc-contract-guard`
+- Mechanism: MSBuild target + unit test
+- What it checks:
+  - `reserved` in `.proto` when removing fields
+  - Field numbering does not change type
+  - New fields — only `optional` or with `default`
 
-#### NetArchTest для Vertical Slice (важно!)
+#### NetArchTest for Vertical Slice (important!)
 
-NetArchTest **работает** с Vertical Slice — нужны только **custom rules про фичи**, а не про слои.
+NetArchTest **works** with Vertical Slice — you only need **custom rules about features**, not layers.
 
 ```csharp
-// Проверка: фича Orders не зависит от Payments (кроме Shared)
-// Повторить для каждой пары фич или параметризовать
+// Check: Orders feature does not depend on Payments (except Shared)
+// Repeat for each feature pair or parameterize
 [Test]
 public void OrdersSlice_ShouldNotDependOn_PaymentsSlice()
 {
@@ -163,7 +163,7 @@ public void OrdersSlice_ShouldNotDependOn_PaymentsSlice()
     Assert.That(result.IsSuccessful).IsTrue();
 }
 
-// Проверка: любой тип из одной фичи не зависит от другой фичи
+// Check: any type from one feature does not depend on another feature
 [Test]
 public void NoSlice_ShouldDependOn_AnotherSlice()
 {
@@ -186,7 +186,7 @@ public void NoSlice_ShouldDependOn_AnotherSlice()
     }
 }
 
-// Проверка: внутренние типы фичи — internal, не public
+// Check: internal feature types are internal, not public
 [Test]
 public void SliceImplementation_ShouldBeInternal()
 {
@@ -198,7 +198,7 @@ public void SliceImplementation_ShouldBeInternal()
     Assert.That(result.IsSuccessful).IsTrue();
 }
 
-// Проверка: каждая фича имеет Handler
+// Check: each feature has a Handler
 [Test]
 public void EachSlice_ShouldHaveHandler()
 {
@@ -217,75 +217,75 @@ public void EachSlice_ShouldHaveHandler()
 }
 ```
 
-**Ключевой инсайт:** NetArchTest проверяет **namespace'ы и типы**, не только сборки.
-Regex НЕ НУЖЕН — используй `ResideInNamespace()`, `HaveNameEndingWith()`, `BeInternal()`.
+**Key insight:** NetArchTest checks **namespaces and types**, not only assemblies.
+Regex is NOT NEEDED — use `ResideInNamespace()`, `HaveNameEndingWith()`, `BeInternal()`.
 
-### Паттерн B: "Доменная специфика"
+### Pattern B: "Domain Specificity"
 
-Когда предметная область требует уникальных проверок.
+When the domain requires unique checks.
 
-**Пример:** Финтех-проект, расчёт комиссий.
-- Принцип: "Комиссия не может измениться без explicit approval"
-- Новый скилл: `fee-calculation-guard`
-- Механизм: ratchet test + code review
-- Что проверяет:
-  - Diff в `FeeCalculator.cs` триггерит дополнительный review
-  - Тест `FeeRatchet` проверяет, что baseline комиссий не уменьшился
-  - Новые fee rules — только через `// DECISION: FEE###`
+**Example:** Fintech project, fee calculation.
+- Principle: "Fee cannot change without explicit approval"
+- New skill: `fee-calculation-guard`
+- Mechanism: ratchet test + code review
+- What it checks:
+  - Diff in `FeeCalculator.cs` triggers additional review
+  - Test `FeeRatchet` checks that baseline fees did not decrease
+  - New fee rules — only via `// DECISION: FEE###`
 
-### Паттерн C: "Инфраструктурная специфика"
+### Pattern C: "Infrastructure Specificity"
 
-Когда инфраструктура проекта уникальна.
+When project infrastructure is unique.
 
-**Пример:** ML inference service, GPU memory.
-- Принцип: "GPU memory не ликит между inference calls"
-- Новый скилл: `gpu-memory-audit`
-- Механизм: unit test + E2E benchmark
-- Что проверяет:
-  - Каждый inference method обёрнут в `using var tensor`
-  - После 1000 calls GPU memory < baseline + 5%
-  - Нет sync-over-async в GPU thread
+**Example:** ML inference service, GPU memory.
+- Principle: "GPU memory does not leak between inference calls"
+- New skill: `gpu-memory-audit`
+- Mechanism: unit test + E2E benchmark
+- What it checks:
+  - Every inference method is wrapped in `using var tensor`
+  - After 1000 calls GPU memory < baseline + 5%
+  - No sync-over-async in GPU thread
 
-### Паттерн D: "Организационная специфика"
+### Pattern D: "Organizational Specificity"
 
-Когда процессы компании требуют кастомных проверок.
+When company processes require custom checks.
 
-**Пример:** Медицинский проект, HIPAA compliance.
-- Принцип: "PHI (Protected Health Information) не попадает в логи"
-- Новый скилл: `hipaa-phi-guard`
-- Механизм: Roslyn analyzer + code review
-- Что проверяет:
-  - Любое поле с `[PHI]` не передаётся в `ILogger`
-  - API ответы не содержат PHI без explicit `[Redact]`
-  - Diff в `*Patient*.cs` триггерит дополнительный аудит
-
----
-
-## Алгоритм для агента
-
-Когда агент обнаруживает, что готовый скилл не подходит:
-
-```
-1. Определи ПРИНЦИП (что защищаем?)
-2. Определи РОЛЬ (когда и кто проверяет?)
-3. Выбери МЕХАНИЗМ (Roslyn / Test / Script / AI Agent)
-4. Придумай ИМЯ ({что}-{контекст})
-5. Определи МЕСТО (.kimi/skills/ или .kimi/skills/{domain}/)
-6. Определи ИНТЕГРАЦИЮ (input / output / trigger / gate)
-7. Сгенерируй файлы:
-   - SKILL.md (роль + правила + формат отчёта)
-   - CHECKLIST.md (если сложный процесс)
-   - {механизм} (код теста / analyzer / script)
-8. Добавь в onboarding report как "новый скилл"
-```
+**Example:** Medical project, HIPAA compliance.
+- Principle: "PHI (Protected Health Information) does not get into logs"
+- New skill: `hipaa-phi-guard`
+- Mechanism: Roslyn analyzer + code review
+- What it checks:
+  - Any field with `[PHI]` is not passed to `ILogger`
+  - API responses do not contain PHI without explicit `[Redact]`
+  - Diff in `*Patient*.cs` triggers additional audit
 
 ---
 
-## Примеры интеграции в CI
+## Algorithm for the Agent
 
-Скилл должен быть не просто markdown — он должен **работать**.
+When the agent discovers that a ready-made skill does not fit:
 
-### Интеграция: Code Review скилл
+```
+1. Define PRINCIPLE (what do we protect?)
+2. Define ROLE (when and who checks?)
+3. Choose MECHANISM (Roslyn / Test / Script / AI Agent)
+4. Invent NAME ({what}-{context})
+5. Define PLACE (.kimi/skills/ or .kimi/skills/{domain}/)
+6. Define INTEGRATION (input / output / trigger / gate)
+7. Generate files:
+   - SKILL.md (role + rules + report format)
+   - CHECKLIST.md (if complex process)
+   - {mechanism} (test / analyzer / script code)
+8. Add to onboarding report as "new skill"
+```
+
+---
+
+## CI Integration Examples
+
+A skill must be not just markdown — it must **work**.
+
+### Integration: Code Review Skill
 
 ```yaml
 # .github/workflows/pr-guard.yml
@@ -297,11 +297,11 @@ jobs:
       - name: Run Code Review Agent
         run: |
           kimi run code-review --diff "$(git diff origin/main)"
-        # Агент читает .kimi/skills/code-review/SKILL.md
-        # и применяет правила к diff
+        # Agent reads .kimi/skills/code-review/SKILL.md
+        # and applies rules to diff
 ```
 
-### Интеграция: Architecture Guard (unit test)
+### Integration: Architecture Guard (unit test)
 
 ```yaml
 # .github/workflows/build.yml
@@ -312,10 +312,10 @@ jobs:
       - uses: actions/checkout@v4
       - name: Run Architecture Tests
         run: dotnet run --project tests/ArchitectureTests/
-        # Тесты читают conventions из .kimi/skills/architecture-audit/
+        # Tests read conventions from .kimi/skills/architecture-audit/
 ```
 
-### Интеграция: Custom Audit (скрипт)
+### Integration: Custom Audit (script)
 
 ```yaml
 # .github/workflows/nightly.yml
@@ -326,52 +326,52 @@ jobs:
       - uses: actions/checkout@v4
       - name: Run GPU Memory Audit
         run: ./scripts/gpu-memory-check.sh
-        # Скрипт реализует правила из .kimi/skills/gpu-memory-audit/SKILL.md
+        # Script implements rules from .kimi/skills/gpu-memory-audit/SKILL.md
 ```
 
 ---
 
-## Метаданные экосистемы
+## Ecosystem Metadata
 
-Агент должен поддерживать "карту скиллов" проекта:
+The agent must maintain a "skill map" of the project:
 
 ```markdown
-# .kimi/skills/README.md (генерируется онбордингом)
+# .kimi/skills/README.md (generated by onboarding)
 
-## Скиллы проекта {ProjectName}
+## Project Skills: {ProjectName}
 
-### Внутренний цикл (Inner Loop)
-| Скилл | Роль | Триггер | Gate | Статус |
+### Inner Loop (Inner Loop)
+| Skill | Role | Trigger | Gate | Status |
 |-------|------|---------|------|--------|
 | code-review-dapper | Reviewer | PR | BLOCKER | ✅ Active |
 | task-compliance | Scope Guard | PR | BLOCKER | ✅ Active |
 | architecture-audit (VSlice) | Build Guard | NetArchTest custom | Build | BLOCKER | 🚧 WIP |
 
-### Внешний цикл (Outer Loop)
-| Скилл | Роль | Триггер | Gate | Статус |
+### Outer Loop (Outer Loop)
+| Skill | Role | Trigger | Gate | Status |
 |-------|------|---------|------|--------|
 | security-audit | Security Auditor | Weekly | WARNING | ✅ Active |
 | dba-audit-dapper | DBA Auditor | Sprint | BLOCKER | 🚧 WIP |
 | gpu-memory-audit | Perf Auditor | Release | BLOCKER | 📋 Backlog |
 
-### Легенда
-- ✅ Active — работает в CI
-- 🚧 WIP — скилл создан, но не в CI
-- 📋 Backlog — только описание, нет кода
+### Legend
+- ✅ Active — works in CI
+- 🚧 WIP — skill created, but not in CI
+- 📋 Backlog — description only, no code
 ```
 
-Эта карта помогает агенту понимать:
-- Что уже есть
-- Что в работе
-- Что ещё не создано
-- Какие gaps между слоями
+This map helps the agent understand:
+- What already exists
+- What is in progress
+- What is not yet created
+- What gaps exist between layers
 
 ---
 
-## Антипаттерны проектирования скиллов
+## Skill Design Anti-Patterns
 
-- ❌ **"God Skill"** — один скилл проверяет и код, и архитектуру, и безопасность. Разделяй.
-- ❌ **"Read-only Skill"** — скилл только описывает, что проверять, но не интегрирован в CI. Каждый скилл должен иметь механизм запуска.
-- ❌ **"Theory without Practice"** — скилл требует невозможного (например, NetArchTest для .NET Framework). Выбирай реалистичный механизм.
-- ❌ **"Copy-paste without Context"** — скопировал `templates/skills/security-audit/` но не адаптировал под ORM проекта. Скилл должен знать стек.
-- ❌ **"Orphan Skill"** — скилл не знает, кто его запускает и куда передаёт результаты. Определи input/output/trigger.
+- ❌ **"God Skill"** — one skill checks code, architecture, and security. Separate them.
+- ❌ **"Read-only Skill"** — skill only describes what to check, but is not integrated into CI. Every skill must have a launch mechanism.
+- ❌ **"Theory without Practice"** — skill requires the impossible (e.g., NetArchTest for .NET Framework). Choose a realistic mechanism.
+- ❌ **"Copy-paste without Context"** — copied `templates/skills/security-audit/` but did not adapt to project ORM. The skill must know the stack.
+- ❌ **"Orphan Skill"** — skill does not know who launches it and where results go. Define input/output/trigger.

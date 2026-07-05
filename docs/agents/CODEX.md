@@ -1,9 +1,9 @@
 # Codex (OpenAI) — Guardrails Integration
 
-> Codex CLI от OpenAI использует `.codex/instructions.md` для project instructions.
-> Минималистичный подход: один файл инструкций + CLI-запросы.
+> Codex CLI from OpenAI uses `.codex/instructions.md` for project instructions.
+> Minimalist approach: one instructions file + CLI prompts.
 
-## Структура интеграции
+## Integration Structure
 
 ```
 .codex/
@@ -13,9 +13,9 @@
 codex.md                           # Alternative name (in root)
 ```
 
-## Конфигурация проекта
+## Project Configuration
 
-### Создать `.codex/instructions.md`
+### Create `.codex/instructions.md`
 
 ```markdown
 # Project Guardrails — {ProjectName}
@@ -55,7 +55,7 @@ For any change check:
 - [ ] CancellationToken is passed through
 ```
 
-## Запуск онбординга
+## Running Onboarding
 
 ```bash
 # Install Codex CLI (if not already installed)
@@ -69,66 +69,66 @@ codex
 > Output an implementation backlog. Consider that we use {stack}.
 ```
 
-## Что онбординг создаёт для код-ревью
+## What Onboarding Creates for Review
 
-**Цель:** после первого сканирования зафиксировать протокол ревью для Codex, привязанный к проекту.
+**Goal:** after the first scan, define a Codex review protocol tied to the project.
 
-### 1. Что решает онбординг
+### 1. What onboarding decides
 
-Онбординг должен определить:
+Onboarding should determine:
 
-- хватает ли review-протокола внутри `.codex/instructions.md`
-- какие разделы review-протокола нужно адаптировать под стек проекта
-- какие проверки надо убрать или добавить под реальный стек проекта
+- whether the review protocol inside `.codex/instructions.md` is sufficient
+- which sections of the review protocol need adaptation for the project stack
+- which checks must be removed or added for the real project stack
 
-### 2. Что должно появиться в проекте
+### 2. What should appear in the project
 
-- обновлённый `.codex/instructions.md` с review-правилами именно этого проекта
-- review-протокол встроен в тот же `.codex/instructions.md`, а не вынесен в отдельный чеклист
-- отчёт с объяснением, что было адаптировано из готовых guardrails, а что пришлось описать отдельно под проект
+- an updated `.codex/instructions.md` with review rules for this specific project
+- the review protocol embedded in the same `.codex/instructions.md`, not a separate checklist
+- a report explaining what was adapted from ready-made guardrails and what had to become project-specific
 
-### 3. Когда сценарий считается успешным
+### 3. When the scenario is successful
 
-- review-протокол закреплён в `.codex/instructions.md`
-- review-правила уже учитывают стек и архитектурные границы, а не остаются общими словами
-- если стандартные проверки не подходят, это явно зафиксировано в `.codex/instructions.md`
+- the review protocol is recorded in `.codex/instructions.md`
+- review rules already reflect the stack and architecture boundaries instead of staying generic
+- if standard checks do not fit, that is explicitly documented in `.codex/instructions.md`
 
-### 4. Важная граница
+### 4. Important boundary
 
-Сначала онбординг собирает протокол ревью под проект. Только потом команда использует этот протокол в PR-проверках.
+Onboarding first assembles the project-specific review protocol. Only after that does the team use the protocol in PR checks.
 
-## Специфика Codex
+## Codex Specifics
 
-### Что отличается от Kimi / Claude
+### What Differs from Kimi / Claude
 
-| Аспект | Kimi | Claude Code | Codex |
+| Aspect | Kimi | Claude Code | Codex |
 |--------|------|-------------|-------|
-| Формат правил | `.kimi/skills/*.md` | `.claude/CLAUDE.md` + commands | `.codex/instructions.md` |
-| Количество файлов | Много (по файлу на скилл) | 1 + N commands | 1 файл |
-| Запуск | `kimi run {name}` | `/{command}` | Прямой prompt |
-| Интеграция | Ручная | Tools (bash, edit) | CLI-only |
+| Rules format | `.kimi/skills/*.md` | `.claude/CLAUDE.md` + commands | `.codex/instructions.md` |
+| Number of files | Many (one per skill) | 1 + N commands | 1 file |
+| Launch | `kimi run {name}` | `/{command}` | Direct prompt |
+| Integration | Manual | Tools (bash, edit) | CLI-only |
 
-### Нюансы Codex
+### Codex Nuances
 
-1. **Один файл.** Вся конституция проекта — в одном `instructions.md`. Это значит:
-   - Нельзя разбить на отдельные "аудиты" как скиллы
-   - Нужно встраивать checklist'ы прямо в instructions
-   - Можно использовать markdown-ссылки на внешние документы
+1. **One file.** The entire project constitution is in one `instructions.md`. This means:
+   - Cannot split into separate "audits" like skills
+   - Need to embed checklists directly into instructions
+   - Can use markdown links to external documents
 
-2. **Нет custom commands.** Codex не поддерживает slash commands как Claude. Все инструкции — через prompt или `instructions.md`.
+2. **No custom commands.** Codex does not support slash commands like Claude. All instructions are via prompt or `instructions.md`.
 
-3. **Git-интеграция.** Codex умеет работать с git (видит diff, может коммитить). Это упрощает code review — агент сам может `git diff`.
+3. **Git integration.** Codex can work with git (sees diff, can commit). This simplifies code review — the agent can `git diff` itself.
 
-4. **Прямой доступ к терминалу.** Codex может выполнять команды через `!bash` или прямо в CLI.
+4. **Direct terminal access.** Codex can execute commands via `!bash` or directly in CLI.
 
-### Формат instructions.md
+### instructions.md Format
 
-Codex использует один файл `.codex/instructions.md`. Содержание — адаптированная версия `rules/AGENTS_TEMPLATE.md`: роль, запрещённые действия, стек, архитектурные границы и review-протокол. Не копируйте шаблон целиком — оставьте только проверки, актуальные для проекта.
+Codex uses a single `.codex/instructions.md`. It should contain an adapted version of `rules/AGENTS_TEMPLATE.md`: role, forbidden actions, stack, architecture boundaries, and a review protocol. Do not copy the template verbatim — keep only the checks relevant to the project.
 
-## Ограничения
+## Limitations
 
-- Нет системы скиллов — только один файл инструкций
-- Нет встроенных tools (read_file, edit_file) как у Claude Code
-- Работает в режиме "prompt → response", агент не всегда видит всю кодбазу
-- Нет marketplace или расширяемости
-- Ограничен контекстом (зависит от модели, ~128k-200k tokens)
+- No skill system — only one instructions file
+- No built-in tools (read_file, edit_file) like Claude Code
+- Works in "prompt → response" mode, agent does not always see the entire codebase
+- No marketplace or extensibility
+- Limited by context (depends on model, ~128k-200k tokens)

@@ -1,17 +1,17 @@
-# Ловушка: Устаревший стек (Stale Stack)
+# Trap: Stale Stack
 
-## Сценарий
+## Scenario
 
-Агент генерирует код, опираясь на training data, а не на актуальное состояние экосистемы:
+The agent generates code based on training data, not on the actual state of the ecosystem:
 
-- Использует .NET 10 preview, хотя в команде стандарт — только stable SDK
-- Цепляет EF Core 8 в проект на .NET 9, хотя есть EF Core 9
-- Предлагает `Microsoft.Extensions.Caching.Memory` 6.x вместо актуальной 9.x
-- В frontend-части React 17 + class components вместо функциональных + hooks
-- Использует пакеты с флагом `-preview`, `-rc`, `-beta` без явного согласования
+- Uses .NET 10 preview, although the team standard is stable SDK only
+- Pins EF Core 8 in a .NET 9 project, although EF Core 9 is available
+- Suggests `Microsoft.Extensions.Caching.Memory` 6.x instead of the current 9.x
+- In the frontend part: React 17 + class components instead of functional + hooks
+- Uses packages with `-preview`, `-rc`, `-beta` flags without explicit agreement
 
 ```csharp
-// Агент: "Вот пример с .NET 10 Preview 3"
+// Agent: "Here is an example with .NET 10 Preview 3"
 // global.json
 {
   "sdk": {
@@ -20,41 +20,41 @@
   }
 }
 
-// PackageReference — версия из training cutoff
+// PackageReference — version from training cutoff
 <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
 ```
 
-## Последствия
+## Consequences
 
-- Security patches не применяются автоматически (preview-пакеты часто не получают обновлений)
-- Новые фичи платформы недоступны (например, C# 13 features в .NET 9)
-- Лишние транзитивные зависимости из старых пакетов
-- Несовместимость с остальным стеком команды
-- Агент пишет код с устаревшими API, которые уже deprecated
+- Security patches are not applied automatically (preview packages often don't receive updates)
+- New platform features are unavailable (e.g., C# 13 features in .NET 9)
+- Extra transitive dependencies from old packages
+- Incompatibility with the rest of the team's stack
+- The agent writes code with outdated APIs that are already deprecated
 
-## Почему стандартные слои не ловят
+## Why Standard Layers Don't Catch It
 
-| Слой | Почему не ловит |
-|------|-----------------|
-| Компилятор | Код компилируется — preview SDK валиден |
-| Архитектура | NetArchTest не проверяет версии пакетов |
-| Тесты | Юнит-тесты проверяют логику, не манифест |
-| Code Review | Агент-ревьюер тоже опирается на training cutoff |
-| E2E | Приложение работает, но с deprecated dependencies |
+| Layer | Why it doesn't catch |
+|-------|----------------------|
+| Compiler | Code compiles — preview SDK is valid |
+| Architecture | NetArchTest doesn't check package versions |
+| Tests | Unit tests check logic, not the manifest |
+| Code Review | The agent-reviewer also relies on the training cutoff |
+| E2E | Application works, but with deprecated dependencies |
 
-## Решение
+## Solution
 
-1. **VersionAuditTest** — тест сканирует `global.json`, `*.csproj`, `package.json`:
-   - Запрещает `preview`, `rc`, `beta` в `global.json` без явного whitelist
-   - Проверяет что `TargetFramework` совпадает с team standard
-   - Сканирует `PackageReference` на устаревшие мажорные версии
+1. **VersionAuditTest** — test scans `global.json`, `*.csproj`, `package.json`:
+   - Forbids `preview`, `rc`, `beta` in `global.json` without an explicit whitelist
+   - Checks that `TargetFramework` matches the team standard
+   - Scans `PackageReference` for outdated major versions
 
-2. **SKILL.md version-audit** — периодический аудит:
-   - Сравнение `PackageReference` с актуальными версиями через `nuget.org` API или `dotnet list package --outdated`
-   - Проверка что frontend-зависимости не отстают больше чем на 1 мажорную версию
+2. **SKILL.md version-audit** — periodic audit:
+   - Compares `PackageReference` with current versions via `nuget.org` API or `dotnet list package --outdated`
+   - Checks that frontend dependencies don't lag more than 1 major version
 
-3. **AGENTS.md правило** — "Не использовать preview-версии без explicit согласования в PR"
+3. **AGENTS.md rule** — "Do not use preview versions without explicit agreement in PR"
 
-## Паттерн
+## Pattern
 
-См. `tests/patterns/VersionAuditTest.cs` и `templates/skills/version-audit/`
+See `tests/patterns/VersionAuditTest.cs` and `templates/skills/version-audit/`

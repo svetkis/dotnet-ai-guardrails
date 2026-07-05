@@ -1,37 +1,37 @@
-# Release Readiness Audit — Чеклист
+# Release Readiness Audit — Checklist
 
-## Перед началом
-- [ ] Определена дата релиза / бета-запуска
-- [ ] Собраны результаты других аудитов
-- [ ] Известен владелец релиза
+## Before Starting
+- [ ] Release / beta date is defined
+- [ ] Results from other audits are collected
+- [ ] Release owner is known
 
-## P0 Блокеры
-- [ ] Security audit: нет открытых P0
-- [ ] Performance audit: нет открытых P0
-- [ ] DBA/schema audit: нет открытых P0
-- [ ] API design audit: нет открытых P0
-- [ ] Test audit: критичные пути покрыты
+## P0 Blockers
+- [ ] Security audit: no open P0s
+- [ ] Performance audit: no open P0s
+- [ ] DBA / schema audit: no open P0s
+- [ ] API design audit: no open P0s
+- [ ] Test audit: critical paths are covered
 
-## Артефакты релиза
-- [ ] `AGENTS.md` актуален
-- [ ] `docs/DEPLOYMENT.md` существует
-- [ ] CI/CD pipeline настроен
-- [ ] OpenAPI snapshot актуален
-- [ ] Smoke тесты проходят
+## Release Artifacts
+- [ ] Project documentation (`AGENTS.md` or equivalent) is current
+- [ ] Deployment document exists
+- [ ] CI / CD pipeline is configured
+- [ ] API schema snapshot / contract is current
+- [ ] Smoke tests pass
 
-## Runtime guardrails
-- [ ] `/health` endpoint работает
-- [ ] Security headers настроены
-- [ ] Rate limiting включён
-- [ ] Logging не содержит PII
+## Runtime Guardrails
+- [ ] Health / ready endpoint works (if applicable)
+- [ ] Security headers are configured
+- [ ] Rate limiting is enabled (if applicable)
+- [ ] Logging does not contain PII / sensitive data
 
-## Человеческое суждение
-- [ ] Product/UX одобрил edge cases
-- [ ] Support/ops осведомлён о рисках
-- [ ] Есть runbook для критичных сценариев
+## Human Judgment
+- [ ] Product / UX approved edge cases
+- [ ] Support / ops is aware of the risks
+- [ ] Runbook exists for critical scenarios
 
-## Формат отчёта
-- [ ] Статус: READY / CONDITIONAL / NOT READY
-- [ ] P0/P1 список с владельцами и дедлайнами
-- [ ] Таблица артефактов
-- [ ] Рекомендация GO / NO-GO
+## Report Format
+- [ ] Status: READY / CONDITIONAL / NOT READY
+- [ ] P0 / P1 list with owners and deadlines
+- [ ] Artifact table
+- [ ] GO / NO-GO recommendation

@@ -1,29 +1,29 @@
-# TUnit Guide — Почему `dotnet run`, а не `dotnet test`
+# TUnit Guide — Why `dotnet run`, not `dotnet test`
 
-## Проблема (Ловушка)
+## Problem (Trap)
 
-На .NET 10 с TUnit + Microsoft Testing Platform (`MTP`) команда `dotnet test` **молча пропускает тесты** при определённых конфигурациях. Exit code 0, CI зелёный, а проверок не было.
+On .NET 10 with TUnit + Microsoft Testing Platform (`MTP`), the `dotnet test` command **silently skips tests** in some configurations. Exit code 0, CI is green, but no checks ran.
 
-Агент, не зная этого, может:
-- Поменять `csproj` тестового проекта
-- Обновить TUnit версию
-- Добавить новый test project без правильного `<TestingPlatformDotnetTestSupport>`
+An agent unaware of this can:
+- Change the test project's `.csproj`
+- Update the TUnit version
+- Add a new test project without the correct `<TestingPlatformDotnetTestSupport>`
 
-Результат: **код мержится две недели без проверок.**
+Result: **code merges for two weeks without checks.**
 
-## Решение
+## Solution
 
-Всегда запускать через `dotnet run --project`:
+Always run via `dotnet run --project`:
 
 ```bash
-# ✅ Правильно — тесты реально бегут
+# ✅ Correct — tests actually run
 dotnet run --project tests/MyProject.Tests/MyProject.Tests.csproj
 
-# ❌ Опасно — может показать 0 tests ran
+# ❌ Dangerous — may show 0 tests ran
 dotnet test tests/MyProject.Tests/MyProject.Tests.csproj
 ```
 
-## Настройка CI
+## CI Configuration
 
 ```yaml
 - name: Run Tests
@@ -33,7 +33,7 @@ dotnet test tests/MyProject.Tests/MyProject.Tests.csproj
     dotnet run --project tests/IntegrationTests/IntegrationTests.csproj
 ```
 
-## Настройка .csproj
+## .csproj Configuration
 
 ```xml
 <Project Sdk="Microsoft.NET.Sdk">
@@ -57,7 +57,7 @@ dotnet test tests/MyProject.Tests/MyProject.Tests.csproj
 > await TUnitRunner.RunTests();
 > ```
 
-## Основные атрибуты TUnit
+## Core TUnit Attributes
 
 ```csharp
 [Test]
@@ -81,15 +81,15 @@ public async Task Setup() { }
 public async Task Teardown() { }
 ```
 
-## Параллелизм
+## Parallelism
 
-TUnit запускает тесты параллельно по умолчанию. Если нужна изоляция — используй:
+TUnit runs tests in parallel by default. If you need isolation, use:
 
 ```csharp
 [NotInParallel]
 public class MyIsolatedTests { }
 ```
 
-## Правило
+## Rule
 
-> **В этом репозитории и во всех проектах, использующих эти guardrails, `dotnet test` ЗАПРЕЩЁН. Только `dotnet run --project`.**
+> **In this repository and in all projects using these guardrails, `dotnet test` is FORBIDDEN. Only `dotnet run --project`.**

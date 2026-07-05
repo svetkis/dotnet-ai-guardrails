@@ -1,107 +1,110 @@
 ---
 name: memory-hygiene
 description: >
-  Груминг Auto Memory агента. Выявляет дубли, stale-заметки, костыли-в-памяти
-  и противоречия между плоской памятью агента и иерархическими guardrails (AGENTS.md).
+  Grooming of agent's Auto Memory. Detects duplicates, stale notes,
+  workarounds-fossilized-as-rules, and contradictions between flat agent
+  memory and hierarchical guardrails (AGENTS.md).
 ---
+
+> **Repo-internal / for methodology archive.** This skill describes a methodological guardrail inside the `dotnet-ai-guardrails` repository. The methodological core (grooming flat agent memory, deduplication, hierarchical drift) applies to any project, but the concrete memory sources and formats are illustrations, not a universal template.
 
 # Memory Hygiene Agent
 
 ## Context Marker
 
-Когда этот скилл активен, добавь `🧹` к своему STARTER_CHARACTER.
-Пример: `🍀 🧹` = базовые правила + роль Memory Hygiene активна.
-При перечитывании (re-read) добавь `♻️` перед маркером скилла.
+When this skill is active, add 🧹 to your STARTER_CHARACTER stack.
+Example: `🍀 🧹` = base rules + Memory Hygiene role active.
+When re-reading this skill, prepend `♻️` to the skill marker.
 
 
-## Роль
+## Role
 
-Ты — агент груминга Auto Memory. Твоя задача — привести в порядок плоские
-заметки, которые агент накопил о проекте, и устранить дублирование с
-иерархическими guardrails.
+You are a memory grooming agent. Your task is to clean up flat notes
+that the agent has accumulated about the project and eliminate duplication
+with hierarchical guardrails.
 
-## Предпосылки
+## Preconditions
 
-- **Auto Memory** — плоская. Привязана к корню git-репозитория. Не понимает
-  иерархии папок. Агент ведёт её сам.
-- **AGENTS.md** — иерархический. Контекстно-зависимый для каждой папки.
-  Проектируется разработчиком.
-- **Auto Memory ≠ AGENTS.md**. Они ортогональны.
+- **Auto Memory** is flat. Bound to the git repository root. Does not
+  understand folder hierarchy. The agent maintains it automatically.
+- **AGENTS.md** is hierarchical. Context-dependent for each folder.
+  Designed by the developer.
+- **Auto Memory ≠ AGENTS.md**. They are orthogonal.
 
 ## Anti-patterns
 
-| Проблема | Почему плохо |
-|----------|-------------|
-| Дубли AGENTS.md в Auto Memory | Агент тянет устаревую копию вместо актуального guardrail |
-| Архитектурные решения в Auto Memory | Плоская память не различает контекст модулей (Ordering vs Payment) |
-| Противоречащие заметки | Одна сессия запомнила Dapper, другая — EF Core |
-| Stale file references | Агент предлагает изменить файл, которого уже нет |
-| **Workaround fossilization** | Агент запомнил костыль как best practice. Баг пофикшен — костыль остался в памяти |
-| **Cross-project contamination** | Факты из другого репо утекли в память текущего (стек, ORM, конвенции) |
-| **TODO accumulation** | «Consider…», «Need to…» накапливаются месяцами и мешают приоритизации |
-| **One-shot generalization** | Разовое решение на PR обобщено как team preference |
+| Problem | Why it's bad |
+|---------|-------------|
+| Duplicates of AGENTS.md in Auto Memory | Agent pulls outdated copy instead of actual guardrail |
+| Architectural decisions in Auto Memory | Flat memory cannot distinguish module context (Ordering vs Payment) |
+| Contradicting notes | One session remembered Dapper, another — EF Core |
+| Stale file references | Agent suggests modifying a file that no longer exists |
+| **Workaround fossilization** | Agent remembered a workaround as best practice. Bug was fixed — workaround persists in memory |
+| **Cross-project contamination** | Facts from another repo leaked into current project memory (stack, ORM, conventions) |
+| **TODO accumulation** | "Consider…", "Need to…" accumulate for months and interfere with prioritization |
+| **One-shot generalization** | One-off PR decision generalized as team preference |
 
 ## Process
 
 ### Phase 1: Inventory
-1. Найти все источники плоской памяти:
-   - `.claude/CLAUDE.md` (если используется как flat memory)
+1. Find all sources of flat memory:
+   - `.claude/CLAUDE.md` (if used as flat memory)
    - `.kimi/skills/README.md`
    - `.serena/memories/`
-   - Любые `.md` в корне, которые агент использует как контекст
+   - Any `.md` in the root that the agent uses as context
 
 ### Phase 2: Semantic Deduplication
 
-// TRAP: Агенты переформулируют одно и то же, а не копируют verbatim.
-// GUARDRAIL: Группировать по intent, не по verbatim text.
+// TRAP: Agents rephrase rather than copy verbatim.
+// GUARDRAIL: Group by intent, not by verbatim text.
 
-- Keyword-clustering по intent (не string fuzzy-match)
-- Группировка: «используем `.Select()`» и «проекции обязательны» — один intent
-- Флаг: «Эта заметка дублирует `rules/AGENTS_TEMPLATE.md` §3.2 — рекомендуется удалить»
+- Keyword-clustering by intent (not string fuzzy-match)
+- Grouping: "use `.Select()`" and "projections are mandatory" — same intent
+- Flag: "This note duplicates `rules/AGENTS_TEMPLATE.md` §3.2 — recommend deletion"
 
 ### Phase 3: Hierarchical Drift Detection
-- Сравнить Auto Memory с ближайшим `AGENTS.md` для каждого модуля
-- Флаг противоречий: Auto Memory говорит X, но `src/Ordering/AGENTS.md` говорит Y
+- Compare Auto Memory with nearest `AGENTS.md` for each module
+- Flag contradictions: Auto Memory says X, but `src/Ordering/AGENTS.md` says Y
 
 ### Phase 3a: Workaround Audit
 
-// TRAP: Агент применил workaround, запомнил его, баг пофиксили — workaround остался.
-// GUARDRAIL: Каждая рекомендация без ссылки на баг/PR считается подозрительной.
+// TRAP: Agent applied a workaround, memorized it, bug was fixed — workaround persists.
+// GUARDRAIL: Every negative recommendation without a bug/PR reference is suspicious.
 
-- Найти заметки с негативными рекомендациями («избегать…», «не использовать…»)
-- Проверить: есть ли `BUG###_` тест или PR, подтверждающий актуальность?
-- Если source > 30 дней и нет подтверждения — пометить `stale-workaround`
+- Find notes with negative recommendations ("avoid…", "do not use…")
+- Check: is there a `BUG###_` test or PR confirming relevance?
+- If source > 30 days and no confirmation — mark `stale-workaround`
 
 ### Phase 3b: Project Boundary Check
 
-// TRAP: Агент вчера работал с проектом на Dapper, сегодня даёт советы из той памяти.
-// GUARDRAIL: Команды и стек в памяти сверяются с `global.json` / `.csproj` текущего репо.
+// TRAP: Agent worked on a Dapper project yesterday, today gives advice from that memory.
+// GUARDRAIL: Stack and commands in memory are verified against current repo's `global.json` / `.csproj`.
 
-- Сверить упомянутый стек (версия .NET, ORM, фреймворк) с `global.json`
-- Проверить команды сборки/тестирования на соответствие текущему репо
-- Флаг: «Упоминание Dapper в памяти, но в `.csproj` только EF Core — cross-project contamination?»
+- Verify mentioned stack (.NET version, ORM, framework) against `global.json`
+- Check build/test commands match current repo
+- Flag: "Dapper mentioned in memory, but `.csproj` only has EF Core — cross-project contamination?"
 
 ### Phase 4: Stale Reference Cleanup
-- Найти упоминания файлов, типов, namespace'ов, которых больше нет в коде
-- Найти устаревшие команды сборки/запуска
+- Find mentions of files, types, namespaces that no longer exist in code
+- Find outdated build/run commands
 
 ### Phase 4a: Todo Graveyard
 
-// TRAP: Агенты пишут «Consider adding caching», «Need to refactor» и забывают.
-// GUARDRAIL: «Consider/Need to/TODO» без тикета и старше 30 дней — в архив.
+// TRAP: Agents write "Consider adding caching", "Need to refactor" and forget.
+// GUARDRAIL: "Consider/Need to/TODO" without a ticket and older than 30 days — archive.
 
-- Найти все items с «Need to», «Consider», «Should», «TODO», «Eventually»
-- Если есть связанный тикет/PR — оставить, пометить `tracked`
-- Если нет source и > 30 дней — пометить `todo-graveyard`, рекомендовать архивировать
+- Find all items with "Need to", "Consider", "Should", "TODO", "Eventually"
+- If linked ticket/PR exists — keep, mark `tracked`
+- If no source and > 30 days — mark `todo-graveyard`, recommend archive
 
 ### Phase 5: Observation Confidence
 
-// TRAP: Агент увидел одноразовое решение на PR и обобщил его как team preference.
-// GUARDRAIL: Preference без explicit source (PR #, commit, human instruction) — unverified.
+// TRAP: Agent saw a one-off PR decision and generalized it as team preference.
+// GUARDRAIL: Preference without explicit source (PR #, commit, human instruction) — unverified.
 
-- Найти заметки о «предпочтениях команды» (prefers, always, never, convention is)
-- Проверить: есть ли source (PR, commit message, explicit human instruction)?
-- Если source отсутствует или > 60 дней — пометить `unverified-preference`
+- Find notes about "team preferences" (prefers, always, never, convention is)
+- Check: is there a source (PR, commit message, explicit human instruction)?
+- If source is missing or > 60 days old — mark `unverified-preference`
 
 ### Phase 6: Cleanup Recommendations
 
@@ -109,34 +112,33 @@ description: >
 ## Memory Hygiene Report
 
 ### Semantic Duplicates
-- [ ] `memory-07.md` ↔ `memory-12.md` — один intent (проекции), объединить
+- [ ] `memory-07.md` ↔ `memory-12.md` — same intent (projections), merge
 
 ### Hierarchical Drift
-- [ ] `memory-03.md`: «используем EF Core» vs `src/Payment/AGENTS.md`: «Dapper only"
+- [ ] `memory-03.md`: "use EF Core" vs `src/Payment/AGENTS.md`: "Dapper only"
 
 ### Stale Workarounds
-- [ ] `memory-09.md`: «Avoid ExecuteUpdateAsync on Order» — нет BUG###, нет PR, > 45 дней
+- [ ] `memory-09.md`: "Avoid ExecuteUpdateAsync on Order" — no BUG###, no PR, > 45 days
 
 ### Cross-project Contamination
-- [ ] `memory-02.md`: упоминает Dapper, но стек репо — EF Core
+- [ ] `memory-02.md`: mentions Dapper, but repo stack is EF Core
 
-### Stale References
-- [ ] `memory-05.md`: ссылается на удалённый `LegacyPaymentService.cs`
+### Stale Notes
+- [ ] `memory-05.md`: references deleted `LegacyPaymentService.cs`
 
 ### Todo Graveyard
-- [ ] `memory-11.md`: «Consider repository pattern» — нет тикета, 90 дней
+- [ ] `memory-11.md`: "Consider repository pattern" — no ticket, 90 days
 
 ### Unverified Preferences
-- [ ] `memory-04.md`: «Team prefers JSON over MessagePack» — source не найден
+- [ ] `memory-04.md`: "Team prefers JSON over MessagePack" — source not found
 ```
 
 ## Output
 
-- `.backlog/memory-hygiene-{дата}.md`
+- `.backlog/memory-hygiene-{date}.md`
 
-## Ключевое правило
+## Key Rule
 
-> Архитектурные решения живут в `AGENTS.md`. Практические мелочи (команды,
-> конвенции именования) — в Auto Memory. Если в Auto Memory найдено
-> архитектурное правило — перенести в иерархический guardrail и удалить
-> из плоской памяти.
+> Architectural decisions live in `AGENTS.md`. Practical details (commands,
+> naming conventions) — in Auto Memory. If an architectural rule is found
+> in Auto Memory — move it to hierarchical guardrail and delete from flat memory.

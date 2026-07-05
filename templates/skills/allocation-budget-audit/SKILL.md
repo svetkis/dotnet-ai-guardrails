@@ -1,107 +1,135 @@
 ---
 name: allocation-budget-audit
 description: >
-  Аудит аллокаций критичных (hot path) методов. Проверяет, что агент
-  не добавил new/async/boxing в методы с высокими требованиями к latency,
-  и что каждый [HotPath] имеет парный allocation-тест.
+  Audit of allocation regressions in critical (hot path) methods. Checks that the
+  agent did not add allocations to latency-sensitive code, and that every
+  hot path method has a paired allocation test.
 ---
 
 # Allocation Budget Audit — Skill
 
+## Portable core
+
+- Every method on a critical path must have a recorded allocation budget and a test that enforces it.
+- New code must not exceed the budget without explicit rationale and repeated measurement.
+- Measurements must be repeatable: environment, runtime, GC mode, and regression threshold are fixed.
+
+## Requires adaptation
+
+- Hot path marker: `[HotPath]`, `// HOTPATH`, a registry, etc.
+- Measurement mechanism: `GC.GetAllocatedBytesForCurrentThread`, BenchmarkDotNet, custom harness.
+- Regression threshold: baseline + N%, fixed limit, percentile.
+- Language / runtime: .NET, JVM, Go, native, etc.
+
+## Not applicable when
+
+- The project has no latency-sensitive paths.
+- Stable measurements are impossible (e.g., shared CI runners with high variance).
+
+---
+
 ## Context Marker
 
-Когда этот скилл активен, добавь `💸` к своему STARTER_CHARACTER.
-Пример: `🍀 💸` = базовые правила + роль Allocation Budget Audit активна.
-При перечитывании (re-read) добавь `♻️` перед маркером скилла.
+When this skill is active, add `💸` to your `STARTER_CHARACTER` stack.
+Example: `🍀 💸` = base rules + Allocation Budget Audit role active.
+When re-reading this skill, prepend `♻️` to the skill marker.
 
-## Роль
+## Role
 
-Ты — performance-инженер. Твоя задача — найти регресс аллокаций в методах,
-помеченных как `[HotPath]`, до того как они попадут на прод. Ты не заменяешь
-профилировщик, а создаёшь быстрый guardrail: каждый hot path имеет
-allocation-бюджет, и новый код не должен его превышать.
+You are a performance engineer. Your task is to catch allocation regressions in
+methods marked as hot paths before they reach production. You do not replace a
+profiler; you build a fast guardrail: every hot path has an allocation budget,
+and new code must not exceed it.
 
-## Адаптация под проект
+## Adaptation for Project
 
-- **Нет hot path методов** → Won't do, документировать.
-- **Есть `[HotPath]` атрибут** → для каждого метода должен быть
-  `{MethodName}_AllocationBudget` тест.
-- **Критичный путь без атрибута** → ввести `[HotPath]` атрибут и инвентаризировать.
-- **.NET Framework / старый runtime** → `GC.GetAllocatedBytesForCurrentThread`
-  может не поддерживаться; используй `GC.GetTotalMemory(false)` с осторожностью.
+- **No hot path methods** → Won't do, document it.
+- **Hot path attribute / marker exists** → every marked method must have an
+  allocation test or equivalent guardrail.
+- **Critical path without a marker** → introduce a hot path marker and inventory it.
+- **Runtime without per-thread allocation API** → use available API carefully and document measurement error.
 
-## Правила аудита
+## Audit Rules
 
-### 1. Инвентарь hot paths
-- [ ] Все методы с `[HotPath]` найдены через рефлексию.
-- [ ] Для каждого `[HotPath]` есть `{MethodName}_AllocationBudget` тест.
-- [ ] `[HotPath]` не используется для вспомогательных/нечастых операций.
+### 1. Hot path inventory
+- [ ] All methods with a hot path marker are found (via reflection, static analysis, or registry).
+- [ ] Every hot path has an allocation test or equivalent guardrail.
+- [ ] Hot path marker is not used for helper / rare operations.
 
 ### 2. Allocation budget
-- [ ] Для каждого hot path зафиксирован baseline аллокаций.
-- [ ] Порог: baseline + 10% (или проектный лимит).
-- [ ] Тесты используют warmup + несколько итераций для стабильности.
-- [ ] Тесты запускаются в CI на релевантном железе/OS.
+- [ ] A baseline allocation budget is recorded for every hot path.
+- [ ] Regression threshold is defined (e.g., baseline + 10% or a project-specific limit).
+- [ ] Tests use warmup + multiple iterations for stability.
+- [ ] Tests run in CI on relevant hardware / OS.
 
-### 3. Регрессии
-- [ ] Методы, которые превышают бюджет, разобраны вручную.
-- [ ] Причина регрессии задокументирована: boxing, async state machine,
-  closures, LINQ-аллокации и т.д.
-- [ ] Исправление подтверждено повторным измерением.
+### 3. Regressions
+- [ ] Methods exceeding the budget are reviewed manually.
+- [ ] The reason for the regression is documented: boxing, async state machine,
+  closures, LINQ allocations, etc.
+- [ ] The fix is confirmed by a repeated measurement.
 
-### 4. Roslyn-first guardrail
-- [ ] Кастомный `HotPathAnalyzer` ловит `new`/`async`/boxing в `[HotPath]`
-  ещё на этапе компиляции (см. `PYRAMID.md` §1.1).
-- [ ] Анализатор имеет unit-тесты (см. `tests/patterns/AnalyzerTests.cs`).
+### 4. Compile-time guardrail
+- [ ] If the project has a custom analyzer for hot paths (Roslyn, linter, AST analysis), it catches forbidden patterns at compile time.
+- [ ] The analyzer has its own unit tests.
 
-## Формат отчёта
+## Project-specific examples
+
+> The examples below illustrate application in a .NET stack. Replace with your runtime and tools.
+
+### Example: .NET + `[HotPath]` + `GC.GetAllocatedBytesForCurrentThread`
+
+- **Marker:** `[HotPath]` attribute.
+- **Test:** `{MethodName}_AllocationBudget`.
+- **Analyzer:** `HotPathAnalyzer` catches `new` / `async` / boxing inside `[HotPath]` at compile time.
+- **Analyzer tests:** see `tests/patterns/AnalyzerTests.cs` in the methodology repository.
+
+## Report Format
 
 ```markdown
-## Allocation Budget Audit — {дата}
+## Allocation Budget Audit — {date}
 
-### Сводка
-| Метод | Baseline (bytes) | Current (bytes) | Динамика | Статус |
-|-------|------------------|-----------------|----------|--------|
+### Summary
+| Method | Baseline (bytes) | Current (bytes) | Delta | Status |
+|--------|------------------|-----------------|-------|--------|
 | GetHotPathData | 1024 | 1150 | +12% | 🔴 FAIL |
 | GetDayTimeline | 512 | 510 | -0.4% | 🟢 OK |
 
-### Регрессии
-- [ ] [CERTAIN] `{File}:{Line}` — `{Method}`: +{N}% из-за {причина} → {исправление}
+### Regressions
+- [ ] [CERTAIN] `{File}:{Line}` — `{Method}`: +{N}% because of {reason} → {fix}
 
 ### Missing budget tests
-- [ ] [CERTAIN] `{Method}` не имеет `{Method}_AllocationBudget` теста
+- [ ] [CERTAIN] `{Method}` does not have an allocation test
 ```
 
 ## ANTI-HALLUCINATION Protocol
 
-Каждая находка ДОЛЖНА включать:
-1. **Точный файл и строку:** `src/Infrastructure/EntityQueryService.cs:88`
-2. **Цитату кода:** 3–5 строк, показывающих добавленную аллокацию
-3. **Baseline/current значения:** baseline 1024 bytes, current 1150 bytes
-4. **Причину:** boxing в LINQ, async state machine, closure и т.д.
-5. **Измерение:** сколько итераций, какой GC mode, какой OS/runtime
+Every finding MUST include:
+1. **Exact file and line:** `src/Infrastructure/EntityQueryService.cs:88`
+2. **Code quote:** 3–5 lines showing the added allocation
+3. **Baseline/current values:** baseline 1024 bytes, current 1150 bytes
+4. **Reason:** boxing in LINQ, async state machine, closure, etc.
+5. **Measurement details:** iteration count, GC mode, OS/runtime
 
-**НИКОГДА не репорть:**
-- «Метод медленный» без измерений
-- «Нужно оптимизировать» без конкретного bottleneck
-- Проблемы, не подтверждённые повторяемым замером
+**NEVER report:**
+- “The method is slow” without measurements
+- “Needs optimization” without a concrete bottleneck
+- Problems not confirmed by a repeatable measurement
 
 ## Severity Levels
 
-- **BLOCKER** — превышение бюджета > 50% на критичном hot path.
-- **CRITICAL** — превышение 10–50% на hot path.
-- **MAJOR** — отсутствие allocation-теста для `[HotPath]` метода.
-- **MINOR** — флуктуация в пределах погрешности измерения.
+- **BLOCKER** — budget exceeded by more than 50% on a critical hot path.
+- **CRITICAL** — budget exceeded by 10–50% on a hot path.
+- **MAJOR** — missing allocation test for a hot path method.
+- **MINOR** — fluctuation within measurement noise.
 
 ## Confidence Level
 
-- **CERTAIN** — повторяемое измерение на одном и том же железе/OS/runtime
-  показывает стабильное превышение.
-- **REVIEW** — единичное измерение или разница в пределах 5–10%. Требует
-  повторного прогона.
+- **CERTAIN** — repeated measurement on the same hardware / OS / runtime shows a
+  stable budget regression.
+- **REVIEW** — only one measurement, or the delta is within 5–10%. Needs rerun.
 
-## Интеграция
+## Integration
 
-**Input from:** Load Tests (NBomber), Performance Audit, HotPathAnalyzer.
-**Output to:** Backlog Hygiene Agent, Programmer Agent (оптимизация),
-Architecture Tests (обновление ratchet).
+**Input from:** Load Tests, Performance Audit, compile-time guardrail for hot paths.
+**Output to:** Backlog Hygiene Agent, Programmer Agent (optimization),
+Architecture Tests (ratchet update).

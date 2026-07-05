@@ -1,34 +1,27 @@
 # Security Audit Checklist
 
 ## Pre-flight
-- [ ] Получен diff изменений
-- [ ] Известен scope (какие endpoint'ы затронуты)
+- [ ] Diff obtained
+- [ ] Scope known (which endpoints are affected)
 
 ## Data Exposure
-- [ ] Логи: нет PII (email, телефоны, имена), токенов, connection strings
-- [ ] API ответы: нет лишних полей (проверить через OpenAPI diff)
-- [ ] Exception messages: нет SQL, нет путей файловой системы
+- [ ] Logs: no PII, tokens, connection strings
+- [ ] API responses: no extra fields (check via OpenAPI diff)
+- [ ] Exception messages: no SQL, no file system paths
 
 ## AuthZ
-- [ ] Для Minimal API: `.RequireAuthorization()` или кастомная защита на чувствительных endpoints
-- [ ] Для MVC / Razor Pages: `[Authorize]` / `[AllowAnonymous]` на контроллерах/страницах
-- [ ] Публичные endpoints (webhook, health) имеют альтернативную защиту (secret, IP whitelist)
-- [ ] Проверка ownership на write-операциях
-- [ ] Нет bypass'а через параметры запроса
-
-## Cross-Layer Invariants
-- [ ] `UserId` / `OwnerId` / `ActorId` / `ContextId` разрешаются одинаково на UI → API → domain → job
-- [ ] Нет IDOR через разницу между идентификатором из запроса и идентификатором из токена/контекста
-- [ ] Публичные endpoints / webhooks не пробрасывают identity в обход authZ
-- [ ] Write-операции верифицируют права в домене, а не только в middleware/API
-- [ ] Каждая находка оценена на вопрос: «что пойдёт тихо не так для реального пользователя?»
+- [ ] For Minimal API: `.RequireAuthorization()` or custom protection on sensitive endpoints
+- [ ] For MVC / Razor Pages: `[Authorize]` / `[AllowAnonymous]` on controllers/pages
+- [ ] Public endpoints (webhook, health) have alternative protection (secret, IP whitelist)
+- [ ] Ownership check on write operations
+- [ ] No bypass via request parameters
 
 ## Input Validation
-- [ ] DTO имеют `[Required]`, `[MaxLength]`, `[Range]` где нужно
-- [ ] Raw SQL параметризован
-- [ ] Нет интерполяции/конкатенации user input в Raw SQL без параметризации (LINQ параметризован по умолчанию)
+- [ ] DTOs have `[Required]`, `[MaxLength]`, `[Range]` where needed
+- [ ] Raw SQL is parameterized
+- [ ] No direct use of `user input` in LINQ without validation
 
 ## Infrastructure
-- [ ] Новые env vars добавлены в `docs/DEPLOYMENT.md`
-- [ ] Секреты не захардкожены
-- [ ] HTTPS-only в production конфигурации
+- [ ] New env vars added to `docs/DEPLOYMENT.md`
+- [ ] Secrets not hardcoded
+- [ ] HTTPS-only in production configuration

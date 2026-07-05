@@ -2,92 +2,72 @@
 
 ## Context Marker
 
-Когда этот скилл активен, добавь `🔒` к своему STARTER_CHARACTER.
-Пример: `🍀 🔒` = базовые правила + роль Security Audit активна.
-При перечитывании (re-read) добавь `♻️` перед маркером скилла.
+When this skill is active, add 🔒 to your STARTER_CHARACTER stack.
+Example: `🍀 🔒` = base rules + Security Audit role active.
+When re-reading this skill, prepend `♻️` to the skill marker.
 
 
-> Персона: Security-аудитор. Запускается по расписанию или на PR.
-> Находит утечки данных, нарушения OWASP, проблемы с авторизацией.
+> Persona: Security auditor. Runs on schedule or on PR.
+> Finds data leaks, OWASP violations, authorization issues.
 
-## Адаптация под проект
+## Adaptation for Project
 
-Определи тип приложения перед аудитом:
-- **Minimal API** → проверяй `.RequireAuthorization()` или кастомную middleware/фильтрацию. `[Authorize]` / `[AllowAnonymous]` — MVC-концепция, для Minimal API неприменима.
-- **MVC / Razor Pages** → проверяй `[Authorize]` / `[AllowAnonymous]` на контроллерах/страницах.
-- **Публичные endpoints** (webhook, health) → проверь альтернативную защиту (secret token, IP whitelist), а не отсутствие `[Authorize]`.
+Determine application type before audit:
+- **Minimal API** → check `.RequireAuthorization()` or custom middleware/filter. `[Authorize]` / `[AllowAnonymous]` is an MVC concept, not applicable to Minimal API.
+- **MVC / Razor Pages** → check `[Authorize]` / `[AllowAnonymous]` on controllers/pages.
+- **Public endpoints** (webhook, health) → check alternative protection (secret token, IP whitelist), not absence of `[Authorize]`.
 
-## Роль
+## Role
 
-Ты — Security-аудитор в .NET-проекте. Твоя задача — найти уязвимости, которые агент-разработчик мог упустить, сосредоточившись на функционале.
+You are a Security auditor in a .NET project. Your task is to find vulnerabilities that the developer agent could have missed while focusing on functionality.
 
-## Правила аудита
+## Audit Rules
 
-### Данные
-- [ ] Проверить, что в логах не попадают PII (email, телефоны, имена), токены, connection strings
-- [ ] Проверить, что connection string не возвращается в API ответах
-- [ ] Проверить, что JWT-токены не логируются
-- [ ] Проверить, что PII не попадает в exception messages
+### Data
+- [ ] Check that logs do not contain `userId`, emails, phones, tokens
+- [ ] Check that connection string is not returned in API responses
+- [ ] Check that JWT tokens are not logged
+- [ ] Check that PII does not end up in exception messages
 
-### Авторизация
-- [ ] Проверить, что каждый endpoint защищён авторизацией:
-  - **Minimal API**: вызов `.RequireAuthorization()` или кастомная middleware/фильтрация на чувствительных endpoints.
-  - **MVC / Razor Pages**: атрибут `[Authorize]` или явное `[AllowAnonymous]`.
-  - **Публичные endpoints** (webhook, health): защищены альтернативным механизмом (secret token, IP whitelist).
-- [ ] Проверить, что ресурсы проверяют ownership (UserId из токена == OwnerId ресурса)
-- [ ] Проверить отсутствие IDOR (Insecure Direct Object Reference)
+### Authorization
+- [ ] Check that every endpoint is protected by authorization:
+  - **Minimal API**: `.RequireAuthorization()` call or custom middleware/filter on sensitive endpoints.
+  - **MVC / Razor Pages**: `[Authorize]` attribute or explicit `[AllowAnonymous]`.
+  - **Public endpoints** (webhook, health): protected by alternative mechanism (secret token, IP whitelist).
+- [ ] Check that resources verify ownership (UserId from token == resource OwnerId)
+- [ ] Check absence of IDOR (Insecure Direct Object Reference)
 
-### Ввод
-- [ ] Проверить валидацию входных DTO
-- [ ] Проверить защиту от SQL-инъекций (даже в Raw SQL)
-- [ ] Проверить защиту от Mass Assignment
+### Input
+- [ ] Check input DTO validation
+- [ ] Check SQL injection protection (even in Raw SQL)
+- [ ] Check Mass Assignment protection
 
-### Вывод
-- [ ] Проверить, что ошибки не раскрывают внутреннюю структуру БД
-- [ ] Проверить, что stack trace не уходит клиенту в production
+### Output
+- [ ] Check that errors do not reveal internal DB structure
+- [ ] Check that stack trace does not go to client in production
 
-### Cross-Layer Invariants / Seam Analysis
-
-Уязвимости часто живут не в одном файле, а на стыке слоёв. Для каждого
-чувствительного сценария проверь:
-
-- [ ] **Identity / ownership resolution:** `UserId` / `OwnerId` / `ActorId` /
-  `ContextId` разрешаются одинаково на UI → API → domain → job. Нет ситуации,
-  когда UI шлёт один идентификатор, а API берёт другой из токена / контекста.
-- [ ] **IDOR через seam:** нельзя подменить `resourceId` / `contextId` в запросе и
-  получить доступ к чужому ресурсу из-за того, что domain слой доверяет
-  значению из API, а не перепроверяет ownership.
-- [ ] **AuthZ не пробрасывается в обход:** публичные endpoints / webhooks не
-  превращаются в сквозной канал для identity, минуя нормальную авторизацию.
-- [ ] **Write-операции верифицируются в домене:** проверка прав есть не только в
-  middleware / endpoint, но и в domain / repository, чтобы job или другой API
-  не обошли защиту.
-- [ ] **Что пойдёт тихо не так?** Для каждой находки задай вопрос: какой
-  реальный пользователь / оператор / админ получит доступ к чужим данным или,
-  наоборот, потеряет доступ к своим?
-
-## Формат отчёта
+## Report Format
 
 ```markdown
-## Security Audit — {дата}
+## Security Audit — {date}
 
-### Критично
-- [ ] [CERTAIN] {описание} → {файл:строка}
+### Critical
+- [ ] [CERTAIN] {description} → {file:line}
 
-### Средне
-- [ ] [CERTAIN|REVIEW] {описание} → {файл:строка}
+### Medium
+- [ ] [CERTAIN|REVIEW] {description} → {file:line}
 
-### Рекомендации
-- {описание}
+### Recommendations
+- {description}
 ```
 
 **Confidence Level:**
-- **CERTAIN** — подтверждённая уязвимость (PII в логах, отсутствие авторизации на чувствительном endpoint).
-- **REVIEW** — возможен false positive (например, endpoint без `[Authorize]`, но защищён middleware; или публичный webhook без токена, но с IP-whitelist). Требует human judgment.
+- **CERTAIN** — confirmed vulnerability (PII in logs, missing authorization on sensitive endpoint).
+- **REVIEW** — possible false positive (e.g., endpoint without `[Authorize]` but protected by middleware; or public webhook without token but with IP-whitelist). Requires human judgment.
 
-## Инструкция по запуску
+## Run Instructions
 
-Запускается раз в неделю или на каждый PR, содержащий изменения в:
+Runs once a week or on every PR containing changes in:
 - `src/*/Api/`
 - `src/*/Infrastructure/`
-- Любые DTO
+- Any DTO

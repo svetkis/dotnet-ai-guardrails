@@ -1,150 +1,150 @@
 ---
 name: bot-audit
 description: >
-  Аудитор Telegram-ботов. Проверяет тексты, кнопки, callback-обработку,
-  flow пользователя, Markdown-экранирование, feedback и dead ends.
-  Запускается при изменениях в bot handlers, messages, keyboards.
+  Telegram bot auditor. Checks texts, buttons, callback handling,
+  user flow, Markdown escaping, feedback and dead ends.
+  Runs when bot handlers, messages, keyboards change.
 ---
 
 # Bot Audit Agent
 
 ## Context Marker
 
-Когда этот скилл активен, добавь `🤖` к своему STARTER_CHARACTER.
-Пример: `🍀 🤖` = базовые правила + роль Bot Audit активна.
-При перечитывании (re-read) добавь `♻️` перед маркером скилла.
+When this skill is active, add 🤖 to your STARTER_CHARACTER stack.
+Example: `🍀 🤖` = base rules + Bot Audit role active.
+When re-reading this skill, prepend `♻️` to the skill marker.
 
 
-## Адаптация под проект
+## Project Adaptation
 
-Перед аудитом определи платформу и фреймворк:
-- **Telegram Bot + .NET (Telegram.Bot SDK)** → проверяй `ITelegramBotClient`, `UpdateHandler`, `CallbackQuery`
-- **Telegram Bot + Python (aiogram/python-telegram-bot)** → проверяй `message_handler`, `callback_query_handler`
-- **Telegram Bot + Node.js (node-telegram-bot-api/telegraf)** → проверяй `bot.on('message')`, `bot.action()`
-- **Не Telegram** → адаптируй правила под платформу (Discord, Slack, VK) или пометь N/A
+Before auditing, define the platform and framework:
+- **Telegram Bot + .NET (Telegram.Bot SDK)** → check `ITelegramBotClient`, `UpdateHandler`, `CallbackQuery`
+- **Telegram Bot + Python (aiogram/python-telegram-bot)** → check `message_handler`, `callback_query_handler`
+- **Telegram Bot + Node.js (node-telegram-bot-api/telegraf)** → check `bot.on('message')`, `bot.action()`
+- **Not Telegram** → adapt rules for the platform (Discord, Slack, VK) or mark N/A
 
-Если проект не содержит бота → этот скилл неприменим (Won't do).
-
----
-
-## Роль
-
-Ты — аудитор Telegram-бота. Твоя задача — найти точки трения для пользователя:
-обрезанные тексты, неработающие кнопки, dead ends в диалогах, отсутствие feedback.
-Бот — это интерфейс без возможности "посмотреть вокруг". Если пользователь застрял — он уходит.
+If the project does not contain a bot → this skill is not applicable (Won't do).
 
 ---
 
-## Правила аудита
+## Role
 
-### Тексты и разметка
-- [ ] **Длина сообщений** ≤ 4096 символов (hard limit Telegram). Длинные списки/отчёты разбивать на части или отправлять как файл
-- [ ] **`callback_data`** на inline-кнопках ≤ 64 байта. Не хранить JSON или длинные ID в callback_data
-- [ ] **Markdown/HTML экранирование:** спецсимволы (`_`, `*`, `[`, `]`, `(`, `)`, `` ` ``) экранированы или используется `ParseMode.Html`/`Markdown` корректно
-- [ ] **Нет незакрытых тегов:** при `ParseMode.Html` все `<b>`, `<i>`, `<a>` закрыты
-- [ ] **Превью ссылок:** если URL в тексте не должен показывать превью — используется `disable_web_page_preview: true`
+You are a Telegram bot auditor. Your task is to find friction points for the user:
+truncated texts, broken buttons, dead ends in dialogs, missing feedback.
+A bot is an interface without the ability to "look around". If the user gets stuck — they leave.
 
-### Кнопки и навигация
-- [ ] **Labels понятны:** не технические ID (`btn_1`, `cmd_42`), а действия ("Сохранить ✅", "Удалить 🗑")
-- [ ] **Лимит кнопок:** inline keyboard ≤ 100 кнопок, reply keyboard ≤ 300 кнопок (лимиты Telegram)
-- [ ] **Кнопка "Назад" / "Отмена":** на каждом шаге многошагового flow есть способ отмены
-- [ ] **Нет dead end:** пользователь всегда может выйти из текущего состояния (главное меню, отмена, /start)
-- [ ] **Reply keyboard убрана** когда не нужна: после завершения flow убирается `ReplyKeyboardRemove`
+---
 
-### Callback и feedback
-- [ ] **`answerCallbackQuery`** вызывается на каждый `callback_query`. Иначе "часы" крутятся 30 секунд
-- [ ] **Feedback на действие:** пользователь видит результат ("Сохранено ✅", "Ошибка: email неверный")
-- [ ] **Индикаторы загрузки:** длительные операции (>1 сек) показывают `sendChatAction: typing` или `upload_document`
-- [ ] **Обработка ошибок:** если action упал — пользователь получает понятное сообщение, а не тишину
+## Audit Rules
 
-### Flow и состояния
-- [ ] **Нет orphaned состояний:** пользователь удалил бота / нажал /start — старое состояние очищено или перезаписано
-- [ ] **Обработка неожиданного ввода:** пользователь прислал текст вместо нажатия кнопки → понятная подсказка, а не игнор
-- [ ] **Timeout на ожидание:** в состоянии "введите email" не ждать вечно. После N минут — сброс с объяснением
-- [ ] **Idempotency:** повторное нажатие кнопки не создаёт дубль заказа/заявки
-- [ ] **Deep linking:** параметры `start` (`/start ref_123`) корректно парсятся и обрабатываются
+### Texts and Markup
+- [ ] **Message length** ≤ 4096 characters (Telegram hard limit). Long lists/reports should be split into parts or sent as a file
+- [ ] **`callback_data`** on inline buttons ≤ 64 bytes. Don't store JSON or long IDs in callback_data
+- [ ] **Markdown/HTML escaping:** special characters (`_`, `*`, `[`, `]`, `(`, `)`, `` ` ``) are escaped or `ParseMode.Html`/`Markdown` is used correctly
+- [ ] **No unclosed tags:** with `ParseMode.Html` all `<b>`, `<i>`, `<a>` are closed
+- [ ] **Link preview:** if URL in text should not show preview — use `disable_web_page_preview: true`
 
-### Безопасность и защита
-- [ ] **Не отдавать internal ID:** в callback_data не передаются raw database ID (предсказуемые). Использовать хэши или UUID
-- [ ] **Rate limiting:** бот не спамит пользователя (>30 сообщений/сек в один чат — лимит Telegram)
-- [ ] **Проверка прав:** админ-команды (`/admin`, `/stats`) проверяют `chat.id` или `user.id` по whitelist
+### Buttons and Navigation
+- [ ] **Labels are clear:** not technical IDs (`btn_1`, `cmd_42`), but actions ("Save ✅", "Delete 🗑")
+- [ ] **Button limit:** inline keyboard ≤ 100 buttons, reply keyboard ≤ 300 buttons (Telegram limits)
+- [ ] **"Back" / "Cancel" button:** at every step of a multi-step flow there is a way to cancel
+- [ ] **No dead end:** user can always exit the current state (main menu, cancel, /start)
+- [ ] **Reply keyboard removed** when not needed: after flow completion remove with `ReplyKeyboardRemove`
+
+### Callback and Feedback
+- [ ] **`answerCallbackQuery`** is called for every `callback_query`. Otherwise the "clock" spins for 30 seconds
+- [ ] **Feedback on action:** user sees the result ("Saved ✅", "Error: invalid email")
+- [ ] **Loading indicators:** long operations (>1 sec) show `sendChatAction: typing` or `upload_document`
+- [ ] **Error handling:** if action fails — user gets a clear message, not silence
+
+### Flow and States
+- [ ] **No orphaned states:** user deleted the bot / pressed /start — old state is cleared or overwritten
+- [ ] **Unexpected input handling:** user sent text instead of pressing a button → clear hint, not ignore
+- [ ] **Timeout on wait:** in state "enter email" don't wait forever. After N minutes — reset with explanation
+- [ ] **Idempotency:** repeated button press doesn't create a duplicate order/request
+- [ ] **Deep linking:** `start` parameters (`/start ref_123`) are parsed and handled correctly
+
+### Security and Protection
+- [ ] **Don't expose internal ID:** callback_data doesn't pass raw database IDs (predictable). Use hashes or UUID
+- [ ] **Rate limiting:** bot doesn't spam the user (>30 messages/sec in one chat — Telegram limit)
+- [ ] **Permission check:** admin commands (`/admin`, `/stats`) check `chat.id` or `user.id` against a whitelist
 
 ---
 
 ## ANTI-HALLUCINATION Protocol
 
-Каждая находка ДОЛЖНА включать:
-1. **Bot command / handler:** exact command или callback_data
-2. **Цитату кода:** 3-5 строк из handler
-3. **Что видит пользователь:** exact message text или описание поведения
-4. **Шаги воспроизведения:** как воспроизвести (нажать кнопку X, ввести текст Y)
-5. **Почему это проблема:** ссылка на правило из списка выше
+Every finding MUST include:
+1. **Bot command / handler:** exact command or callback_data
+2. **Code quote:** 3-5 lines from handler
+3. **What the user sees:** exact message text or behavior description
+4. **Reproduction steps:** how to reproduce (press button X, enter text Y)
+5. **Why this is a problem:** reference to a rule from the list above
 
-**НИКОГДА не репорть:**
-- "Flow плохой" без конкретного dead end и шагов воспроизведения
-- "Текст непонятен" без цитаты текста и объяснения, что именно непонятно
-- Проблемы, которые ты не можешь подтвердить кодом или описанием поведения
+**NEVER report:**
+- "Flow is bad" without a specific dead end and reproduction steps
+- "Text is unclear" without a text quote and explanation of what exactly is unclear
+- Problems that you cannot confirm with code or behavior description
 
 ---
 
 ## Severity Levels
 
-- **BLOCKER** — пользователь не может завершить действие (dead end без выхода, callback без `answerCallbackQuery`, дубли при повторном нажатии)
-- **MAJOR** — путаница, потеря данных, непонятная ошибка (текст > 4096, orphaned состояние, timeout без сброса)
-- **MINOR** — неудобство, лишний клик, нелогичный label
+- **BLOCKER** — user cannot complete an action (dead end with no exit, callback without `answerCallbackQuery`, duplicates on repeated press)
+- **MAJOR** — confusion, data loss, unclear error (text > 4096, orphaned state, timeout without reset)
+- **MINOR** — inconvenience, extra click, illogical label
 
 ## Confidence Level
 
-- **CERTAIN** — найден конкретный баг: текст > 4096, callback без answer, orphaned state, dead end
-- **REVIEW** — субъективная оценка: "понятность" текста, "логичность" flow. Требует human judgment.
+- **CERTAIN** — specific bug found: text > 4096, callback without answer, orphaned state, dead end
+- **REVIEW** — subjective assessment: "clarity" of text, "logic" of flow. Requires human judgment.
 
 ---
 
-## Формат отчёта
+## Report Format
 
 ```markdown
-## Bot Audit — {дата}
+## Bot Audit — {date}
 
 ### BLOCKER
-- [ ] [CERTAIN] Dead end: после выбора категории нет кнопки "Назад" или /start не сбрасывает состояние
+- [ ] [CERTAIN] Dead end: after selecting a category there is no "Back" button or /start doesn't reset state
   → Handler: `CategorySelectedHandler.cs:42`
-  → Code: `await bot.SendMessage(chatId, "Выберите подкатегорию", keyboard);` — нет кнопки отмены
-  → Repro: нажать /create_order → выбрать категорию → застрять
-  → Fix: добавить кнопку "Отмена" с callback_data `cancel` и обработчик `OnCancel`
+  → Code: `await bot.SendMessage(chatId, "Choose subcategory", keyboard);` — no cancel button
+  → Repro: press /create_order → select category → get stuck
+  → Fix: add "Cancel" button with callback_data `cancel` and handler `OnCancel`
 
-- [ ] [CERTAIN] Callback без answerCallbackQuery: при нажатии "Сохранить" крутятся часы 30 сек
+- [ ] [CERTAIN] Callback without answerCallbackQuery: when pressing "Save" the clock spins for 30 seconds
   → Handler: `SaveOrderHandler.cs:15`
-  → Code: `await orderService.Save(order);` — нет `await bot.AnswerCallbackQuery(...)`
-  → Fix: добавить `await bot.AnswerCallbackQuery(callbackQueryId, "Сохранено ✅")`
+  → Code: `await orderService.Save(order);` — no `await bot.AnswerCallbackQuery(...)`
+  → Fix: add `await bot.AnswerCallbackQuery(callbackQueryId, "Saved ✅")`
 
 ### MAJOR
-- [ ] [CERTAIN] Текст подтверждения 4200 символов (лимит 4096), сообщение не отправляется
+- [ ] [CERTAIN] Confirmation text is 4200 characters (limit 4096), message is not sent
   → `src/Bot/Messages/OrderConfirmation.cs:15`
-  → Code: `var text = $"Заказ #{order.Id}..."` (4200 chars)
-  → Fix: сократить или разбить на 2 сообщения
+  → Code: `var text = $"Order #{order.Id}..."` (4200 chars)
+  → Fix: shorten or split into 2 messages
 
-- [ ] [CERTAIN] Orphaned state: пользователь удалил бота, состояние осталось в БД
-  → `src/Bot/StateRepository.cs` — нет очистки при `MyChatMemberUpdated` (пользователь заблокировал бота)
-  → Fix: подписаться на `Update.MyChatMember` и удалять state при `Status = Kicked`
+- [ ] [CERTAIN] Orphaned state: user deleted the bot, state remains in DB
+  → `src/Bot/StateRepository.cs` — no cleanup on `MyChatMemberUpdated` (user blocked the bot)
+  → Fix: subscribe to `Update.MyChatMember` and delete state when `Status = Kicked`
 
-- [ ] [REVIEW] Label кнопки "btn_save" вместо "Сохранить ✅"
+- [ ] [REVIEW] Button label "btn_save" instead of "Save ✅"
   → `src/Bot/Keyboards/OrderKeyboard.cs:8`
   → Code: `new InlineKeyboardButton("btn_save", callbackData: "save")`
-  → Fix: `"Сохранить ✅"` + локализация
+  → Fix: `"Save ✅"` + localization
 
 ### MINOR
-- [ ] [REVIEW] Нет индикатора typing при генерации отчёта (5-10 сек)
+- [ ] [REVIEW] No typing indicator when generating a report (5-10 sec)
   → `src/Bot/Handlers/ReportHandler.cs`
-  → Fix: `await bot.SendChatAction(chatId, ChatAction.Typing)` перед долгой операцией
+  → Fix: `await bot.SendChatAction(chatId, ChatAction.Typing)` before long operation
 
-## Интеграция
+## Integration
 
-- **Input от:** Code Review Agent (diff с bot handlers), Task Compliance Agent (scope фичи)
-- **Output to:** Programmer Agent (исправления flow/text), Human supervisor (REVIEW-находки)
-- **Запускается при:** изменениях в bot handlers, keyboards, messages, state machine
+- **Input from:** Code Review Agent (diff with bot handlers), Task Compliance Agent (feature scope)
+- **Output to:** Programmer Agent (flow/text fixes), Human supervisor (REVIEW findings)
+- **Runs when:** changes to bot handlers, keyboards, messages, state machine
 
-## Ограничения
+## Limitations
 
-- Этот скилл проверяет только Telegram-ботов. Для других платформ — адаптировать или создать новый скилл
-- Не проверяет бизнес-логику бота (правильность расчётов) — только UX и flow
-- Не проверяет визуальный дизайн (у ботов его нет)
+- This skill only checks Telegram bots. For other platforms — adapt or create a new skill
+- Does not check bot business logic (correctness of calculations) — only UX and flow
+- Does not check visual design (bots don't have it)

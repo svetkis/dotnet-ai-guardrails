@@ -1,130 +1,130 @@
 # Bootstrap Protocol — Agent Mode Boundary
 
-> **Назначение:** Предотвратить ситуацию, когда агент, получив контекст `dotnet-ai-guardrails`, начинает создавать `DemoProject` в целевом репо.
-> **Аудитория:** AI-агент (Kimi / Claude / Codex / OpenCode).
+> **Purpose:** Prevent situations where an agent, having received context from `dotnet-ai-guardrails`, starts creating a `DemoProject` in the target repo.
+> **Audience:** AI agent (Kimi / Claude / Codex / OpenCode).
 
 ---
 
-## 1. Два режима — выбери свой
+## 1. Two Modes — Pick Yours
 
-Когда ты видишь файлы из `dotnet-ai-guardrails`, определи режим **ДО** любых действий.
+When you see files from `dotnet-ai-guardrails`, determine the mode **BEFORE** any actions.
 
 ```
-Если путь текущей директории содержит "dotnet-ai-guardrails":
-    → РЕЖИМ ИСТОЧНИК (Source Mode)
-Иначе если в текущей директории есть .sln или .csproj:
-    → РЕЖИМ ЦЕЛЬ (Target Mode)
-Иначе:
-    → СПРОСИ пользователя: "Укажите путь к .NET-проекту для оценки."
+If the current directory path contains "dotnet-ai-guardrails":
+    → SOURCE MODE
+Else if there is a .sln or .csproj in the current directory:
+    → TARGET MODE
+Else:
+    → ASK the user: "Please provide the path to the .NET project to assess."
 ```
 
-### РЕЖИМ ИСТОЧНИК (Source Mode)
-- Ты внутри репозитория методологии.
-- Твоя задача: **читать артефакты**, объяснять их пользователю, помогать адаптировать.
-- **ЗАПРЕЩЕНО:** модифицировать этот репо без явной просьбы.
-- **ЗАПРЕЩЕНО:** копировать структуру `examples/`, `templates/skills/`, `tests/` куда-либо.
+### SOURCE MODE
+- You are inside the methodology repository.
+- Your task: **read artifacts**, explain them to the user, help adapt.
+- **FORBIDDEN:** modify this repo without explicit request.
+- **FORBIDDEN:** copy the structure of `examples/`, `templates/skills/`, `tests/` anywhere.
 
-### РЕЖИМ ЦЕЛЬ (Target Mode)
-- Ты внутри чужого .NET-проекта.
-- Твоя задача: **оценить кодбазу** и выдать план внедрения guardrails.
-- **ЗАПРЕЩЕНО:** создавать `examples/`, `DemoProject/`, `DemoProject.Traps/`, `DemoProject.MinimalApi/`, новые `.sln`/`.csproj`.
-- **ЗАПРЕЩЕНО:** писать код "для демонстрации" или "как пример".
-- **РАЗРЕШЕНО:** генерировать `.md` отчёты, чеклисты, `AGENTS.md`, `CONVENTIONS.md`.
-
----
-
-## 2. Почему агенты ломаются
-
-| Ловушка | Что видит агент | Что делает неправильно | Правильное поведение |
-|---------|----------------|------------------------|----------------------|
-| `examples/DemoProject.sln` | Полноценный .NET проект с тестами | "Нужно создать такой же проект для пользователя" | Это ДЕМОНСТРАЦИЯ методологии, не шаблон для копирования |
-| `tests/patterns/ArchitectureRules.cs` | Готовый C# код | "Нужно создать `tests/patterns/` и написать код" | Адаптировать существующие тесты в целевом репо, или создать отчёт с рекомендациями |
-| `templates/skills/*/SKILL.md` | Инструкции для скиллов | "Нужно создать `.kimi/skills/` со всеми скиллами" | Скопировать только markdown-файлы скиллов, адаптировав под стек. НЕ создавать `.cs` файлы скиллов. |
-| `AGENTS.md` с `[ADAPT]` | Шаблон с placeholder'ами | "Нужно заполнить и создать полноценный проект" | Заменить `[ADAPT]` на конкретики целевого проекта, сохранить как `AGENTS.md`. |
+### TARGET MODE
+- You are inside a third-party .NET project.
+- Your task: **assess the codebase** and produce a guardrail implementation plan.
+- **FORBIDDEN:** create `examples/`, `DemoProject/`, `DemoProject.Traps/`, `DemoProject.MinimalApi/`, new `.sln`/`.csproj`.
+- **FORBIDDEN:** write code "for demonstration" or "as an example".
+- **ALLOWED:** generate `.md` reports, checklists, `AGENTS.md`, `CONVENTIONS.md`.
 
 ---
 
-## 3. Output Contract (что можно создавать)
+## 2. Why Agents Break
 
-### ✅ РАЗРЕШЁННЫЕ выходные артефакты
-
-| Тип | Пример | Когда |
-|-----|--------|-------|
-| Markdown отчёты | `.backlog/onboarding-2026-06-05.md` | Всегда |
-| Agent rules | `AGENTS.md`, `CONVENTIONS.md` | После адаптации |
-| CI конфиги | `.github/workflows/safe-ci.yml` | Если проект использует GitHub Actions |
-| EditorConfig | `.editorconfig` | Если нет или нужно обновить |
-| Build props | `Directory.Build.props` (адаптация) | Если есть nullable/warnings |
-| Скиллы (только .md) | `.kimi/skills/code-review/SKILL.md` | При адаптации |
-
-### ❌ ЗАПРЕЩЁННЫЕ выходные артефакты
-
-| Тип | Пример | Почему запрещено |
-|-----|--------|------------------|
-| Демо-проекты | `examples/DemoProject/`, `DemoProject.Traps/`, `DemoProject.MinimalApi/`, `DemoProject.sln` | Это примеры методологии, не целевой код |
-| Новые проекты | `MyApp.Tests.csproj` (созданный с нуля) | Агент оценки не пишет боевой код |
-| Папки методологии в корне | `rules/`, `templates/skills/`, `tests/patterns/` в корне целевого репо | Целевой проект имеет свою структуру. Исключение: `.kimi/skills/` для markdown-скиллов — нормально |
-| Код "для примера" | `// Вот как это должно выглядеть:` + 20 строк C# | Агент не должен генерировать нереализованный код в рабочей кодбазе |
+| Trap | What the agent sees | What it does wrong | Correct behavior |
+|------|---------------------|--------------------|------------------|
+| `examples/DemoProject.sln` | A full .NET project with tests | "I need to create a similar project for the user" | This is a DEMONSTRATION of the methodology, not a template to copy |
+| `tests/patterns/ArchitectureRules.cs` | Ready-made C# code | "I need to create `tests/patterns/` and write code" | Adapt existing tests in the target repo, or create a report with recommendations |
+| `templates/skills/*/SKILL.md` | Skill instructions | "I need to create `.kimi/skills/` with all skills" | Copy only markdown skill files, adapting to the stack. Do NOT create `.cs` skill files. |
+| `AGENTS.md` with `[ADAPT]` | A template with placeholders | "I need to fill it and create a full project" | Replace `[ADAPT]` with target project specifics, save as `AGENTS.md`. |
 
 ---
 
-## 4. Decision Tree (дерево принятия решений)
+## 3. Output Contract (what you can create)
+
+### ✅ ALLOWED Output Artifacts
+
+| Type | Example | When |
+|------|---------|------|
+| Markdown reports | `.backlog/onboarding-2026-06-05.md` | Always |
+| Agent rules | `AGENTS.md`, `CONVENTIONS.md` | After adaptation |
+| CI configs | `.github/workflows/safe-ci.yml` | If the project uses GitHub Actions |
+| EditorConfig | `.editorconfig` | If missing or needs update |
+| Build props | `Directory.Build.props` (adaptation) | For nullable/warnings configuration |
+| Skills (markdown only) | `.kimi/skills/code-review/SKILL.md` | During adaptation |
+
+### ❌ FORBIDDEN Output Artifacts
+
+| Type | Example | Why forbidden |
+|------|---------|---------------|
+| Demo projects | `examples/DemoProject/`, `DemoProject.Traps/`, `DemoProject.MinimalApi/`, `DemoProject.sln` | These are methodology examples, not target code |
+| New projects | `MyApp.Tests.csproj` (created from scratch) | Assessment agent does not write production code |
+| Methodology folders in root | `rules/`, `templates/skills/`, `tests/patterns/` in target repo root | Target project has its own structure. Exception: `.kimi/skills/` for markdown skills — normal |
+| Code "for example" | `// Here's how it should look:` + 20 lines of C# | Agent must not generate unimplemented code in a working codebase |
+
+---
+
+## 4. Decision Tree
 
 ```
-Пользователь просит: "Оцени мой проект по методологии SAE"
+User asks: "Assess my project using SAE methodology"
     │
     ▼
-Ты в dotnet-ai-guardrails?
-    ├── ДА → "Я не могу оценить проект изнутри репозитория методологии. Укажи путь к целевому проекту."
-    └── НЕТ → Есть .sln в cwd?
-            ├── ДА → Запускаем skeptical-ai-bootstrap скилл (оценка существующей кодбазы)
-            └── НЕТ → "Укажи путь к .NET-проекту (где лежит .sln)"
+Are you in dotnet-ai-guardrails?
+    ├── YES → "I cannot assess a project from inside the methodology repository. Please provide the path to the target project."
+    └── NO → Is there a .sln in cwd?
+            ├── YES → Run skeptical-ai-bootstrap skill (assess existing codebase)
+            └── NO → "Please provide the path to the .NET project (where .sln is located)"
 
-Пользователь просит: "Покажи пример архитектурного теста"
+User asks: "Show me an example of an architecture test"
     │
     ▼
-Ты в dotnet-ai-guardrails?
-    ├── ДА → Читаем examples/DemoProject/tests/... и объясняем
-    └── НЕТ → "Примеры находятся в репозитории методологии: examples/DemoProject/tests/..."
-              НЕ создаём эти файлы в целевом проекте.
+Are you in dotnet-ai-guardrails?
+    ├── YES → Read examples/DemoProject/tests/... and explain
+    └── NO → "Examples are in the methodology repository: examples/DemoProject/tests/..."
+              Do NOT create these files in the target project.
 
-Пользователь просит: "Адаптируй скилл code-review под мой стек"
+User asks: "Adapt the code-review skill for my stack"
     │
     ▼
-Ты в целевом проекте?
-    ├── ДА → Читаем templates/skills/code-review/SKILL.md из dotnet-ai-guardrails (если доступен) →
-    │        Адаптируем текст → Сохраняем в .kimi/skills/code-review/SKILL.md (только .md!)
-    └── НЕТ → "Установи меня в целевой проект или укажи его путь."
+Are you in the target project?
+    ├── YES → Read templates/skills/code-review/SKILL.md from dotnet-ai-guardrails (if available) →
+    │        Adapt text → Save to .kimi/skills/code-review/SKILL.md (markdown only!)
+    └── NO → "Install me in the target project or provide its path."
 ```
 
 ---
 
-## 5. Anti-Hallucination Checklist для агента
+## 5. Anti-Hallucination Checklist for the Agent
 
-Перед созданием ЛЮБОГО файла спроси себя:
+Before creating ANY file, ask yourself:
 
-- [ ] Это `.md`, `.yml`, `.editorconfig`, или `.props`? (Если `.cs`/`.csproj`/`.sln` — остановись)
-- [ ] Этот файл уже существует в целевом репо? (Если нет — точно ли он нужен?)
-- [ ] Я создаю `examples/`, `DemoProject/` или любой из демо-проектов (`Traps`, `MinimalApi`)? (Если да — остановись, это ловушка)
-- [ ] Я копирую структуру `dotnet-ai-guardrails`? (Если да — остановись)
-- [ ] Моя задача — оценить или создать? (Только оценить → только отчёты)
+- [ ] Is it `.md`, `.yml`, `.editorconfig`, or `.props`? (If `.cs`/`.csproj`/`.sln` — stop)
+- [ ] Does this file already exist in the target repo? (If not — is it really needed?)
+- [ ] Am I creating `examples/`, `DemoProject/`, or any demo project (`Traps`, `MinimalApi`)? (If yes — stop, this is a trap)
+- [ ] Am I copying the structure of `dotnet-ai-guardrails`? (If yes — stop)
+- [ ] Is my task to assess or to create? (Assess only → reports only)
 
 ---
 
-## 6. Интеграция с Kimi Code CLI
+## 6. Kimi Code CLI Integration
 
-Если скилл установлен в `.kimi/skills/skeptical-ai-bootstrap/`:
+If the skill is installed in `.kimi/skills/skeptical-ai-bootstrap/`:
 
 ```bash
-# Правильный запуск — из корня ЦЕЛЕВОГО проекта
+# Correct launch — from the root of the TARGET project
 $ cd /path/to/target-project
 $ kimi run skeptical-ai-bootstrap
 
-# Неправильный запуск — изнутри dotnet-ai-guardrails
+# Incorrect launch — from inside dotnet-ai-guardrails
 $ cd /path/to/dotnet-ai-guardrails
-$ kimi run skeptical-ai-bootstrap  # ← агент должен отказаться и попросить путь
+$ kimi run skeptical-ai-bootstrap  # ← agent must refuse and ask for path
 ```
 
 ---
 
-> **Принцип:** Методология SAE натягивается на проект как **сетка оценки**, а не как **лебедка, которая перетягивает структуру**.
+> **Principle:** SAE methodology is stretched over a project like an **assessment mesh**, not a **winch that pulls the structure over**.

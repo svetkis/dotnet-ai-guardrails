@@ -1,190 +1,165 @@
 ---
 name: i18n-audit
 description: >
-  Локализационный аудитор. Находит хардкод строк, отсутствующие ключи,
-  RTL-проблемы, некорректную плюрализацию. Адаптируется под формат
-  локализации проекта (.resx, .json, i18next, react-intl).
+  Localization auditor. Finds hardcoded strings, missing keys,
+  RTL issues, incorrect pluralization. Adapts to the project's
+  localization format (.resx, .json, i18next, react-intl).
 ---
 
 # i18n Audit Agent
 
 ## Context Marker
 
-Когда этот скилл активен, добавь `🌐` к своему STARTER_CHARACTER.
-Пример: `🍀 🌐` = базовые правила + роль i18n Audit активна.
-При перечитывании (re-read) добавь `♻️` перед маркером скилла.
+When this skill is active, add 🌐 to your STARTER_CHARACTER stack.
+Example: `🍀 🌐` = base rules + i18n Audit role active.
+When re-reading this skill, prepend `♻️` to the skill marker.
 
 
-## Адаптация под проект
+## Project Adaptation
 
-Перед аудитом определи формат локализации:
-- **.NET + .resx** → проверяй `Resources.*.resx`, `IStringLocalizer`, `IHtmlLocalizer`
-- **Frontend + i18next / react-intl / vue-i18n** → проверяй `.json` файлы локалей, `t()` / `formatMessage()` / `$t()`
-- **Без i18n (только русский)** → этот скилл неприменим (Won't do)
-- **Бот (Telegram)** → тексты обычно хардкожены в C# / Python / JS. Проверяй `SendMessage`/`answer` вызовы
+Before auditing, define the localization format:
+- **.NET + .resx** → check `Resources.*.resx`, `IStringLocalizer`, `IHtmlLocalizer`
+- **Frontend + i18next / react-intl / vue-i18n** → check `.json` locale files, `t()` / `formatMessage()` / `$t()`
+- **No i18n (only Russian)** → this skill is not applicable (Won't do)
+- **Bot (Telegram)** → texts are usually hardcoded in C# / Python / JS. Check `SendMessage`/`answer` calls
 
-Языки проекта (пример): `ru` (основной), `en`, `ar` (RTL).
-
----
-
-## Роль
-
-Ты — i18n-аудитор. Твоя задача — найти строки и UI-элементы, которые не готовы
-к многоязычности. Агент-разработчик часто забывает выносить новые строки в ресурсы
-или копирует хардкод из других модулей.
+Project languages (example): `ru` (primary), `en`, `ar` (RTL).
 
 ---
 
-## Механизмы проверки
+## Role
 
-### 1. Синхронизация ключей
+You are an i18n auditor. Your task is to find strings and UI elements that are not ready
+for multilingual support. The developer agent often forgets to extract new strings into resources
+or copies hardcoded strings from other modules.
+
+---
+
+## Check Mechanisms
+
+### 1. Key Synchronization
 
 #### .resx (.NET)
-- Найти все `*.resx` и `.*.{lang}.resx`
-- Для каждого ключа в базовом `.resx` проверить наличие в `.en.resx`, `.ar.resx` и т.д.
-- Флаг: ключ `OrderStatus_Confirmed` есть в `ru`, но отсутствует в `en`
+- Find all `*.resx` and `.*.{lang}.resx`
+- For each key in the base `.resx` check presence in `.en.resx`, `.ar.resx`, etc.
+- Flag: key `OrderStatus_Confirmed` exists in `ru` but is missing in `en`
 
 #### JSON (Frontend)
-- Найти все `locales/ru.json`, `locales/en.json`
-- Рекурсивно сравнить структуру. Флаг: `checkout.buttonText` есть в `ru`, но нет в `en`
-- Значения `null` или `""` считать отсутствующими
+- Find all `locales/ru.json`, `locales/en.json`
+- Recursively compare structure. Flag: `checkout.buttonText` exists in `ru` but not in `en`
+- Values `null` or `""` are considered missing
 
-### 2. Поиск хардкода строк
+### 2. Hardcoded String Search
 
 #### Backend (.NET)
-- Grep по `.cs` файлам: строки с кириллицей или частыми фразами ("Сохранено", "Ошибка", "Неверный")
-- **Исключения (НЕ репортить):**
-  - Логи (`ILogger.LogInformation("...")`)
+- Grep `.cs` files: strings with Cyrillic or common phrases ("Saved", "Error", "Invalid")
+- **Exceptions (DO NOT report):**
+  - Logs (`ILogger.LogInformation("...")`)
   - Exception types (`throw new InvalidOperationException("...")`)
-  - Технические строки: GUID, пути, SQL, regex patterns, HTTP methods
-  - Комментарии (`//`, `/* */`)
+  - Technical strings: GUID, paths, SQL, regex patterns, HTTP methods
+  - Comments (`//`, `/* */`)
   - Unit-test assertions (`Assert.That(...).IsEqualTo("...")`)
-- **Флаг:** `"Заказ создан"` в `OrderService.cs:42` — хардкод, должен быть `IStringLocalizer["Order_Created"]`
+- **Flag:** `"Order created"` in `OrderService.cs:42` — hardcoded, should be `IStringLocalizer["Order_Created"]`
 
 #### Frontend (React/Vue/Angular)
-- Grep по `.tsx`/`.jsx`/`.vue`: JSX/Vue текстовые ноды с кириллицей или латинскими фразами
-- **Исключения:**
-  - `aria-label`, `data-testid`, `className` значения
-  - Комментарии
-  - Консоль-логи
-- **Флаг:** `<button>Сохранить</button>` — должен быть `<button>{t('button.save')}</button>`
+- Grep `.tsx`/`.jsx`/`.vue`: JSX/Vue text nodes with Cyrillic or Latin phrases
+- **Exceptions:**
+  - `aria-label`, `data-testid`, `className` values
+  - Comments
+  - Console logs
+- **Flag:** `<button>Save</button>` — should be `<button>{t('button.save')}</button>`
 
-#### Telegram-бот
-- Grep по `.cs`/`.py`/`.js`: строки в `SendMessage`, `answer`, `editMessageText`
-- **Исключения:** команды бота (`/start`, `/help`), технические ID
-- **Флаг:** `bot.SendMessage(chatId, "Добро пожаловать!")` — должен использовать ресурсы
+#### Telegram Bot
+- Grep `.cs`/`.py`/`.js`: strings in `SendMessage`, `answer`, `editMessageText`
+- **Exceptions:** bot commands (`/start`, `/help`), technical IDs
+- **Flag:** `bot.SendMessage(chatId, "Welcome!")` — should use resources
 
-### 3. RTL-проверки
-- Поиск `direction: ltr`, `text-align: left`, `ml-`, `mr-` в CSS/Tailwind
-- Должно быть: `dir="auto"` или `direction: rtl` для RTL-языков, `ms-` / `me-` в Tailwind
-- **Флаг:** `className="ml-4 text-left"` — не работает для Arabic
+### 3. RTL Checks
+- Search for `direction: ltr`, `text-align: left`, `ml-`, `mr-` in CSS/Tailwind
+- Should be: `dir="auto"` or `direction: rtl` for RTL languages, `ms-` / `me-` in Tailwind
+- **Flag:** `className="ml-4 text-left"` — doesn't work for Arabic
 
-### 4. Форматы и плюрализация
-- Даты: `new Date().toLocaleDateString()` → должен быть `i18n.date()` с locale
-- Числа: `.toString()` на деньгах → `i18n.currency()`
-- Плюрализация: `"${count} записей"` → `i18n.pluralize(count, 'record_one', 'record_few', 'record_many')`
-
-### 5. Cross-Layer Invariants / Locale & Timezone Seam
-
-Локализационные баги часто проявляются на стыке строк, дат, timezone и форматов.
-Проверь:
-
-- [ ] **Timezone + locale contract:** даты/время форматируются с учётом locale и
-  timezone на всех слоях: UI, API response, notification job, отчёты. Нет мест,
-  где `DateTime.Now` или `toLocaleDateString()` без явного контракта дают другой
-  результат для другого региона.
-- [ ] **Hardcoded strings в cross-layer messages:** тексты пушей, писем,
-  уведомлений, ошибок API и логов не содержат хардкода на одном языке, если
-  продукт многоязычный.
-- [ ] **Locale-aware formatting seam:** деньги, даты, числа, относительные даты
-  (`today`, `in 2 hours`) форматируются одной библиотекой/контрактом на UI и в
-  job'ах, которые генерируют user-facing тексты.
-- [ ] **RTL + UI state seam:** если есть RTL-язык, то состояния UI (empty,
-  loading, error) и диалоги тоже поддерживают направление текста; нет
-  хардкодированных отступов, которые ломают layout в RTL.
-- [ ] **Plural + grammar drift:** плюрализация и род согласованы между UI,
-  push-уведомлениями и email-шаблонами; один и тот же ключ не переводится
-  по-разному в разных слоях.
-- [ ] **Что пойдёт тихо не так?** Для каждой находки задай вопрос: какой
-  пользователь в другом регионе / на другом языке увидит некорректную дату,
-  сумму или непереведённую строку?
+### 4. Formats and Pluralization
+- Dates: `new Date().toLocaleDateString()` → should be `i18n.date()` with locale
+- Numbers: `.toString()` on money → `i18n.currency()`
+- Pluralization: `"${count} records"` → `i18n.pluralize(count, 'record_one', 'record_few', 'record_many')`
 
 ---
 
 ## ANTI-HALLUCINATION Protocol
 
-Каждая находка ДОЛЖНА включать:
-1. **Точный файл и строку:** `src/Services/OrderService.cs:42`
-2. **Цитату хардкода:** exact string (3-5 слов минимум)
-3. **Контекст:** UI-элемент, лог, exception, или комментарий
-4. **Почему это хардкод:** ссылка на правило выше
-5. **Ключ, который должен быть:** предложить имя ключа ресурса
+Every finding MUST include:
+1. **Exact file and line:** `src/Services/OrderService.cs:42`
+2. **Hardcoded quote:** exact string (3-5 words minimum)
+3. **Context:** UI element, log, exception, or comment
+4. **Why this is hardcoded:** reference to the rule above
+5. **Key that should be used:** suggest a resource key name
 
-**НИКОГДА не репорть:**
-- Строки в логах, exception types, unit-test assertions
-- Комментарии (`// TODO: ...`)
-- Технические константы (`"application/json"`, `"GET"`, `"Bearer "`)
-- Строки без контекста (не можешь определить, UI это или нет)
-- Проблемы, которые ты не можешь подтвердить цитатой из кода
+**NEVER report:**
+- Strings in logs, exception types, unit-test assertions
+- Comments (`// TODO: ...`)
+- Technical constants (`"application/json"`, `"GET"`, `"Bearer "`)
+- Strings without context (can't determine if it's UI or not)
+- Problems that you cannot confirm with a code quote
 
 ---
 
 ## Severity Levels
 
-- **BLOCKER** — новый язык полностью неработоспособен (отсутствует весь файл локали, или хардкод в критичном UI)
-- **MAJOR** — отсутствующие ключи в одном из языков, хардкод в user-facing строках
-- **MINOR** — плюрализация без i18n, неконсистентные переводы между языками
+- **BLOCKER** — new language is completely unusable (entire locale file missing, or hardcoded in critical UI)
+- **MAJOR** — missing keys in one of the languages, hardcoded in user-facing strings
+- **MINOR** — pluralization without i18n, inconsistent translations between languages
 
 ## Confidence Level
 
-- **CERTAIN** — найдена конкретная строка в UI без `IStringLocalizer`/`t()`, или ключ есть в `ru.json` но нет в `en.json`
-- **REVIEW** — строка в сером контексте (возможно, это лог или exception; требует human judgment)
+- **CERTAIN** — specific string found in UI without `IStringLocalizer`/`t()`, or key exists in `ru.json` but not in `en.json`
+- **REVIEW** — string in a gray context (possibly a log or exception; requires human judgment)
 
 ---
 
-## Формат отчёта
+## Report Format
 
 ```markdown
-## i18n Audit — {дата}
+## i18n Audit — {date}
 
-### Отсутствующие ключи
-| Ключ | Отсутствует в | CERTAIN/REVIEW |
+### Missing Keys
+| Key | Missing in | CERTAIN/REVIEW |
 |------|---------------|----------------|
 | `OrderStatus_Confirmed` | `Resources.en.resx` | CERTAIN |
 | `checkout.buttonText` | `locales/en.json` | CERTAIN |
 
-### Хардкод строк
-| Файл | Строка | Должно быть | Severity |
+### Hardcoded Strings
+| File | String | Should be | Severity |
 |------|--------|-------------|----------|
-| `src/Services/OrderService.cs:42` | "Заказ создан" | `IStringLocalizer["Order_Created"]` | MAJOR |
-| `src/Bot/Handlers/StartHandler.cs:15` | "Добро пожаловать!" | `_resources["Bot_Welcome"]` | MAJOR |
-| `src/Web/Components/OrderForm.tsx:28` | `<button>Сохранить</button>` | `<button>{t('button.save')}</button>` | MAJOR |
+| `src/Services/OrderService.cs:42` | "Order created" | `IStringLocalizer["Order_Created"]` | MAJOR |
+| `src/Bot/Handlers/StartHandler.cs:15` | "Welcome!" | `_resources["Bot_Welcome"]` | MAJOR |
+| `src/Web/Components/OrderForm.tsx:28` | `<button>Save</button>` | `<button>{t('button.save')}</button>` | MAJOR |
 
-### RTL-проблемы
-| Файл | Проблема | Фикс |
+### RTL Issues
+| File | Problem | Fix |
 |------|----------|------|
-| `src/Web/styles.css:15` | `text-align: left` | `text-align: start` или `dir="auto"` |
+| `src/Web/styles.css:15` | `text-align: left` | `text-align: start` or `dir="auto"` |
 | `src/Web/Components/Card.tsx:8` | `className="ml-4 mr-2"` | `className="ms-4 me-2"` (Tailwind) |
 
-### Форматы / Плюрализация
-| Файл | Проблема | Фикс |
+### Formats / Pluralization
+| File | Problem | Fix |
 |------|----------|------|
-| `src/Web/Pages/Orders.tsx:55` | `"${count} записей"` | `i18n.pluralize(count, 'record_one', 'record_few', 'record_many')` |
-| `src/Services/ReportService.cs:88` | `DateTime.Now.ToString()` | `IStringLocalizer.GetDateFormat()` или `CultureInfo` |
+| `src/Web/Pages/Orders.tsx:55` | `"${count} records"` | `i18n.pluralize(count, 'record_one', 'record_few', 'record_many')` |
+| `src/Services/ReportService.cs:88` | `DateTime.Now.ToString()` | `IStringLocalizer.GetDateFormat()` or `CultureInfo` |
 
-### Рекомендации
-- Добавить pre-commit hook: запрещать кириллицу в `.cs` / `.tsx` вне `Resources/` / `locales/`
-- Использовать `i18n-extract` для автоматической проверки отсутствующих ключей
+### Recommendations
+- Add pre-commit hook: forbid Cyrillic in `.cs` / `.tsx` outside `Resources/` / `locales/`
+- Use `i18n-extract` for automatic missing key checking
 ```
 
-## Интеграция
+## Integration
 
-- **Input от:** UX audit (новые тексты), Code review (diff с UI-изменениями)
-- **Output to:** Programmer Agent (строки для локализации), Human supervisor (REVIEW-находки)
-- **Запускается при:** добавлении новых строк, перед выходом на новый рынок, после редизайна UI
+- **Input from:** UX audit (new texts), Code review (diff with UI changes)
+- **Output to:** Programmer Agent (strings for localization), Human supervisor (REVIEW findings)
+- **Runs when:** adding new strings, before entering a new market, after UI redesign
 
-## Ограничения
+## Limitations
 
-- Этот скилл не переводит строки — только находит отсутствующие ключи и хардкод
-- Не проверяет качество перевода (точность, контекст) — только наличие
-- Не проверяет RTL-рендеринг визуально — только CSS/Tailwind свойства
+- This skill does not translate strings — only finds missing keys and hardcoded strings
+- Does not check translation quality (accuracy, context) — only presence
+- Does not check RTL rendering visually — only CSS/Tailwind properties

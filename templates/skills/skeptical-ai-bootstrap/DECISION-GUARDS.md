@@ -1,47 +1,47 @@
-# Decision Guards — шаблон реестра осознанных отклонений (ADR)
+# Decision Guards — Conscious Deviation Registry Template (ADR)
 
-> **Назначение:** Реализация паттерна **ADR (Architecture Decision Records)** — зафиксировать каждое осознанное отклонение от «стандарта» с номером и обоснованием, чтобы агент не пытался его «исправить».  
-> **Потребитель:** Человек (Tech Lead) пишет, агент читает комментарии в коде.  
-> **Результат:** Реестр решений вида `PERF-###`, `DB-###`, `AUD-###`, которые проверяются архитектурным тестом на уникальность.
-
----
-
-## Зачем это отдельный файл
-
-`ARCHITECTURE-INVENTORY.md` — это «карта местности» (C4, сборки, стек).  
-А `DECISION-GUARDS.md` — это **журнал компромиссов**: почему здесь нет индекса, почему убрали `QueryFilter`, почему `SELECT *` в этом месте оправдан.
-
-Без такого журнала агент через 3 месяца увидит «странный» код и откатит оптимизацию.
+> **Purpose:** Implementation of the **ADR (Architecture Decision Records)** pattern — document every conscious deviation from the "standard" with a number and rationale, so the agent doesn't try to "fix" it.  
+> **Consumer:** Human (Tech Lead) writes, agent reads comments in code.  
+> **Result:** Registry of decisions like `PERF-###`, `DB-###`, `AUD-###` that are checked by an architecture uniqueness test.
 
 ---
 
-## Шаблон записи
+## Why This Is a Separate File
+
+`ARCHITECTURE-INVENTORY.md` is the "terrain map" (C4, assemblies, stack).  
+And `DECISION-GUARDS.md` is the **compromise journal**: why there is no index here, why `QueryFilter` was removed, why `SELECT *` is justified in this place.
+
+Without such a journal, the agent will see "strange" code in 3 months and roll back the optimization.
+
+---
+
+## Record Template
 
 ```markdown
-### {PREFIX}-###: {Краткое название}
-**Дата:** YYYY-MM-DD  
-**Автор:** @username  
-**Контекст:** {почему пришли к этому решению}  
-**Решение:** {что именно сделали}  
-**Последствия:** {что сломается, если откатить}  
-**Где в коде:** {файл:строка}
+### {PREFIX}-###: {Short Name}
+**Date:** YYYY-MM-DD  
+**Author:** @username  
+**Context:** {why we came to this decision}  
+**Decision:** {what exactly we did}  
+**Consequences:** {what will break if rolled back}  
+**Where in code:** {file:line}
 ```
 
 ---
 
-## Пример
+## Example
 
 ```markdown
-### PERF-022: Удалён QueryFilter на SoftDelete
-**Дата:** 2026-03-15  
-**Автор:** @lead  
-**Контекст:** QueryFilter добавлял JOIN к users через Tenant.Owner.DeletedAt в каждом EXISTS-подзапросе. Под нагрузкой — деградация на 400ms.  
-**Решение:** Убрали `HasQueryFilter(s => !s.IsDeleted)`. Soft delete реализован явно в запросах.  
-**Последствия:** Агент, видя `HasQueryFilter` в других конфигах, попытается «исправить» это. Номер останавливает.  
-**Где в коде:** `src/Infrastructure/Persistence/Configuration/EntityConfiguration.cs:31`
+### PERF-022: QueryFilter on SoftDelete Removed
+**Date:** 2026-03-15  
+**Author:** @lead  
+**Context:** QueryFilter added a JOIN to users via Tenant.Owner.DeletedAt in every EXISTS subquery. Under load — 400ms degradation.  
+**Decision:** Removed `HasQueryFilter(s => !s.IsDeleted)`. Soft delete implemented explicitly in queries.  
+**Consequences:** An agent seeing `HasQueryFilter` in other configs will try to "fix" this. The number stops it.  
+**Where in code:** `src/Infrastructure/Persistence/Configuration/EntityConfiguration.cs:31`
 ```
 
-В коде рядом с решением оставляют краткий комментарий:
+In code, a brief comment is left next to the decision:
 
 ```csharp
 // PERF-022: QueryFilter removed — JOIN added 3ms to every query, see docs/DECISION-GUARDS.md
@@ -50,33 +50,33 @@ builder.HasQueryFilter(s => !s.IsDeleted); // REMOVED — see PERF-022
 
 ---
 
-## Правила именования
+## Naming Rules
 
-| Префикс | Что фиксируем | Проверяет тест |
-|---------|--------------|----------------|
-| `PERF-###` | Оптимизация, отклонение от стандартного EF | `ArchitectureRules.cs` (уникальность ID) |
-| `DB-###` | Решение по схеме БД (тип данных, индекс) | `ArchitectureRules.cs` (уникальность ID) |
-| `AUD-###` | Решение по аудиту или логированию | `ArchitectureRules.cs` (уникальность ID) |
-| `ARCH-###` | Решение по слоям или границам модулей | Добавь в тест самостоятельно |
-| `SEC-###` | Исключение из security-правил (публичный webhook) | Добавь в тест самостоятельно |
+| Prefix | What we document | Checked by test |
+|--------|------------------|-----------------|
+| `PERF-###` | Optimization, deviation from standard EF | `ArchitectureRules.cs` (ID uniqueness) |
+| `DB-###` | DB schema decision (data type, index) | `ArchitectureRules.cs` (ID uniqueness) |
+| `AUD-###` | Audit or logging decision | `ArchitectureRules.cs` (ID uniqueness) |
+| `ARCH-###` | Layer or module boundary decision | Add to test yourself |
+| `SEC-###` | Security rule exception (public webhook) | Add to test yourself |
 
-> **Тест на уникальность:** Шаблон `ArchitectureRules.cs` проверяет, что `PERF-###`, `DB-###`, `AUD-###` уникальны по кодбазе. Дубликат = падение сборки. Префиксы `ARCH-###` и `SEC-###` — расширения; добавь их в regex теста (`(PERF|DB|AUD|ARCH|SEC)-\d{3}`) при необходимости.
+> **Uniqueness test:** `ArchitectureRules.cs` template checks that `PERF-###`, `DB-###`, `AUD-###` are unique across the codebase. Duplicate = build failure. Prefixes `ARCH-###` and `SEC-###` — extensions; add them to the regex test (`(PERF|DB|AUD|ARCH|SEC)-\d{3}`) as needed.
 
 ---
 
-## Где хранить в проекте
+## Where to Store in Project
 
-Сохрани этот файл рядом с `AGENTS.md` и `ARCHITECTURE-INVENTORY.md`:
+Save this file next to `AGENTS.md` and `ARCHITECTURE-INVENTORY.md`:
 
 ```
 docs/
   AGENTS.md
   ARCHITECTURE-INVENTORY.md
-  DECISION-GUARDS.md   ← здесь
+  DECISION-GUARDS.md   ← here
 ```
 
-Если решений много — можно разбить по доменам: `docs/decisions/PERF.md`, `docs/decisions/DB.md`.
+If there are many decisions — they can be split by domain: `docs/decisions/PERF.md`, `docs/decisions/DB.md`.
 
 ---
 
-> **Принцип:** Комментарий `// PERF-022` в коде останавливает агента. А этот файл объясняет человеку, почему.
+> **Principle:** The comment `// PERF-022` in code stops the agent. And this file explains to a human why.

@@ -1,39 +1,38 @@
-# Ловушка: Слепота контекста (Context Blindness)
+# Trap: Context Blindness
 
-## Сценарий
+## Scenario
 
-Агент видит только те файлы, которые правит. Контекстное окно ограничено, и агент:
-- Не видит, что новый endpoint не покрыт авторизацией
-- Не видит, что изменение DTO сломает 3 других сервиса
-- Не видит, что "простая оптимизация" сломала интеграцию с Telegram
+The agent sees only the files it is editing. The context window is limited, and the agent:
+- Does not see that the new endpoint is not covered by authorization
+- Does not see that changing the DTO will break 3 other services
+- Does not see that a "simple optimization" broke the Telegram integration
 
 ```csharp
-// Агент добавил новое поле в Response DTO
+// Agent added a new field to Response DTO
 public record TicketDto(
     int Id,
     string Title,
-    string InternalNotes  // ❌ Упс, это приватное поле попало в API
+    string InternalNotes  // ❌ Oops, this private field leaked into the API
 );
 ```
 
-## Почему это системная проблема
+## Why This Is a Systemic Problem
 
-Агент не может удержать всю кодовую базу в голове. Он оптимизен локально, а последствия глобальны.
+The agent cannot hold the entire codebase in its head. It optimizes locally, but the consequences are global.
 
-## Решение
+## Solution
 
-1. **Context Markers** — визуальные маркеры активного контекста в ответах агента. Складываемые эмодзи (🍀 ✅ 🔴) показывают, какие правила и роли загружены прямо сейчас. Ловит ситуацию «агент забыл, что он в режиме TDD» или «не прочитал ground rules». См. [`rules/AGENTS_TEMPLATE.md`](../../rules/AGENTS_TEMPLATE.md) §Context Markers
-2. **E2E MCP** — заставляем агента самого протыкивать систему. Telegram-бот, API клиент — реальные сценарии
-3. **Пакетные аудиты** — создаём узкие персоны:
-   - **Security** — видит утечки данных, которые агент не заметил
-   - **DBA** — видит N+1 и отсутствие индексов
-   - **UX** — видит непонятные ошибки и странные тексты
-4. **Запуск по расписанию** — аудиты не ждут PR, они ищут дыры систематически
+1. **E2E MCP** — make the agent poke the system itself. Telegram bot, API client — real scenarios
+2. **Batch audits** — create narrow personas:
+   - **Security** — sees data leaks that the agent missed
+   - **DBA** — sees N+1 and missing indexes
+   - **UX** — sees unclear errors and strange texts
+3. **Scheduled runs** — audits don't wait for PR, they systematically search for holes
 
-## Результат
+## Result
 
-19 багов найдено за счёт смены фокуса. Агент их не видел, потому что смотрел на функционал. Аудиторы смотрели на риски.
+19 bugs found by shifting focus. The agent didn't see them because it was looking at functionality. The auditors were looking at risks.
 
-## Паттерн
+## Pattern
 
-См. `templates/skills/security-audit/`, `templates/skills/dba-audit/`, `templates/skills/api-design-audit/`, `templates/skills/bot-audit/`
+See `templates/skills/security-audit/`, `templates/skills/dba-audit/`, `templates/skills/api-design-audit/`, `templates/skills/bot-audit/`

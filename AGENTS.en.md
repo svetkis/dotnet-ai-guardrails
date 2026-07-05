@@ -35,7 +35,7 @@ Do not write domain code here — only guardrails, skills, patterns, and example
 
 This repository is a **collection of defensive artifacts**, not a NuGet package. To apply it to your own .NET project:
 
-**Full guide:** [`docs/ONBOARDING.md`](docs/ONBOARDING.md) — step-by-step implementation plan with checkpoints and anti-patterns.
+**Full guide:** [`docs/ONBOARDING.en.md`](docs/ONBOARDING.en.md) — step-by-step implementation plan with checkpoints and anti-patterns.
 
 | Step | What to do | Where to go |
 |------|-----------|-------------|
@@ -47,7 +47,7 @@ This repository is a **collection of defensive artifacts**, not a NuGet package.
 | 5. Agent | Configure your AI agent (Kimi / Claude / Cursor / Codex) | [`docs/agents/`](docs/agents/) |
 | 6. Acceptance | Implement audits + load (manual or AI) | [`docs/solutions/human-audit-bridge.md`](docs/solutions/human-audit-bridge.md) |
 
-> **Principle:** don't copy everything blindly — adapt or create new. See anti-patterns in [`docs/ONBOARDING.md`](docs/ONBOARDING.md) §"Implementation Anti-Patterns".
+> **Principle:** don't copy everything blindly — adapt or create new. See anti-patterns in [`docs/ONBOARDING.en.md`](docs/ONBOARDING.en.md) §"Implementation Anti-Patterns".
 
 ---
 
@@ -63,7 +63,7 @@ If you are an AI agent reading this file in the context of a **different** repos
 ## Navigation
 
 **Lost?** Start with [docs/README.en.md](docs/README.en.md) — the unified map of all artifacts.
-**Unfamiliar terms?** See [GLOSSARY.md](GLOSSARY.md).
+**Unfamiliar terms?** See [GLOSSARY.en.md](GLOSSARY.en.md).
 
 | What you need | Where to go |
 |-----------|-----------|

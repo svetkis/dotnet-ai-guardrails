@@ -1,15 +1,15 @@
 # AGENTS.md — Guardrails for .NET Agentic Engineering
 
-> ⚠️ **ШАБЛОН** — Адаптируйте под свой проект перед использованием.
-> Замените все блоки `[ADAPT]` на правила вашего стека.
-> Не копируйте as-is: конкретные технологии ниже — пример из DemoProject.
+> ⚠️ **TEMPLATE** — Adapt to your project before use.
+> Replace all `[ADAPT]` blocks with rules for your stack.
+> Do not copy as-is: the specific technologies below are an example from DemoProject.
 >
-> **Как использовать:**
-> 1. Скопируйте этот файл в корень проекта как `AGENTS.md`.
-> 2. Выберите ORM-add-on:
->    - EF Core → дополните `AGENTS_TEMPLATE.efcore.md`
->    - Dapper / Raw SQL → дополните `AGENTS_TEMPLATE.dapper.md`
->    - Другой ORM / No ORM → используйте этот файл как есть, допишите свои правила
+> **How to use:**
+> 1. Copy this file to the project root as `AGENTS.md`.
+> 2. Choose an ORM add-on:
+>    - EF Core → supplement with `AGENTS_TEMPLATE.efcore.md`
+>    - Dapper / Raw SQL → supplement with `AGENTS_TEMPLATE.dapper.md`
+>    - Other ORM / No ORM → use this file as-is and add your own rules
 
 ## Semantic Anchors
 

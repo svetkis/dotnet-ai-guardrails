@@ -1,15 +1,15 @@
 ---
 name: code-review
 description: |
-  Pre-commit code review for .NET projects with agent-generated code.
+  Pre-commit code review for backend projects with agent-generated code.
   Trigger this skill right before `git commit`, when the user asks to review staged changes,
-  or when the staged diff contains .NET backend files (*.cs, *.csproj, *.sln, *.props, *.targets).
-  Reviews staged changes against architectural rules, EF Core / Dapper constraints, TUnit conventions,
+  or when the staged diff contains backend source files.
+  Reviews staged changes against architectural rules, ORM constraints, test conventions,
   and security hygiene.
 whenToUse:
-  - Before committing .NET backend changes (pre-commit).
+  - Before committing backend changes (pre-commit).
   - User says "pre-commit review", "review my staged changes", "check the diff", "code review".
-  - Staged diff includes *.cs, *.csproj, *.sln, *.props, *.targets.
+  - Staged diff includes source files of the project's backend language.
 triggers:
   - pre-commit
   - review staged diff
@@ -21,15 +21,38 @@ invocation:
 version: 1.0.0
 ---
 
-## Адаптация под проект
+## Portable core
 
-Перед запуском оцени стек проекта. Если какие-то проверки неприменимы — пометь их N/A и не используй как находки:
-- **Single-project MVP без Clean Architecture** → пропусти проверку слоёв (NetArchTest). Если нет отдельных проектов Domain / Infrastructure / Application — правило о зависимостях между ними неприменимо.
-- **Minimal API** → проверяй `.RequireAuthorization()`, а не `[Authorize]`.
-- **Проекции `.Select()` в DTO** — EF Core не отслеживает их, `.AsNoTracking()` не требуется. Не ставь флаги на отсутствие AsNoTracking на проекциях.
-- **Dapper / Raw SQL (нет EF Core)** → пропусти ВСЕ EF-специфичные проверки (AsNoTracking, Include, FindAsync, Change Tracker). Используй Dapper-раздел ниже.
-- **Frontend на React + TypeScript (JS/TS/CSS/HTML)** → этот скилл не применим. Используй `frontend-code-review`.
-- **Razor / Blazor / Vue / Svelte / другие фреймворки** → `frontend-code-review` не покрывает их; заведи отдельный скилл или пометь проверки N/A.
+- Review **only staged changes** (`git diff --cached`) and only added (`+`) lines with immediate context.
+- Never review unchanged code or entire files without a diff.
+- Every finding must include: exact path and line, code quote, violated rule, concrete fix, and self-correction evidence.
+- Verdict: `APPROVED` / `APPROVED_WITH_NITS` / `CHANGES_REQUESTED`.
+
+## Requires adaptation
+
+- Language / stack: C#, Java, Python, Go, TypeScript, etc.
+- Authorization framework: MVC attributes, Minimal API middleware, decorators, guards.
+- ORM / data access: EF Core, Dapper, Hibernate, SQLAlchemy, raw SQL, etc.
+- Architectural boundaries: Clean Architecture, Vertical Slices, Ports & Adapters, single-project MVP.
+- Test framework and bug-regression test naming convention.
+
+## Not applicable when
+
+- Changes are only in frontend / mobile / desktop UI covered by a separate skill.
+- There are no staged changes.
+- The user asks for a full-file review without a diff.
+
+---
+
+## Adaptation for Project
+
+Before running, assess the project stack. If some checks are not applicable — mark them N/A and do not report as findings:
+- **Single-project MVP without layered architecture** → skip cross-project dependency checks. If there are no separate Domain / Infrastructure / Application projects — the dependency rule does not apply.
+- **Minimal API / non-MVC** → check middleware / fluent authorization, not MVC attributes.
+- **ORM with projection DTOs** — if the ORM does not track projections, `AsNoTracking` (or equivalent) is not required. Do not flag missing read-only mode on projections.
+- **Dapper / raw SQL (no ORM tracking)** → skip ORM-specific checks (change tracking, eager loading, async find helpers). Use the raw SQL section.
+- **React + TypeScript frontend** → this skill is not applicable. Use `frontend-code-review`.
+- **Razor / Blazor / Vue / Svelte / other frameworks** → `frontend-code-review` does not cover them; create a separate skill or mark checks N/A.
 
 ---
 
@@ -37,25 +60,24 @@ version: 1.0.0
 
 ## Context Marker
 
-Когда этот скилл активен, добавь `🔍` к своему STARTER_CHARACTER.
-Пример: `🍀 🔍` = базовые правила + роль Code Review активна.
-При перечитывании (re-read) добавь `♻️` перед маркером скилла.
+When this skill is active, add `🔍` to your `STARTER_CHARACTER` stack.
+Example: `🍀 🔍` = base rules + Code Review role active.
+When re-reading this skill, prepend `♻️` to the skill marker.
 
 ## Trigger / When to invoke
 
-Автоматически активируй этот скилл **перед каждым `git commit`**, если в staged-изменениях есть бэкендовые .NET-файлы.
-Явный вызов: `/skill:code-review` или фразы:
+Automatically activate this skill **right before every `git commit`** when staged changes include backend source files.
+Explicit invocation: `/skill:code-review` or phrases:
 - "pre-commit review"
 - "review my staged changes"
 - "check the diff"
 - "code review"
-- "проревьюй staged changes"
 
-Не активируй скилл, если:
-- Изменения только в React + TypeScript frontend-файлах (используй frontend-code-review).
-- Изменения в Razor/Blazor/Vue/Svelte/другом фреймворке — для них нужен отдельный скилл.
-- Нет staged-изменений.
-- Пользователь просит ревью всего файла без diff.
+Do NOT activate the skill when:
+- Changes are frontend-only (use `frontend-code-review` instead).
+- Changes are Razor/Blazor/Vue/Svelte/other framework — they need a separate skill.
+- There are no staged changes.
+- The user asks for a full-file review without a diff.
 
 ## Why a Second Agent
 
@@ -68,11 +90,11 @@ This skill implements two concepts from [Augmented Coding Patterns](https://gith
 - Review ONLY staged changes (`git diff --cached`).
 - Review ONLY `+` lines in the staged diff and directly related context lines.
 - NEVER review unchanged code or entire files.
-- Focus on stack: .NET 10, TUnit, EF Core, Dapper, PostgreSQL, SQL Server, Minimal API.
+- Focus on the project's backend stack.
 
 ## Pre-commit behavior
-1. Read the staged diff: `git diff --cached --diff-filter=ACMR -- '*.cs' '*.csproj' '*.sln' '*.props' '*.targets'`.
-2. If there are no staged .NET backend changes, tell the user there is nothing to review and stop.
+1. Read the staged diff: backend source files only.
+2. If there are no staged backend changes, tell the user there is nothing to review and stop.
 3. Apply the checks below to every `+` block.
 4. Produce findings in the required format.
 5. State a verdict.
@@ -80,55 +102,83 @@ This skill implements two concepts from [Augmented Coding Patterns](https://gith
 
 ## Severity Levels
 - **BLOCKER**: Security vulnerability, data loss risk, compilation error, test breakage
-- **CRITICAL**: EF Core write-path with `AsNoTracking` OR Dapper SQL injection, missing `CancellationToken`, `async void`, race condition, hexagonal violation
+- **CRITICAL**: ORM write-path with read-only tracking OR SQL injection, missing `CancellationToken` (if project uses async), `async void`, race condition, architecture violation
 - **MAJOR**: Missing test, exception swallowing, N+1 query, unhandled nullable, DTO mismatch, business logic duplication
 - **MINOR**: Naming inconsistency, missing XML doc, magic number
-- **NIT**: Formatting, trailing whitespace, unused using
+- **NIT**: Formatting, trailing whitespace, unused import/using
 
-## .NET / C# Specific Checks
-- **CancellationToken**: Every `async` public method MUST accept `CancellationToken ct = default`
-- **EF Core Read-Path** (N/A для Dapper): Если read-path возвращает **entity** (не проекцию) — должен быть `.AsNoTracking()`. Проекции `.Select()` в DTO/record не требуют `.AsNoTracking()` — EF Core не отслеживает их.
-- **EF Core Write-Path** (N/A для Dapper): No `.AsNoTracking()` on write operations. Исключение: raw SQL (`FromSqlRaw`, `ExecuteSqlRaw`) и bulk update API (`ExecuteUpdateAsync`) — Change Tracker их всё равно не отслеживает.
-- **Dapper / Raw SQL** (N/A для EF-only):
-  - **SQL Injection**: Любая строковая интерполяция (`$"..."`) или конкатенация (`+`) в SQL-запросе — BLOCKER.
-  - **Parameterization**: Все SQL-запросы должны использовать параметры (`@param`). Нет `string.Format` в SQL.
-  - **CommandTimeout**: Каждый вызов `QueryAsync` / `ExecuteAsync` должен иметь `commandTimeout` или использовать глобальный default.
-  - **Transactions**: Write-операции (`Execute`, `ExecuteAsync`) должны быть внутри `IDbTransaction`.
-  - **Dynamic IN**: `IN` с динамическим списком — через TVP или временную таблицу. `string.Join` в SQL — BLOCKER.
-- **Architecture**: Domain MUST NOT reference Infrastructure **только если в проекте есть разделение на слои** (2+ проектов с суффиксами Domain / Infrastructure / Application). Для single-project MVP — пометить N/A.
-- **DTOs**: API returns records/DTOs, not Entities directly
-- **TUnit**: `[Test]` + `await Assert.That(value).IsEqualTo(expected)`. No xUnit/NUnit syntax
-- **DateTime**: All backend dates MUST be UTC (`DateTime.UtcNow`, `DateTimeKind.Utc`)
-- **PostgreSQL**: Column names `snake_case` via `.HasColumnName()`
-- **Exception Handling**: No empty `catch { }`. At minimum log + rethrow or throw custom exception
-- **Nullability**: Respect nullable reference types. `string?` vs `string` — flag mismatches
-- **BUG Pattern**: Every bug fix MUST have `BUG###_DescriptiveName` test
-- **Duplication (Literal)**: If validation/calculation/status check is added, verify it does not already exist in another service. Business rules belong in Domain, not copy-pasted into Application/API.
-  - Automated guard: `DuplicationGuardTest.cs` catches literal copy-paste via regex.
+## Backend-specific checks (adapt to your stack)
+
+### If project uses async public methods
+- Every public `async` method accepts `CancellationToken ct = default`.
+
+### If project uses ORM with change tracking
+- **Read-path:** if a method returns an entity (not a projection), it must have explicit read-only mode (`AsNoTracking` or equivalent). Projections to DTO/record do not require read-only mode if the ORM does not track them.
+- **Write-path:** no read-only mode on write operations. Exception: raw SQL and bulk API that the change tracker does not track anyway.
+
+### If project uses raw SQL / Dapper / ADO.NET
+- **SQL Injection:** any string interpolation or concatenation in SQL query — BLOCKER.
+- **Parameterization:** all SQL queries use parameters. No `string.Format` in SQL.
+- **CommandTimeout:** every query/execute call has a timeout or uses a global default.
+- **Transactions:** write operations must be inside a transaction.
+- **Dynamic IN:** dynamic `IN` lists must use TVP, temp table, or ORM equivalent. `string.Join` in SQL — BLOCKER.
+
+### If project uses layered / hexagonal architecture
+- Domain MUST NOT reference Infrastructure **only if the project has layer separation** (2+ projects with Domain / Infrastructure / Application suffixes). For single-project MVP — mark N/A.
+
+### API / DTO
+- API returns DTOs/records, not entities directly.
+- Naming is consistent: `OrderResponse`, `CreateOrderRequest`, `OrderListItem` — not generic `OrderDto` everywhere.
+
+### Tests
+- The project uses a single test framework (no mixing of xUnit/NUnit/MSTest/Jest/Mocha without reason).
+- Every bug fix has a named regression test per project convention.
+
+### Common hygiene
+- Dates: if the project uses UTC/ISO 8601 — check compliance.
+- Exception handling: no empty `catch { }`. At minimum log + rethrow or throw custom exception.
+- Nullability: respect nullable reference types / optional types.
+- **Duplication (Literal):** if validation/calculation/status check is added, verify it does not already exist in another service. Business rules belong in Domain, not copy-pasted into Application/API.
+  - Automated guardrail: an equivalent `DuplicationGuardTest` catches literal copy-paste.
   - Human guard: CHECKLIST.md "Semantic Duplication" catches `IsConfirmed()` vs `Status == Confirmed` — same rule, different code.
 
 ## Cross-Layer Drift Checks
 
-Рефакторинг, меняющий DTO, domain events или модель, часто ломает контракты
-между слоями. Для изменений, затрагивающих 2+ слоя, проверь:
+Refactors that change DTOs, domain events, or models often break contracts
+between layers. For changes touching 2+ layers, check:
 
-- [ ] **DTO / domain event contract:** изменение поля в DTO или domain event
-  сопровождается обновлением всех consumers (handlers, jobs, frontend,
-  OpenAPI snapshot).
-- [ ] **AuthZ / ownership drift:** изменение проверки прав в API не оставляет
-  обходной путь в domain service или background job.
-- [ ] **Cache invalidation drift:** добавление/изменение write-операции сопровождается
-  инвалидацией кэша на всех уровнях, где этот объект кэшируется.
-- [ ] **Timezone / date contract:** изменение формата хранения или передачи дат
-  согласовано между UI, API, БД и job'ами.
-- [ ] **Migration / runtime drift:** изменение domain model сопровождается
-  миграцией; breaking change не вливается без обратной совместимости.
-- [ ] **Broken invariant after refactor:** бизнес-правило, которое раньше
-  проверялось в одном месте, не было случайно удалено или размазано по
-  нескольким сервисам с противоречивой семантикой.
-- [ ] **Что пойдёт тихо не так?** Для каждой находки задай вопрос: какой
-  end-to-end инвариант сломается после мержа, хотя unit-тесты на каждый слой
-  отдельно будут зелёными?
+- [ ] **DTO / domain event contract:** a field change in a DTO or domain event
+  is accompanied by updates to all consumers (handlers, jobs, frontend,
+  API schema snapshot).
+- [ ] **AuthZ / ownership drift:** a permission check change in API does not leave
+  a bypass in domain service or background job.
+- [ ] **Cache invalidation drift:** a write operation addition/change is accompanied by
+  cache invalidation on all levels where this object is cached.
+- [ ] **Timezone / date contract:** a storage or transmission format change
+  is agreed between UI, API, DB, and jobs.
+- [ ] **Migration / runtime drift:** a domain model change is accompanied by
+  a migration; breaking changes are not merged without backward compatibility.
+- [ ] **Broken invariant after refactor:** a business rule that was previously
+  checked in one place has not been accidentally removed or smeared across
+  several services with contradictory semantics.
+- [ ] **What could silently go wrong?** For every finding ask: which
+  end-to-end invariant will break after merge, even though per-layer unit tests
+  are green?
+
+## Project-specific examples
+
+> The examples below illustrate applying portable checks to a concrete stack. Replace with your own stack.
+
+### Example: .NET 10 + EF Core + PostgreSQL + Minimal API
+
+- **EF Core Read-Path:** if read-path returns an entity (not a projection) — it must have `.AsNoTracking()`. Projections `.Select()` to DTO/record do NOT require `.AsNoTracking()`.
+- **EF Core Write-Path:** no `.AsNoTracking()` on write operations. Exception: raw SQL (`FromSqlRaw`, `ExecuteSqlRaw`, `ExecuteUpdateAsync`).
+- **Dapper / Raw SQL:** interpolation in SQL — BLOCKER; parameterization required; `CommandTimeout`; `IDbTransaction` for writes; dynamic `IN` via TVP/temp table.
+- **Architecture:** Domain MUST NOT reference Infrastructure **only if the project has layer separation**.
+- **Tests:** `[Test]` + `await Assert.That(value).IsEqualTo(expected)` (TUnit convention). No xUnit/NUnit syntax.
+- **DateTime:** All backend dates MUST be UTC (`DateTime.UtcNow`, `DateTimeKind.Utc`).
+- **PostgreSQL:** Column names `snake_case` via `.HasColumnName()`.
+- **BUG Pattern:** Every bug fix MUST have `BUG###_DescriptiveName` test.
 
 ## ANTI-HALLUCINATION Protocol
 Every finding MUST include:
@@ -146,8 +196,8 @@ If you cannot satisfy 1-4, you MUST NOT report the finding.
 ```
 
 **Confidence Level:**
-- **CERTAIN** — точно баг, требует исправления.
-- **REVIEW** — возможен false positive, требует human judgment перед действием. Используй для архитектурных проверок в проектах без Clean Architecture, для EF-правил при проекциях, и т.п.
+- **CERTAIN** — definitely a bug, requires fixing.
+- **REVIEW** — possible false positive, requires human judgment before action. Use for architectural checks in projects without Clean Architecture, for ORM rules with projections, etc.
 
 ## Verdict
 - **APPROVED**: 0 BLOCKER/CRITICAL/MAJOR
@@ -155,7 +205,7 @@ If you cannot satisfy 1-4, you MUST NOT report the finding.
 - **CHANGES_REQUESTED**: Any BLOCKER/CRITICAL/MAJOR
 
 ## Execution
-1. Read the staged diff (`git diff --cached --diff-filter=ACMR -- '*.cs' '*.csproj' '*.sln' '*.props' '*.targets'`).
+1. Read the staged diff (backend source files only).
 2. For each `+` block, apply stack-specific checks.
 3. Verify evidence for every finding.
 4. Output findings in format above.

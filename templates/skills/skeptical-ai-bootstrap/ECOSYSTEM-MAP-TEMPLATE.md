@@ -1,75 +1,75 @@
-# Шаблон карты экосистемы скиллов
+# Skill Ecosystem Map Template
 
-> Генерируется при онбординге. Обновляется при добавлении новых скиллов.
+> Generated during onboarding. Updated when adding new skills.
 
 ---
 
 ```markdown
-# Скиллы проекта {ProjectName}
+# Project {ProjectName} Skills
 
-> Это карта guardrails. Она показывает, что защищает проект от агентов,
-> когда срабатывает и насколько надёжно.
+> This is a guardrail map. It shows what protects the project from agents,
+> when it triggers and how reliably.
 >
-> Обновлять при добавлении новых скиллов.
+> Update when adding new skills.
 
 ---
 
-## Внутренний цикл (Inner Loop)
+## Inner Loop
 
-Срабатывают на каждое изменение. Feedback loop: секунды → минуты.
+Trigger on every change. Feedback loop: seconds → minutes.
 
-| Скилл | Роль | Механизм | Триггер | Gate | Статус |
-|-------|------|----------|---------|------|--------|
+| Skill | Role | Mechanism | Trigger | Gate | Status |
+|-------|------|-----------|---------|------|--------|
 | code-review | Reviewer | AI Agent | PR | BLOCKER | ✅ Active |
 | task-compliance | Scope Guard | AI Agent | PR | BLOCKER | ✅ Active |
 | architecture-audit | Build Guard | Unit Tests | Build | BLOCKER | ✅ Active |
 | compiler-guard | Fast Feedback | MSBuild | Build | BLOCKER | ✅ Active |
 
-## Внешний цикл (Outer Loop)
+## Outer Loop
 
-Срабатывают по расписанию или триггеру. Feedback loop: часы → дни.
+Trigger on schedule or event. Feedback loop: hours → days.
 
-| Скилл | Роль | Механизм | Триггер | Gate | Статус |
-|-------|------|----------|---------|------|--------|
+| Skill | Role | Mechanism | Trigger | Gate | Status |
+|-------|------|-----------|---------|------|--------|
 | security-audit | Security Auditor | AI Agent | Weekly | WARNING | ✅ Active |
 | dba-audit | DBA Auditor | AI Agent + Script | Sprint | BLOCKER | ✅ Active |
 | performance-audit | Perf Auditor | AI Agent + NBomber | Release | BLOCKER | 🚧 WIP |
 | api-design-audit | API Design Auditor | AI Agent | Sprint | WARNING | 📋 Backlog |
 | bot-audit | Bot Auditor | AI Agent | Sprint | WARNING | 📋 Backlog |
 
-## Проектно-специфичные
+## Project-Specific
 
-Уникальные для этого проекта.
+Unique to this project.
 
-| Скилл | Роль | Механизм | Триггер | Gate | Статус |
-|-------|------|----------|---------|------|--------|
+| Skill | Role | Mechanism | Trigger | Gate | Status |
+|-------|------|-----------|---------|------|--------|
 | {custom-skill} | {role} | {mechanism} | {trigger} | {gate} | 🚧 WIP |
 
 ---
 
-## Легенда
+## Legend
 
-| Статус | Значение |
-|--------|----------|
-| ✅ Active | Работает в CI/CD, блокирует при необходимости |
-| 🚧 WIP | Скилл создан, но ещё не интегрирован в CI |
-| 📋 Backlog | Только описание, нет кода или интеграции |
-| ❌ Skipped | Не применим к проекту (документировано почему) |
+| Status | Meaning |
+|--------|---------|
+| ✅ Active | Works in CI/CD, blocks when necessary |
+| 🚧 WIP | Skill created, but not yet integrated into CI |
+| 📋 Backlog | Only description, no code or integration |
+| ❌ Skipped | Not applicable to project (documented why) |
 
 ---
 
-## Гапы (чего не хватает)
+## Gaps (what's missing)
 
-| Слой | Чего не хватает | Приоритет | План |
-|------|-----------------|-----------|------|
+| Layer | What's missing | Priority | Plan |
+|-------|----------------|----------|------|
 | {layer} | {gap} | {priority} | {plan} |
 
 ---
 
-## Интеграционная схема
+## Integration Schema
 
 ```
-PR создан
+PR created
   → Task Compliance (scope check)
     → Code Review (style + bugs)
       → Build (compilation + analyzers)
@@ -89,11 +89,11 @@ PR создан
 
 ---
 
-## Как использовать
+## How to Use
 
-1. При онбординге агент генерирует этот файл как `.kimi/skills/README.md`
-2. Команда обновляет статусы по мере внедрения
-3. При добавлении нового скилла — добавляем строку в таблицу
-4. При изменении пайплайна — обновляем схему
+1. During onboarding the agent generates this file as `.kimi/skills/README.md`
+2. The team updates statuses as implementation progresses
+3. When adding a new skill — add a row to the table
+4. When changing the pipeline — update the schema
 
-Это **живой документ**, не генерация один раз и забыть.
+This is a **living document**, not generate once and forget.

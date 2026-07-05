@@ -1,47 +1,39 @@
-# i18n Audit — Чеклист
+# i18n Audit — Checklist
 
-## Адаптация
-- [ ] Определён формат локализации (.resx / .json / i18next / бот)
-- [ ] Определены языки проекта (ru, en, ar и т.д.)
-- [ ] Неприменимые разделы помечены N/A
+## Adaptation
+- [ ] Localization format defined (.resx / .json / i18next / bot)
+- [ ] Project languages defined (ru, en, ar, etc.)
+- [ ] Inapplicable sections marked N/A
 
-## Синхронизация ключей
-- [ ] Все ключи из базового языка присутствуют в остальных языках
-- [ ] Структура JSON-локалей совпадает рекурсивно
-- [ ] Нет пустых значений `""` или `null` в переводах
+## Key Synchronization
+- [ ] All keys from the base language are present in other languages
+- [ ] JSON locale structures match recursively
+- [ ] No empty values `""` or `null` in translations
 
-## Хардкод строк
-- [ ] Backend (.cs): нет кириллицы / частых фраз вне `Resources/` и `IStringLocalizer`
-- [ ] Frontend (.tsx/.jsx/.vue): нет текстовых нод вне `t()` / `formatMessage()` / `$t()`
-- [ ] Бот: нет хардкода в `SendMessage` / `answer` / `editMessageText`
-- [ ] Исключения проверены: логи, exception types, комментарии, unit-tests, технические константы
+## Hardcoded Strings
+- [ ] Backend (.cs): no Cyrillic / common phrases outside `Resources/` and `IStringLocalizer`
+- [ ] Frontend (.tsx/.jsx/.vue): no text nodes outside `t()` / `formatMessage()` / `$t()`
+- [ ] Bot: no hardcoded strings in `SendMessage` / `answer` / `editMessageText`
+- [ ] Exceptions verified: logs, exception types, comments, unit-tests, technical constants
 
 ## RTL
-- [ ] Нет `direction: ltr`, `text-align: left`
-- [ ] В Tailwind используются `ms-` / `me-`, а не `ml-` / `mr-`
-- [ ] HTML-элементы с текстом имеют `dir="auto"` или корректный `dir`
+- [ ] No `direction: ltr`, `text-align: left`
+- [ ] Tailwind uses `ms-` / `me-`, not `ml-` / `mr-`
+- [ ] HTML elements with text have `dir="auto"` or correct `dir`
 
-## Форматы и плюрализация
-- [ ] Даты форматируются через i18n / `CultureInfo`
-- [ ] Числа и валюты форматируются через i18n
-- [ ] Плюрализация обработана (1 запись / 2 записи / 5 записей)
-- [ ] Нет конкатенации строк для плюрализации (`"${count} записей"`)
+## Formats and Pluralization
+- [ ] Dates formatted via i18n / `CultureInfo`
+- [ ] Numbers and currencies formatted via i18n
+- [ ] Pluralization handled (1 record / 2 records / 5 records)
+- [ ] No string concatenation for pluralization (`"${count} records"`)
 
 ## Edge cases
-- [ ] Длинные строки не ломают layout
-- [ ] Короткие строки не выглядят странно
-- [ ] Спецсимволы экранированы корректно
+- [ ] Long strings don't break layout
+- [ ] Short strings don't look odd
+- [ ] Special characters are escaped correctly
 
 ## Quality Gates
-- [ ] Каждая находка включает: файл, строка, цитата хардкода, контекст (UI/лог/exception)
-- [ ] Нет MAJOR без exact цитаты строки из кода
-- [ ] REVIEW-находки помечены как требующие human judgment
-- [ ] Технические строки (логи, exceptions) исключены из репорта
-
-## Cross-Layer Invariants
-- [ ] Даты/время форматируются с учётом locale и timezone на UI, в API response, notification job и отчётах
-- [ ] Тексты пушей, писем, уведомлений, ошибок API не содержат хардкода на одном языке
-- [ ] Деньги, даты, числа, относительные даты форматируются одним контрактом на UI и в job'ах
-- [ ] RTL-языки корректно поддерживаются в empty/loading/error состояниях и диалогах
-- [ ] Плюрализация и род согласованы между UI, push и email
-- [ ] Каждая находка оценена на вопрос: «что пойдёт тихо не так для пользователя в другом регионе/языке?»
+- [ ] Every finding includes: file, line, hardcoded quote, context (UI/log/exception)
+- [ ] No MAJOR without an exact string quote from code
+- [ ] REVIEW findings marked as requiring human judgment
+- [ ] Technical strings (logs, exceptions) excluded from report

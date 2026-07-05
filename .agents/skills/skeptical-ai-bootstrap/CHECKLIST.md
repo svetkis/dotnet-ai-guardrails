@@ -1,118 +1,118 @@
 # Skeptical AI Bootstrap Checklist
 
 ## Pre-flight
-- [ ] Получен путь к корню .NET-решения
-- [ ] Определён режим: `fast` | `standard` | `paranoid`
-- [ ] Определён стек (не предполагаем — смотрим `.csproj`)
+- [ ] Path to the .NET solution root obtained
+- [ ] Mode determined: `fast` | `standard` | `paranoid`
+- [ ] Stack determined (don't assume — check `.csproj`)
 
-## Discovery — честный осмотр кодбазы
-- [ ] Найдены все `.csproj` и `.sln`
-- [ ] Определена версия .NET (`TargetFramework`)
-- [ ] Определён тип приложения (Web / Worker / Desktop / Lib / Game / ML)
-- [ ] Определён ORM/доступ к данным (EF / Dapper / Mongo / ADO.NET)
-- [ ] Определён test framework (TUnit / xUnit / NUnit / MSTest / нет)
-- [ ] Найдены CI/CD конфиги
-- [ ] Определена архитектура (Clean / VSlice / Modular / None / BBoM)
-- [ ] Найдены существующие `AGENTS.md`, conventions
+## Discovery — honest codebase inspection
+- [ ] All `.csproj` and `.sln` found
+- [ ] .NET version determined (`TargetFramework`)
+- [ ] Application type determined (Web / Worker / Desktop / Lib / Game / ML)
+- [ ] ORM/data access determined (EF / Dapper / Mongo / ADO.NET)
+- [ ] Test framework determined (TUnit / xUnit / NUnit / MSTest / none)
+- [ ] CI/CD configs found
+- [ ] Architecture determined (Clean / VSlice / Modular / None / BBoM)
+- [ ] Existing `AGENTS.md`, conventions found
 
-## Layer 1 — Компилятор (принцип: быстрая обратная связь)
+## Layer 1 — Compiler (principle: fast feedback)
 - [ ] `<TreatWarningsAsErrors>`?
-- [ ] `<Nullable>` или `#nullable`?
-- [ ] Есть `.editorconfig`?
-- [ ] Сборка проходит без warning'ов?
-- [ ] **Если .NET Framework:** есть ли Roslyn analyzers?
+- [ ] `<Nullable>` or `#nullable`?
+- [ ] Is there `.editorconfig`?
+- [ ] Does the build pass without warnings?
+- [ ] **If .NET Framework:** are there Roslyn analyzers?
 
-## Layer 2 — Архитектура (принцип: авто-проверка слоёв)
-- [ ] Есть ли архитектурные тесты ЛЮБОГО вида?
-- [ ] NetArchTest подходит под стек?
-  - [ ] .NET 6+? → можно NetArchTest
-  - [ ] .NET Framework? → нужен другой подход
-  - [ ] Vertical Slice? → NetArchTest работает, но нужны custom rules про фичи (не слои)
-- [ ] Есть ли сканирование исходников? (Roslyn analyzers / MSBuild tasks / fallback regex)
-- [ ] Проверяются ли критичные атрибуты (ratchet)?
-- [ ] **Решение:** Адаптировать / Создать новый скилл / Пропустить
+## Layer 2 — Architecture (principle: auto-check layers)
+- [ ] Are there architectural tests of ANY kind?
+- [ ] Does NetArchTest fit the stack?
+  - [ ] .NET 6+? → NetArchTest is possible
+  - [ ] .NET Framework? → different approach needed
+  - [ ] Vertical Slice? → NetArchTest works, but needs custom rules about features (not layers)
+- [ ] Is there source scanning? (Roslyn analyzers / MSBuild tasks / fallback regex)
+- [ ] Are critical attributes checked (ratchet)?
+- [ ] **Decision:** Adapt / Create new skill / Skip
 
-## Layer 3 — Тесты (принцип: покрытие + реальная БД, не InMemory)
-- [ ] Есть ли unit-тесты?
-- [ ] Есть ли интеграционные тесты?
-- [ ] Есть ли проверка "0 tests ran"?
-- [ ] Не предлагать миграцию, если >1000 тестов на другом фреймворке
-- [ ] **Если Worker/Desktop/Game/ML:** E2E тесты будут другие — предложить создать
-- [ ] **Решение:** Адаптировать / Создать новый скилл / Пропустить
+## Layer 3 — Tests (principle: coverage + real DB, not InMemory)
+- [ ] Are there unit tests?
+- [ ] Are there integration tests?
+- [ ] Is there a "0 tests ran" check?
+- [ ] Do not propose migration if >1000 tests on another framework
+- [ ] **If Worker/Desktop/Game/ML:** E2E tests will be different — propose creating
+- [ ] **Decision:** Adapt / Create new skill / Skip
 
-## Layer 4 — Code Review (принцип: агент проверяет агента)
-- [ ] Есть ли правила для агентов?
-- [ ] Готовый `code-review` скилл подходит под стек?
-  - [ ] Razor Pages? → нужен `code-review-razor`
-  - [ ] Dapper? → нужен `code-review-dapper`
-  - [ ] .NET Framework? → нужен `code-review-netframework`
-  - [ ] gRPC? → нужен `code-review-grpc`
-  - [ ] Game? → нужен `code-review-game`
-  - [ ] ML/AI? → нужен `code-review-ml`
-  - [ ] Minimal API + EF Core? → ✅ адаптировать
-- [ ] **Решение:** Адаптировать / Создать новый скилл / Пропустить
+## Layer 4 — Code Review (principle: agent checks agent)
+- [ ] Are there agent rules?
+- [ ] Does the ready `code-review` skill fit the stack?
+  - [ ] Razor Pages? → need `code-review-razor`
+  - [ ] Dapper? → need `code-review-dapper`
+  - [ ] .NET Framework? → need `code-review-netframework`
+  - [ ] gRPC? → need `code-review-grpc`
+  - [ ] Game? → need `code-review-game`
+  - [ ] ML/AI? → need `code-review-ml`
+  - [ ] Minimal API + EF Core? → ✅ adapt
+- [ ] **Decision:** Adapt / Create new skill / Skip
 
-## Layer 5 — E2E / MCP (принцип: end-to-end через внешние системы)
-- [ ] Есть ли E2E проверки?
-- [ ] Тип проекта позволяет OpenAPI snapshot?
-  - [ ] Web API → ✅ можно snapshot
-  - [ ] gRPC → ❌ нужен proto compatibility check
-  - [ ] Worker / Desktop / Game → ❌ нужны другие E2E
-- [ ] Есть ли load-тесты?
-- [ ] **Решение:** Адаптировать / Создать новый скилл / Пропустить
+## Layer 5 — E2E / MCP (principle: end-to-end via external systems)
+- [ ] Are there E2E checks?
+- [ ] Does the project type allow OpenAPI snapshot?
+  - [ ] Web API → ✅ can snapshot
+  - [ ] gRPC → ❌ need proto compatibility check
+  - [ ] Worker / Desktop / Game → ❌ need different E2E
+- [ ] Are there load tests?
+- [ ] **Decision:** Adapt / Create new skill / Skip
 
 ## Layer 0 — Instructions
-- [ ] Есть ли `AGENTS.md` или аналог?
-- [ ] Есть ли `CONVENTIONS.md`?
-- [ ] Есть ли нумерованные решения?
+- [ ] Is there `AGENTS.md` or equivalent?
+- [ ] Is there `CONVENTIONS.md`?
+- [ ] Are there decision guards?
 
-## Outer Loop — Аудиты
-- [ ] Есть ли security-артефакты?
-- [ ] DBA-аудит применим к ORM проекта?
-  - [ ] EF Core → ✅ готовый скилл
-  - [ ] Dapper → ❌ создать `dba-audit-dapper`
-  - [ ] Mongo → ❌ создать `dba-audit-mongo`
-- [ ] Perf / UX / i18n аудиты нужны?
-  - [ ] Только русский язык → i18n не нужен, документировать
-- [ ] **Решение:** Адаптировать / Создать новый скилл / Пропустить
+## Outer Loop — Audits
+- [ ] Are there security artifacts?
+- [ ] Is DBA audit applicable to project ORM?
+  - [ ] EF Core → ✅ ready skill
+  - [ ] Dapper → ❌ create `dba-audit-dapper`
+  - [ ] Mongo → ❌ create `dba-audit-mongo`
+- [ ] Are Perf / UX / i18n audits needed?
+  - [ ] Russian only → i18n not needed, document
+- [ ] **Decision:** Adapt / Create new skill / Skip
 
-## Проектирование новых скиллов (если требуется)
-- [ ] Определён **Threat Model**: что агент может сломать?
-- [ ] Определена **Роль**: когда и кто проверяет?
-- [ ] Выбран **Механизм**: Roslyn / Test / Script / AI Agent / MSBuild?
-- [ ] Придумано **Имя**: `{что-проверяем}-{контекст}`
-- [ ] Определено **Место**: `.kimi/skills/{name}/`
-- [ ] Определена **Интеграция**:
-  - [ ] Input: откуда берём контекст?
-  - [ ] Output: куда передаём результаты?
-  - [ ] Trigger: что запускает (PR / schedule / manual)?
-  - [ ] Gate: блокирует ли merge?
-- [ ] Сгенерированы файлы:
+## New Skill Design (if required)
+- [ ] **Threat Model** defined: what can the agent break?
+- [ ] **Role** defined: when and who checks?
+- [ ] **Mechanism** selected: Roslyn / Test / Script / AI Agent / MSBuild?
+- [ ] **Name** invented: `{what-checks}-{context}`
+- [ ] **Place** defined: `.kimi/skills/{name}/`
+- [ ] **Integration** defined:
+  - [ ] Input: where do we get context?
+  - [ ] Output: where do we send results?
+  - [ ] Trigger: what launches it (PR / schedule / manual)?
+  - [ ] Gate: does it block merge?
+- [ ] Files generated:
   - [ ] `SKILL.md`
-  - [ ] `CHECKLIST.md` (если сложный процесс)
-  - [ ] Код механизма (тест / analyzer / script)
+  - [ ] `CHECKLIST.md` (if complex process)
+  - [ ] Mechanism code (test / analyzer / script)
 
-## Карта экосистемы (генерируется в отчёте)
-- [ ] Создана таблица всех скиллов проекта
-- [ ] Каждый скилл имеет статус: Active / WIP / Backlog
-- [ ] Определены gaps между слоями
-- [ ] Новые скиллы добавлены в карту
+## Ecosystem Map (generated in report)
+- [ ] Table of all project skills created
+- [ ] Each skill has status: Active / WIP / Backlog
+- [ ] Gaps between layers defined
+- [ ] New skills added to the map
 
-## Anti-Patterns Check (не навязывать!)
-- [ ] Не предложил миграцию xUnit→TUnit при >1000 тестов
-- [ ] Не скопировал EF-тесты в Dapper-проект
-- [ ] Не требовал OpenAPI snapshot для Worker/Desktop
-- [ ] Не предложил NetArchTest для .NET Framework
-- [ ] Не предложил Clean Architecture для BBoM без рефакторинга
-- [ ] Не создал "God Skill" (всё в одном файле)
-- [ ] Каждый новый скилл имеет конкретный механизм запуска
-- [ ] Не создал скилл "ради скилла" — есть реальная угроза
+## Anti-Patterns Check (do not impose!)
+- [ ] Did not propose xUnit→TUnit migration at >1000 tests
+- [ ] Did not copy EF tests into Dapper project
+- [ ] Did not require OpenAPI snapshot for Worker/Desktop
+- [ ] Did not propose NetArchTest for .NET Framework
+- [ ] Did not propose Clean Architecture for BBoM without refactoring
+- [ ] Did not create a "God Skill" (everything in one file)
+- [ ] Each new skill has a specific launch mechanism
+- [ ] Did not create a skill "for the sake of skill" — there is a real threat
 
 ## Report Quality Gates
-- [ ] Каждый слой имеет статус + обоснование
-- [ ] Для каждого слоя указано: Адаптировать / Создать / Внедрить / Пропустить
-- [ ] Новые скиллы описаны с обоснованием (почему не подходят готовые)
-- [ ] Каждый новый скилл имеет: роль, механизм, место, интеграцию
-- [ ] Не-применимые слои задокументированы (почему)
-- [ ] Сгенерирована карта экосистемы скиллов
-- [ ] Нет галлюцинаций — только факты из кодбазы
+- [ ] Each layer has status + rationale
+- [ ] For each layer specified: Adapt / Create / Deploy / Skip
+- [ ] New skills described with rationale (why ready-made don't fit)
+- [ ] Each new skill has: role, mechanism, place, integration
+- [ ] Non-applicable layers documented (why)
+- [ ] Skill ecosystem map generated
+- [ ] No hallucinations — only facts from the codebase

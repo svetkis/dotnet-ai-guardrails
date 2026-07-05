@@ -1,34 +1,34 @@
-# Ловушка: Вайб-рефакторинг (Vibe Refactoring)
+# Trap: Vibe Refactoring
 
-## Сценарий
+## Scenario
 
-Агент решает "почистить код":
-- Удаляет 3000 строк "неиспользуемого" кода
-- Убирает атрибуты, которые "ни на что не влияют"
-- Меняет архитектуру, потому что "так лучше"
+The agent decides to "clean up the code":
+- Deletes 3000 lines of "unused" code
+- Removes attributes that "don't affect anything"
+- Changes architecture because "it's better this way"
 
 ```csharp
-// Агент: "[SensitiveData] не используется в рантайме, удалю для чистоты"
-// Было:
+// Agent: "[SensitiveData] is not used at runtime, I'll remove it for cleanliness"
+// Before:
 [SensitiveData]
 public string Email { get; init; }
 
-// Стало:
+// After:
 public string Email { get; init; }
 ```
 
-## Последствия
+## Consequences
 
-- PII-поле перестало быть помеченным — логи начали утекать
-- При рефакторинге удалили валидацию, но никто не заметил
-- Compliance-тесты падают, но причина не ясна
+- The PII field is no longer marked — logs start leaking
+- Validation was removed during refactoring, but no one noticed
+- Compliance tests fail, but the cause is unclear
 
-## Решение
+## Solution
 
-1. **NetArchTest** — регламентирует, что можно, а что нельзя. Запрет `FindAsync` в read-path, запрет прямых зависимостей Infrastructure из Api
-2. **Ratchet-тесты** — рефлексией считаем публичные типы в слое и тесты. Уменьшилось количество → тест падает
-3. **Code Review агент** — отдельный агент проверяет diff перед коммитом
+1. **NetArchTest** — regulates what is and isn't allowed. Forbidding `FindAsync` in read-path, forbidding direct Infrastructure dependencies from Api
+2. **Ratchet tests** — use reflection to count public types in a layer and tests. Count decreases → test fails
+3. **Code Review Agent** — a separate agent checks the diff before commit
 
-## Паттерн
+## Pattern
 
-См. `tests/patterns/RatchetTest.cs` и `tests/patterns/ArchitectureRules.cs`
+See `tests/patterns/RatchetTest.cs` and `tests/patterns/ArchitectureRules.cs`

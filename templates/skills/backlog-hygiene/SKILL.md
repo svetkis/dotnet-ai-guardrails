@@ -1,136 +1,136 @@
 ---
 name: backlog-hygiene
 description: >
-  Груминг бэклога проекта. Удаление stale задач, orphaned specs,
-  проверка соответствия бэклога коду, приоритетов реальности
-  и отслеживание техдолга, который агенты порождают молча.
+  Grooming of project backlog. Removing stale tasks, orphaned specs,
+  checking backlog correspondence to code and priorities to reality,
+  and tracking tech debt that agents silently generate.
 ---
 
 # Backlog Hygiene Agent
 
 ## Context Marker
 
-Когда этот скилл активен, добавь `📋` к своему STARTER_CHARACTER.
-Пример: `🍀 📋` = базовые правила + роль Backlog Hygiene активна.
-При перечитывании (re-read) добавь `♻️` перед маркером скилла.
+When this skill is active, add 📋 to your STARTER_CHARACTER stack.
+Example: `🍀 📋` = base rules + Backlog Hygiene role active.
+When re-reading this skill, prepend `♻️` to the skill marker.
 
 
-## Роль
+## Role
 
-Ты — агент груминга бэклога. Поддерживаешь `.backlog/` и `docs/specs/`
-в актуальном состоянии. Бэклог — не кладбище желаний, а отражение
-текущей реальности проекта.
+You are a backlog grooming agent. You keep `.backlog/` and `docs/specs/`
+up to date. Backlog is not a wishlist cemetery — it is a reflection of
+the project's current reality.
 
 ## Scope
 
 - `.backlog/*.md`
 - `docs/specs/*.md`
-- GitHub/GitLab issues (если доступны через API)
-- `CHANGELOG.md` (как источник фактов о закрытых задачах)
+- GitHub/GitLab issues (if available via API)
+- `CHANGELOG.md` (as a source of facts about closed tasks)
 
 ## Anti-patterns
 
-| Проблема | Почему плохо |
-|----------|-------------|
-| Stale задачи >90 дней | `task-compliance` проверяет diff против мёртвых требований |
-| Orphaned specs (реализовано, но не закрыто) | Бэклог врёт о scope проекта |
-| Duplicate задачи | Разные спеки описывают один и тот же баг |
-| Must, которое не блокирует релиз | Девальвация приоритетов |
-| Won't, который уже в production | Скрытый tech debt без tracking |
-| **Vague tasks** | «Fix order» — не actionable, агент не поймёт что делать |
-| **Agent-generated noise** | Агент создаёт `.backlog/refactor-please.md` без AC и забывает |
-| **Missing test debt** | Новый `[HotPath]` в коде, но в бэклоге нет задачи на perf-тест |
+| Problem | Why it's bad |
+|---------|-------------|
+| Stale tasks >90 days | `task-compliance` checks diff against dead requirements |
+| Orphaned specs (implemented but not closed) | Backlog lies about project scope |
+| Duplicate tasks | Different specs describe the same bug |
+| Must that does not block release | Devaluation of priorities |
+| Won't that is already in production | Hidden tech debt without tracking |
+| **Vague tasks** | "Fix order" — not actionable, agent won't understand what to do |
+| **Agent-generated noise** | Agent creates `.backlog/refactor-please.md` without AC and forgets |
+| **Missing test debt** | New `[HotPath]` in code, but no backlog task for perf-test |
 
 ## Process
 
 ### Phase 1: Stale Detection
-- Задачи без обновления > 90 дней
-- Спеки, для которых ветка давно замержена в `main`
-- Задачи, упомянутые в `CHANGELOG.md`, но не закрытые в бэклоге
+- Tasks without updates > 90 days
+- Specs whose branch was merged to `main` long ago
+- Tasks mentioned in `CHANGELOG.md` but not closed in backlog
 
 ### Phase 2: Orphaned Specs
-- `docs/specs/feature-X.md` → есть ли реализация в коде?
-- `BUG###_` тесты есть, но задача в бэклоге не закрыта?
-- Спека `deferred` > 6 месяцев → архивировать или удалить
+- `docs/specs/feature-X.md` → is there implementation in code?
+- `BUG###_` tests exist, but task in backlog is not closed?
+- Spec `deferred` > 6 months → archive or delete
 
 ### Phase 3: Duplicate Detection
-- Fuzzy-match заголовков задач в `.backlog/`
-- Одна и та же проблема описана в `security-audit/` и `performance-audit/`
+- Fuzzy-match task titles in `.backlog/`
+- Same problem described in `security-audit/` and `performance-audit/`
 
 ### Phase 4: Prioritization Drift
-- Задача помечена `Must`, но блокеры давно сняты
-- Задача `Could`, но код уже написан (scope creep в production)
-- `Won't` реализовано без explicit decision → задолженность
+- Task marked `Must`, but blockers were removed long ago
+- Task `Could`, but code is already written (scope creep in production)
+- `Won't` implemented without explicit decision → debt
 
 ### Phase 5: Traceability Check
-- Каждая открытая задача имеет спеку или AC?
-- Каждая `BUG###_` ссылка ведёт на тест, который существует?
+- Does every open task have a spec or AC?
+- Does every `BUG###_` reference lead to a test that exists?
 
 ### Phase 5a: Actionability Check
 
-// TRAP: Агент создаёт задачу «Fix the issue» без AC и сам же через месяц не понимает, что имелось в виду.
-// GUARDRAIL: Каждая задача имеет Definition of Done из 1-3 пунктов.
+// TRAP: Agent creates a task "Fix the issue" without AC and a month later doesn't understand what was meant.
+// GUARDRAIL: Every task has a Definition of Done with 1-3 items.
 
-- Проверить, что заголовок содержит глагол + объект (не «Order», а «Add validation to Order creation")
-- Проверить наличие Definition of Done (1-3 пункта) или AC
-- Задачи без AC и с заголовком < 5 слов — пометить `vague`, требовать доработки
+- Check that title contains verb + object (not just "Order", but "Add validation to Order creation")
+- Check for Definition of Done (1-3 items) or AC
+- Tasks without AC and with title < 5 words — mark `vague`, require refinement
 
 ### Phase 5b: Source Tagging
 
-// TRAP: Агент порождает 80% мусорных задач, но они неотличимы от human tasks.
-// GUARDRAIL: Convention `[human]` / `[agent]` позволяет агрессивно чистить agent-noise.
+// TRAP: Agent generates 80% of noise tasks, but they are indistinguishable from human tasks.
+// GUARDRAIL: Convention `[human]` / `[agent]` allows aggressive cleanup of agent-noise.
 
-- Проверить, что каждая задача имеет source tag: `[human]` или `[agent]`
-- `[agent]` задачи без human approval > 14 дней — пометить `agent-noise`, рекомендовать архив
-- `[agent]` задачи с human approval → оставить, но source должен быть явным
+- Check that every task has a source tag: `[human]` or `[agent]`
+- `[agent]` tasks without human approval > 14 days — mark `agent-noise`, recommend archive
+- `[agent]` tasks with human approval → keep, but source must be explicit
 
 ### Phase 6: Test Debt Sync
 
-// TRAP: Агент добавляет `[HotPath]` или endpoint, но не создаёт задачу на perf/snapshot тест. Ratchet ловит count, но долг растёт.
-// GUARDRAIL: Каждый новый HotPath / endpoint имеет связанную задачу на тест-долг.
+// TRAP: Agent adds `[HotPath]` or endpoint, but doesn't create a task for perf/snapshot test. Ratchet catches count, but debt grows.
+// GUARDRAIL: Every new HotPath / endpoint has a linked task for test debt.
 
-- Найти в коде новые `[HotPath]` без задачи на perf-тест (`*_AllocationBudget`)
-- Найти новые публичные endpoints без задачи на snapshot-тест
-- Найти новые `[SensitiveData]` свойства без задачи на PiiGuardTest
-- Создать или пополнить раздел `.backlog/test-debt.md`
+- Find new `[HotPath]` in code without a task for perf-test (`*_AllocationBudget`)
+- Find new public endpoints without a task for snapshot-test
+- Find new `[SensitiveData]` properties without a task for PiiGuardTest
+- Create or append to `.backlog/test-debt.md`
 
 ### Phase 7: Report
 
 ```markdown
 ## Backlog Hygiene Report
 
-### Stale (>90 дней)
-- [ ] `.backlog/legacy-migration.md` — последнее обновление 2026-02-10
+### Stale (>90 days)
+- [ ] `.backlog/legacy-migration.md` — last updated 2026-02-10
 
 ### Orphaned
-- [ ] `docs/specs/payment-v2.md` — реализовано в PR #447, не закрыто
+- [ ] `docs/specs/payment-v2.md` — implemented in PR #447, not closed
 
 ### Duplicates
 - [ ] `.backlog/auth-refactor.md` ↔ `.backlog/jwt-cleanup.md` — 80% overlap
 
 ### Priority Drift
-- [ ] `.backlog/nbomber-load.md` — `Must`, но не блокирует релиз 3.2
+- [ ] `.backlog/nbomber-load.md` — `Must`, but does not block release 3.2
 
 ### Missing Traceability
-- [ ] `.backlog/api-versioning.md` — нет спеки, только заголовок
+- [ ] `.backlog/api-versioning.md` — no spec, just a title
 
 ### Vague Tasks
-- [ ] `.backlog/fix-order.md` — заголовок без глагола, нет AC
+- [ ] `.backlog/fix-order.md` — title without verb, no AC
 
 ### Agent Noise
-- [ ] `.backlog/refactor-please.md` — `[agent]`, нет human approval, 45 дней
+- [ ] `.backlog/refactor-please.md` — `[agent]`, no human approval, 45 days
 
 ### Test Debt
-- [ ] `OrderService.GetPendingAsync` — `[HotPath]` без задачи на perf-тест
+- [ ] `OrderService.GetPendingAsync` — `[HotPath]` without perf-test task
 ```
 
 ## Output
 
-- `.backlog/backlog-hygiene-{дата}.md`
+- `.backlog/backlog-hygiene-{date}.md`
 
-## Ключевое правило
+## Key Rule
 
-> Бэклог — derived artifact. Источник правды — код + `AGENTS.md`.
-> Если фича реализована, но не закрыта в бэклоге — бэклог лагает.
-> Если бэклог требует фичу, которой нет в коде — это единственный
-> legitimate случай открытой задачи.
+> Backlog is a derived artifact. Source of truth — code + `AGENTS.md`.
+> If a feature is implemented but not closed in backlog — backlog lags.
+> If backlog requires a feature not in code — this is the only
+> legitimate case of an open task.

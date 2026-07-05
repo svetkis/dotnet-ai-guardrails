@@ -1,28 +1,30 @@
 ---
 name: doc-hygiene
 description: >
-  Груминг иерархической документации проекта. Проверяет консистентность
-  AGENTS.md, README, docs/ и соответствие реальному коду.
-  Ловит мёртвые правила и раздувание guardrails.
+  Grooming of hierarchical project documentation. Checks consistency of
+  AGENTS.md, README, docs/ and correspondence to actual code.
+  Catches dead rules and guardrail bloat.
 ---
+
+> **Repo-internal / for methodology archive.** This skill is intended for internal self-audit of the `dotnet-ai-guardrails` repository. It checks the integrity of its own ecosystem (`docs/agents/`, `rules/AGENTS_TEMPLATE.md`, `templates/skills/`, `examples/`). The methodological core (hierarchy consistency, code drift, dead rules, fact checking) can be adapted to another project, but the concrete paths and artifacts are specific to this repository.
 
 # Doc Hygiene Agent
 
 ## Context Marker
 
-Когда этот скилл активен, добавь `📝` к своему STARTER_CHARACTER.
-Пример: `🍀 📝` = базовые правила + роль Doc Hygiene активна.
-При перечитывании (re-read) добавь `♻️` перед маркером скилла.
+When this skill is active, add 📝 to your STARTER_CHARACTER stack.
+Example: `🍀 📝` = base rules + Doc Hygiene role active.
+When re-reading this skill, prepend `♻️` to the skill marker.
 
 
-## Роль
+## Role
 
-Ты — агент груминга документации. Проверяешь, что иерархические guardrails
-не противоречат друг другу и соответствуют коду.
+You are a documentation grooming agent. You check that hierarchical
+guardrails do not contradict each other and match the code.
 
 ## Scope
 
-- `AGENTS.md` (корень и подпапки)
+- `AGENTS.md` (root and subfolders)
 - `README.md`, `README.en.md`
 - `docs/agents/*.md`
 - `docs/solutions/*.md`
@@ -31,79 +33,67 @@ description: >
 
 ## Anti-patterns
 
-| Проблема | Почему плохо |
-|----------|-------------|
-| Корневой AGENTS.md противоречит модульному | Агент не знает, какому правилу следовать |
-| AGENTS.md требует X, но в коде нет guardrail для X | Правило — мёртвая буква |
-| docs/agents/KIMI.md описывает pipeline, которого нет | Онбординг нового агента начинается с лжи |
-| README устарел относительно стека | Человек-разработчик теряет доверие |
-| **AGENTS.md bloat** | Агент перестаёт читать файл целиком из-за размера |
-| **Dead rules** | Правило есть, но нет enforcement (теста, компиляции, CI) |
-| **Internal contradictions** | Два правила в одном AGENTS.md противоречат друг другу |
+| Problem | Why it's bad |
+|---------|-------------|
+| Root AGENTS.md contradicts module one | Agent doesn't know which rule to follow |
+| AGENTS.md requires X, but no guardrail for X in code | Rule is a dead letter |
+| docs/agents/KIMI.md describes non-existent pipeline | Onboarding of a new agent starts with a lie |
+| README is outdated relative to stack | Human developer loses trust |
+| **AGENTS.md bloat** | Agent stops reading the file entirely due to size |
+| **Dead rules** | Rule exists, but no enforcement (test, compiler, CI) |
+| **Internal contradictions** | Two rules in one AGENTS.md contradict each other |
 
 ## Process
 
 ### Phase 1: Hierarchy Consistency
-1. Корневой `AGENTS.md` → `rules/AGENTS_TEMPLATE.md` — нет конфликтов?
-2. `src/{Module}/AGENTS.md` — не противоречат корню?
-3. Deep overrides: более глубокий AGENTS.md отменяет поверхностный?
-   Проверить, что override осознан и задокументирован.
+1. Root `AGENTS.md` → `rules/AGENTS_TEMPLATE.md` — no conflicts?
+2. `src/{Module}/AGENTS.md` — do not contradict root?
+3. Deep overrides: does deeper AGENTS.md override shallower one?
+   Check that override is intentional and documented.
 
 ### Phase 1a: Internal Contradictions
 
-// TRAP: Агент добавляет правило в AGENTS.md, не замечая, что оно противоречит существующему §2.1.
-// GUARDRAIL: Каждый «MUST» / «FORBIDDEN» сверяется с остальными правилами того же файла.
+// TRAP: Agent adds a rule to AGENTS.md without noticing it contradicts existing §2.1.
+// GUARDRAIL: Every MUST / FORBIDDEN is cross-checked with other rules in the same file.
 
-- Найти пары правил, где одно требует X, а другое запрещает X
-- Пример: «Все сервисы должны иметь интерфейс» vs «Minimal API — static classes, без интерфейсов"
-- Конфликты пометить `internal-contradiction`, требовать resolution
+- Find rule pairs where one requires X and another forbids X
+- Example: "All services must have interfaces" vs "Minimal API — static classes, no interfaces"
+- Mark conflicts as `internal-contradiction`, require resolution
 
 ### Phase 2: Code Drift
-1. `AGENTS.md` запрещает `.FindAsync()` в read-path → есть ли regex-тест?
-2. `AGENTS.md` требует `BUG###_` тесты → есть ли convention в `tests/`?
-3. Упомянутые модули/скиллы существуют в `templates/skills/`, `tests/`?
-4. Decision Guards (`PERF-###`) из `AGENTS.md` реально есть в коде?
+1. `AGENTS.md` forbids `.FindAsync()` in read-path → is there a regex test?
+2. `AGENTS.md` requires `BUG###_` tests → is there a convention in `tests/`?
+3. Do mentioned modules/skills exist in `templates/skills/`, `tests/`?
+4. Are Decision Guards (`PERF-###`) from AGENTS.md present in code?
 
 ### Phase 2a: Rule Vitality
 
-// TRAP: AGENTS.md запрещает «raw SQL без комментария», но в коде нет теста/анализатора, который это проверяет. Агент быстро понимает, что правило мёртвое.
-// GUARDRAIL: Каждое MUST/FORBIDDEN имеет enforcement: компилятор, тест, linter или CI.
+// TRAP: AGENTS.md forbids "raw SQL without comment", but no test/analyzer enforces it. Agents quickly learn the rule is dead.
+// GUARDRAIL: Every MUST/FORBIDDEN has enforcement: compiler, test, linter, or CI.
 
-- Для каждого «MUST» / «FORBIDDEN» найти enforcement (тест, компилятор, linter, CI)
-- Правила без enforcement > 90 дней — пометить `dead-rule`
-- Рекомендовать: либо добавить guardrail, либо удалить правило
+- For each MUST / FORBIDDEN find enforcement (test, compiler, linter, CI)
+- Rules without enforcement > 90 days — mark `dead-rule`
+- Recommend: either add guardrail or remove the rule
 
 ### Phase 3: Cross-Agent Docs
-1. `docs/agents/KIMI.md` актуален относительно `AGENTS.md`?
-2. Нет расхождений в описании pipeline между `docs/agents/CLAUDE-CODE.md` и `docs/agents/OPENCODE.md`?
-3. Все агенты описывают один и тот же стек/версии?
-
-### Phase 3a: Fact Check (Documentation vs Code)
-
-// TRAP: Агент написал отчёт с цифрами, которые не соответствуют коду. "450 fix-коммитов" вместо 377, строка 325 в файле из 299 строк.
-// GUARDRAIL: Сверка фактов из docs/audits/, docs/meetup/, docs/talks/ с реальным кодом.
-
-1. Все числовые утверждения (количество тестов, строк, коммитов, endpoints) верифицированы через `git log` / `wc` / `grep` / `find`
-2. Все даты коммитов/релизов соответствуют `git log`
-3. Все имена файлов и номера строк из примеров существуют в текущей кодовой базе
-4. Все ссылки на Decision Guards (`PERF-###`, `DB-###`, `BR-###`) ведут на существующий код
-5. Все ссылки на скиллы/тесты существуют в `templates/skills/`, `tests/`, `examples/`
-6. Все `case study` / `incident report` содержат корректные хеши коммитов (`git show --stat`)
+1. Is `docs/agents/KIMI.md` current relative to `AGENTS.md`?
+2. No divergence in pipeline description between `docs/agents/CLAUDE-CODE.md` and `docs/agents/OPENCODE.md`?
+3. Do all agents describe the same stack/versions?
 
 ### Phase 4: README & CHANGELOG
-1. `README.md` содержит актуальные команды сборки?
-2. `CHANGELOG.md` покрывает последний релиз?
-3. Нет ссылок на удалённые разделы/скиллы?
+1. Does `README.md` contain current build commands?
+2. Does `CHANGELOG.md` cover the latest release?
+3. No links to deleted sections/skills?
 
 ### Phase 5: Size Budget
 
-// TRAP: AGENTS.md разрастается до 500 строк. Агент читает начало, пропускает середину, ломается на конце.
-// GUARDRAIL: Жёсткий или мягкий budget на размер + предложение разбиения.
+// TRAP: AGENTS.md grows to 500 lines. Agent reads the beginning, skips the middle, breaks on the end.
+// GUARDRAIL: Hard or soft budget on size + suggestion to split.
 
-- Подсчитать строки в корневом `AGENTS.md`
-- Если > 150 строк — предупреждение (`approaching budget`)
-- Если > 200 строк — пометить `size-budget-exceeded`, предложить разбиение на module-specific файлы
-- Подсчитать module-level AGENTS.md: если > 80 строк — предложить рефакторинг
+- Count lines in root `AGENTS.md`
+- If > 150 lines — warning (`approaching budget`)
+- If > 200 lines — mark `size-budget-exceeded`, suggest splitting into module-specific files
+- Count module-level AGENTS.md: if > 80 lines — suggest refactoring
 
 ### Phase 6: Report
 
@@ -111,40 +101,35 @@ description: >
 ## Doc Hygiene Report
 
 ### Hierarchy
-- [ ] `src/Payment/AGENTS.md` override «Dapper» на «EF Core» — задокументировано?
+- [ ] `src/Payment/AGENTS.md` overrides "Dapper" to "EF Core" — documented?
 
 ### Internal Contradictions
-- [ ] `rules/AGENTS_TEMPLATE.md` §3.1 требует интерфейсы, §5.4 — static classes (Minimal API)
+- [ ] Root guardrail §X requires A, §Y forbids A
 
 ### Code Drift
-- [ ] `AGENTS.md` §4.2 требует `[SensitiveData]`, но `PiiGuardTest.cs` не найден
+- [ ] Guardrail requires X, but corresponding guardrail test / analyzer not found
 
 ### Dead Rules
-- [ ] `AGENTS.md` §6.1 запрещает raw SQL без комментария — enforcement не найден (> 90 дней)
+- [ ] Guardrail forbids X — no enforcement found (> 90 days)
 
 ### Cross-Agent
-- [ ] `docs/agents/KIMI.md` ссылается на удалённый `templates/skills/legacy-audit/`
-
-### Fact Check
-- [ ] В отчёте `AGENT_FIX_STATS.md` 450 fix-коммитов, факт — 377 (`git log --grep='fix:' | wc -l`)
-- [ ] Строка 325 в `SomeApiClient.cs`, файл имеет 299 строк
-- [ ] Хеш `f18681ee` из case study не существует (`git show f18681ee` → fatal)
+- [ ] Agent documentation references deleted skill / artifact
 
 ### README
-- [ ] Команда сборки устарела: `dotnet test` вместо `dotnet run --project`
+- [ ] Build command outdated
 
 ### Size Budget
-- [ ] Корневой `AGENTS.md` — 230 строк, превышает budget 200
+- [ ] Root guardrail — 230 lines, exceeds budget of 200
 ```
 
 ## Output
 
-- `.backlog/doc-hygiene-{дата}.md`
+- `.backlog/doc-hygiene-{date}.md`
 
-## Ключевое правило
+## Key Rule
 
-> AGENTS.md — единый источник правды для архитектурных guardrail.
-> Всё остальное (docs/agents/, templates/skills/) — derived. Если расходится —
-> обновлять derived, не корень.
-> Мёртвое правило хуже, чем отсутствующее. Если нет enforcement —
-> удалить или добавить guardrail.
+> AGENTS.md is the single source of truth for architectural guardrails.
+> Everything else (docs/agents/, templates/skills/) — derived. If it diverges —
+> update derived, not the root.
+> A dead rule is worse than no rule. If there is no enforcement —
+> remove it or add a guardrail.

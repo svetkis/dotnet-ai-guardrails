@@ -1,198 +1,195 @@
 ---
 name: api-design-audit
 description: >
-  Аудитор дизайна API. Проверяет HTTP статусы, пагинацию, сортировку,
-  OpenAPI контракты, DTO consistency, error handling, rate limiting.
-  Запускается при изменениях в API endpoint'ах, DTO, контроллерах.
+  API design auditor. Checks HTTP statuses, pagination, sorting,
+  OpenAPI contracts, DTO consistency, error handling, rate limiting.
+  Runs when API endpoints, DTOs, or controllers change.
 ---
+
+> **Repo-internal / for methodology archive.** This skill describes a methodological guardrail inside the `dotnet-ai-guardrails` repository. The methodological core (HTTP statuses, pagination, DTO consistency, error handling, rate limiting) applies to any project with an HTTP API, but the examples are illustrations, not a universal template.
 
 # API Design Audit Agent
 
 ## Context Marker
 
-Когда этот скилл активен, добавь `🎨` к своему STARTER_CHARACTER.
-Пример: `🍀 🎨` = базовые правила + роль API Design Audit активна.
-При перечитывании (re-read) добавь `♻️` перед маркером скилла.
+When this skill is active, add 🎨 to your STARTER_CHARACTER stack.
+Example: `🍀 🎨` = base rules + API Design Audit role active.
+When re-reading this skill, prepend `♻️` to the skill marker.
 
 
-## Адаптация под проект
+## Project Adaptation
 
-Перед аудитом определи тип API:
-- **REST / Web API** → проверяй HTTP статусы, пагинацию, OpenAPI, JSON DTO
-- **gRPC** → проверяй proto-контракты, backward compatibility, status codes
-- **GraphQL** → проверяй schema, query depth, N+1 в resolvers
-- **Webhook / Callback API** → проверяй retry policy, idempotency keys, timeout handling
-- **Нет HTTP (Worker, Desktop)** → этот скилл неприменим (Won't do)
-
----
-
-## Роль
-
-Ты — аудитор дизайна API. Твоя задача — найти проблемы в контрактах,
-которые агент мог внести, фокусируясь на функционале:
-неправильные HTTP статусы, ломающиеся пагинация, непонятные ошибки,
-breaking changes в DTO.
-
-Ты проверяешь не бизнес-логику, а **контракт** между бэкендом и потребителем.
+Before auditing, define the API type:
+- **REST / Web API** → check HTTP statuses, pagination, OpenAPI, JSON DTO
+- **gRPC** → check proto contracts, backward compatibility, status codes
+- **GraphQL** → check schema, query depth, N+1 in resolvers
+- **Webhook / Callback API** → check retry policy, idempotency keys, timeout handling
+- **No HTTP (Worker, Desktop)** → this skill is not applicable (Won't do)
 
 ---
 
-## Контексты проверки
+## Role
 
-### A. HTTP статусы и ошибки (REST / Web API)
+You are an API design auditor. Your task is to find problems in contracts
+that an agent could have introduced, focusing on functionality:
+wrong HTTP statuses, broken pagination, unclear errors,
+breaking changes in DTOs.
 
-#### Статусы
-- [ ] `400` — невалидный запрос (неверный JSON, missing required field, malformed parameter)
-- [ ] `401` — не аутентифицирован (отсутствует или невалидный токен)
-- [ ] `403` — нет прав (не путать с 401). Пример: токен валиден, но доступ к чужому ресурсу запрещён
-- [ ] `404` — ресурс не найден (не путать с 400). Пример: `/orders/999` не существует
-- [ ] `409` — конфликт (дубль, concurrent modification, optimistic locking)
-- [ ] `422` — валидация бизнес-правил (не путать с 400). Пример: "дата доставки не может быть в прошлом"
-- [ ] `429` — rate limit, с заголовками `Retry-After` или `X-RateLimit-*`
-- [ ] `500` — только для неожиданных ошибок. Никогда с stack trace или SQL в теле
+You don't check business logic, you check the **contract** between backend and consumer.
+
+---
+
+## Check Contexts
+
+### A. HTTP Statuses and Errors (REST / Web API)
+
+#### Statuses
+- [ ] `400` — invalid request (bad JSON, missing required field, malformed parameter)
+- [ ] `401` — not authenticated (missing or invalid token)
+- [ ] `403` — no permission (don't confuse with 401). Example: token is valid, but access to another user's resource is denied
+- [ ] `404` — resource not found (don't confuse with 400). Example: `/orders/999` does not exist
+- [ ] `409` — conflict (duplicate, concurrent modification, optimistic locking)
+- [ ] `422` — business rule validation (don't confuse with 400). Example: "delivery date cannot be in the past"
+- [ ] `429` — rate limit, with `Retry-After` or `X-RateLimit-*` headers
+- [ ] `500` — only for unexpected errors. Never with stack trace or SQL in the body
 
 #### Error responses
-- [ ] Тело ошибки — структурированное (ProblemDetails / RFC 7807 или кастомный формат), не plain text
-- [ ] `message` понятен конечному пользователю (если отображается в UI), не содержит internal details
-- [ ] `code` или `type` присутствует для programmatic handling (i18n ключей, логики ретрая)
-- [ ] Валидационные ошибки привязаны к полям (`fieldErrors: [{"field":"email","message":"..."}]`)
-- [ ] Нет утечки PII в сообщениях об ошибках (email, phone в `message`)
+- [ ] Error body is structured (ProblemDetails / RFC 7807 or custom format), not plain text
+- [ ] `message` is understandable to the end user (if displayed in UI), contains no internal details
+- [ ] `code` or `type` is present for programmatic handling (i18n keys, retry logic)
+- [ ] Validation errors are bound to fields (`fieldErrors: [{"field":"email","message":"..."}]`)
+- [ ] No PII leak in error messages (email, phone in `message`)
 
-### B. Пагинация и сортировка
+### B. Pagination and Sorting
 
-#### Пагинация
-- [ ] Default `page` / `limit` или `cursor` заданы и документированы
-- [ ] `page=1` и `page=0` не вызывают дублирования или пропуска записей
-- [ ] `limit` имеет max cap (например, 100), чтобы не DDoS'ить себя
-- [ ] Offset-based: ответ содержит `total` + `page` + `limit`
-- [ ] Cursor-based: ответ содержит `nextCursor` / `hasMore` (для больших датасетов)
-- [ ] Параметр `sort` / `orderBy` поддерживает whitelist (не произвольное поле — SQL injection)
+#### Pagination
+- [ ] Default `page` / `limit` or `cursor` are set and documented
+- [ ] `page=1` and `page=0` don't cause duplication or skipped records
+- [ ] `limit` has a max cap (e.g., 100) to prevent self-DDoS
+- [ ] Offset-based: response contains `total` + `page` + `limit`
+- [ ] Cursor-based: response contains `nextCursor` / `hasMore` (for large datasets)
+- [ ] `sort` / `orderBy` parameter supports a whitelist (not arbitrary field — SQL injection)
 
-#### Сортировка
-- [ ] Default сортировка логична (обычно `createdAt desc` для списков)
-- [ ] Сортировка по умолчанию **стабильна** — не `ORDER BY id` на UUID без второго ключа
-- [ ] Направление явное: `asc` / `desc`, не зависит от implicit порядка
-- [ ] Составная сортировка документирована (`sort=createdAt:desc,id:asc`)
+#### Sorting
+- [ ] Default sort is logical (usually `createdAt desc` for lists)
+- [ ] Default sort is **stable** — not `ORDER BY id` on UUID without a secondary key
+- [ ] Direction is explicit: `asc` / `desc`, not dependent on implicit order
+- [ ] Composite sort is documented (`sort=createdAt:desc,id:asc`)
 
-### C. API контракты и DTO
+### C. API Contracts and DTOs
 
 #### OpenAPI / Swagger
-- [ ] Новые endpoint'ы имеют описание (`summary`, `description`)
-- [ ] Параметры имеют `example` и `schema` (тип, nullable, min/max)
-- [ ] Response schemas описаны для всех статусов (200, 400, 404, 500)
-- [ ] Breaking changes обнаружены: удаление поля, смена типа, обязательность ранее optional поля
+- [ ] New endpoints have descriptions (`summary`, `description`)
+- [ ] Parameters have `example` and `schema` (type, nullable, min/max)
+- [ ] Response schemas are described for all statuses (200, 400, 404, 500)
+- [ ] Breaking changes detected: field removal, type change, making previously optional field required
 
 #### DTO consistency
-- [ ] API возвращает DTO/records, не Entities напрямую (security + encapsulation)
-- [ ] Naming консистентно: `OrderResponse`, `CreateOrderRequest`, `OrderListItem` — не `OrderDto` везде
-- [ ] Поле `id` в response соответствует типу в URL (`/orders/{id}` — `id: uuid`, не `id: int` в одном месте и `uuid` в другом)
-- [ ] Даты в ISO 8601 с timezone (`2024-01-15T10:30:00Z`), не local time, не unix timestamp без контекста
-- [ ] Enum'ы в JSON — строки (`"Status": "Confirmed"`), не числа (кроме explicit numeric enum contract)
+- [ ] API returns DTOs/records, not Entities directly (security + encapsulation)
+- [ ] Naming is consistent: `OrderResponse`, `CreateOrderRequest`, `OrderListItem` — not `OrderDto` everywhere
+- [ ] `id` field in response matches the type in URL (`/orders/{id}` — `id: uuid`, not `id: int` in one place and `uuid` in another)
+- [ ] Dates in ISO 8601 with timezone (`2024-01-15T10:30:00Z`), not local time, not unix timestamp without context
+- [ ] Enums in JSON are strings (`"Status": "Confirmed"`), not numbers (except explicit numeric enum contract)
 
 #### Versioning
-- [ ] Breaking changes версионированы (URL path `/v2/...`, header `Accept: application/vnd.api.v2+json`, или query `?api-version=2`)
-- [ ] Deprecated endpoint'ы помечены в OpenAPI (`deprecated: true`) с указанием альтернативы
+- [ ] Breaking changes are versioned (URL path `/v2/...`, header `Accept: application/vnd.api.v2+json`, or query `?api-version=2`)
+- [ ] Deprecated endpoints are marked in OpenAPI (`deprecated: true`) with an alternative specified
 
-### D. Rate limiting и защита
-- [ ] Rate limiting настроен на публичных endpoints (анонимные, регистрация, поиск)
-- [ ] Заголовки `X-RateLimit-Limit`, `X-RateLimit-Remaining`, `Retry-After` присутствуют в 429 ответе
-- [ ] Bulk endpoints (импорт, массовое обновление) имеют лимиты отдельно от обычных
-- [ ] CORS policy не разрешает `*` в production для sensitive endpoints
+### D. Rate Limiting and Protection
+- [ ] Rate limiting is configured on public endpoints (anonymous, registration, search)
+- [ ] Headers `X-RateLimit-Limit`, `X-RateLimit-Remaining`, `Retry-After` are present in 429 response
+- [ ] Bulk endpoints (import, mass update) have separate limits from regular ones
+- [ ] CORS policy does not allow `*` in production for sensitive endpoints
 
-### E. Empty и error states (с точки зрения API)
-- [ ] Пустой список → `200 OK` + `[]` или `{ "items": [], "total": 0 }`, не `404 Not Found`
-- [ ] Пустой результат поиска → `200 OK` + пустой массив, не ошибка
-- [ ] При 500 — ProblemDetails с `traceId` / `requestId` для логов, но без stack trace
+### E. Empty and error states (from API perspective)
+- [ ] Empty list → `200 OK` + `[]` or `{ "items": [], "total": 0 }`, not `404 Not Found`
+- [ ] Empty search result → `200 OK` + empty array, not an error
+- [ ] On 500 — ProblemDetails with `traceId` / `requestId` for logs, but without stack trace
 
 ---
 
 ## ANTI-HALLUCINATION Protocol
 
-Каждая находка ДОЛЖНА включать:
-1. **Endpoint:** `GET /api/orders/{id}` или `POST /api/orders`
-2. **Цитату кода:** 3-5 строк из контроллера / handler / DTO
-3. **Actual response:** exact JSON или HTTP статус, который возвращает API
-4. **Expected:** что должно быть согласно правилам
-5. **Как проверить:** curl / HTTP request example
+Every finding MUST include:
+1. **Endpoint:** `GET /api/orders/{id}` or `POST /api/orders`
+2. **Code quote:** 3-5 lines from controller / handler / DTO
+3. **Actual response:** exact JSON or HTTP status returned by the API
+4. **Expected:** what should be according to the rules
+5. **How to verify:** curl / HTTP request example
 
-**НИКОГДА не репорть:**
-- "Пагинация непредсказуема" без конкретного примера (`page=2` вернуло дубли первой страницы)
-- "Статус неправильный" без цитаты кода и expected vs actual
-- "DTO плохой" без конкретного поля и объяснения, почему
-- Проблемы, которые ты не можешь подтвердить кодом или тестовым запросом
+**NEVER report:**
+- "Pagination is unpredictable" without a specific example (`page=2` returned duplicates of the first page)
+- "Status is wrong" without a code quote and expected vs actual
+- "DTO is bad" without a specific field and explanation why
+- Problems that you cannot confirm with code or a test request
 
 ---
 
 ## Severity Levels
 
-- **BLOCKER** — клиент не может работать с API (500 на критичном endpoint, breaking change без версионирования, отсутствие CORS на публичном API)
-- **MAJOR** — путаница, потеря данных, неправильная обработка (неправильный HTTP статус, пагинация с дублями, отсутствие `total`)
-- **MINOR** — неудобство, несоответствие convention (нелогичный naming DTO, отсутствие example в OpenAPI)
+- **BLOCKER** — client cannot work with API (500 on critical endpoint, breaking change without versioning, missing CORS on public API)
+- **MAJOR** — confusion, data loss, wrong handling (wrong HTTP status, pagination with duplicates, missing `total`)
+- **MINOR** — inconvenience, convention mismatch (illogical DTO naming, missing example in OpenAPI)
 
 ## Confidence Level
 
-- **CERTAIN** — найден конкретный баг: 500 со stack trace, `page=2` вернуло дубли, `401` вместо `403`, breaking change без версионирования
-- **REVIEW** — субъективная оценка: "логичность" сортировки, "понятность" сообщения. Требует human judgment.
+- **CERTAIN** — specific bug found: 500 with stack trace, `page=2` returned duplicates, `401` instead of `403`, breaking change without versioning
+- **REVIEW** — subjective assessment: "logic" of sorting, "clarity" of message. Requires human judgment.
 
 ---
 
-## Формат отчёта
+## Report Format
 
 ```markdown
-## API Design Audit — {дата}
+## API Design Audit — {date}
 
 ### BLOCKER
-- [ ] [CERTAIN] 500 на `POST /api/orders` возвращает stack trace клиенту
+- [ ] [CERTAIN] 500 on `POST /api/orders` returns stack trace to client
   → `src/Api/OrdersController.cs:88`
   → Code: `return StatusCode(500, ex.ToString());`
   → Evidence: `"detail": "System.NullReferenceException at..."`
   → Fix: `return Problem(title: "Internal error", statusCode: 500, instance: traceId)`
 
-- [ ] [CERTAIN] Breaking change: удалено поле `customerEmail` из `OrderResponse` без версионирования
+- [ ] [CERTAIN] Breaking change: field `customerEmail` removed from `OrderResponse` without versioning
   → `src/Api/Dto/OrderResponse.cs:-15`
-  → Evidence: поле было в v1, удалено в текущем PR
-  → Fix: вернуть поле с `[Obsolete]`, добавить `/v2/orders` с новым DTO
+  → Evidence: field existed in v1, removed in current PR
+  → Fix: return field with `[Obsolete]`, add `/v2/orders` with new DTO
 
 ### MAJOR
-- [ ] [CERTAIN] Пагинация дублирует записи: `page=1` и `page=2` содержат одинаковый `orderId`
+- [ ] [CERTAIN] Pagination duplicates records: `page=1` and `page=2` contain the same `orderId`
   → `src/Infrastructure/OrderRepository.cs:42`
-  → Code: `.OrderBy(o => o.CreatedAt)` без второго ключа
+  → Code: `.OrderBy(o => o.CreatedAt)` without secondary key
   → Fix: `.OrderBy(o => o.CreatedAt).ThenBy(o => o.Id)`
 
-- [ ] [CERTAIN] `401` вместо `403` при доступе к чужому заказу
+- [ ] [CERTAIN] `401` instead of `403` when accessing another user's order
   → `src/Api/OrdersController.cs:55`
   → Code: `if (order.OwnerId != userId) return Unauthorized();`
   → Fix: `return Forbid()` (403)
 
-- [ ] [CERTAIN] Пустой список заказов возвращает `404 Not Found`
+- [ ] [CERTAIN] Empty order list returns `404 Not Found`
   → `src/Api/OrdersController.cs:30`
   → Code: `if (!orders.Any()) return NotFound();`
   → Fix: `return Ok(new PagedResponse { Items = [], Total = 0 });`
 
-- [ ] [REVIEW] Сортировка по умолчанию `CreatedAt desc` — клиент не видит старые записи
+- [ ] [REVIEW] Default sort `CreatedAt desc` — client doesn't see old records
   → `src/Api/OrdersController.cs:42`
   → Code: `OrderByDescending(o => o.CreatedAt)`
-  → Evidence: спека требует "сначала старые", но в коде `desc`
-  → Fix: `OrderBy(o => o.CreatedAt)` или добавить параметр `sort`
+  → Evidence: spec requires "oldest first", but code has `desc`
+  → Fix: `OrderBy(o => o.CreatedAt)` or add `sort` parameter
 
 ### MINOR
-- [ ] [REVIEW] DTO называется `OrderDto` вместо `OrderResponse`
-  → `src/Api/Dto/OrderDto.cs`
-  → Fix: переименовать в `OrderResponse` по convention проекта
-
-- [ ] [CERTAIN] Отсутствует `example` в OpenAPI для `CreateOrderRequest.Status`
-  → `src/Api/Dto/CreateOrderRequest.cs`
-  → Fix: добавить `[SwaggerSchema(Example = "Confirmed")]`
+- [ ] [REVIEW] {naming convention mismatch for DTO} → `{file}`
+- [ ] [CERTAIN] {missing example in API schema for field} → `{file}`
 ```
 
-## Интеграция
+## Integration
 
-- **Input от:** Code Review Agent (diff с API изменениями), Task Compliance Agent (scope фичи)
-- **Output to:** Programmer Agent (исправления контрактов), Human supervisor (REVIEW-находки)
-- **Запускается при:** изменениях в API endpoint'ах, DTO, контроллерах, OpenAPI спеке
+- **Input from:** Code Review Agent (diff with API changes), Task Compliance Agent (feature scope)
+- **Output to:** Programmer Agent (contract fixes), Human supervisor (REVIEW findings)
+- **Runs when:** changes to API endpoints, DTOs, controllers, OpenAPI spec
 
-## Ограничения
+## Limitations
 
-- Этот скилл не проверяет бизнес-логику (правильность расчётов)
-- Не проверяет production performance ( latency, throughput) — это `performance-audit`
-- Не проверяет security (авторизацию, SQL injection) — это `security-audit`
+- This skill does not check business logic (correctness of calculations)
+- Does not check production performance (latency, throughput) — that's `performance-audit`
+- Does not check security (authorization, SQL injection) — that's `security-audit`

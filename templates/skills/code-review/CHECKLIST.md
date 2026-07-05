@@ -1,73 +1,73 @@
-# Code Review — Чеклист
+# Code Review — Checklist
 
-## Перед началом
-- [ ] Получен staged diff (`git diff --cached`)
-- [ ] Известен контекст задачи (backlog item / spec)
-- [ ] Скилл активирован автоматически перед `git commit` или явно через `/skill:code-review`
+## Before Start
+- [ ] Staged diff obtained (`git diff --cached`)
+- [ ] Task context known (backlog item / spec)
+- [ ] Skill activated automatically before `git commit` or explicitly via `/skill:code-review`
 
-## Pre-commit / Триггер
-- [ ] В staged-изменениях есть .NET backend файлы (*.cs, *.csproj, *.sln, *.props, *.targets)
-- [ ] Frontend-only изменения пропущены (отдельный frontend-code-review скилл)
-- [ ] При пустом staged diff агент не пишет находок и не блокирует коммит
-- [ ] Агент НЕ вызывает `git commit` самостоятельно
+## Pre-commit / Trigger
+- [ ] Staged changes include backend source files
+- [ ] Frontend-only changes are skipped (use separate frontend-code-review skill)
+- [ ] When staged diff is empty, agent reports nothing and does not block commit
+- [ ] Agent does NOT run `git commit` itself
 
 ## Security
-- [ ] XSS: query params, returnUrl стрипаются
-- [ ] Утечка ID: внутренние ClientId/OwnerId не возвращаются в API
-- [ ] JWT не логируется
-- [ ] Rate limiting на публичных endpoints
-- [ ] Constant-time comparison для хешей
+- [ ] XSS: query params, returnUrl stripped (if applicable)
+- [ ] ID leak: internal ClientId/OwnerId not returned in API
+- [ ] JWT / credentials not logged
+- [ ] Rate limiting on public endpoints (if applicable)
+- [ ] Constant-time comparison for hashes
 
-## EF Core
-- [ ] Read-path без проекции: `.AsNoTracking()` присутствует. Проекции `.Select()` в DTO — не требуют.
-- [ ] Write-path: нет `.AsNoTracking()`. Исключение: raw SQL (`FromSqlRaw`, `ExecuteSqlRaw`, `ExecuteUpdateAsync`).
-- [ ] `.Include()` в QueryService обоснован: нет избыточных цепочек без проекции
-- [ ] `.FindAsync()` в read-path разумно: допустим для чтения по PK, флаг если для списков/фильтров
+## ORM / Data Access
+- [ ] If project uses ORM with change tracking: read-path without projection has read-only mode; projections to DTO — not required.
+- [ ] Write-path: no read-only mode. Exception: raw SQL / bulk API.
+- [ ] Eager loading justified; no over-fetched chains without projection
+- [ ] Raw SQL parameterized; no interpolation/concatenation in SQL
 
-## Архитектура
-- [ ] Если проект использует Clean Architecture (есть проекты Domain / Infrastructure) — Domain не зависит от Infrastructure
-- [ ] API возвращает DTO/records, не Entities
-- [ ] CancellationToken принимается всеми async методами
+## Architecture
+- [ ] If project uses layered architecture — Domain/core does not depend on Infrastructure
+- [ ] API returns DTO/records, not Entities
+- [ ] Async methods accept CancellationToken (if project uses async)
 
-## Тесты
-- [ ] Каждый `fix:` коммит имеет `BUG*Tests.cs` или изменение существующего
-- [ ] Новый функционал покрыт тестами
-- [ ] Нет `Assert.That(true)` или пустых placeholder-тестов
+## Tests
+- [ ] Every `fix:` commit has a regression test per project convention
+- [ ] New functionality covered by tests
+- [ ] No empty placeholder tests
 
-## Качество кода
-- [ ] Нет `async void`
-- [ ] Нет пустых `catch { }`
-- [ ] DateTime в UTC (`DateTime.UtcNow`, `DateTimeKind.Utc`)
-- [ ] PostgreSQL колонки: `snake_case`
+## Code Quality
+- [ ] No `async void` (if applicable)
+- [ ] No empty `catch { }`
+- [ ] Dates in agreed format (UTC / ISO 8601 / project convention)
+- [ ] Consistent naming for DB entities / columns
 
-## Дублирование бизнес-логики (Semantic)
-> Автотест ловит только буквальное копирование. Этот блок — для человека.
-- [ ] Новая валидация/расчёт статуса — нет ли похожей логики в других сервисах?
-- [ ] Правило можно вынести в Domain Service / Value Object / `BR-###`?
-- [ ] Нет разъезда: в одном месте `>= 100`, в другом `> 100`
+## Business Logic Duplication (Semantic)
+> Automated tests catch only literal copying. This block is for humans.
+- [ ] New validation/status calculation — does similar logic exist in other services?
+- [ ] Can the rule be extracted into a Domain Service / Value Object / numbered business rule ID?
+- [ ] No divergence: in one place `>= 100`, in another `> 100`
 
 ## Cross-Layer Drift Checks
-- [ ] Изменение DTO / domain event обновлено у всех consumers
-- [ ] Изменение проверки прав в API не оставляет обход в domain/job
-- [ ] Write-операция инвалидирует кэш на всех уровнях
-- [ ] Изменение формата дат согласовано между UI, API, БД, jobs
-- [ ] Изменение domain model сопровождается миграцией / обратной совместимостью
-- [ ] Бизнес-правило не удалено/размазано с противоречивой семантикой после рефакторинга
-- [ ] Каждая находка оценена на вопрос: «какой end-to-end инвариант сломается, хотя unit-тесты зелёные?»
+- [ ] DTO / domain event change updated for all consumers
+- [ ] Permission check change in API does not leave bypass in domain/job
+- [ ] Write operation invalidates cache on all levels
+- [ ] Date format change agreed between UI, API, DB, jobs
+- [ ] Domain model change accompanied by migration / backward compatibility
+- [ ] Business rule not removed/smeared with contradictory semantics after refactor
+- [ ] Every finding evaluated against: "which end-to-end invariant breaks though unit tests are green?"
 
-## Формат отчёта
+## Report Format
 
 ```markdown
-## Code Review — {дата}
+## Code Review — {date}
 
 ### BLOCKER
-- [ ] {описание} → {файл:строка}
+- [ ] {description} → {file:line}
 
 ### CRITICAL
-- [ ] {описание} → {файл:строка}
+- [ ] {description} → {file:line}
 
 ### MAJOR
-- [ ] {описание} → {файл:строка}
+- [ ] {description} → {file:line}
 
 ### Verdict
 - [ ] APPROVED

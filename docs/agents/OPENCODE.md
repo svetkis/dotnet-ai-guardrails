@@ -1,21 +1,21 @@
 # OpenCode — Guardrails Integration
 
-> OpenCode — open-source агент для разработки (опенсорс-альтернатива проприетарным инструментам).
-> Может работать как VS Code extension или standalone.
-> Формат конфигурации зависит от конкретной реализации.
+> OpenCode — open-source agent for development (open-source alternative to proprietary tools).
+> Can work as a VS Code extension or standalone.
+> Configuration format depends on the specific implementation.
 
-## Структура интеграции
+## Integration Structure
 
-OpenCode обычно использует один из форматов:
+OpenCode typically uses one of the formats:
 
-### Вариант A: Markdown instructions (похоже на Codex)
+### Option A: Markdown instructions (similar to Codex)
 
 ```
 .opencode/
 └── instructions.md                # Project instructions
 ```
 
-### Вариант B: JSON/YAML config
+### Option B: JSON/YAML config
 
 ```
 .opencode/
@@ -28,18 +28,18 @@ OpenCode обычно использует один из форматов:
     └── guardrails.json
 ```
 
-### Вариант C: VS Code workspace settings
+### Option C: VS Code workspace settings
 
 ```
 .vscode/
 └── settings.json                  # OpenCode extension settings
 ```
 
-## Конфигурация проекта
+## Project Configuration
 
-### Универсальный подход (рекомендуется)
+### Universal Approach (recommended)
 
-Создать `.opencode/instructions.md` + набор prompt-файлов:
+Create `.opencode/instructions.md` + a set of prompt files:
 
 ```markdown
 # Project Guardrails — {ProjectName}
@@ -67,7 +67,7 @@ For any change:
 - ...
 ```
 
-### Если OpenCode поддерживает prompt-файлы:
+### If OpenCode supports prompt files:
 
 ```
 .opencode/
@@ -81,9 +81,9 @@ For any change:
     └── architecture-audit.md      # Architecture audit
 ```
 
-## Запуск онбординга
+## Running Onboarding
 
-Зависит от реализации OpenCode:
+Depends on the OpenCode implementation:
 
 ```bash
 # If CLI
@@ -93,66 +93,66 @@ opencode --prompt .opencode/prompts/onboarding.md
 # Open Command Palette → OpenCode: Run Prompt → onboarding
 ```
 
-## Что онбординг создаёт для код-ревью
+## What Onboarding Creates for Review
 
-**Цель:** после оценки проекта зафиксировать review-артефакт под вашу конфигурацию OpenCode.
+**Goal:** after project assessment, define a review artifact for your OpenCode setup.
 
-### 1. Что решает онбординг
+### 1. What onboarding decides
 
-Онбординг должен определить:
+Onboarding should determine:
 
-- как распределить review-инструкции: `AGENTS.md` — универсальная конституция, `.opencode/instructions.md` — поведение OpenCode, prompt-файлы — конкретные задачи ревью
-- нужен ли отдельный `code-review.md` prompt
-- какие проверки нужно адаптировать под стек и ограничения конкретной модели
+- how to split review instructions: `AGENTS.md` for the universal constitution, `.opencode/instructions.md` for OpenCode behavior, prompt files for concrete review tasks
+- whether a dedicated `code-review.md` prompt is required
+- which checks must be adapted to the stack and to the limits of the specific model
 
-### 2. Что должно появиться в проекте
+### 2. What should appear in the project
 
-- `.opencode/prompts/code-review.md` или эквивалентный файл для конкретной задачи ревью
-- базовые review-правила в `.opencode/instructions.md`; универсальные запреты — в `AGENTS.md`
-- явная фиксация, что было адаптировано, а что признано неприменимым
+- `.opencode/prompts/code-review.md` or the equivalent file for a concrete review task
+- base review rules in `.opencode/instructions.md`; universal prohibitions in `AGENTS.md`
+- explicit documentation of what was adapted and what was declared not applicable
 
-### 3. Когда сценарий считается успешным
+### 3. When the scenario is successful
 
-- у команды есть один понятный запрос для ревью в этой конфигурации OpenCode
-- ограничения и N/A-проверки, добавленные специально под проект, уже отражены в артефактах
-- review не зависит от того, кто именно в команде сейчас помнит правильный промпт
+- the team has one clear review prompt for this OpenCode setup
+- project-specific constraints and N/A checks are already reflected in artifacts
+- review no longer depends on who in the team happens to remember the right prompt
 
-### 4. Важная граница
+### 4. Important boundary
 
-Онбординг сначала формирует артефакт для ревью под вашу конфигурацию OpenCode. Уже потом этот артефакт используется на PR и при ручном ревью.
+Onboarding first builds the review artifact for your OpenCode setup. Only after that is the artifact used on PRs and in manual review.
 
-## Специфика OpenCode
+## OpenCode Specifics
 
-### Что отличается от проприетарных агентов
+### What Differs from Proprietary Agents
 
-| Аспект | Kimi | Claude Code | Codex | OpenCode |
+| Aspect | Kimi | Claude Code | Codex | OpenCode |
 |--------|------|-------------|-------|----------|
-| Формат | `.kimi/skills/*.md` | `.claude/CLAUDE.md` | `.codex/instructions.md` | Зависит от реализации |
-| Open Source | Нет | Нет | Нет | Да |
-| Self-hosted | Нет | Нет | Нет | Возможно |
-| Model choice | Фиксировано | Claude | GPT-4o | Любая (Ollama, etc.) |
-| Интеграция | CLI | CLI + IDE | CLI | CLI + IDE |
+| Format | `.kimi/skills/*.md` | `.claude/CLAUDE.md` | `.codex/instructions.md` | Depends on implementation |
+| Open Source | No | No | No | Yes |
+| Self-hosted | No | No | No | Possible |
+| Model choice | Fixed | Claude | GPT-4o | Any (Ollama, etc.) |
+| Integration | CLI | CLI + IDE | CLI | CLI + IDE |
 
-### Нюансы OpenCode
+### OpenCode Nuances
 
-1. **Нестандартный формат.** Поскольку OpenCode — open-source, разные форки могут иметь разные форматы конфигурации. Рекомендуется:
-   - Использовать простой Markdown (универсально)
-   - Держать instructions в одном месте
-   - Документировать формат в `README.md` проекта
+1. **Non-standard format.** Since OpenCode is open-source, different forks may have different configuration formats. It is recommended to:
+   - Use simple Markdown (universal)
+   - Keep instructions in one place
+   - Document the format in the project's `README.md`
 
-2. **Self-hosted models.** Если OpenCode работает с локальными моделями (Ollama, LM Studio):
-   - Контекст может быть меньше (4k-32k tokens)
-   - Инструкции должны быть короче и конкретнее
-   - Нужно больше примеров (few-shot learning)
+2. **Self-hosted models.** If OpenCode works with local models (Ollama, LM Studio):
+   - Context may be smaller (4k-32k tokens)
+   - Instructions should be shorter and more specific
+   - More examples are needed (few-shot learning)
 
-3. **Плагинная архитектура.** OpenCode может поддерживать плагины:
-   - Можно написать плагин для запуска `dotnet test`
-   - Можно написать плагин для NetArchTest
-   - Можно написать плагин для verify-tests
+3. **Plugin architecture.** OpenCode may support plugins:
+   - You can write a plugin to run `dotnet test`
+   - You can write a plugin for NetArchTest
+   - You can write a plugin for verify-tests
 
-## Рекомендуемый формат для OpenCode
+## Recommended Format for OpenCode
 
-Поскольку OpenCode не имеет единого стандарта, рекомендуется **гибридный подход**:
+Since OpenCode has no single standard, a **hybrid approach** is recommended:
 
 ```
 {project-root}/
@@ -169,22 +169,22 @@ opencode --prompt .opencode/prompts/onboarding.md
 └── .codex/instructions.md         # If Codex is used
 ```
 
-### Универсальная конституция `AGENTS.md`
+### Universal Constitution `AGENTS.md`
 
-Используй [`rules/AGENTS_TEMPLATE.md`](../../rules/AGENTS_TEMPLATE.md) как базу. Для OpenCode важно не дублировать её в `.opencode/instructions.md`, а оставить там только специфичные для формата дополнения.
+Use [`rules/AGENTS_TEMPLATE.md`](../../rules/AGENTS_TEMPLATE.md) as the base. For OpenCode, do not duplicate it in `.opencode/instructions.md`; keep only format-specific additions there.
 
-## Онбординг для OpenCode
+## Onboarding for OpenCode
 
-Агент при онбординге:
+The agent during onboarding:
 
-1. Определяет, какой формат использует OpenCode в проекте (спрашивает или проверяет `.opencode/`)
-2. Генерирует конфигурацию в правильном формате
-3. Создаёт `AGENTS.md` (универсальный) + `.opencode/instructions.md` (специфичный)
-4. Генерирует prompt-файлы для частых задач
+1. Determines which format OpenCode uses in the project (asks or checks `.opencode/`)
+2. Generates configuration in the correct format
+3. Creates `AGENTS.md` (universal) + `.opencode/instructions.md` (specific)
+4. Generates prompt files for frequent tasks
 
-## Ограничения
+## Limitations
 
-- Нет единого стандарта конфигурации
-- Может требоваться адаптация под конкретный форк/версию
-- Self-hosted модели могут плохо следовать длинным инструкциям
-- Меньше встроенных tools по сравнению с Claude Code
+- No single configuration standard
+- May require adaptation for a specific fork/version
+- Self-hosted models may poorly follow long instructions
+- Fewer built-in tools compared to Claude Code

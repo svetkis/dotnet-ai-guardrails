@@ -1,26 +1,26 @@
-# Архитектурный инвентарь — шаблон для техлида
+# Architecture Inventory — Template for Tech Lead
 
-> **Назначение:** Зафиксировать текущую архитектуру проекта **перед** внедрением guardrails.  
-> **Потребитель:** Человек (Tech Lead). Не агент.  
-> **Результат:** На входе — кодбаза. На выходе — схема, границы сборок, критичные пути и зафиксированные решения, на которые опираются архитектурные тесты.
+> **Purpose:** Document the current project architecture **before** implementing guardrails.  
+> **Consumer:** Human (Tech Lead). Not an agent.  
+> **Result:** Input — codebase. Output — schema, assembly boundaries, critical paths, and documented decisions that architecture tests rely on.
 
 ---
 
-## Зачем это нужно
+## Why This Is Needed
 
-Архитектурные тесты (`NetArchTest`, `ArchitectureRules.cs`) проверяют **правила**.  
-Но если правила не зафиксированы, агент не может их создать — он угадывает.  
-Этот шаблон помогает за 30–60 минут нарисовать «карту местности», по которой потом строятся guardrails.
+Architecture tests (`NetArchTest`, `ArchitectureRules.cs`) check **rules**.  
+But if rules are not documented, the agent cannot create them — it guesses.  
+This template helps draw a "terrain map" in 30–60 minutes, which guardrails are then built upon.
 
 ---
 
 ## 1. Container Diagram (C4 Lite)
 
-Нарисуй текущую систему в 4–6 блоках. Не уходи в классы — только процессы и хранилища.
+Draw your current system in 4–6 blocks. Don't go into classes — only processes and storage.
 
 ```mermaid
 graph LR
-    User[Пользователь / Client]
+    User[User / Client]
     Api[Web API<br/>.NET 10 Minimal API]
     Worker[Background Worker<br/>Hangfire / Quartz]
     Db[(PostgreSQL)]
@@ -38,105 +38,105 @@ graph LR
     Worker --> Bus
 ```
 
-**Правило:** Если блока нет в диаграмме — нет и архитектурного теста на его границах.
+**Rule:** If a block is not on the diagram — there is no architecture test for its boundaries.
 
 ---
 
-## 2. Assembly Boundaries — границы сборок
+## 2. Assembly Boundaries — Assembly Boundaries
 
-Заполни таблицу: какие проекты/сборки есть и какие зависимости **разрешены**.
+Fill in the table: what projects/assemblies exist and what dependencies are **allowed**.
 
-| Сборка | Назначение | Может ссылаться на | НЕ может ссылаться на | Тест (NetArchTest) |
-|--------|-----------|--------------------|----------------------|-------------------|
-| `MyApp.Domain` | Entities, Value Objects, Domain Services | `MyApp.Domain` (сама) | `MyApp.Application`, `MyApp.Infrastructure`, `MyApp.Api` | `Domain_ShouldNotDependOn_*` |
+| Assembly | Purpose | Can reference | Cannot reference | Test (NetArchTest) |
+|----------|---------|---------------|------------------|-------------------|
+| `MyApp.Domain` | Entities, Value Objects, Domain Services | `MyApp.Domain` (itself) | `MyApp.Application`, `MyApp.Infrastructure`, `MyApp.Api` | `Domain_ShouldNotDependOn_*` |
 | `MyApp.Application` | Use Cases, DTOs, Interfaces (ports) | `MyApp.Domain` | `MyApp.Infrastructure`, `MyApp.Api` | `Application_ShouldNotDependOn_Infrastructure` |
 | `MyApp.Infrastructure` | EF, HttpClients, Cache, FileStorage | `MyApp.Domain`, `MyApp.Application` | `MyApp.Api` | `Infrastructure_ShouldNotDependOn_Api` |
-| `MyApp.Api` | Endpoints, Middleware, DI registration | `MyApp.Domain`, `MyApp.Application`, `MyApp.Infrastructure` | — (корневая) | `Api_ShouldDependOnlyOn_*` |
+| `MyApp.Api` | Endpoints, Middleware, DI registration | `MyApp.Domain`, `MyApp.Application`, `MyApp.Infrastructure` | — (root) | `Api_ShouldDependOnlyOn_*` |
 
-**Для Vertical Slice / Modular:**
+**For Vertical Slice / Modular:**
 
-| Фича / Модуль | Публичный API (что экспортирует) | Может вызывать | НЕ может вызывать |
-|---------------|----------------------------------|----------------|-------------------|
-| `Features.Order` | `CreateOrder`, `GetOrder` | `Features.Payment` (через интеграционные события) | `Features.Payment.Internal.*` |
-| `Features.Payment` | `ProcessPayment`, `Refund` | `Features.Notification` (через события) | `Features.Order.Repository` |
+| Feature / Module | Public API (what it exports) | Can call | Cannot call |
+|------------------|------------------------------|----------|-------------|
+| `Features.Order` | `CreateOrder`, `GetOrder` | `Features.Payment` (via integration events) | `Features.Payment.Internal.*` |
+| `Features.Payment` | `ProcessPayment`, `Refund` | `Features.Notification` (via events) | `Features.Order.Repository` |
 
-> **Где хранить:** Эта таблица копируется в комментарий к `ArchitectureRules.cs` — она становится «контрактом», который ломает тест при нарушении.
-
----
-
-## 3. Critical Paths — критичные пути
-
-Какие цепочки нельзя сломать? Для каждой цепочки укажи: входную точку, ключевое хранилище, side effects.
-
-| ID | Название | Вход | Обработка | Хранилище | Side Effects | Тест-шаблон |
-|----|----------|------|-----------|-----------|--------------|-------------|
-| CP-01 | Создание заказа | `POST /orders` | `OrderService.Create()` | `orders`, `order_items` | Отправка события `OrderCreated` в Bus | `BUG###_` regression + интеграционный |
-| CP-02 | Обработка платежа | `PaymentReceived` (Bus) | `PaymentJob.Execute()` | `payments` | Обновление статуса заказа | Job test + Saga test |
-| CP-03 | Экспорт отчёта | `GET /reports/daily` | `ReportService.Generate()` | `orders` (read-only) | Запись в Blob | Snapshot test на формат файла |
-
-**Зачем:** Приоритизация тестов. Если ресурсов мало — сначала покрываем CP-01, потом CP-02.
+> **Where to store:** This table is copied into a comment in `ArchitectureRules.cs` — it becomes the "contract" that breaks the test when violated.
 
 ---
 
-## 4. Technology Inventory — технический инвентарь
+## 3. Critical Paths — Critical Paths
 
-Заполни один раз — используй при адаптации всех скиллов (`ADAPTATION.md`).
+What chains must not be broken? For each chain specify: entry point, key storage, side effects.
 
-| Категория | Технология | Версия | Что это значит для guardrails |
-|-----------|-----------|--------|-------------------------------|
-| .NET | .NET 10 | 10.0.x | Nullable enabled, `required`, `init` — используем |
-| Framework | Minimal API | — | Нет `[Authorize]` → проверяем `.RequireAuthorization()` |
-| ORM | EF Core + PostgreSQL | 9.x | Есть `AsNoTracking`, `Include`, миграции |
-| Cache | Redis (IDistributedCache) | — | Нет `SetSized()` — проверяем через regex |
-| Tests | xUnit | 2.x | Адаптируем `verify-tests.sh`, не мигрируем на TUnit |
-| CI | GitHub Actions | — | Шаблон `safe-ci.yml` подходит 1-к-1 |
-| Arch | Clean Architecture | 4 проекта | NetArchTest применим напрямую |
+| ID | Name | Entry | Processing | Storage | Side Effects | Test Template |
+|----|------|-------|------------|---------|--------------|---------------|
+| CP-01 | Order creation | `POST /orders` | `OrderService.Create()` | `orders`, `order_items` | Sending `OrderCreated` event to Bus | `BUG###_` regression + integration |
+| CP-02 | Payment processing | `PaymentReceived` (Bus) | `PaymentJob.Execute()` | `payments` | Updating order status | Job test + Saga test |
+| CP-03 | Report export | `GET /reports/daily` | `ReportService.Generate()` | `orders` (read-only) | Writing to Blob | Snapshot test on file format |
 
-> **Вычеркнуть при адаптации:** Если у вас Dapper — вычеркни все EF-правила. Если Worker Service — вычеркни HTTP-аудиты. Если .NET Framework 4.8 — вычеркни NetArchTest, используй Roslyn analyzers.
+**Why:** Test prioritization. If resources are scarce — cover CP-01 first, then CP-02.
 
 ---
 
-## 5. Decision Guards — зафиксированные архитектурные решения
+## 4. Technology Inventory — Technology Inventory
 
-Каждое осознанное отклонение от «стандарта» — с номером и обоснованием. Агенты видят номер и не «чинят» код.
+Fill in once — use when adapting all skills (`ADAPTATION.md`).
 
-> **Подробный шаблон и примеры:** см. отдельный файл [`DECISION-GUARDS.md`](DECISION-GUARDS.md).
+| Category | Technology | Version | What this means for guardrails |
+|----------|------------|---------|--------------------------------|
+| .NET | .NET 10 | 10.0.x | Nullable enabled, `required`, `init` — use them |
+| Framework | Minimal API | — | No `[Authorize]` → check `.RequireAuthorization()` |
+| ORM | EF Core + PostgreSQL | 9.x | There is `AsNoTracking`, `Include`, migrations |
+| Cache | Redis (IDistributedCache) | — | No `SetSized()` — check via regex |
+| Tests | xUnit | 2.x | Adapt `verify-tests.sh`, don't migrate to TUnit |
+| CI | GitHub Actions | — | `safe-ci.yml` template fits 1-to-1 |
+| Arch | Clean Architecture | 4 projects | NetArchTest applicable directly |
 
-**Краткая сводка:**
-
-| Префикс | Что фиксируем | Проверяет тест |
-|---------|--------------|----------------|
-| `PERF-###` | Оптимизация, отклонение от стандартного EF | `ArchitectureRules.cs` (уникальность ID) |
-| `DB-###` | Решение по схеме БД (тип данных, индекс) | `ArchitectureRules.cs` (уникальность ID) |
-| `AUD-###` | Решение по аудиту или логированию | `ArchitectureRules.cs` (уникальность ID) |
-| `ARCH-###` | Решение по слоям или границам модулей | Добавь в тест самостоятельно |
-| `SEC-###` | Исключение из security-правил (публичный webhook) | Добавь в тест самостоятельно |
-
-> **Тест на уникальность:** Шаблон `ArchitectureRules.cs` проверяет, что `PERF-###`, `DB-###`, `AUD-###` уникальны по кодбазе. Дубликат = падение сборки. Префиксы `ARCH-###` и `SEC-###` — расширения; добавь их в regex теста (`(PERF|DB|AUD|ARCH|SEC)-\d{3}`) при необходимости.
+> **Cross out when adapting:** If you have Dapper — cross out all EF rules. If Worker Service — cross out HTTP audits. If .NET Framework 4.8 — cross out NetArchTest, use Roslyn analyzers.
 
 ---
 
-## 6. Anti-Hallucination Checklist для техлида
+## 5. Decision Guards (ADR) — Documented Architectural Decisions
 
-Прежде чем передать инвентарь агенту для генерации guardrails, проверь:
+Every conscious deviation from the "standard" — with a number and rationale. Agents see the number and don't "fix" the code.
 
-- [ ] Диаграмма не содержит блоков, которых нет в `.sln` (иначе агент сгенерирует тесты на несуществующие сборки)
-- [ ] Таблица сборок соответствует реальным `.csproj` (проверь через `dotnet sln list`)
-- [ ] Каждый `PERF-###` / `DB-###` имеет точную ссылку на код (файл:строка)
-- [ ] Critical Paths реально существуют (проверь через поиск по `Route` / `Queue` / `Job`)
-- [ ] Technology Inventory соответствует `global.json` и `Directory.Packages.props`
+> **Detailed template and examples:** see separate file [`DECISION-GUARDS.md`](DECISION-GUARDS.md).
 
----
+**Summary:**
 
-## 7. Next Steps — что делать с инвентарём
+| Prefix | What we document | Checked by test |
+|--------|------------------|-----------------|
+| `PERF-###` | Optimization, deviation from standard EF | `ArchitectureRules.cs` (ID uniqueness) |
+| `DB-###` | DB schema decision (data type, index) | `ArchitectureRules.cs` (ID uniqueness) |
+| `AUD-###` | Audit or logging decision | `ArchitectureRules.cs` (ID uniqueness) |
+| `ARCH-###` | Layer or module boundary decision | Add to test yourself |
+| `SEC-###` | Security rule exception (public webhook) | Add to test yourself |
 
-1. **Сохрани** этот файл в `docs/ARCHITECTURE-INVENTORY.md` целевого проекта (рядом с `AGENTS.md`)
-2. **Если есть осознанные отклонения** — сохрани [`DECISION-GUARDS.md`](DECISION-GUARDS.md) в `docs/DECISION-GUARDS.md` и заполни шаблон.
-3. **Настрой `ArchitectureRules.cs`** — скопируй таблицу сборок в комментарий к тесту
-4. **Проверь `ADAPTATION.md`** — вычеркни неприменимые проверки на основе Technology Inventory
-5. **Запусти bootstrap** — агент использует этот файл как ground truth для генерации guardrails
-6. **Обновляй** при добавлении сборок или изменении критичных путей
+> **Uniqueness test:** `ArchitectureRules.cs` template checks that `PERF-###`, `DB-###`, `AUD-###` are unique across the codebase. Duplicate = build failure. Prefixes `ARCH-###` and `SEC-###` — extensions; add them to the regex test (`(PERF|DB|AUD|ARCH|SEC)-\d{3}`) as needed.
 
 ---
 
-> **Принцип:** Guardrails работают только тогда, когда «правильно» зафиксировано. Этот шаблон — не документация для красоты, а input для архитектурных тестов.
+## 6. Anti-Hallucination Checklist for Tech Lead
+
+Before handing the inventory to the agent for guardrail generation, check:
+
+- [ ] Diagram does not contain blocks that don't exist in `.sln` (otherwise the agent will generate tests for non-existent assemblies)
+- [ ] Assembly table matches real `.csproj` (check via `dotnet sln list`)
+- [ ] Each `PERF-###` / `DB-###` has an exact code reference (file:line)
+- [ ] Critical Paths actually exist (check via search by `Route` / `Queue` / `Job`)
+- [ ] Technology Inventory matches `global.json` and `Directory.Packages.props`
+
+---
+
+## 7. Next Steps — What to Do with the Inventory
+
+1. **Save** this file to `docs/ARCHITECTURE-INVENTORY.md` of the target project (next to `AGENTS.md`)
+2. **If there are conscious deviations** — save [`DECISION-GUARDS.md`](DECISION-GUARDS.md) to `docs/DECISION-GUARDS.md` and fill in the template.
+3. **Configure `ArchitectureRules.cs`** — copy the assembly table into a comment in the test
+4. **Check `ADAPTATION.md`** — cross out non-applicable checks based on Technology Inventory
+5. **Run bootstrap** — the agent uses this file as ground truth for guardrail generation
+6. **Update** when adding assemblies or changing critical paths
+
+---
+
+> **Principle:** Guardrails work only when the "correct" is documented. This template is not documentation for beauty, but input for architecture tests.

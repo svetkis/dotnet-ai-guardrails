@@ -1,42 +1,42 @@
-# Roslyn-анализаторы как compile-time guardrails
+# Roslyn Analyzers as Compile-Time Guardrails
 
-> Regex ищет строки. Roslyn понимает C#.
-> Для C# guardrails по исходникам default choice — Roslyn analyzer.
+> Regex searches strings. Roslyn understands C#.
+> For source-level C# guardrails, the default choice is a Roslyn analyzer.
 
-## Когда выбирать Roslyn
+## When To Choose Roslyn
 
-Используй анализатор, если правило зависит от смысла C#:
+Use an analyzer when the rule depends on C# meaning:
 
-| Правило | Почему Roslyn |
-|---------|---------------|
-| Запрет raw `Guid Id` в Domain | Нужно понимать тип свойства и namespace |
-| Запрет `FindAsync()` в read-path | Нужно отличать реальный invocation от комментария и write-path |
-| Запрет allocations в `[HotPath]` | Нужно видеть attribute, `new`, array creation, boxing, `async` |
-| DTO наружу не содержит internal entity | Нужно анализировать symbols и return types |
-| Метод обязан принимать `CancellationToken` | Нужно смотреть signature и async usage |
+| Rule | Why Roslyn |
+|------|------------|
+| Forbid raw `Guid Id` in Domain | Needs property type and namespace |
+| Forbid `FindAsync()` in read-path | Needs real invocation, not comments, and write-path context |
+| Forbid allocations in `[HotPath]` | Needs attributes, `new`, array creation, boxing, `async` |
+| Public DTO must not expose internal entity | Needs symbols and return types |
+| Method must accept `CancellationToken` | Needs signature and async usage |
 
-## Когда НЕ Roslyn
+## When Not Roslyn
 
-| Проверка | Инструмент |
-|----------|------------|
-| Зависимости между сборками / слоями | NetArchTest |
-| Циклы между slices/modules | ArchUnitNET |
-| Уникальность `PERF-###`, `DB-###`, `AUD-###` в markdown/config/code comments | Regex или parser |
-| `.csproj`, `.yml`, `package.json`, lock-файлы | Structured parser или regex |
+| Check | Tool |
+|-------|------|
+| Dependencies between assemblies / layers | NetArchTest |
+| Cycles between slices/modules | ArchUnitNET |
+| Unique `PERF-###`, `DB-###`, `AUD-###` in markdown/config/code comments | Regex or parser |
+| `.csproj`, `.yml`, `package.json`, lock files | Structured parser or regex |
 
-## Рабочий пример
+## Working Example
 
 `examples/DemoProject/src/DemoProject.Analyzers/`:
 
 - `StronglyTypedIdAnalyzer.cs`
-  - `SAE001`: primitive `*Id` property в Domain
-  - `SAE002`: raw `Guid *Id` parameter в Domain
+  - `SAE001`: primitive `*Id` property in Domain
+  - `SAE002`: raw `Guid *Id` parameter in Domain
 - `HotPathAnalyzer.cs`
-  - `SAE003`: allocation в `[HotPath]`
-  - `SAE004`: `async` state machine в `[HotPath]`
-  - `SAE005`: boxing в `[HotPath]`
+  - `SAE003`: allocation in `[HotPath]`
+  - `SAE004`: `async` state machine in `[HotPath]`
+  - `SAE005`: boxing in `[HotPath]`
 
-Подключение к проекту:
+Project hookup:
 
 ```xml
 <ProjectReference Include="..\DemoProject.Analyzers\DemoProject.Analyzers.csproj"
@@ -44,16 +44,16 @@
                   ReferenceOutputAssembly="false" />
 ```
 
-## Минимальный процесс для агента
+## Minimal Agent Process
 
-1. Сформулируй bug class: какой конкретный агентский баг ловим.
-2. Напиши 2-3 маленьких примера кода: должен сработать / не должен сработать.
-3. Создай `DiagnosticDescriptor` с ID `SAE###`.
-4. Зарегистрируй syntax или operation action.
-5. Используй `SemanticModel`, когда правило зависит от типа или symbol.
-6. Подключи analyzer как `OutputItemType="Analyzer"`.
-7. Зафиксируй severity: error для safety/correctness, warning для performance guidance.
+1. State the bug class: which specific agent bug this catches.
+2. Write 2-3 tiny code examples: should trigger / should not trigger.
+3. Create a `DiagnosticDescriptor` with an `SAE###` ID.
+4. Register a syntax or operation action.
+5. Use `SemanticModel` when the rule depends on types or symbols.
+6. Hook the analyzer with `OutputItemType="Analyzer"`.
+7. Set severity: error for safety/correctness, warning for performance guidance.
 
-## Правило репозитория
+## Repository Rule
 
-Regex по `.cs` — только временный spike или fallback. Если C#-правило стабилизировалось и должно защищать команду постоянно, перенеси его в Roslyn analyzer.
+Regex over `.cs` is only a temporary spike or fallback. If a C# rule has stabilized and should protect the team permanently, promote it to a Roslyn analyzer.

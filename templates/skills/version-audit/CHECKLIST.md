@@ -1,27 +1,27 @@
 # Version Audit Checklist
 
 ## Pre-flight
-- [ ] Получен список изменённых файлов (`global.json`, `*.csproj`, `package.json`, `Dockerfile`)
-- [ ] Известен team standard для TargetFramework (например, `net9.0`)
-- [ ] Доступен вывод `dotnet list package --outdated` (для .NET-проектов)
+- [ ] List of changed files obtained (`global.json`, `*.csproj`, `package.json`, `Dockerfile`)
+- [ ] Team standard for TargetFramework is known (e.g., `net9.0`)
+- [ ] `dotnet list package --outdated` output is available (for .NET projects)
 
 ## SDK & Runtime
-- [ ] `global.json` — версия без `preview`/`rc`/`beta`
+- [ ] `global.json` — version without `preview`/`rc`/`beta`
 - [ ] `global.json` — `rollForward` != `disable`
-- [ ] Все проекты используют единый `TargetFramework`
+- [ ] All projects use a single `TargetFramework`
 
 ## NuGet Packages
-- [ ] Нет `preview`/`rc`/`beta` в `PackageReference`/`PackageVersion`
-- [ ] Версии Microsoft.* пакетов совпадают с TargetFramework (например, `net9.0` → EF Core 9.x)
-- [ ] Нет пакетов старше 2 мажорных релизов от current LTS
-- [ ] `dotnet list package --vulnerable` — чисто или все уязвимости задокументированы
+- [ ] No `preview`/`rc`/`beta` in `PackageReference`/`PackageVersion`
+- [ ] Microsoft.* package versions match TargetFramework (e.g., `net9.0` → EF Core 9.x)
+- [ ] No packages more than 2 major releases behind current LTS
+- [ ] `dotnet list package --vulnerable` — clean or all vulnerabilities documented
 
-## Frontend (если применимо)
-- [ ] `package.json` — нет `alpha`/`beta`/`rc` в `dependencies`
-- [ ] React/Vue/Angular — отставание не более 1 мажорной версии
-- [ ] TypeScript — совместим с framework
+## Frontend (if applicable)
+- [ ] `package.json` — no `alpha`/`beta`/`rc` in `dependencies`
+- [ ] React/Vue/Angular — lag no more than 1 major version
+- [ ] TypeScript — compatible with framework
 
 ## Infrastructure
-- [ ] `Dockerfile` — base image не `preview`, не `rc`
-- [ ] GitHub Actions — `actions/setup-dotnet` с указанием версии или `global.json`
-- [ ] GitHub Actions — `actions/checkout@v4`, не `v2` или `v3`
+- [ ] `Dockerfile` — base image is not `preview`, not `rc`
+- [ ] GitHub Actions — `actions/setup-dotnet` with version specified or `global.json`
+- [ ] GitHub Actions — `actions/checkout@v4`, not `v2` or `v3`

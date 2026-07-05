@@ -1,35 +1,35 @@
 # AI Agents Integration
 
-> Эта директория содержит инструкции по интеграции guardrails
-> с различными AI-агентами и инструментами разработки.
+> This directory contains instructions for integrating guardrails
+> with various AI agents and development tools.
 >
-> Каждый агент имеет свою экосистему, формат конфигурации и нюансы.
-> Выбирай файл, соответствующий твоему инструменту.
+> Each agent has its own ecosystem, configuration format, and nuances.
+> Choose the file matching your tool.
 
-## Протокол онбординга (прочитай первым)
+## Bootstrap Protocol (read this first)
 
-Перед настройкой любого агента — прочитай [BOOTSTRAP-PROTOCOL.md](BOOTSTRAP-PROTOCOL.md).  
-Он предотвращает ситуацию, когда агент пытается создать `DemoProject` в целевом репо вместо оценки существующей кодбазы.
+Before configuring any agent — read [BOOTSTRAP-PROTOCOL.md](BOOTSTRAP-PROTOCOL.md).  
+It prevents situations where an agent tries to create a `DemoProject` in the target repo instead of assessing the existing codebase.
 
-## Доступные агенты
+## Available Agents
 
-| Агент | Файл | Формат конфигурации | Особенности |
-|-------|------|---------------------|-------------|
-| **Kimi Code CLI** | [KIMI.md](KIMI.md) | `.kimi/skills/{name}/SKILL.md` | Система скиллов, marketplace |
+| Agent | File | Configuration Format | Features |
+|-------|------|---------------------|----------|
+| **Kimi Code CLI** | [KIMI.md](KIMI.md) | `.kimi/skills/{name}/SKILL.md` | Skill system, marketplace |
 | **Claude Code** | [CLAUDE-CODE.md](CLAUDE-CODE.md) | `.claude/CLAUDE.md` + commands | Tools (bash, edit), 200k context |
 | **Cursor** | [CURSOR.md](CURSOR.md) | `.cursorrules` + `.cursor/rules/` | IDE-integrated, context-aware rules |
-| **Codex (OpenAI)** | [CODEX.md](CODEX.md) | `.codex/instructions.md` | Один файл, git-интеграция |
+| **Codex (OpenAI)** | [CODEX.md](CODEX.md) | `.codex/instructions.md` | Single file, git integration |
 | **OpenCode** | [OPENCODE.md](OPENCODE.md) | `.opencode/instructions.md` | Open-source, self-hosted |
 
-## Как читать эти гайды
+## How to Read These Guides
 
-Каждый гайд построен вокруг практического вопроса: **что онбординг должен создать для код-ревью**.
-Сначала запустите onboarding по разделу «Запуск онбординга», затем вернитесь к разделу «Что онбординг создаёт для код-ревью».
+Each guide focuses on one practical question: **what onboarding should create for review**.
+Run onboarding first, then read the "What Onboarding Creates for Review" section.
 
-## Универсальный подход
+## Universal Approach
 
-Если в проекте используется несколько агентов или агент неизвестен —
-используй универсальный `AGENTS.md` в корне проекта:
+If multiple agents are used in the project or the agent is unknown —
+use the universal `AGENTS.md` in the project root:
 
 ```markdown
 # AGENTS.md — {ProjectName}
@@ -45,33 +45,33 @@
 - ...
 ```
 
-## Как выбрать формат
+## How to Choose the Format
 
-1. **Определи, какой агент используется** (или будет использоваться)
-2. **Прочитай соответствующий файл** из таблицы выше
-3. **Следуй инструкциям** по структуре конфигурации
-4. **Используй `skeptical-ai-bootstrap`** для автоматического сканирования:
-   - Скилл определит тип агента
-   - Сгенерирует конфигурацию в правильном формате
-   - Создаст агенто-специфичные артефакты
+1. **Identify which agent is used** (or will be used)
+2. **Read the corresponding file** from the table above
+3. **Follow the instructions** for the configuration structure
+4. **Use `skeptical-ai-bootstrap`** for automatic scanning:
+   - It determines the agent type
+   - Generates configuration in the correct format
+   - Creates agent-specific artifacts
 
-## Сравнение агентов
+## Agent Comparison
 
-| Характеристика | Kimi | Claude Code | Cursor | Codex | OpenCode |
+| Characteristic | Kimi | Claude Code | Cursor | Codex | OpenCode |
 |----------------|------|-------------|--------|-------|----------|
-| **Формат правил** | Много файлов (скиллы) | 1 файл + команды | `.cursorrules` + rules/ | 1 файл | Зависит от реализации |
-| **Запуск** | `kimi run {name}` | `/{command}` | Chat / Composer | Прямой prompt | CLI / IDE |
-| **Tools** | Ограниченно | Bash, edit, read | Inline edits | CLI-only | Зависит от реализации |
-| **Context** | ~200k | ~200k | ~200k | ~128-200k | Зависит от модели |
-| **Open Source** | Нет | Нет | Нет | Нет | Да |
-| **Self-hosted** | Нет | Нет | Нет | Нет | Возможно |
+| **Rules format** | Multiple files (skills) | 1 file + commands | `.cursorrules` + rules/ | 1 file | Depends on implementation |
+| **Launch** | `kimi run {name}` | `/{command}` | Chat / Composer | Direct prompt | CLI / IDE |
+| **Tools** | Limited | Bash, edit, read | Inline edits | CLI-only | Depends on implementation |
+| **Context** | ~200k | ~200k | ~200k | ~128-200k | Depends on model |
+| **Open Source** | No | No | No | No | Yes |
+| **Self-hosted** | No | No | No | No | Possible |
 
-## Рекомендация
+## Recommendation
 
-Если ты только начинаешь — используй **Kimi Code CLI**, **Claude Code** или **Cursor**.
-Они имеют наиболее зрелые экосистемы для guardrails.
+If you are just starting — use **Kimi Code CLI**, **Claude Code**, or **Cursor**.
+They have the most mature ecosystems for guardrails.
 
-- **Kimi / Claude Code** — для CLI-first workflow, скриптов, CI-интеграции
-- **Cursor** — для IDE-first workflow, inline edits, контекстно-зависимых правил
+- **Kimi / Claude Code** — for CLI-first workflow, scripts, CI integration
+- **Cursor** — for IDE-first workflow, inline edits, context-dependent rules
 
-Если важна приватность или self-hosting — смотри на **OpenCode** с локальными моделями.
+If privacy or self-hosting is important — look at **OpenCode** with local models.

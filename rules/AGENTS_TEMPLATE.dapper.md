@@ -1,8 +1,8 @@
 # AGENTS.md — Dapper / Raw SQL Add-on
 
-> Дополнение к `AGENTS_TEMPLATE.md` для проектов с **Dapper, ADO.NET или raw SQL**.
-> Скопируйте содержимое этого файла в конец вашего `AGENTS.md`.
-> Архитектурные guardrails: [`tests/patterns/DapperGuardRules.cs`](../tests/patterns/DapperGuardRules.cs)
+> Add-on to `AGENTS_TEMPLATE.md` for projects using **Dapper, ADO.NET, or raw SQL**.
+> Copy the contents of this file to the end of your `AGENTS.md`.
+> Architecture guardrails: [`tests/patterns/DapperGuardRules.cs`](../tests/patterns/DapperGuardRules.cs)
 
 ## Semantic Anchors (Dapper)
 
@@ -13,24 +13,24 @@
 
 ## Raw SQL
 
-- ❌ C# string interpolation (`$"..."`) в SQL-строке — **FORBIDDEN**
-- ❌ Конкатенация (`+`) user input с SQL — **FORBIDDEN**
-- ✅ Параметризация (`@param`) — **MANDATORY**
-- ✅ `IN` с динамическим списком — через Table-Valued Parameter (TVP) или временную таблицу, не `string.Join`
+- ❌ C# string interpolation (`$"..."`) in SQL string — **FORBIDDEN**
+- ❌ Concatenation (`+`) of user input with SQL — **FORBIDDEN**
+- ✅ Parameterization (`@param`) — **MANDATORY**
+- ✅ `IN` with dynamic list — via Table-Valued Parameter (TVP) or temp table, not `string.Join`
 
 ## Dapper Conventions
 
-- ✅ Каждый вызов `QueryAsync` / `ExecuteAsync` должен иметь `commandTimeout` (явный или глобальный default)
-- ✅ Write-операции обёрнуты в `IDbTransaction` — нет standalone `ExecuteAsync` для изменений
-- ✅ `TransactionScope` только с `TransactionScopeAsyncFlowOption.Enabled`
-- ✅ `QueryMultiple` для batch-запросов вместо N отдельных вызовов
+- ✅ Every `QueryAsync` / `ExecuteAsync` call must have `commandTimeout` (explicit or global default)
+- ✅ Write operations wrapped in `IDbTransaction` — no standalone `ExecuteAsync` for mutations
+- ✅ `TransactionScope` only with `TransactionScopeAsyncFlowOption.Enabled`
+- ✅ `QueryMultiple` for batch queries instead of N separate calls
 
 ## Raw SQL Hygiene in EF Projects
 
-- ✅ Даже в EF-проектах `FromSqlRaw` / `ExecuteSqlRaw` требуют параметризации
-- ❌ `FromSqlRaw` с `$"..."` — **FORBIDDEN** (используй `FromSqlInterpolated`)
+- ✅ Even in EF projects `FromSqlRaw` / `ExecuteSqlRaw` require parameterization
+- ❌ `FromSqlRaw` with `$"..."` — **FORBIDDEN** (use `FromSqlInterpolated`)
 
 ## Hard Prohibitions (Dapper)
 
-- ❌ `string.Format`, `StringBuilder.Append(userInput)` в SQL
-- ❌ Динамический `ORDER BY` через конкатенацию без whitelist
+- ❌ `string.Format`, `StringBuilder.Append(userInput)` in SQL
+- ❌ Dynamic `ORDER BY` via concatenation without whitelist

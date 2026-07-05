@@ -1,161 +1,161 @@
-# Ловушка: Дрейф графа зависимостей (Dependency Drift)
+# Trap: Dependency Drift
 
-> **Тезис:** Дублирование и дрейф графа — разные метрики. Диф выглядит безобидно, а архитектура тихо ломается.
+> **TL;DR:** Code duplication and dependency drift are different metrics. The diff looks harmless — +1 `using`, +1 `#include`, +1 `ProjectReference` — but breaks the topology of the dependency graph.
 
-| | Дублирование | Дрейф графа |
+| | Duplication | Dependency Drift |
 |---|---|---|
-| **Что** | Одна и та же логика в разных местах | Слой A начинает зависеть от слоя B, который зависит от A |
-| **На ревью** | Очевидно: «это мы уже писали» | Неочевидно: «+1 using в 9 файлах — ну и что?» |
-| **Последствия** | Баги при расхождении логики | Невозможность изолировать слой, каскадные пересборки |
-| **AI-агент** | Повторяет логику, не видя существующую | Добавляет «удобный» using, не проверяя граф |
+| **What** | Same logic in multiple places | Layer A starts depending on layer B, which depends on A (or on C, which depends on A) |
+| **In review** | Obvious: "we already wrote this in file X" | Non-obvious: "+1 using in 9 files — so what?" |
+| **Consequences** | Bugs when logic diverges | Inability to test layers in isolation, cascading rebuilds |
+| **AI agent** | Repeats logic without seeing existing code | Adds a "convenient" using without checking the architecture graph |
 
 ---
 
-## Сценарий
+## Scenario
 
-Агент делает "косметический" рефакторинг или добавляет фичу:
+The agent performs a "cosmetic" refactoring or adds a feature:
 
 ```csharp
-// Диф: всего одна строчка
+// Diff: just one line
 + using DemoProject.Infrastructure.Helpers;
 ```
 
 ```cpp
-// Диф: всего один #include
+// Diff: just one #include
 + #include "Acts/TrackFinding/Seed.hpp"
 ```
 
-На ревью diff выглядит безобидно. Но эта одна строка замыкает цикл в графе зависимостей.
+In code review the diff looks benign. But that single line closes a cycle in the dependency graph.
 
-### Реальный кейс: CERN ACTS
+### Real-world case: CERN ACTS
 
-Коллега делал "косметический" рефакторинг в проекте ACTS (CERN). Добавил **+1 `#include` в 70 файлах**. На ревью диф выглядел как тривиальная чистка заголовков. В результате — **40 новых циклических зависимостей**. Компилятор прошёл, тесты прошли, но архитектура сломалась: время полной пересборки выросло с 12 до 47 минут, параллельная компиляция модулей стала невозможна.
+A colleague performed a "cosmetic" refactoring in the ACTS project (CERN). Added **+1 `#include` in 70 files**. In review the diff looked like a trivial header cleanup. The result — **40 new circular dependencies**. Compiler passed, tests passed, but the architecture was broken: full rebuild time grew from 12 to 47 minutes, parallel module compilation became impossible.
 
 ```cpp
-// До: A → B → C (ациклично)
-// После: A → B → C → A (цикл)
-// Причина: в A добавили #include <C.hpp> "ради одной константы"
+// Before: A → B → C (acyclic)
+// After:  A → B → C → A (cycle)
+// Cause: added #include <C.hpp> in A "for just one constant"
 ```
 
-### Типы дрейфа
+### Types of drift
 
-**Тип 1: «Удобный using» — постепенное проникновение**
+**Type 1: "Convenient using" — gradual penetration**
 ```
-Нужно залогировать метрику
+Need to log a metric
     ↓
 + using Infrastructure.Telemetry;
     ↓
-Через месяц: 5 endpoint'ов используют Telemetry напрямую
+After a month: 5 endpoints use Telemetry directly
     ↓
-Api слой зависит от Infrastructure
+Api layer depends on Infrastructure
 ```
 
-**Тип 2: «DTO в wrong layer» — семантический цикл**
+**Type 2: "DTO in wrong layer" — semantic cycle**
 ```
 Infrastructure.Payments.YooKassaPaymentDto
     ↓
-Используется в Api.Endpoints
+Used in Api.Endpoints
     ↓
-Api зависит от Infrastructure не через интерфейс, а через конкретный тип
+Api depends on Infrastructure not through interface, but through concrete type
 ```
 
-**Тип 3: «Рефакторинг ради чистоты» — CERN-эффект**
+**Type 3: "Refactoring for cleanliness" — CERN effect**
 ```
-«Вынесем общий хедер» / «Обобщим базовый класс»
+"Let's extract a common header" / "Let's generalize a base class"
     ↓
-+1 include/using в N файлах
++1 include/using in N files
     ↓
-Каждый файл теперь видит больше типов
+Each file now sees more types
     ↓
-Через неделю: 40 циклических зависимостей
-```
-
-**Тип 4: «Тест добавили поздно»**
-```
-Граф дрейфует месяцами
-    ↓
-Добавили архитектурный тест
-    ↓
-Тест сразу красный
-    ↓
-«Но код же работает!» — да, но архитектура сломана
+After a week: 40 circular dependencies
 ```
 
-## Последствия
+**Type 4: "Test added too late"**
+```
+Graph drifts for months
+    ↓
+Architecture test added
+    ↓
+Test immediately red
+    ↓
+"But the code works!" — yes, but the architecture is broken
+```
 
-- **Слои перестают быть независимыми.** Domain зависит от Application, Application — от Infrastructure, Infrastructure — от Domain.
-- **Параллельная компиляция ломается.** Сборка становится последовательной, время CI растёт.
-- **Тесты перестают изолировать.** Модульный тест тянет половину кодбазы из-за цикла.
-- **Entity leak — скрытый цикл.** Application возвращает `Booking` (Entity) вместо DTO. Это не цикл в `.csproj`, но семантический цикл: Application тянет ORM-логику, lazy loading, навигационные свойства — и тестировать слой изолированно невозможно.
-- **Агент усиливает drift.** Видя, что "так уже делают", добавляет ещё using-ов в тот же слой.
+## Consequences
 
-## Почему агент не видит
+- **Layers stop being independent.** Domain depends on Application, Application on Infrastructure, Infrastructure on Domain.
+- **Parallel compilation breaks.** Build becomes sequential, CI time grows.
+- **Tests stop isolating.** A unit test drags in half the codebase because of the cycle.
+- **Entity leak — hidden cycle.** Application returns `Booking` (Entity) instead of DTO. This is not a cycle in `.csproj`, but a semantic cycle: Application pulls ORM logic, lazy loading, navigation properties — and testing the layer in isolation becomes impossible.
+- **Agent amplifies drift.** Seeing that "others already do this", it adds more usings to the same layer.
 
-- Агент смотрит **diff**, а не граф зависимостей.
-- Context window не хватает на анализ всего графа `#include` или `using`.
-- Компилятор **не падает** — код синтаксически верный. Агент думает, что всё ок.
-- "Вайб-кодинг" — быстрее добавить using, чем вынести shared-константу в отдельный header/namespace.
+## Why the agent doesn't see it
 
-## Почему автотеста недостаточно
+- The agent looks at the **diff**, not the dependency graph.
+- Context window is insufficient to analyze the entire `#include` or `using` graph.
+- The compiler **does not fail** — the code is syntactically correct. The agent thinks everything is fine.
+- "Vibe coding" — faster to add a using than to extract a shared constant into a separate header/namespace.
 
-NetArchTest проверяет зависимости **между сборками**, но:
-- В C++ нет сборок — есть `#include`-граф.
-- В .NET цикл может быть **внутри одной сборки** между namespace/типами (Entity leak).
-- `dotnet build` ловит циклы между проектами, но не между namespace внутри одного проекта.
+## Why automated tests are not enough
 
-## Решение
+NetArchTest checks dependencies **between assemblies**, but:
+- In C++ there are no assemblies — there is an `#include` graph.
+- In .NET a cycle can be **within a single assembly** between namespaces/types (Entity leak).
+- `dotnet build` catches cycles between projects, but not between namespaces inside one project.
 
-### 1. Автотест: Cycle Detection Guard
-Парсинг `.csproj` (или `#include` / `using`) и поиск циклов в графе. См. `tests/patterns/DependencyDriftTest.cs`.
+## Solution
+
+### 1. Automated test: Cycle Detection Guard
+Parse `.csproj` (or `#include` / `using`) and search for cycles in the graph. See `tests/patterns/DependencyDriftTest.cs`.
 
 ```csharp
-// Парсим все .csproj → строим граф ProjectReference → DFS на циклы
+// Parse all .csproj → build ProjectReference graph → DFS for cycles
 var cycles = FindCycles(graph);
 Assert.That(cycles).IsEmpty();
 ```
 
-### 2. Архитектурный тест: Layer Boundaries
-NetArchTest ловит реальные assembly-зависимости между слоями, а Roslyn analyzer подходит для C# source-level правил вроде запрещённых `using`, API-вызовов и атрибутов. См. `tests/patterns/ArchitectureRules.cs` и `docs/solutions/roslyn-analyzers.md`.
+### 2. Architectural test: Layer Boundaries
+NetArchTest catches real assembly dependencies between layers, while a Roslyn analyzer fits C# source-level rules such as forbidden `using` statements, API calls and attributes. See `tests/patterns/ArchitectureRules.cs` and `docs/solutions/roslyn-analyzers.md`.
 
-**Правило:** добавлять архитектурные тесты **в первый же коммит** со слоистой архитектурой. Тест, добавленный через 3 месяца, покажет красный — и это не значит, что тест плохой. Это значит, что граф дрейфовал незамеченным.
+**Rule:** add architecture tests **in the very first commit** with layered architecture. A test added after 3 months and immediately failing does not mean the test is bad. It means the graph has been drifting unnoticed.
 
 ### 3. Code Review: Import/Using diff analysis
-Агент-ревьюер проверяет: если в PR добавлены новые `using` или `#include` — не замыкают ли они цикл?
+The reviewer agent checks: if new `using` or `#include` statements were added in the PR, do they close a cycle?
 
-Чеклист ревью:
-- [ ] Новый `using` / `#include` — есть ли обратная зависимость в целевом модуле?
-- [ ] Можно ли вынести shared-константу/интерфейс в отдельный header/файл?
-- [ ] Если агент добавляет **один и тот же using в 3+ файлах одного слоя** — это сигнал: тип живёт не в том слое, нужна абстракция.
-- [ ] Появился ли цикл в графе сборок (`.csproj`) или заголовков (`#include`)?
+Review checklist:
+- [ ] New `using` / `#include` — is there an inverse dependency in the target module?
+- [ ] Can a shared constant/interface be extracted into a separate header/file?
+- [ ] If the agent adds the **same using in 3+ files of the same layer** — this is a signal: the type lives in the wrong layer, an abstraction is needed.
+- [ ] Did a cycle appear in the assembly graph (`.csproj`) or header graph (`#include`)?
 
-### 4. Tech Debt Audit: Граф зависимостей
-Раз в спринт техлид строит граф зависимостей и сверяет с `ARCHITECTURE-INVENTORY.md`. См. `templates/skills/tech-debt-audit/SKILL.md`.
+### 4. Tech Debt Audit: Dependency graph
+Once per sprint the tech lead builds the dependency graph and compares it with `ARCHITECTURE-INVENTORY.md`. See `templates/skills/tech-debt-audit/SKILL.md`.
 
-Метрики аудита:
-- Количество «нелегальных» `using` по слоям (например, `grep -r "using .*Infrastructure" src/Api/`)
-- NetArchTest score: зелёные / красные тесты
-- Entity leak count: интерфейсы, возвращающие Entity вместо DTO
-- Время жизни TODO в архитектурных тестах
+Audit metrics:
+- Number of "illegal" `using` statements per layer (e.g. `grep -r "using .*Infrastructure" src/Api/`)
+- NetArchTest score: passing / failing tests
+- Entity leak count: interfaces returning Entity instead of DTO
+- Lifetime of TODOs in architectural tests
 
 ### 5. Shared Kernel / Common Contracts
-Вынести константы и интерфейсы, которые нужны обоим слоям, в отдельный модуль, от которого зависят оба:
+Extract constants and interfaces needed by both layers into a separate module that both depend on:
 
 ```
-// До: A → B → C → A (цикл)
-// После: A → Contracts ← B
+// Before: A → B → C → A (cycle)
+// After:  A → Contracts ← B
 //              ↓
 //              C
 ```
 
 ### 6. Compile-time guard: BannedApiAnalyzers
-`Microsoft.CodeAnalysis.BannedApiAnalyzers` — Roslyn-анализатор от Microsoft. Читает `BannedSymbols.txt` и ловит запрещённые вызовы прямо при `dotnet build` (ошибка `RS0030`). Агент видит красное подчёркивание в IDE **до коммита**.
+`Microsoft.CodeAnalysis.BannedApiAnalyzers` is a Roslyn analyzer from Microsoft. It reads `BannedSymbols.txt` and catches forbidden calls during `dotnet build` (error `RS0030`). The agent sees a red squiggle in the IDE **before commit**.
 
-**Почему это лучше regex-теста для конкретных API:**
-- Regex ищет строку `FindAsync(` в файле — ловит и комментарии, и мёртвый код
-- BannedApiAnalyzers анализирует IL-вызовы — ловит только реальное использование
-- Не нужно запускать `dotnet test` — guard встроен в компиляцию
+**Why it's better than a regex test for specific APIs:**
+- Regex searches for the string `FindAsync(` in a file — catches comments and dead code
+- BannedApiAnalyzers analyzes IL calls — catches only real usage
+- No need to run `dotnet test` — the guard is embedded in compilation
 
-**Конфигурация в проекте:**
+**Project configuration:**
 
 ```xml
 <!-- Directory.Build.props -->
@@ -173,26 +173,26 @@ M:Microsoft.EntityFrameworkCore.DbSet`1.FindAsync(System.Object[]);Use read-opti
 ```
 
 ```ini
-# .editorconfig — делаем ошибкой, а не warning
+# .editorconfig — make it an error, not a warning
 dotnet_diagnostic.RS0030.severity = error
 ```
 
-**Где посмотреть:** `examples/DemoProject/BannedSymbols.txt`, `examples/DemoProject/Directory.Build.props`
+**Where to see it:** `examples/DemoProject/BannedSymbols.txt`, `examples/DemoProject/Directory.Build.props`
 
-**Ограничение:** BannedApiAnalyzers ловит только конкретные API (методы, типы, свойства). Он **не ловит** архитектурные слои («Domain не должен зависеть от Infrastructure») и не считает связность. Для слоёв — NetArchTest, для подсчёта связности — semantic tests.
+**Limitation:** BannedApiAnalyzers catches only specific APIs (methods, types, properties). It **does not** catch architectural layers ("Domain must not depend on Infrastructure") or measure coupling. For layers — NetArchTest, for coupling metrics — semantic tests.
 
-### 7. Правило после косметического рефакторинга
-Если PR содержит «переместил хедер/вынес using/обобщил импорт» и затрагивает **>5 файлов** — обязателен `grep` на новые cross-layer зависимости.
+### 7. Rule after cosmetic refactoring
+If a PR contains "moved header / extracted using / generalized import" and touches **>5 files** — a `grep` for new cross-layer dependencies is mandatory.
 
-## Паттерн
+## Pattern
 
-- `tests/patterns/DependencyDriftTest.cs` — циклические зависимости + дрейф слоёв
-- `tests/patterns/EntityLeakTest.cs` — Application-интерфейсы возвращают Entity вместо DTO (ratchet)
+- `tests/patterns/DependencyDriftTest.cs` — circular dependencies + layer drift
+- `tests/patterns/EntityLeakTest.cs` — Application interfaces returning Entity instead of DTO (ratchet)
 
-### Выводы для доклада
+### Takeaways for the talk
 
-1. **«Диф выглядит ок, а архитектура сломалась» — это про using-и.** AI-агент не видит граф зависимостей. Он видит локальный файл. +1 using — это +1 потенциальная дыра в слоистой архитектуре.
-2. **Измерение открывает дрейф.** Архитектурный тест, добавленный поздно и сразу падающий, — не плохой тест. Это значит, что граф дрейфовал месяцами, и мы этого не замечали.
-3. **Guard должен быть compile-time.** Tests можно пропустить. `dotnet build` с BannedApiAnalyzers — нет.
-4. **Entity leak — скрытый цикл.** Application → Entity не выглядит как цикл в `.csproj`. Но это семантический цикл, который ломает изоляцию слоя.
-5. **Если агент добавляет один и тот же using в 3+ файлах одного слоя — это паттерн.** Тип живёт не в том слое. Нужна абстракция, а не копирование импорта.
+1. **"The diff looks fine, but the architecture is broken" — that's about usings.** An AI agent does not see the dependency graph. It sees a local file. +1 using is +1 potential hole in layered architecture.
+2. **Measurement reveals drift.** An architecture test added late and immediately failing is not a bad test. It means the graph has been drifting for months unnoticed.
+3. **The guard should be compile-time.** Tests can be skipped. `dotnet build` with BannedApiAnalyzers — cannot.
+4. **Entity leak is a hidden cycle.** Application → Entity does not look like a cycle in `.csproj`. But it is a semantic cycle that breaks layer isolation.
+5. **If the agent adds the same using in 3+ files of the same layer — it's a pattern.** The type lives in the wrong layer. An abstraction is needed, not copied imports.

@@ -1,19 +1,19 @@
-# Ловушка: Агент ходит кругами (Agent Circles)
+# Trap: Agent Circles
 
-## Сценарий
+## Scenario
 
-Агент входит в цикл fix → fix → fix (или fix → revert), когда оптимизация или рефакторинг затрагивает слишком много подсистем. Агент видит локальную проблему, чинит её, но создаёт новую — и так по кругу. Иногда единственный выход — откат всего решения.
+The agent enters a fix → fix → fix (or fix → revert) loop when an optimization or refactoring touches too many subsystems. The agent sees a local problem, fixes it, but creates a new one — and so on in circles. Sometimes the only way out is to revert the entire change.
 
-### Примеры из практики
+### Examples from Practice
 
-**1. NoTracking default — 21 час в проде**
+**1. NoTracking default — 21 hours in production**
 ```
 perf: QueryTrackingBehavior.NoTracking globally (p99: 2727→209ms, 13x!)
-  → fix: AsTracking() в 5 write-методов (заплатка)
-  → db: убрать NoTracking default, ручной AsNoTracking (правильный фикс)
+  → fix: AsTracking() in 5 write-methods (patch)
+  → db: remove NoTracking default, manual AsNoTracking (proper fix)
 ```
 
-**2. Tailwind 3→4 — 5 фиксов за 20 часов, потом полный revert**
+**2. Tailwind 3→4 — 5 fixes in 20 hours, then full revert**
 ```
 upgrade Tailwind CSS 3→4
   → fix: outline-none, bg-opacity, ring-offset breaking
@@ -22,44 +22,44 @@ upgrade Tailwind CSS 3→4
   → REVERT: CSS reset fundamentally incompatible
 ```
 
-**3. .Include() → .Select() — 11 файлов рефакторинга, 46 файлов починки**
+**3. .Include() → .Select() — 11 files refactored, 46 files fixed**
 ```
-refactor: replace Include/FirstOrDefaultAsync with Select projections (11 файлов)
-  → fix: "Починили все прокидывания entity" (46 файлов!)
-  → 4 доп. perf-коммита с доделками
+refactor: replace Include/FirstOrDefaultAsync with Select projections (11 files)
+  → fix: "Fixed all entity pass-throughs" (46 files!)
+  → 4 additional perf commits with follow-ups
 ```
 
-## Почему агент входит в цикл
+## Why the Agent Enters the Loop
 
-1. **Не видит blast radius** — оптимизирует сервис A, не зная что сервис B зависит от побочного эффекта A
-2. **Тесты дают ложную уверенность** — InMemory DB, изолированные моки, нет cross-service тестов
-3. **Чинит симптом, не причину** — `AsTracking()` в 5 методов вместо отката глобального NoTracking
-4. **Визуальные баги невидимы** — `tsc --noEmit` проходит, но layout сломан
-5. **Каждый фикс создаёт иллюзию прогресса** — "ещё один коммит и готово"
+1. **Doesn't see blast radius** — optimizes service A, not knowing that service B depends on A's side effect
+2. **Tests give false confidence** — InMemory DB, isolated mocks, no cross-service tests
+3. **Fixes symptom, not cause** — `AsTracking()` in 5 methods instead of reverting global NoTracking
+4. **Visual bugs are invisible** — `tsc --noEmit` passes, but layout is broken
+5. **Each fix creates an illusion of progress** — "one more commit and it's done"
 
-## Признаки входа в цикл
+## Signs of Entering the Loop
 
-- Второй fix-коммит на ту же проблему
-- Fix затрагивает файлы, которых не было в оригинальном изменении
-- Commit message содержит "still", "another", "properly", "actually"
+- Second fix-commit for the same problem
+- Fix touches files that weren't in the original change
+- Commit message contains "still", "another", "properly", "actually"
 
-## Решение
+## Solution
 
-### Когда прерывать
+### When to Interrupt
 
-| Сигнал | Действие |
-|--------|----------|
-| 2-й fix-коммит на ту же проблему | Ревью blast radius |
-| 3-й fix-коммит | Рассмотреть revert |
-| Fix затрагивает 4x больше файлов чем оригинал | **Точно revert** |
+| Signal | Action |
+|--------|--------|
+| 2nd fix-commit for the same problem | Review blast radius |
+| 3rd fix-commit | Consider revert |
+| Fix touches 4x more files than the original | **Definitely revert** |
 
-### Профилактика
+### Prevention
 
-1. **E2E-тестирование после perf-коммитов** — ловит 80% циклов (stale cache, layout breaks)
-2. **Интеграционные тесты вместо моков** — для cross-service взаимодействий
-3. **Правило: после perf-коммита агента — ручной аудит write-paths**
-4. **Ratchet-тесты** — не дают удалить критичные атрибуты при рефакторинге
+1. **E2E testing after perf commits** — catches 80% of loops (stale cache, layout breaks)
+2. **Integration tests instead of mocks** — for cross-service interactions
+3. **Rule: after an agent's perf commit — manual audit of write-paths**
+4. **Ratchet tests** — prevent removal of critical attributes during refactoring
 
-## Паттерн
+## Pattern
 
-См. `tests/patterns/RatchetTest.cs` и `tests/patterns/ArchitectureRules.cs`
+See `tests/patterns/RatchetTest.cs` and `tests/patterns/ArchitectureRules.cs`

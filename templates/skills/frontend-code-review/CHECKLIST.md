@@ -1,97 +1,97 @@
-# Frontend Code Review — Чеклист
+# Frontend Code Review — Checklist
 
-## Перед началом
-- [ ] Получен staged diff (`git diff --cached`)
-- [ ] Известен контекст задачи (backlog item / spec)
-- [ ] Подтверждена версия React (>= 18) и TypeScript (>= 4.8); легаси-проверки помечены N/A
-- [ ] Скилл активирован автоматически перед `git commit` или явно через `/skill:frontend-code-review`
+## Before Start
+- [ ] Staged diff obtained (`git diff --cached`)
+- [ ] Task context known (backlog item / spec)
+- [ ] React version (>= 18) and TypeScript version (>= 4.8) confirmed; legacy checks marked N/A
+- [ ] Skill activated automatically before `git commit` or explicitly via `/skill:frontend-code-review`
 
-## Pre-commit / Триггер
-- [ ] В staged-изменениях есть frontend-файлы (*.tsx, *.ts, *.jsx, *.js, *.css, *.scss, *.json)
-- [ ] Backend-only изменения пропущены (используется `code-review`)
-- [ ] При пустом staged diff агент не пишет находок и не блокирует коммит
-- [ ] Агент НЕ вызывает `git commit` самостоятельно
+## Pre-commit / Trigger
+- [ ] Staged changes include frontend files (*.tsx, *.ts, *.jsx, *.js, *.css, *.scss, *.json)
+- [ ] Backend-only changes are skipped (use `code-review`)
+- [ ] When staged diff is empty, agent reports nothing and does not block commit
+- [ ] Agent does NOT run `git commit` itself
 
 ## React / Hooks
-- [ ] Хуки вызываются только на верхнем уровне, не в циклах/условиях
-- [ ] Кастомные хуки именуются с `use`
-- [ ] `useEffect` имеет исчерпывающий deps-массив или обоснованный комментарий
-- [ ] `useEffect` не используется для derived state
-- [ ] `useEffect` cleanup для подписок, таймеров, слушателей, `AbortController`
-- [ ] `useState`: нет прямой мутации, используется функциональный updater где нужно
-- [ ] `useMemo` / `useCallback` обоснованы, а не "на всякий случай"
-- [ ] Context разбит по concern'ам, default value соответствует форме
+- [ ] Hooks called only at top level, not in loops/conditions
+- [ ] Custom hooks named with `use` prefix
+- [ ] `useEffect` has exhaustive deps array or justified comment
+- [ ] `useEffect` not used for derived state
+- [ ] `useEffect` cleanup for subscriptions, timers, listeners, `AbortController`
+- [ ] `useState`: no direct mutation, functional updater used where needed
+- [ ] `useMemo` / `useCallback` justified, not "just in case"
+- [ ] Context split by concern, default value matches shape
 
-## Рендеринг / JSX
-- [ ] `key` — стабильные уникальные ID, не индекс (если список изменяемый)
-- [ ] Условный рендеринг защищён от `0` / `""` (`!!condition` или тернарник)
-- [ ] `dangerouslySetInnerHTML` только с санитизацией
-- [ ] Нет inline объектов/массивов/функций в пропсах, ломающих memo
-- [ ] Нет прямого DOM-манипулирования вне refs/effects
-- [ ] Обработчики событий именованные, где это важно для perf/readability
+## Rendering / JSX
+- [ ] `key` uses stable unique IDs, not index (unless list is static)
+- [ ] Conditional rendering guarded against `0` / `""` (`!!condition` or ternary)
+- [ ] `dangerouslySetInnerHTML` only with sanitization
+- [ ] No inline objects/arrays/functions in props breaking memo
+- [ ] No direct DOM manipulation outside refs/effects
+- [ ] Event handlers named where important for perf/readability
 
 ## TypeScript
-- [ ] Нет неявного `any` (`strict: true`)
-- [ ] `!` non-null assertion обоснован
-- [ ] `as` casts обоснованы и прокомментированы
-- [ ] Экспортируемые компоненты/хуки имеют типы возвращаемых значений или сильную инференцию
-- [ ] Discriminated unions вместо `| undefined`
+- [ ] No implicit `any` (`strict: true`)
+- [ ] `!` non-null assertion justified
+- [ ] `as` casts justified and commented
+- [ ] Exported components/hooks have return types or strong inference
+- [ ] Discriminated unions preferred over `| undefined`
 
-## Производительность
-- [ ] `React.memo` обоснован
-- [ ] Тяжёлые компоненты / роуты лениво загружаются
-- [ ] Context не передаёт новые объекты/массивы без мемоизации
-- [ ] Изображения с lazy loading и явными размерами
+## Performance
+- [ ] `React.memo` justified
+- [ ] Heavy components / routes lazy loaded
+- [ ] Context does not pass new objects/arrays without memoization
+- [ ] Images lazy loaded with explicit dimensions
 
-## Доступность
-- [ ] Кликабельные элементы — `<button>`, не `<div onClick>`
-- [ ] Изображения имеют `alt` или `role="presentation"`
-- [ ] Инпуты имеют `<label>` или `aria-label`/`aria-labelledby`
-- [ ] Модалки/дропдауны ловят и восстанавливают фокус
-- [ ] Нет положительного `tabIndex`
-- [ ] Статусы/ошибки не только цветом
+## Accessibility
+- [ ] Clickable elements are `<button>`, not `<div onClick>`
+- [ ] Images have `alt` or `role="presentation"`
+- [ ] Inputs have `<label>` or `aria-label`/`aria-labelledby`
+- [ ] Modals/dropdowns trap and restore focus
+- [ ] No positive `tabIndex`
+- [ ] Status/errors not conveyed by color alone
 
-## Безопасность
-- [ ] Нет `innerHTML`, `eval`, `new Function` с пользовательским вводом
-- [ ] `href`/`src` не содержат сырой пользовательский ввод, нет `javascript:`
-- [ ] Секреты не захардкожены в коде
-- [ ] Новые npm-зависимости не подозрительны
+## Security
+- [ ] No `innerHTML`, `eval`, `new Function` with user input
+- [ ] `href`/`src` do not contain raw user input, no `javascript:` URLs
+- [ ] Secrets not hardcoded
+- [ ] New npm dependencies not suspicious
 
 ## State Management
-- [ ] Prop drilling не глубже 2 промежуточных компонентов без использования
-- [ ] Глобальный state обоснован, локальный UI state не в Redux/Zustand без причины
-- [ ] Серверный state через RTK Query / TanStack Query / SWR, а не ручной кэш
-- [ ] Immutability в reducer/store
+- [ ] Prop drilling no deeper than 2 intermediate components without usage
+- [ ] Global state justified, local UI state not in Redux/Zustand without reason
+- [ ] Server state via RTK Query / TanStack Query / SWR, not manual cache
+- [ ] Immutability in reducer/store
 
-## Формы
-- [ ] Контролируемые инпуты (`value` + `onChange`)
-- [ ] Валидация доступна и срабатывает на submit/blur
-- [ ] Обработчик submit предотвращает дефолт, управляет loading/error, блокирует повторную отправку
+## Forms
+- [ ] Controlled inputs (`value` + `onChange`)
+- [ ] Validation accessible and triggered on submit/blur
+- [ ] Submit handler prevents default, manages loading/error, disables re-submission
 
-## Стили
-- [ ] Единый подход в проекте (CSS Modules / Tailwind / styled-components)
-- [ ] Нет inline стилей без причины
+## Styling
+- [ ] Single approach per project (CSS Modules / Tailwind / styled-components)
+- [ ] No inline styles without reason
 - [ ] Responsive/mobile-first
 
-## Тесты
-- [ ] React Testing Library + Vitest/Jest, нет Enzyme
-- [ ] Предпочтительны `getByRole`/`getByLabelText` над `getByTestId`
-- [ ] Используется `@testing-library/user-event`
-- [ ] Асинхронные тесты корректно ждут состояние (`waitFor`, `findBy*`)
+## Testing
+- [ ] React Testing Library + Vitest/Jest, no Enzyme
+- [ ] Prefer `getByRole`/`getByLabelText` over `getByTestId`
+- [ ] Uses `@testing-library/user-event`
+- [ ] Async tests correctly wait for state (`waitFor`, `findBy*`)
 
-## Формат отчёта
+## Report Format
 
 ```markdown
-## Frontend Code Review — {дата}
+## Frontend Code Review — {date}
 
 ### BLOCKER
-- [ ] {описание} → {файл:строка}
+- [ ] {description} → {file:line}
 
 ### CRITICAL
-- [ ] {описание} → {файл:строка}
+- [ ] {description} → {file:line}
 
 ### MAJOR
-- [ ] {описание} → {файл:строка}
+- [ ] {description} → {file:line}
 
 ### Verdict
 - [ ] APPROVED

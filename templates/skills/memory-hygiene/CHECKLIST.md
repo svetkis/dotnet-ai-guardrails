@@ -1,41 +1,41 @@
 # Memory Hygiene Checklist
 
 ## Semantic Duplicates
-- [ ] Найдены intent-duplicates (не только verbatim)
-- [ ] Дубли AGENTS.md в Auto Memory помечены на удаление
-- [ ] Переформулировки одного правила сгруппированы
+- [ ] Intent-duplicates found (not just verbatim)
+- [ ] Duplicates of AGENTS.md in Auto Memory marked for deletion
+- [ ] Rephrasings of the same rule grouped
 
 ## Hierarchical Drift
-- [ ] Каждая архитектурная заметка сверена с ближайшим AGENTS.md
-- [ ] Практические мелочи (команды, конвенции) оставлены в памяти
-- [ ] Конфликты Auto Memory vs AGENTS.md задокументированы
+- [ ] Every architectural note checked against nearest AGENTS.md
+- [ ] Practical details (commands, conventions) kept in memory
+- [ ] Conflicts Auto Memory vs AGENTS.md documented
 
 ## Workaround Audit
-- [ ] Каждая негативная рекомендация («избегать», «не использовать») имеет source
-- [ ] Workaround'ы без BUG### / PR / test > 30 дней помечены `stale-workaround`
-- [ ] Нет костылей, зафиксированных как permanent rules
+- [ ] Every negative recommendation ("avoid", "do not use") has a source
+- [ ] Workarounds without BUG### / PR / test > 30 days marked `stale-workaround`
+- [ ] No workarounds fossilized as permanent rules
 
 ## Project Boundary
-- [ ] Стек в памяти (.NET version, ORM) совпадает с `global.json` / `.csproj`
-- [ ] Команды сборки/тестирования актуальны для текущего репо
-- [ ] Нет упоминаний технологий, отсутствующих в проекте
+- [ ] Stack in memory (.NET version, ORM) matches `global.json` / `.csproj`
+- [ ] Build/test commands are current for this repo
+- [ ] No mentions of technologies absent from the project
 
 ## Stale References
-- [ ] Нет ссылок на удалённые файлы
-- [ ] Нет упоминаний устаревших технологий (не соответствующих global.json)
-- [ ] Команды сборки/тестирования актуальны
+- [ ] No references to deleted files
+- [ ] No mentions of outdated technologies (not matching global.json)
+- [ ] Build/test commands are current
 
 ## Todo Graveyard
-- [ ] Найдены все «Consider», «Need to», «Should», «TODO», «Eventually"
-- [ ] Items без тикета/PR и старше 30 дней помечены на архивирование
-- [ ] Items с тикетом помечены `tracked`
+- [ ] All "Consider", "Need to", "Should", "TODO", "Eventually" found
+- [ ] Items without ticket/PR and older than 30 days marked for archive
+- [ ] Items with ticket marked `tracked`
 
 ## Observation Confidence
-- [ ] «Preferences» / «conventions» имеют explicit source (PR, commit, human)
-- [ ] Preferences без source и старше 60 дней помечены `unverified`
-- [ ] Нет one-shot решений, обобщённых как team rules
+- [ ] "Preferences" / "conventions" have explicit source (PR, commit, human)
+- [ ] Preferences without source and older than 60 days marked `unverified`
+- [ ] No one-shot decisions generalized as team rules
 
 ## Canonical Boundaries
-- [ ] Архитектура — только в AGENTS.md
-- [ ] Практика — только в Auto Memory
-- [ ] Нет смешивания слоёв
+- [ ] Architecture — only in AGENTS.md
+- [ ] Practice — only in Auto Memory
+- [ ] No mixing of layers

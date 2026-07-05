@@ -1,35 +1,35 @@
-# Tech Debt Audit — Чеклист
+# Tech Debt Audit — Checklist
 
-## Перед началом
-- [ ] Получен доступ к кодовой базе (`git log --since="3 months ago"` для контекста)
-- [ ] Известен стек проекта (Clean Architecture / MVP / Minimal API)
+## Before Start
+- [ ] Access to codebase obtained (`git log --since="3 months ago"` for context)
+- [ ] Project stack and architecture known
 
 ## Semantic Duplication
-- [ ] Валидация/расчёт дублируется в 2+ местах по-разному
-- [ ] Есть разъезд порогов (`>=` vs `>`, `==` vs `Equals`)
-- [ ] Можно вынести в Domain Service / `BR-###`
+- [ ] Validation/calculation duplicated in 2+ places differently
+- [ ] Threshold divergence (`>=` vs `>`, `==` vs `Equals`)
+- [ ] Can be extracted to Domain Service / numbered business-rule ID
 
 ## Stale Abstractions
-- [ ] Интерфейс с одной реализацией (кроме Ports)
-- [ ] Абстрактный класс без наследников
-- [ ] Метод не вызывается нигде (кроме тестов)
+- [ ] Interface with one implementation (except Ports)
+- [ ] Abstract class without inheritors
+- [ ] Method never called (except in tests)
 
-## Мёртвый код
-- [ ] `[Obsolete]` без даты удаления
-- [ ] Feature flags константны
-- [ ] Закомментированные блоки > 3 строк
+## Dead Code
+- [ ] `[Obsolete]` without removal date
+- [ ] Constant feature flags
+- [ ] Commented-out blocks > 3 lines
 
-## Архитектурный drift
-- [ ] Новые зависимости Domain → Infrastructure / Api
-- [ ] Циклические зависимости между проектами
-- [ ] API напрямую использует Infrastructure
+## Architectural Drift
+- [ ] New Domain → Infrastructure / Api dependencies
+- [ ] Circular dependencies between projects
+- [ ] API directly uses Infrastructure
 
-## Тестовый долг
-- [ ] Критичные пути без тестов
-- [ ] `BUG###_` тесты не воспроизводят баг
-- [ ] Characterization tests устарели
+## Test Debt
+- [ ] Critical paths without tests
+- [ ] Bug-regression tests no longer reproduce bug
+- [ ] Characterization tests stale
 
-## Документационный drift
-- [ ] `AGENTS.md` противоречит коду
-- [ ] Decision Guards ссылаются на удалённый код
-- [ ] `TODO` / `FIXME` без задачи в бэклоге
+## Documentation Drift
+- [ ] Project documentation contradicts code
+- [ ] Decision Guards reference deleted code
+- [ ] `TODO` / `FIXME` without backlog item

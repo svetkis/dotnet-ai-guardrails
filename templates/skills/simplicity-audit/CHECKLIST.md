@@ -1,62 +1,62 @@
-# Simplicity Audit — Чеклист
+# Simplicity Audit — Checklist
 
-## Перед началом
-- [ ] Получен доступ к кодовой базе (`git log --since="3 months ago"` для контекста)
-- [ ] Известен стек проекта (Clean Architecture / MVP / Minimal API)
-- [ ] Зафиксирован baseline сложности (если legacy)
+## Before Starting
+- [ ] Access to codebase obtained (`git log --since="3 months ago"` for context)
+- [ ] Project stack known (Clean Architecture / MVP / Minimal API)
+- [ ] Complexity baseline established (if legacy)
 
-## Абстракционный перебор
-- [ ] Интерфейс с одной реализацией (кроме Ports/Adapters)
-- [ ] Abstract factory / Builder для простого `new`
-- [ ] Generic-конвейер с > 2 параметрами
-- [ ] Стратегия / протокол для 2 ветвлений без roadmap расширения
-- [ ] Wrapper вокруг wrapper'а вокруг стандартного API
+## Abstraction Bloat
+- [ ] Interface with one implementation (except Ports/Adapters)
+- [ ] Abstract factory / Builder for simple `new`
+- [ ] Generic pipeline with > 2 parameters
+- [ ] Strategy / protocol for 2 branches without expansion roadmap
+- [ ] Wrapper around a wrapper around a standard API
 
-## Паттерн-фетишизм
-- [ ] CQRS для CRUD с < 5 полями
-- [ ] Event Sourcing / Outbox без аудит-требований
-- [ ] MediatR / PipelineBehavior для синхронных вызовов
-- [ ] Repository + UnitOfWork поверх EF Core без тестов на БД
-- [ ] Specification pattern для единственного `Where`
+## Pattern Fetishism
+- [ ] CQRS for CRUD with < 5 fields
+- [ ] Event Sourcing / Outbox without audit requirements
+- [ ] MediatR / PipelineBehavior for synchronous calls
+- [ ] Repository + UnitOfWork on top of EF Core with no DB tests
+- [ ] Specification pattern for a single `Where`
 
-## Данные-матрёшки
-- [ ] DTO вложенность > 2 уровней
-- [ ] API возвращает > 15 полей, клиент использует < 5
-- [ ] Include-цепочка > 2 уровней в списковом запросе
-- [ ] Поля аудита на сущностях, которые аудит не читают
-- [ ] Generic `BaseEntity<TId>` без разнообразия ID-типов
+## Data Matryoshkas
+- [ ] DTO nesting > 2 levels
+- [ ] API returns > 15 fields, client uses < 5
+- [ ] Include chain > 2 levels in a list query
+- [ ] Audit fields on entities that audit never reads
+- [ ] Generic `BaseEntity<TId>` without diversity of ID types
 
-## Алгоритмический перебор
-- [ ] LINQ-цепочка > 5 операций
-- [ ] Regex для простого `Replace` / `Split`
-- [ ] `Parallel.ForEach` / `Task.WhenAll` на < 10 элементах
-- [ ] Expression Tree вместо обычного predicate
-- [ ] Reflection вместо `internal` + `InternalsVisibleTo`
+## Algorithmic Overkill
+- [ ] LINQ chain > 5 operations
+- [ ] Regex for simple `Replace` / `Split`
+- [ ] `Parallel.ForEach` / `Task.WhenAll` on < 10 items
+- [ ] Expression Tree instead of plain predicate
+- [ ] Reflection instead of `internal` + `InternalsVisibleTo`
 
-## Параметрический перебор
-- [ ] Метод с > 5 параметрами
-- [ ] `out` / `ref` / `in` в public API без perf-требований
-- [ ] `async void` вместо `Task`
+## Parameter Bloat
+- [ ] Method with > 5 parameters
+- [ ] `out` / `ref` / `in` in public API without perf requirements
+- [ ] `async void` instead of `Task`
 
-## Инфраструктурная сложность
-- [ ] Микросервис / процесс для 1 endpoint и < 100 RPS
-- [ ] gRPC / GraphQL без latency-бюджета
-- [ ] Docker / K8s для консольного приложения
-- [ ] Собственный middleware вместо стандартного
+## Infrastructure Complexity
+- [ ] Microservice / process for 1 endpoint and < 100 RPS
+- [ ] gRPC / GraphQL without latency budget
+- [ ] Docker / K8s for a console app
+- [ ] Custom middleware instead of standard one
 
-## Тестовая сложность
-- [ ] Setup > 50 строк для теста на < 10 строк логики
-- [ ] Моки моков (mock возвращает mock)
-- [ ] > 2 библиотеки ассертов / моков в проекте
-- [ ] Тест проверяет порядок вызовов, а не результат
+## Test Complexity
+- [ ] Setup > 50 lines for a test with < 10 lines of logic
+- [ ] Mocks of mocks (mock returns mock)
+- [ ] > 2 assertion / mock libraries in the project
+- [ ] Test checks call order instead of result
 
-## Языковая сложность
-- [ ] Generic-параметров > 3 у public типа
-- [ ] Имя метода > 40 символов
-- [ ] `Func<Func<...>>` или аналогичная вложенность
-- [ ] `Span<T>`, `Memory<T>` в бизнес-логике без perf-требований
+## Language Complexity
+- [ ] Generic parameters > 3 on a public type
+- [ ] Method name > 40 characters
+- [ ] `Func<Func<...>>` or similar nesting
+- [ ] `Span<T>`, `Memory<T>` in business logic without perf requirements
 
-## Структурный перебор
-- [ ] Файл > 300 effective lines
-- [ ] Класс нарушает SRP (2+ несвязанных обязанности)
-- [ ] Метод > 50 строк без веской причины
+## Structural Bloat
+- [ ] File > 300 effective lines
+- [ ] Class violates SRP (2+ unrelated responsibilities)
+- [ ] Method > 50 lines without compelling reason

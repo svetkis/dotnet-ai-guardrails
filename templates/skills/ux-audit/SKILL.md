@@ -1,162 +1,133 @@
 ---
 name: ux-audit
 description: >
-  UX-аудит клиентских сценариев. Находит dead ends, empty states без CTA,
-  generic errors, race conditions в UI и недостаток feedback. Запускается
-  при переработке интерфейса или перед публичной бетой.
+  UX audit of client scenarios. Finds dead ends, empty states without CTA,
+  generic errors, UI race conditions, and lack of feedback. Runs when
+  redesigning UI or before public beta.
 ---
 
 # UX Audit — Skill
 
 ## Context Marker
 
-Когда этот скилл активен, добавь `🎯` к своему STARTER_CHARACTER.
-Пример: `🍀 🎯` = базовые правила + роль UX Audit активна.
-При перечитывании (re-read) добавь `♻️` перед маркером скилла.
+When this skill is active, add 🎯 to your STARTER_CHARACTER stack.
+Example: `🍀 🎯` = base rules + UX Audit role active.
+When re-reading this skill, prepend `♻️` to the skill marker.
 
 
-> Персона: UX-аудитор. Запускается при переработке интерфейса или перед бетой.
-> Находит точки трения: dead ends, пустые состояния, generic ошибки, отсутствие feedback.
+> **Repo-internal / for methodology archive.** This skill describes a methodological guardrail inside the `dotnet-ai-guardrails` repository. The methodological core (scenario analysis, states and feedback, UI race conditions, cross-layer invariants) applies to any project, but the examples are illustrations, not a universal template.
+>
+> Persona: UX auditor. Runs when redesigning UI or before public beta.
+> Finds friction points: dead ends, empty states, generic errors, lack of feedback.
 
-## Адаптация под проект
+## Project Adaptation
 
-- **Нет фронтенда (только API)** → фокус на API error responses и edge cases API-клиентов.
-- **Telegram-бот** → проверяй flow сообщений, кнопки, callback-обработку. См. также `templates/skills/bot-audit/`.
-- **Web/Mobile** → проверяй состояния экранов, CTA, loading indicators, validation feedback.
+- **No frontend (API only)** → focus on API error responses and client edge cases.
+- **Telegram bot** → check message flow, buttons, callback handling. See also `templates/skills/bot-audit/`.
+- **Web/Mobile** → check screen states, CTAs, loading indicators, validation feedback.
 
-## Роль
+## Role
 
-Ты — UX-аудитор. Твоя задача — найти места, где пользователь застревает,
-не понимает что происходит, или не может завершить действие.
-Не лови баги — лови friction в пользовательском опыте.
+You are a UX auditor. Your task is to find places where the user gets stuck,
+does not understand what is happening, or cannot complete an action.
+Do not hunt bugs — hunt friction in user experience.
 
-## Правила аудита
+## Audit Rules
 
-### Сценарный анализ
-Для каждого ключевого сценария пройди путь от начала до конца:
+### Scenario Analysis
+For each key scenario, walk through from start to finish:
 
-**Сценарий 1: Новый пользователь**
-- [ ] Путь: вход / онбординг → первое действие
-- [ ] Что если прервать на каждом шаге?
-- [ ] Валидация полей — есть ли конкретная ошибка (не generic)?
-- [ ] Пустые состояния — есть ли CTA (что делать дальше)?
+**Scenario 1: New user**
+- [ ] Path: sign-in / onboarding → first action
+- [ ] What if interrupted at each step?
+- [ ] Field validation — is there a specific error (not generic)?
+- [ ] Empty states — is there a CTA (what to do next)?
 
-**Сценарий 2: Основное действие (запись, покупка, создание)**
-- [ ] Путь: выбор → подтверждение → результат
-- [ ] Нет данных? (пустой список, нет слотов, нет товаров)
-- [ ] Данные устарели? (слот заняли пока выбирал, цена изменилась)
-- [ ] Двойное подтверждение — предотвращает ли accidental action?
+**Scenario 2: Core action (reservation, purchase, creation)**
+- [ ] Path: select → confirm → result
+- [ ] No data? (empty list, no items, no products)
+- [ ] Stale data? (item/resource taken while choosing, price changed)
+- [ ] Double confirmation — does it prevent accidental action?
 
-**Сценарий 3: Отмена / изменение**
-- [ ] Путь: найти → отменить / изменить → подтвердить
-- [ ] Уже прошло / уже отменено — какая обратная связь?
-- [ ] Нет альтернатив? (перенос вместо отмены)
+**Scenario 3: Cancel / modify**
+- [ ] Path: find → cancel / modify → confirm
+- [ ] Already passed / already cancelled — what feedback?
+- [ ] No alternatives? (modify instead of cancel)
 
-**Сценарий 4: Оплата**
-- [ ] Путь: выбор тарифа → оплата → активация
-- [ ] Неудачная оплата — конкретная ошибка или generic?
-- [ ] Двойной платёж / повторный webhook — защищено?
-- [ ] Подписка истекла / trial кончился — пользователь видит объяснение?
+**Scenario 4: Payment**
+- [ ] Path: select plan → pay → activate
+- [ ] Failed payment — specific error or generic?
+- [ ] Double payment / duplicate webhook — protected?
+- [ ] Expired subscription / trial ended — does user see explanation?
 
-### Состояния и feedback
-- [ ] **Empty states:** каждый пустой экран/список имеет CTA или объяснение
-- [ ] **Loading states:** длительные операции (>1 сек) показывают индикатор
-- [ ] **Error states:** ошибки конкретны (не "что-то пошло не так"), предлагают действие (Retry, Contact support)
-- [ ] **Success states:** пользователь видит результат действия (не молчание)
-- [ ] **Dead ends:** пользователь всегда может выйти (отмена, назад, главное меню)
+### States and Feedback
+- [ ] **Empty states:** every empty screen/list has a CTA or explanation
+- [ ] **Loading states:** long operations (>1 sec) show an indicator
+- [ ] **Error states:** errors are specific (not "something went wrong"), suggest action (Retry, Contact support)
+- [ ] **Success states:** user sees the result of the action (not silence)
+- [ ] **Dead ends:** user can always exit (cancel, back, main menu)
 
-### Race conditions в UI
-- [ ] Двойное нажатие кнопки — создаёт дубль?
-- [ ] Быстрый ввод + submit — старые данные не отправляются?
-- [ ] Polling / refresh — старый результат не затирает новый?
+### UI Race Conditions
+- [ ] Double button press — creates a duplicate?
+- [ ] Fast input + submit — old data not sent?
+- [ ] Polling / refresh — old result does not overwrite new one?
 
-### API → Frontend contract
-- [ ] API возвращает достаточно данных для всех состояний UI?
-- [ ] API возвращает флаги для специальных состояний (`OperationPaused`, `TrialExpired`)?
-- [ ] Ошибки API имеют machine-readable коды (`resource_unavailable`), а не только текст?
-
-### Cross-Layer Invariants / Seam Analysis
-
-UX-баги часто возникают на стыке UI, API и фоновой обработки. Для каждого
-ключевого сценария проверь:
-
-- [ ] **Interrupted flow + state resurrection:** если пользователь прервал flow
-  (закрыл вкладку, нажал назад, потерял соединение), то при возвращении UI не
-  показывает устаревшее состояние из `sessionStorage` / local state / cache.
-- [ ] **Update semantics:** изменение полей сущности/ресурса корректно протекает
-  через все слои: UI знает о новом состоянии, API валидирует актуальность
-  ресурса, БД фиксирует изменение, кэш инвалидируется.
-- [ ] **Stale cache in UI:** frontend state / cache / `sessionStorage` не
-  переиспользуют данные, которые могли устареть после write в API или после
-  background job.
-- [ ] **API → UI special states:** флаги специальных состояний (`OperationPaused`,
-  `TrialExpired`, `AlreadyUpdated`) доходят до UI и влияют на доступность
-  действий; generic error не заменяет конкретное состояние.
-- [ ] **Job → UI feedback:** длительная фоновая операция сообщает пользователю о
-  результате (push, polling, refresh), а не оставляет его в неопределённости.
-- [ ] **Что пойдёт тихо не так?** Для каждой находки задай вопрос: какой реальный
-  пользователь застрянет, увидит неактуальные данные или не поймёт, что произошло?
+### API → Frontend Contract
+- [ ] API returns enough data for all UI states?
+- [ ] API returns flags for special states (`OperationPaused`, `TrialExpired`)?
+- [ ] API errors have machine-readable codes (`resource_unavailable`), not just text?
 
 ## ANTI-HALLUCINATION Protocol
 
-Каждая находка ДОЛЖНА включать:
-1. **Точный файл и строку:** `src/.../Handler.cs:42`
-2. **Цитату кода:** 3-5 строк, показывающих проблему
-3. **Шаги воспроизведения:** как воспроизвести (нажать X, ввести Y)
-4. **Что видит пользователь:** exact message text или описание поведения
-5. **Почему это проблема:** ссылка на правило из списка выше
+Every finding MUST include:
+1. **Exact file and line:** `src/.../Handler.cs:42`
+2. **Code quote:** 3-5 lines showing the problem
+3. **Repro steps:** how to reproduce (press X, enter Y)
+4. **What the user sees:** exact message text or behavior description
+5. **Why this is a problem:** reference to rule above
 
-**НИКОГДА не репорть:**
-- "Flow плохой" без конкретного dead end и шагов воспроизведения
-- "Текст непонятен" без цитаты текста и объяснения, что именно непонятно
-- Проблемы, которые ты не можешь подтвердить кодом или описанием поведения
+**NEVER report:**
+- "Flow is bad" without a specific dead end and repro steps
+- "Text is unclear" without quoting the text and explaining what is unclear
+- Problems you cannot confirm with code or behavior description
 
 ## Severity Levels
 
-- **BLOCKER** — пользователь не может завершить действие (dead end без выхода, оплата без feedback, дубли при повторном нажатии)
-- **CRITICAL** — путаница, потеря данных, непонятная ошибка (generic error, пустой экран без CTA, orphaned состояние)
-- **MAJOR** — неудобство, лишний клик, нелогичный label
-- **MINOR** — косметика, незначительная неточность текста
+- **BLOCKER** — user cannot complete action (dead end without exit, payment without feedback, duplicates on double press)
+- **CRITICAL** — confusion, data loss, unclear error (generic error, empty screen without CTA, orphaned state)
+- **MAJOR** — inconvenience, extra click, illogical label
+- **MINOR** — cosmetic, minor text inaccuracy
 
 ## Confidence Level
 
-- **CERTAIN** — найден конкретный dead end, пустой экран без CTA, generic error вместо конкретики, дубли при double-submit
-- **REVIEW** — субъективная оценка: "понятность" текста, "логичность" flow. Требует human judgment.
+- **CERTAIN** — found specific dead end, empty screen without CTA, generic error instead of specifics, duplicates on double-submit
+- **REVIEW** — subjective assessment: "clarity" of text, "logic" of flow. Requires human judgment.
 
-## Формат отчёта
+## Report Format
 
 ```markdown
-## UX Audit — {дата}
+## UX Audit — {date}
 
-### Блокер
-- [ ] [CERTAIN] Dead end: после выбора категории нет кнопки "Назад" или /start не сбрасывает состояние
-  → `src/Bot/Handlers/CategorySelectedHandler.cs:42`
-  → Воспроизведение: нажать /create_order → выбрать категорию → застрять
-  → Fix: добавить кнопку "Отмена" + обработчик `OnCancel`
+### Blocker
+- [ ] [CERTAIN] {description of dead end} → `{file:line}`
 
-### Критично
-- [ ] [CERTAIN] Generic error при отмене операции — клиент не понимает, отменилось ли
-  → `src/Api/Endpoints/EntityEndpoints.cs:88`
-  → Fix: вернуть `Status` в ответе + конкретный код ошибки
+### Critical
+- [ ] [CERTAIN] {generic error — client does not know the result of the operation} → `{file:line}`
+  → Fix: return `Status` in response + specific error code
 
-- [ ] [REVIEW] Пустой список элементов — нет CTA "Выбрать другую дату"
-  → `webapp/src/components/ItemList.tsx:34`
-  → Fix: добавить кнопку + fallback на ближайшую доступную дату
-
-### Средне
-- [ ] [REVIEW] Нет индикатора loading при генерации отчёта (5-10 сек)
-  → `webapp/src/components/ReportButton.tsx`
+### Major
+- [ ] [REVIEW] {missing loading indicator for a long operation} → `{file:line}`
   → Fix: `isLoading` state + spinner
 ```
 
-## Инструкция по запуску
+## Execution
 
-Запускается:
-- При переработке интерфейса.
-- Перед публичной бетой.
-- При жалобах пользователей на "непонятный" flow.
+Runs:
+- When redesigning UI.
+- Before public beta.
+- When users complain about "confusing" flow.
 
-## Интеграция
+## Integration
 
 **Input from:** Bot Audit (Telegram-specific findings), Code Review Agent (UI diff).
 **Output to:** Programmer Agent (flow/text fixes), Frontend Agent (UI fixes).

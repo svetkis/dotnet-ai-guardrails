@@ -1,42 +1,42 @@
 # Doc Hygiene Checklist
 
 ## Hierarchy
-- [ ] Все `AGENTS.md` иерархически согласованы
-- [ ] Deep overrides явно помечены и обоснованы
-- [ ] Нет циклических противоречий (корень vs модуль vs подмодуль)
+- [ ] All `AGENTS.md` are hierarchically consistent
+- [ ] Deep overrides are explicitly marked and justified
+- [ ] No cyclic contradictions (root vs module vs submodule)
 
 ## Internal Contradictions
-- [ ] Нет пар MUST/FORBIDDEN, противоречащих друг другу в одном файле
-- [ ] Конфликты разрешены или помечены на обсуждение
+- [ ] No MUST/FORBIDDEN pairs contradicting each other in the same file
+- [ ] Conflicts are resolved or marked for discussion
 
 ## Code Drift
-- [ ] Каждое правило AGENTS.md имеет guardrail в коде или CI
-- [ ] Упомянутые скиллы/тесты существуют в `templates/skills/`, `tests/`
-- [ ] Decision Guards из AGENTS.md найдены в коде
+- [ ] Every AGENTS.md rule has a guardrail in code or CI
+- [ ] Mentioned templates/skills/tests exist in `templates/skills/`, `tests/`
+- [ ] Decision Guards from AGENTS.md found in code
 
 ## Dead Rules
-- [ ] Каждое MUST/FORBIDDEN имеет enforcement (тест, компилятор, linter, CI)
-- [ ] Правила без enforcement > 90 дней помечены `dead-rule`
-- [ ] Для каждого dead rule — решение: добавить guardrail или удалить
+- [ ] Every MUST/FORBIDDEN has enforcement (test, compiler, linter, CI)
+- [ ] Rules without enforcement > 90 days marked `dead-rule`
+- [ ] For each dead rule — decision: add guardrail or remove
 
 ## Cross-Agent
-- [ ] Все `docs/agents/*.md` консистентны с корневым `AGENTS.md`
-- [ ] Описания pipeline идентичны для всех агентов (формат отличается, суть — нет)
-- [ ] Нет ссылок на удалённые скиллы/модули
+- [ ] All `docs/agents/*.md` are consistent with root `AGENTS.md`
+- [ ] Pipeline descriptions are identical for all agents (format differs, substance does not)
+- [ ] No links to deleted templates/skills/modules
 
 ## Fact Check (Documentation vs Code)
-- [ ] Все числа в отчётах/документации верифицированы через `git log` / `wc` / `grep`
-- [ ] Все даты коммитов соответствуют `git log`
-- [ ] Все имена файлов и номера строк из примеров существуют
-- [ ] Все `PERF-###` / `DB-###` / `BR-###` ведут на существующий код
-- [ ] Все хеши коммитов в case studies корректны (`git show --stat`)
+- [ ] All numbers in reports/docs verified via `git log` / `wc` / `grep`
+- [ ] All commit dates match `git log`
+- [ ] All file names and line numbers from examples exist
+- [ ] All `PERF-###` / `DB-###` / `BR-###` point to existing code
+- [ ] All commit hashes in case studies are correct (`git show --stat`)
 
 ## README & Changelog
-- [ ] Команды сборки актуальны
-- [ ] CHANGELOG покрывает последний релиз
-- [ ] Нет stale ссылок
+- [ ] Build commands are current
+- [ ] CHANGELOG covers latest release
+- [ ] No stale links
 
 ## Size Budget
-- [ ] Корневой AGENTS.md ≤ 200 строк (warning > 150)
-- [ ] Module-level AGENTS.md ≤ 80 строк
-- [ ] Если превышен — есть план разбиения или рефакторинга
+- [ ] Root AGENTS.md ≤ 200 lines (warning > 150)
+- [ ] Module-level AGENTS.md ≤ 80 lines
+- [ ] If exceeded — there is a plan to split or refactor

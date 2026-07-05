@@ -1,43 +1,43 @@
-# Bot Audit — Чеклист
+# Bot Audit — Checklist
 
-## Адаптация
-- [ ] Определена платформа (Telegram / Discord / Slack / VK)
-- [ ] Определён фреймворк (Telegram.Bot / aiogram / telegraf / node-telegram-bot-api)
-- [ ] Неприменимые разделы помечены N/A
+## Adaptation
+- [ ] Platform defined (Telegram / Discord / Slack / VK)
+- [ ] Framework defined (Telegram.Bot / aiogram / telegraf / node-telegram-bot-api)
+- [ ] Inapplicable sections marked N/A
 
-## Тексты и разметка
-- [ ] Длина сообщений ≤ 4096 символов
-- [ ] `callback_data` ≤ 64 байта, не содержит JSON или длинные ID
-- [ ] Markdown/HTML спецсимволы экранированы
-- [ ] Нет незакрытых HTML-тегов
-- [ ] `disable_web_page_preview` использован где нужно
+## Texts and Markup
+- [ ] Message length ≤ 4096 characters
+- [ ] `callback_data` ≤ 64 bytes, does not contain JSON or long IDs
+- [ ] Markdown/HTML special characters are escaped
+- [ ] No unclosed HTML tags
+- [ ] `disable_web_page_preview` used where needed
 
-## Кнопки и навигация
-- [ ] Labels понятные (не технические ID)
-- [ ] Inline keyboard ≤ 100 кнопок
-- [ ] Есть кнопка "Назад" / "Отмена" на многошаговых flow
-- [ ] Нет dead end
-- [ ] Reply keyboard убрана после завершения flow (`ReplyKeyboardRemove`)
+## Buttons and Navigation
+- [ ] Labels are clear (not technical IDs)
+- [ ] Inline keyboard ≤ 100 buttons
+- [ ] "Back" / "Cancel" button exists on multi-step flows
+- [ ] No dead end
+- [ ] Reply keyboard removed after flow completion (`ReplyKeyboardRemove`)
 
-## Callback и feedback
-- [ ] Каждый `callback_query` получает `answerCallbackQuery`
-- [ ] Пользователь видит feedback на действие
-- [ ] Длительные операции показывают `sendChatAction`
-- [ ] Ошибки обработаны: пользователь получает сообщение, а не тишину
+## Callback and Feedback
+- [ ] Every `callback_query` gets `answerCallbackQuery`
+- [ ] User sees feedback on action
+- [ ] Long operations show `sendChatAction`
+- [ ] Errors are handled: user gets a message, not silence
 
-## Flow и состояния
-- [ ] Нет orphaned состояний (очистка при удалении бота / блокировке)
-- [ ] Обработка неожиданного ввода (текст вместо кнопки)
-- [ ] Timeout на ожидание ввода с объяснением
-- [ ] Idempotency: повторное нажатие не создаёт дубль
-- [ ] Deep linking (`/start ref_123`) корректно обрабатывается
+## Flow and States
+- [ ] No orphaned states (cleanup on bot deletion / block)
+- [ ] Unexpected input handling (text instead of button)
+- [ ] Timeout on input wait with explanation
+- [ ] Idempotency: repeated press doesn't create a duplicate
+- [ ] Deep linking (`/start ref_123`) is handled correctly
 
-## Безопасность
-- [ ] В `callback_data` не передаются raw database ID
-- [ ] Rate limiting: не более 30 сообщений/сек в чат
-- [ ] Админ-команды проверяют whitelist по `chat.id` / `user.id`
+## Security
+- [ ] No raw database IDs in `callback_data`
+- [ ] Rate limiting: no more than 30 messages/sec in a chat
+- [ ] Admin commands check whitelist by `chat.id` / `user.id`
 
 ## Quality Gates
-- [ ] Каждая находка включает: command/handler, цитату кода, что видит пользователь, шаги воспроизведения
-- [ ] Нет BLOCKER без конкретного примера воспроизведения
-- [ ] REVIEW-находки помечены как требующие human judgment
+- [ ] Every finding includes: command/handler, code quote, what the user sees, reproduction steps
+- [ ] No BLOCKER without a specific reproduction example
+- [ ] REVIEW findings marked as requiring human judgment

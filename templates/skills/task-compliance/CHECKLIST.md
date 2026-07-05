@@ -1,31 +1,31 @@
-# Task Compliance — Чеклист
+# Task Compliance — Checklist
 
-## Phase 1: Замысел и контракты
-- [ ] Прочитан spec / backlog item
-- [ ] Извлечены acceptance criteria (AC)
-- [ ] Определены границы scope (IN / OUT)
+## Phase 1: Intent and Contracts
+- [ ] Spec / backlog item has been read
+- [ ] Acceptance criteria (AC) extracted
+- [ ] Scope boundaries defined (IN / OUT)
 
-## Phase 2: Анализ diff
-- [ ] Получен `git diff main...[branch]`
-- [ ] Составлен список изменённых файлов
-- [ ] Отфильтрованы auto-generated файлы
+## Phase 2: Diff Analysis
+- [ ] `git diff main...[branch]` obtained
+- [ ] List of changed files compiled
+- [ ] Auto-generated files filtered out
 
-## Phase 3: Трассируемость
-- [ ] Каждый AC сопоставлен с кодом в diff
-- [ ] Каждый AC имеет статус: IMPLEMENTED / TESTED / MISSING / UNTESTED
-- [ ] Нет удалённого функционала, требуемого AC
+## Phase 3: Traceability
+- [ ] Each AC is mapped to code in the diff
+- [ ] Each AC has status: IMPLEMENTED / TESTED / MISSING / UNTESTED
+- [ ] No removed functionality required by AC
 
-## Phase 4: Обнаружение scope creep
-- [ ] Нет кода вне scope spec'а
-- [ ] Нет новых public-методов вне use cases
-- [ ] Нет изменений в unrelated слоях
+## Phase 4: Scope Creep Detection
+- [ ] No code outside the spec scope
+- [ ] No new public methods outside use cases
+- [ ] No changes in unrelated layers
 
-## Phase 5: Доказательства
-- [ ] Каждая находка включает: файл, строка, цитата кода, цитата spec
-- [ ] Нет галлюцинированных находок
+## Phase 5: Evidence
+- [ ] Every finding includes: file, line, code quote, spec quote
+- [ ] No hallucinated findings
 
 ## Quality Gates
-- [ ] Каждый AC сопоставлен или помечен MISSING
-- [ ] Каждый IMPLEMENTED AC имеет статус TESTED или UNTESTED
-- [ ] Нет SCOPE_CREEP без цитаты границ бэклога
-- [ ] Нет REGRESSION_RISK без показа удалённого кода
+- [ ] Every AC is mapped or marked MISSING
+- [ ] Every IMPLEMENTED AC has status TESTED or UNTESTED
+- [ ] No SCOPE_CREEP without a backlog boundaries quote
+- [ ] No REGRESSION_RISK without showing removed code

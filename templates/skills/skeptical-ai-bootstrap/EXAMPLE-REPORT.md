@@ -1,272 +1,272 @@
-# Пример отчёта онбординга (принципиальный подход)
+# Onboarding Report Example (Principled Approach)
 
-> Этот пример показывает, как агент адаптируется под нестандартный стек
-> вместо слепого копирования артефактов.
+> This example shows how the agent adapts to a non-standard stack
+> instead of blindly copying artifacts.
 
 ---
 
 # Onboarding Report: Logistics.Worker
 
-**Дата:** 2026-06-15  
-**Режим:** standard  
-**Агент:** skeptical-ai-bootstrap
+**Date:** 2026-06-15  
+**Mode:** standard  
+**Agent:** skeptical-ai-bootstrap
 
 ---
 
-## Сводка по принципам
+## Summary by Principles
 
-| Слой | Принцип соблюдён | Текущее состояние | Решение |
-|------|------------------|-------------------|---------|
-| 1. Компилятор | 🟡 | Nullable enable, но нет TreatWarningsAsErrors | **Адаптировать**: Directory.Build.props |
-| 2. Архитектура | 🔴 | Нет арх. тестов. Vertical Slice — стандартные правила NetArchTest (про слои) неприменимы | **Адаптировать**: NetArchTest с custom rules про границы фич |
-| 3. Тесты | 🟡 | xUnit, 340 тестов, нет проверки "0 ran" | **Адаптировать**: verify-tests.sh для xUnit |
-| 4. Code Review | 🔴 | Нет AGENTS.md. Dapper + MediatR — готовый скилл не подходит | **Создать скилл**: `code-review-dapper` |
-| 5. E2E / MCP | 🔴 | Worker Service, нет HTTP. OpenAPI snapshot невозможен | **Создать скилл**: `e2e-worker` |
-| 0. Инструкции | 🔴 | Нет AGENTS.md | **Внедрить**: `rules/AGENTS_TEMPLATE.md` |
-| Внешний цикл | 🔴 | Нет аудитов. Dapper + SQL Server — готовый DBA не подходит | **Создать скилл**: `dba-audit-dapper` |
+| Layer | Principle Adhered | Current State | Decision |
+|------|-------------------|---------------|----------|
+| 1. Compiler | 🟡 | Nullable enable, but no TreatWarningsAsErrors | **Adapt**: Directory.Build.props |
+| 2. Architecture | 🔴 | No arch tests. Vertical Slice — standard NetArchTest rules (about layers) are not applicable | **Adapt**: NetArchTest with custom rules about feature boundaries |
+| 3. Tests | 🟡 | xUnit, 340 tests, no "0 ran" check | **Adapt**: verify-tests.sh for xUnit |
+| 4. Code Review | 🔴 | No AGENTS.md. Dapper + MediatR — ready-made skill does not fit | **Create skill**: `code-review-dapper` |
+| 5. E2E / MCP | 🔴 | Worker Service, no HTTP. OpenAPI snapshot impossible | **Create skill**: `e2e-worker` |
+| 0. Instructions | 🔴 | No AGENTS.md | **Implement**: `rules/AGENTS_TEMPLATE.md` |
+| Outer loop | 🔴 | No audits. Dapper + SQL Server — ready-made DBA does not fit | **Create skill**: `dba-audit-dapper` |
 
 ---
 
-## Стек проекта
+## Project Stack
 
 - **.NET:** 8.0 (`net8.0`)
-- **Тип:** Worker Service (BackgroundService + RabbitMQ)
-- **ORM/Данные:** Dapper 2.1 + SQL Server (нет EF Core)
-- **Архитектура:** Vertical Slice (Features/Orders/, Features/Deliveries/)
-- **Test framework:** xUnit (340 тестов, миграция на TUnit нецелесообразна)
-- **CI:** GitHub Actions (простой `dotnet test`)
+- **Type:** Worker Service (BackgroundService + RabbitMQ)
+- **ORM/Data:** Dapper 2.1 + SQL Server (no EF Core)
+- **Architecture:** Vertical Slice (Features/Orders/, Features/Deliveries/)
+- **Test framework:** xUnit (340 tests, migrating to TUnit is not cost-effective)
+- **CI:** GitHub Actions (simple `dotnet test`)
 - **Messaging:** RabbitMQ + MassTransit
 
 ---
 
-## Агенто-специфичная конфигурация
+## Agent-Specific Configuration
 
-Проект использует **Claude Code**. Поэтому конфигурация guardrails будет в формате Claude:
+The project uses **Claude Code**. Therefore, guardrails configuration will be in Claude format:
 
 ```
 .claude/
-├── CLAUDE.md                      # Конституция (адаптирована из rules/AGENTS_TEMPLATE.md)
+├── CLAUDE.md                      # Constitution (adapted from rules/AGENTS_TEMPLATE.md)
 ├── commands/
-│   ├── code-review-dapper.md      # Code review для Dapper + MediatR
-│   ├── architecture-audit.md        # NetArchTest с custom rules для VSlice
-│   ├── task-compliance.md         # Scope check (адаптирован)
-│   ├── e2e-worker.md              # E2E для Worker + RabbitMQ
-│   ├── security-audit.md          # Адаптирован из templates/skills/security-audit/
-│   └── dba-audit-dapper.md        # DBA audit для Dapper
+│   ├── code-review-dapper.md      # Code review for Dapper + MediatR
+│   ├── architecture-audit.md        # NetArchTest with custom rules for VSlice
+│   ├── task-compliance.md         # Scope check (adapted)
+│   ├── e2e-worker.md              # E2E for Worker + RabbitMQ
+│   ├── security-audit.md          # Adapted from templates/skills/security-audit/
+│   └── dba-audit-dapper.md        # DBA audit for Dapper
 ```
 
-Если бы проект использовал **Kimi** — скиллы лежали бы в `.kimi/skills/`.
-Если **Codex** — единый `.codex/instructions.md` с встроенными чеклистами.
+If the project used **Kimi** — skills would be in `.kimi/skills/`.
+If **Codex** — single `.codex/instructions.md` with built-in checklists.
 
 ---
 
-## Почему не подходят готовые артефакты
+## Why Ready-Made Artifacts Do Not Fit
 
-### Архитектура: NetArchTest
-Проект Vertical Slice. Границы — по фичам, а не по слоям.
-NetArchTest проверяет `Domain` → `Application`, но здесь нет таких проектов.
-Нужен сканер slice-зависимостей.
+### Architecture: NetArchTest
+The project is Vertical Slice. Boundaries are by feature, not by layer.
+NetArchTest checks `Domain` → `Application`, but there are no such projects here.
+A slice dependency scanner is needed.
 
-### Code Review: EF-специфичные правила
-Готовый скилл проверяет `AsNoTracking`, `.Include()`, `[Authorize]`.
-В проекте Dapper — эти правила бессмысленны. Нужны правила:
-- Параметризация SQL (нет string interpolation)
-- Async-методы Dapper (`QueryAsync`, не `Query`)
-- Transaction scope в handlers
+### Code Review: EF-Specific Rules
+The ready-made skill checks `AsNoTracking`, `.Include()`, `[Authorize]`.
+In a Dapper project, these rules are meaningless. Need rules:
+- SQL parameterization (no string interpolation)
+- Async Dapper methods (`QueryAsync`, not `Query`)
+- Transaction scope in handlers
 
 ### E2E: OpenAPI Snapshot
-Worker Service не имеет HTTP. E2E — это проверка обработки сообщений
-из очереди и side-effects (записи в БД, логи, метрики).
+Worker Service has no HTTP. E2E is checking message processing
+from queue and side-effects (DB records, logs, metrics).
 
-### DBA Audit: EF-миграции
-Готовый скилл смотрит EF миграции, `Include()`, `FindAsync()`.
-В проекте Dapper — нужно проверять raw SQL, индексы, планы запросов.
+### DBA Audit: EF Migrations
+The ready-made skill looks at EF migrations, `Include()`, `FindAsync()`.
+In a Dapper project — need to check raw SQL, indexes, query plans.
 
 ---
 
-## Бэклог внедрения
+## Implementation Backlog
 
-### Sprint 0 — Слой 0 + Компилятор (1 день)
-- [ ] **Внедрить** `rules/AGENTS_TEMPLATE.md` → адаптировать под Worker + Dapper
-- [ ] **Внедрить** `rules/CONVENTIONS.md`
-- [ ] **Адаптировать** `Directory.Build.props`:
+### Sprint 0 — Layer 0 + Compiler (1 day)
+- [ ] **Implement** `rules/AGENTS_TEMPLATE.md` → adapt for Worker + Dapper
+- [ ] **Implement** `rules/CONVENTIONS.md`
+- [ ] **Adapt** `Directory.Build.props`:
   - `<TreatWarningsAsErrors>true</TreatWarningsAsErrors>`
   - `<Nullable>enable</Nullable>`
-- [ ] **Адаптировать** `.editorconfig` (severity = error для критичных правил)
+- [ ] **Adapt** `.editorconfig` (severity = error for critical rules)
 
-### Sprint 1 — Архитектура (3 дня)
-- [ ] **Адаптировать** `ArchitectureRules.cs` для Vertical Slice:
-  - Проверка: Slice A не импортирует внутренности Slice B
-  - Проверка: каждый Slice имеет Handler + Validator + Endpoint (или Worker consumer)
-  - Проверка: Shared Kernel явно помечен // DECISION:
-  - Реализация: NetArchTest custom rules + unit tests
-  - Шаблон: `NEW-SKILL-TEMPLATE.md`
-  - Положить в: `tests/ArchitectureTests/ArchitectureRules.VSlice.cs`
+### Sprint 1 — Architecture (3 days)
+- [ ] **Adapt** `ArchitectureRules.cs` for Vertical Slice:
+  - Check: Slice A does not import internals of Slice B
+  - Check: each Slice has Handler + Validator + Endpoint (or Worker consumer)
+  - Check: Shared Kernel is explicitly marked // DECISION:
+  - Implementation: NetArchTest custom rules + unit tests
+  - Template: `NEW-SKILL-TEMPLATE.md`
+  - Put in: `tests/ArchitectureTests/ArchitectureRules.VSlice.cs`
 
-### Sprint 2 — Тесты (2 дня)
-- [ ] **Адаптировать** verify-tests.sh для xUnit (не мигрировать на TUnit!)
-  - Парсить выход `dotnet test --logger "console;verbosity=detailed"`
-  - Проверить, что `Total tests: > 0`
-- [ ] **Адаптировать** `tests/patterns/RatchetTest.cs`:
-  - Добавить ratchet на кастомные атрибуты проекта (например, `[CriticalHandler]`) в дополнение к счётчику тестов
-- [ ] **Создать** интеграционные тесты для RabbitMQ consumer:
-  - Паттерн: In-memory queue + test host
+### Sprint 2 — Tests (2 days)
+- [ ] **Adapt** verify-tests.sh for xUnit (do not migrate to TUnit!)
+  - Parse output of `dotnet test --logger "console;verbosity=detailed"`
+  - Verify that `Total tests: > 0`
+- [ ] **Adapt** `tests/patterns/RatchetTest.cs`:
+  - Add ratchet for project custom attributes (e.g., `[CriticalHandler]`) in addition to test count
+- [ ] **Create** integration tests for RabbitMQ consumer:
+  - Pattern: In-memory queue + test host
 
-### Sprint 3 — Code Review Agent (2 дня)
-- [ ] **Создать скилл** `code-review-dapper`:
-  - Правила: параметризованный SQL, async Dapper, transaction scope
-  - Правила: MediatR handler не должен быть толстым (>50 строк)
-  - Шаблон: `NEW-SKILL-TEMPLATE.md`
-  - Положить в: `.claude/commands/code-review-dapper.md` (для Claude) или `.kimi/skills/code-review-dapper/` (для Kimi)
-- [ ] **Адаптировать** `templates/skills/task-compliance/` (подходит 1-к-1, заменить только stack-ссылки)
+### Sprint 3 — Code Review Agent (2 days)
+- [ ] **Create skill** `code-review-dapper`:
+  - Rules: parameterized SQL, async Dapper, transaction scope
+  - Rules: MediatR handler must not be fat (>50 lines)
+  - Template: `NEW-SKILL-TEMPLATE.md`
+  - Put in: `.claude/commands/code-review-dapper.md` (for Claude) or `.kimi/skills/code-review-dapper/` (for Kimi)
+- [ ] **Adapt** `templates/skills/task-compliance/` (fits 1-to-1, just replace stack references)
 
-### Sprint 4 — E2E + CI (3 дня)
-- [ ] **Создать скилл** `e2e-worker`:
-  - Тест: публикуем сообщение в in-memory bus → проверяем обработку
-  - Тест: проверяем side-effects (записи в БД, логи)
-  - Тест: dead letter queue при ошибке
-  - Шаблон: `NEW-SKILL-TEMPLATE.md`
-- [ ] **Адаптировать** `ci/github-actions/safe-ci.yml`:
-  - Заменить `dotnet run --project` на `dotnet test` (xUnit)
-  - Добавить шаг: запуск Worker в test host для интеграционных тестов
+### Sprint 4 — E2E + CI (3 days)
+- [ ] **Create skill** `e2e-worker`:
+  - Test: publish message to in-memory bus → check processing
+  - Test: check side-effects (DB records, logs)
+  - Test: dead letter queue on error
+  - Template: `NEW-SKILL-TEMPLATE.md`
+- [ ] **Adapt** `ci/github-actions/safe-ci.yml`:
+  - Replace `dotnet run --project` with `dotnet test` (xUnit)
+  - Add step: run Worker in test host for integration tests
 
-### Backlog — Аудиты (раз в спринт)
-- [ ] **Создать скилл** `dba-audit-dapper`:
-  - Проверка: все SQL-запросы параметризованы
-  - Проверка: нет `SELECT *` (explicit columns)
-  - Проверка: индексы для WHERE-колонок (анализ через SQL Server DMVs)
-  - Шаблон: `NEW-SKILL-TEMPLATE.md`
-- [ ] **Адаптировать** `templates/skills/security-audit/` (подходит 1-к-1)
-- [ ] **Пропустить** `templates/skills/i18n-audit/` (проект только русский, документировано)
-
----
-
-## Новые скиллы для создания
-
-| Скилл | Причина | Сложность |
-|-------|---------|-----------|
-| `ArchitectureRules.cs` (адаптированный) | Vertical Slice, нужны custom NetArchTest rules | Medium |
-| `code-review-dapper` | Dapper + MediatR, готовый скилл про EF Core | Low |
-| `e2e-worker` | Worker Service, нет HTTP/OpenAPI | Medium |
-| `dba-audit-dapper` | Raw SQL, нужен аудит запросов и индексов | Medium |
-
-**Всего новых скиллов:** 4  
-**Всего адаптированных артефактов:** 5  
-**Всего внедрённых 1-к-1:** 2 (`AGENTS.md`, `CONVENTIONS.md`)
+### Backlog — Audits (once per sprint)
+- [ ] **Create skill** `dba-audit-dapper`:
+  - Check: all SQL queries are parameterized
+  - Check: no `SELECT *` (explicit columns)
+  - Check: indexes for WHERE columns (analysis via SQL Server DMVs)
+  - Template: `NEW-SKILL-TEMPLATE.md`
+- [ ] **Adapt** `templates/skills/security-audit/` (fits 1-to-1)
+- [ ] **Skip** `templates/skills/i18n-audit/` (project is Russian only, documented)
 
 ---
 
-## Проектирование новых скиллов (детали)
+## New Skills to Create
 
-Агент спроектировал каждый новый скилл полностью — не просто имя, а роль, механизм, интеграция.
+| Skill | Reason | Complexity |
+|-------|--------|------------|
+| `ArchitectureRules.cs` (adapted) | Vertical Slice, needs custom NetArchTest rules | Medium |
+| `code-review-dapper` | Dapper + MediatR, ready-made skill is about EF Core | Low |
+| `e2e-worker` | Worker Service, no HTTP/OpenAPI | Medium |
+| `dba-audit-dapper` | Raw SQL, needs query and index audit | Medium |
 
-### `ArchitectureRules.cs` (адаптированный под VSlice)
-- **Threat Model:** Агент добавляет cross-slice зависимость или ломает границу фичи
-- **Роль:** Build Guard (срабатывает при сборке)
-- **Механизм:** NetArchTest custom rules
-- **Input:** Сборка проекта
+**Total new skills:** 4  
+**Total adapted artifacts:** 5  
+**Total implemented 1-to-1:** 2 (`AGENTS.md`, `CONVENTIONS.md`)
+
+---
+
+## New Skill Design (Details)
+
+The agent designed each new skill fully — not just a name, but role, mechanism, integration.
+
+### `ArchitectureRules.cs` (Adapted for VSlice)
+- **Threat Model:** Agent adds cross-slice dependency or breaks feature boundary
+- **Role:** Build Guard (triggers on build)
+- **Mechanism:** NetArchTest custom rules
+- **Input:** Project build
 - **Output:** Test result (pass/fail)
-- **Trigger:** Каждый `dotnet build` → `dotnet run --project tests/ArchitectureTests/`
+- **Trigger:** Every `dotnet build` → `dotnet run --project tests/ArchitectureTests/`
 - **Gate:** BLOCKER
-- **Правила:**
-  - `Features/X/.*` не зависит от `Features/Y/.*` (кроме `Features/Shared/.*`)
-  - Каждый slice имеет ровно один `*Handler`, один `*Validator`
-  - Внутренние типы slice — `internal`, не `public`
+- **Rules:**
+  - `Features/X/.*` does not depend on `Features/Y/.*` (except `Features/Shared/.*`)
+  - Each slice has exactly one `*Handler`, one `*Validator`
+  - Internal slice types are `internal`, not `public`
 
 ### `code-review-dapper`
-- **Threat Model:** SQL injection, blocking calls, N+1 через Dapper
-- **Роль:** Reviewer (срабатывает на PR)
-- **Механизм:** AI Agent (скилл)
+- **Threat Model:** SQL injection, blocking calls, N+1 via Dapper
+- **Role:** Reviewer (triggers on PR)
+- **Mechanism:** AI Agent (skill)
 - **Input:** Git diff PR
-- **Output:** Комментарии в PR / отчёт
-- **Trigger:** Каждый PR
+- **Output:** PR comments / report
+- **Trigger:** Every PR
 - **Gate:** BLOCKER/CRITICAL/MAJOR/MINOR
-- **Правила:**
-  - Нет string interpolation в SQL (`$"SELECT ... {id}"`)
-  - `QueryAsync`/`ExecuteAsync` вместо sync-методов
-  - TransactionScope или `using var tran` в write-операциях
-  - Метод >50 строк — разбить или обосновать // DECISION:
+- **Rules:**
+  - No string interpolation in SQL (`$"SELECT ... {id}"`)
+  - `QueryAsync`/`ExecuteAsync` instead of sync methods
+  - TransactionScope or `using var tran` in write operations
+  - Method >50 lines — split or justify // DECISION:
 
 ### `e2e-worker`
-- **Threat Model:** Потеря сообщений, повторная обработка, отсутствие idempotency
-- **Роль:** Integration Guard (срабатывает в CI)
-- **Механизм:** Unit test + test host (In-memory RabbitMQ)
-- **Input:** Сборка проекта
+- **Threat Model:** Message loss, duplicate processing, lack of idempotency
+- **Role:** Integration Guard (triggers in CI)
+- **Mechanism:** Unit test + test host (In-memory RabbitMQ)
+- **Input:** Project build
 - **Output:** Test result (pass/fail)
-- **Trigger:** Каждый PR + nightly
+- **Trigger:** Every PR + nightly
 - **Gate:** BLOCKER
-- **Правила:**
-  - Публикуем сообщение → проверяем обработку за 5 секунд
-  - Публикуем дубликат → проверяем idempotency (не 2 записи в БД)
-  - Ломаем handler → проверяем retry + dead letter queue
+- **Rules:**
+  - Publish message → check processing within 5 seconds
+  - Publish duplicate → check idempotency (not 2 DB records)
+  - Break handler → check retry + dead letter queue
 
 ### `dba-audit-dapper`
-- **Threat Model:** Деградация perf из-за отсутствия индексов, N+1 в raw SQL
-- **Роль:** DBA Auditor (срабатывает по триггеру)
-- **Механизм:** AI Agent + SQL Server DMV query script
-- **Input:** Git diff + схема БД
-- **Output:** Отчёт с рекомендациями
-- **Trigger:** Раз в спринт / при изменении `*.sql` или `*Repository*.cs`
-- **Gate:** WARNING (не блокирует, но требует ack)
-- **Правила:**
-  - Все SQL с `WHERE` имеют покрывающий индекс (проверка через DMV)
-  - Нет `SELECT *` (explicit column list)
-  - Нет `TOP 100` без `ORDER BY`
-  - Query execution time < 100ms на тестовых данных
+- **Threat Model:** Perf degradation due to missing indexes, N+1 in raw SQL
+- **Role:** DBA Auditor (triggers on demand)
+- **Mechanism:** AI Agent + SQL Server DMV query script
+- **Input:** Git diff + DB schema
+- **Output:** Report with recommendations
+- **Trigger:** Once per sprint / when `*.sql` or `*Repository*.cs` changes
+- **Gate:** WARNING (does not block, but requires ack)
+- **Rules:**
+  - All SQL with `WHERE` has covering index (check via DMV)
+  - No `SELECT *` (explicit column list)
+  - No `TOP 100` without `ORDER BY`
+  - Query execution time < 100ms on test data
 
 ---
 
-## Карта экосистемы скиллов (генерируется)
+## Skill Ecosystem Map (Generated)
 
 ```markdown
-# Скиллы проекта Logistics.Worker
+# Project Skills: Logistics.Worker
 
-## Внутренний цикл
-| Скилл | Роль | Механизм | Триггер | Gate | Статус |
-|-------|------|----------|---------|------|--------|
+## Inner Loop
+| Skill | Role | Mechanism | Trigger | Gate | Status |
+|-------|------|-----------|---------|------|--------|
 | code-review-dapper | Reviewer | AI Agent | PR | BLOCKER | 🚧 WIP |
 | task-compliance | Scope Guard | AI Agent | PR | BLOCKER | 📋 Backlog |
 | architecture-audit (VSlice) | Build Guard | NetArchTest custom | Build | BLOCKER | 🚧 WIP |
 | compiler-guard | Fast Feedback | MSBuild props | Build | BLOCKER | ✅ Active* |
 
-* Sprint 0 активирует TreatWarningsAsErrors
+* Sprint 0 activates TreatWarningsAsErrors
 
-## Внешний цикл
-| Скилл | Роль | Механизм | Триггер | Gate | Статус |
-|-------|------|----------|---------|------|--------|
+## Outer Loop
+| Skill | Role | Mechanism | Trigger | Gate | Status |
+|-------|------|-----------|---------|------|--------|
 | security-audit | Security Auditor | AI Agent | Weekly | WARNING | 📋 Backlog |
 | dba-audit-dapper | DBA Auditor | AI Agent + Script | Sprint | WARNING | 🚧 WIP |
 | performance-audit | Perf Auditor | AI Agent + NBomber | Release | BLOCKER | 📋 Backlog |
 
-## Проектно-специфичные
-| Скилл | Роль | Механизм | Триггер | Gate | Статус |
-|-------|------|----------|---------|------|--------|
+## Project-Specific
+| Skill | Role | Mechanism | Trigger | Gate | Status |
+|-------|------|-----------|---------|------|--------|
 | e2e-worker | Integration Guard | Unit Tests | PR + Nightly | BLOCKER | 🚧 WIP |
 ```
 
 ---
 
-## Не применимо (документировано)
+## Not Applicable (Documented)
 
-- **OpenAPI Snapshot** — проект Worker Service, нет HTTP endpoints
-- **i18n Audit** — проект только для рынка РФ, русский язык
-- **Стандартные NetArchTest rules** — правила про слои (Domain→Application) не применимы к VSlice. Заменены на custom rules про границы фич
-- **TUnit миграция** — 340 тестов на xUnit, миграция дороже выгоды
-
----
-
-## Риски
-
-1. **4 новых скилла** — это работа на 2-3 дня только на описание правил. Но без них guardrails будут бесполезны.
-2. **xUnit остаётся** — не мигрируем на TUnit, потому что 340 тестов + инфраструктура. verify-tests.sh решает проблему "0 ran".
-3. **Vertical Slice + Dapper** — нет готовых паттернов в `dotnet-ai-guardrails`. Но принципы те же: авто-проверка, ratchet, code review.
+- **OpenAPI Snapshot** — Worker Service project, no HTTP endpoints
+- **i18n Audit** — project is for Russian market only, Russian language
+- **Standard NetArchTest rules** — layer rules (Domain→Application) are not applicable to VSlice. Replaced with custom rules about feature boundaries
+- **TUnit migration** — 340 tests on xUnit, migration cost exceeds benefit
 
 ---
 
-## Рекомендация
+## Risks
 
-Начать со **Sprint 0** (слой 0) + адаптации `ArchitectureRules.cs` под VSlice.
-Это даёт 60% эффекта: агенты перестанут ломать slice-границы и nullable.
+1. **4 new skills** — this is 2-3 days of work just to describe the rules. But without them, guardrails will be useless.
+2. **xUnit remains** — we do not migrate to TUnit because 340 tests + infrastructure. verify-tests.sh solves the "0 ran" problem.
+3. **Vertical Slice + Dapper** — no ready-made patterns in `dotnet-ai-guardrails`. But the principles are the same: auto-check, ratchet, code review.
 
-Остальные скиллы можно создавать по мере необходимости — важно,
-чтобы **принципы** работали, а не конкретные инструменты.
+---
+
+## Recommendation
+
+Start with **Sprint 0** (layer 0) + adapting `ArchitectureRules.cs` for VSlice.
+This gives 60% effect: agents will stop breaking slice boundaries and nullable.
+
+Other skills can be created as needed — what matters is that
+**principles** work, not the specific tools.

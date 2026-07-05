@@ -1,39 +1,39 @@
 # DemoProject.MinimalApi
 
-> Single-project ASP.NET Core Minimal API с guardrails.
-> Для проектов **без Clean Architecture** — показывает, какие архитектурные тесты остаются релевантными.
+> Single-project ASP.NET Core Minimal API with guardrails.
+> For projects **without Clean Architecture** — shows which architecture tests remain relevant.
 
-## Стек
+## Stack
 
 - .NET 10
 - ASP.NET Core Minimal API
-- Single-project (нет слоёв Domain / Application / Infrastructure)
+- Single-project (no Domain / Application / Infrastructure layers)
 - TUnit + `dotnet run --project`
 - NetArchTest.eNhancedEdition
 
-## Что внутри
+## What's Inside
 
 ```
 src/DemoProject.MinimalApi/
 ├── Program.cs
 ├── Domain/
-│   ├── Order.cs              # Record с init-only properties
+│   ├── Order.cs              # Record with init-only properties
 │   └── Payment.cs
 ├── Features/
 │   ├── Orders/
 │   │   ├── OrderEndpoints.cs # Minimal API endpoint mapping
-│   │   └── OrderService.cs   # Бизнес-логика
+│   │   └── OrderService.cs   # Business logic
 │   └── Payments/
 │       ├── PaymentEndpoints.cs
 │       └── PaymentService.cs
 
 tests/DemoProject.MinimalApi.Tests/
 ├── ArchitectureRules.cs      # Naming, banned APIs (DateTime.Now), CancellationToken
-├── RatchetTests.cs           # Публичные типы и тесты не уменьшились
-└── DuplicationGuardTest.cs   # Бизнес-логика не дублируется
+├── RatchetTests.cs           # Public types and tests did not decrease
+└── DuplicationGuardTest.cs   # Business logic is not duplicated
 ```
 
-## Как запустить
+## How to Run
 
 ```bash
 cd examples/DemoProject.MinimalApi
@@ -41,11 +41,11 @@ dotnet build
 dotnet run --project tests/DemoProject.MinimalApi.Tests
 ```
 
-## Чем отличается от DemoProject (Clean Architecture)
+## How It Differs from DemoProject (Clean Architecture)
 
-| Аспект | DemoProject (Clean) | DemoProject.MinimalApi (No Layers) |
+| Aspect | DemoProject (Clean) | DemoProject.MinimalApi (No Layers) |
 |--------|---------------------|------------------------------------|
-| Проектов | 4 (Domain, Application, Infrastructure, Tests) | 1 + Tests |
-| Arch-тесты | Зависимости между слоями | Naming conventions, banned APIs |
-| EF Core | Да | Нет (in-memory список) |
-| Цель | Показать guardrails для CA | Показать guardrails для single-project MVP |
+| Projects | 4 (Domain, Application, Infrastructure, Tests) | 1 + Tests |
+| Arch tests | Layer dependencies | Naming conventions, banned APIs |
+| EF Core | Yes | No (in-memory list) |
+| Goal | Show guardrails for CA | Show guardrails for single-project MVP |

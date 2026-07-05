@@ -1,25 +1,25 @@
 # Type Safety Checklist
 
 ## Pre-flight
-- [ ] Получен diff изменений
-- [ ] Известен scope (какие сущности и DTO затронуты)
+- [ ] Diff of changes is available
+- [ ] Scope is known (which entities and DTOs are affected)
 
 ## Strongly Typed IDs
-- [ ] Все новые ID-свойства в Domain имеют собственный тип (не Guid/string/int/long)
-- [ ] Тип ID — `readonly record struct` с единственным полем `Value`
-- [ ] Есть фабрика `.New()` или конструктор для создания
-- [ ] Для JSON сериализации добавлен `JsonConverter` (System.Text.Json или Newtonsoft)
-- [ ] Для EF Core добавлен `ValueConverter` (если используется ORM)
+- [ ] All new ID properties in Domain have their own type (not Guid/string/int/long)
+- [ ] ID type is `readonly record struct` with a single `Value` field
+- [ ] There is a `.New()` factory or constructor for creation
+- [ ] A `JsonConverter` is added for JSON serialization (System.Text.Json or Newtonsoft)
+- [ ] A `ValueConverter` is added for EF Core (if an ORM is used)
 
 ## Value Objects
-- [ ] Примитивы, передающиеся вместе, объединены в record/class (Money, Address, DateRange)
-- [ ] Value Objects immutable (`init` или `readonly record struct`)
+- [ ] Primitives that travel together are combined into a record/class (Money, Address, DateRange)
+- [ ] Value Objects are immutable (`init` or `readonly record struct`)
 
-## Антипаттерны
-- [ ] Нет методов с сигнатурой `void DoSomething(Guid id1, Guid id2, string code)`
-- [ ] Нет DTO с полем `public string Status` вместо enum/strong type
-- [ ] Нет передачи примитивов через границы слоёв без типизации
+## Anti-patterns
+- [ ] No methods with signature `void DoSomething(Guid id1, Guid id2, string code)`
+- [ ] No DTOs with field `public string Status` instead of enum/strong type
+- [ ] No passing of primitives across layer boundaries without typing
 
-## Регрессия
-- [ ] Архитектурный тест `StronglyTypedIds` проходит (`DomainEntities_ShouldNotUseRawPrimitivesForIds`)
-- [ ] Ratchet на количество strongly typed IDs не уменьшился
+## Regression
+- [ ] Architecture test `StronglyTypedIds` passes (`DomainEntities_ShouldNotUseRawPrimitivesForIds`)
+- [ ] Ratchet on the number of strongly typed IDs has not decreased

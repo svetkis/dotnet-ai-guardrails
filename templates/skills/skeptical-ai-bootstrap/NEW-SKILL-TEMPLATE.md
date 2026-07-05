@@ -1,7 +1,7 @@
-# Шаблон нового скилла
+# New Skill Template
 
-> Используй этот шаблон, когда готовые артефакты из `dotnet-ai-guardrails`
-> не подходят под стек или архитектуру проекта.
+> Use this template when ready-made artifacts from `dotnet-ai-guardrails`
+> don't fit the project stack or architecture.
 
 ---
 
@@ -9,144 +9,138 @@
 ---
 name: {skill-name}
 description: >
-  {Краткое описание: что проверяет, для какого стека/архитектуры}
+  {Brief description: what it checks, for which stack/architecture}
 ---
 
-# {Название} — Skill
+# {Name} — Skill
 
-## Почему создан
+## Why Created
 
-Готовый скилл `{оригинальный скилл}` не подходит, потому что:
-- {стек проекта отличается}
-- {архитектура требует других проверок}
-- {специфичные риски проекта}
+Ready skill `{original-skill}` doesn't fit because:
+- {project stack differs}
+- {architecture requires different checks}
+- {project-specific risks}
 
-## Context Marker
+## Role
 
-Когда этот скилл активен, добавь `{marker}` к своему STARTER_CHARACTER.
-Пример: `🍀 {marker}` = базовые правила + роль {роль} активна.
-При перечитывании (re-read) добавь `♻️` перед маркером скилла.
+You are a {role} in a .NET project. Your task is to {what to do}.
 
-## Роль
-
-Ты — {роль} в .NET-проекте. Твоя задача — {что делать}.
-
-## Контекст проекта
+## Project Context
 
 - .NET: {version}
-- Тип приложения: {Web API / Worker / Desktop / etc.}
-- ORM/Данные: {EF Core / Dapper / Mongo / etc.}
-- Архитектура: {Clean / Vertical Slice / Modular / etc.}
-- Особенности: {что важно знать агенту}
+- Application type: {Web API / Worker / Desktop / etc.}
+- ORM/Data: {EF Core / Dapper / Mongo / etc.}
+- Architecture: {Clean / Vertical Slice / Modular / etc.}
+- Specifics: {what the agent needs to know}
 
-## Принцип
+## Principle
 
-{Один абзац: что защищаем и почему это важно}
+{One paragraph: what we protect and why it's important}
 
-## Правила / Чеклист
+## Rules / Checklist
 
-### {Категория 1}
-- [ ] {правило 1}
-- [ ] {правило 2}
+### {Category 1}
+- [ ] {rule 1}
+- [ ] {rule 2}
 
-### {Категория 2}
-- [ ] {правило 3}
-- [ ] {правило 4}
+### {Category 2}
+- [ ] {rule 3}
+- [ ] {rule 4}
 
 ## Anti-Hallucination Protocol
 
-Каждая находка ДОЛЖНА включать:
-1. **Точный путь к файлу** и **номер строки**
-2. **Цитату кода** (3-5 строк)
-3. **Нарушенное правило** (из списка выше)
-4. **Исправление**: конкретное действие или код
+Every finding MUST include:
+1. **Exact file path** and **line number**
+2. **Code quote** (3-5 lines)
+3. **Violated rule** (from the list above)
+4. **Fix**: specific action or code
 
-Если не можешь указать 1-4 — НЕ репортишь находку.
+If you can't specify 1-4 — DON'T report the finding.
 
-## Формат отчёта
+## Report Format
 
 ```markdown
-## {Название аудита} — {дата}
+## {Audit Name} — {date}
 
-### Критично
-- [ ] {описание} → {файл:строка}
+### Critical
+- [ ] {description} → {file:line}
 
-### Средне
-- [ ] {описание} → {файл:строка}
+### Medium
+- [ ] {description} → {file:line}
 
-### Рекомендации
-- {описание}
+### Recommendations
+- {description}
 ```
 
-## Инструкция по запуску
+## Launch Instructions
 
-- **Когда запускать:** {на каждый PR / раз в спринт / по триггеру}
-- **На что смотреть:** {какие файлы/изменения триггерят запуск}
-- **Кто потребитель:** {программист / QA / human gate}
+- **When to run:** {on every PR / once per sprint / on trigger}
+- **What to look at:** {which files/changes trigger the run}
+- **Consumer:** {programmer / QA / human gate}
 
-## Интеграция
+## Integration
 
-- **Input от:** {откуда берём контекст}
-- **Output to:** {кому передаём результаты}
-- **Runs before/after:** {связь с другими скиллами}
+- **Input from:** {where we get context}
+- **Output to:** {who we send results to}
+- **Runs before/after:** {relation to other skills}
 ```
 
 ---
 
-## Примеры создания скиллов по мотивам проектов
+## Examples of Skill Creation by Project Type
 
-### Пример 1: Vertical Slice Architecture
+### Example 1: Vertical Slice Architecture
 
 ```markdown
 ---
 name: architecture-audit-vslice
 
-> Примечание: NetArchTest ВСЁ-ТАКИ работает с Vertical Slice — нужны только
-> custom rules про границы фич, а не про слои. Regex — не единственный путь.
-> См. примеры в `SKILL-ARCHITECTURE.md`.
+> Note: NetArchTest DOES work with Vertical Slice — you just need
+> custom rules about feature boundaries, not about layers. Regex is not the only path.
+> See examples in `SKILL-ARCHITECTURE.md`.
 
 ---
 
 # Architecture Audit — Vertical Slice
 
-## Почему создан
-NetArchTest проверяет зависимости между слоями (Domain/Application/Infrastructure),
-но в Vertical Slice границы — по фичам (Features/Orders/, Features/Payments/),
-а не по слоям. Нужен сканер, который проверяет:
-- Slice A не импортирует внутренности Slice B
-- Каждый Slice имеет чёткий API (Handler/Endpoint/Validator)
-- Нет shared database без явного контракта
+## Why Created
+NetArchTest checks dependencies between layers (Domain/Application/Infrastructure),
+but in Vertical Slice boundaries are by features (Features/Orders/, Features/Payments/),
+not by layers. Need a scanner that checks:
+- Slice A doesn't import Slice B internals
+- Each Slice has a clear API (Handler/Endpoint/Validator)
+- No shared database without explicit contract
 ```
 
-### Пример 2: Dapper + SQL Server
+### Example 2: Dapper + SQL Server
 
 ```markdown
 name: dba-audit-dapper
 ---
 # DBA Audit — Dapper
 
-## Почему создан
-Готовый `dba-audit` заточен под EF Core (миграции, Include, AsNoTracking).
-В проекте Dapper — проверяем:
-- Raw SQL параметризован (нет string interpolation в SQL)
-- Нет SELECT * (explicit column list)
-- Используются async-методы (QueryAsync, ExecuteAsync)
-- Нет N+1 без явного комментария // DECISION:
+## Why Created
+Ready `dba-audit` is tuned for EF Core (migrations, Include, AsNoTracking).
+In a Dapper project we check:
+- Raw SQL is parameterized (no string interpolation in SQL)
+- No SELECT * (explicit column list)
+- Async methods are used (QueryAsync, ExecuteAsync)
+- No N+1 without explicit comment // DECISION:
 ```
 
-### Пример 3: .NET Framework 4.8 + WPF
+### Example 3: .NET Framework 4.8 + WPF
 
 ```markdown
 name: code-review-wpf
 ---
 # Code Review — WPF Desktop
 
-## Почему создан
-Готовый `code-review` про Minimal API и EF Core.
-В WPF проверяем:
-- ViewModel не обращается к БД напрямую (через Service)
-- INotifyPropertyChanged реализован корректно
-- Нет blocking call в UI thread (async/await)
-- Commands используют AsyncCommand, не void
+## Why Created
+Ready `code-review` is about Minimal API and EF Core.
+In WPF we check:
+- ViewModel doesn't access DB directly (via Service)
+- INotifyPropertyChanged implemented correctly
+- No blocking call in UI thread (async/await)
+- Commands use AsyncCommand, not void
 ```
 ```

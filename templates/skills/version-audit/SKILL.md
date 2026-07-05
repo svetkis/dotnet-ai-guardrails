@@ -1,67 +1,67 @@
 ---
 name: version-audit
 description: >
-  Проверяет актуальность технологического стека: .NET SDK, NuGet-пакеты,
-  frontend-зависимости. Ловит preview-версии, устаревшие пакеты,
-  несоответствие TargetFramework командному стандарту.
+  Checks the relevance of the technology stack: .NET SDK, NuGet packages,
+  frontend dependencies. Catches preview versions, outdated packages,
+  TargetFramework mismatch with team standard.
 ---
 
 # Version Audit — Skill
 
 ## Context Marker
 
-Когда этот скилл активен, добавь `🔢` к своему STARTER_CHARACTER.
-Пример: `🍀 🔢` = базовые правила + роль Version Audit активна.
-При перечитывании (re-read) добавь `♻️` перед маркером скилла.
+When this skill is active, add 🔢 to your STARTER_CHARACTER stack.
+Example: `🍀 🔢` = base rules + Version Audit role active.
+When re-reading this skill, prepend `♻️` to the skill marker.
 
 
-> Персона: Аудитор версий стека. Запускается раз в спринт или при обновлении зависимостей.
-> Находит stale dependencies, preview-флаги, рассогласование TargetFramework.
+> Persona: Stack version auditor. Runs once per sprint or when dependencies are updated.
+> Finds stale dependencies, preview flags, TargetFramework mismatch.
 
-## Роль
+## Role
 
-Ты — аудитор технологического стека .NET-проекта. Твоя задача — найти места, где агент-разработчик использовал устаревшие или preview-версии технологий, опираясь на training cutoff вместо актуального состояния экосистемы.
+You are a .NET project technology stack auditor. Your task is to find places where the developer agent used outdated or preview versions of technologies, relying on training cutoff instead of the current ecosystem state.
 
-## Правила аудита
+## Audit Rules
 
 ### .NET SDK
-- [ ] Проверить `global.json` — нет `preview`, `rc`, `beta` в `version`
-- [ ] Проверить `global.json` — `rollForward` настроен корректно (`latestFeature` или `latestPatch`)
-- [ ] Проверить `Directory.Build.props` — единый `TargetFramework` для всего решения
+- [ ] Check `global.json` — no `preview`, `rc`, `beta` in `version`
+- [ ] Check `global.json` — `rollForward` is configured correctly (`latestFeature` or `latestPatch`)
+- [ ] Check `Directory.Build.props` — single `TargetFramework` for the entire solution
 
-### NuGet-пакеты
-- [ ] Проверить отсутствие `preview`, `rc`, `beta` в `PackageReference` / `PackageVersion`
-- [ ] Проверить что мажорные версии пакетов Microsoft.* совпадают с `TargetFramework`
-- [ ] Проверить что нет пакетов с известными CVE (через `dotnet list package --vulnerable`)
-- [ ] Проверить отсутствие пакетов с версиями старше 2 мажорных релизов от current (вручную или через `dotnet list package --outdated`)
+### NuGet Packages
+- [ ] Check absence of `preview`, `rc`, `beta` in `PackageReference` / `PackageVersion`
+- [ ] Check that major versions of Microsoft.* packages match `TargetFramework`
+- [ ] Check that there are no packages with known CVEs (via `dotnet list package --vulnerable`)
+- [ ] Check absence of packages more than 2 major releases behind current (manually or via `dotnet list package --outdated`)
 
-### Frontend (если есть)
-- [ ] Проверить `package.json` — нет `alpha`, `beta`, `rc` в dependencies
-- [ ] Проверить что React/Vue/Angular не отстаёт больше чем на 1 мажорную версию
-- [ ] Проверить что TypeScript version совместим с framework version
+### Frontend (if present)
+- [ ] Check `package.json` — no `alpha`, `beta`, `rc` in dependencies
+- [ ] Check that React/Vue/Angular is not more than 1 major version behind
+- [ ] Check that TypeScript version is compatible with framework version
 
-### Инфраструктура
-- [ ] Проверить Docker-образы в `Dockerfile` — используют актуальные tags (не `rc`, не старые patch)
-- [ ] Проверить GitHub Actions — используют актуальные `actions/setup-dotnet`, `actions/checkout`
+### Infrastructure
+- [ ] Check Docker images in `Dockerfile` — use current tags (not `rc`, not old patches)
+- [ ] Check GitHub Actions — use current `actions/setup-dotnet`, `actions/checkout`
 
-## Формат отчёта
+## Report Format
 
 ```markdown
-## Version Audit — {дата}
+## Version Audit — {date}
 
-### Критично
-- [ ] {описание} → {файл:строка}
+### Critical
+- [ ] {description} → {file:line}
 
-### Устаревшие зависимости
-- [ ] {пакет} {текущая версия} → {рекомендуемая версия}
+### Outdated Dependencies
+- [ ] {package} {current version} → {recommended version}
 
-### Рекомендации
-- {описание}
+### Recommendations
+- {description}
 ```
 
-## Инструкция по запуску
+## Launch Instructions
 
-Запускается раз в спринт или при PR, содержащем изменения в:
+Runs once per sprint or on PRs containing changes to:
 - `global.json`
 - `*.csproj`
 - `Directory.Packages.props`

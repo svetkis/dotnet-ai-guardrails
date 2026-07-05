@@ -1,33 +1,33 @@
-# Test Audit — Чеклист
+# Test Audit — Checklist
 
-## Перед началом
-- [ ] Известен стек (TUnit / xUnit / NUnit)
-- [ ] Получен список сервисов, endpoints, jobs
+## Before Start
+- [ ] Stack known (TUnit / xUnit / NUnit)
+- [ ] List of services, endpoints, jobs obtained
 
-## Сервисы
-- [ ] Каждый сервис имеет файл тестов
-- [ ] Покрыты public методы (не только happy path)
-- [ ] Покрыты ошибки, null, пустые коллекции
-- [ ] Есть тесты на race conditions (если применимо)
+## Services
+- [ ] Every service has a test file
+- [ ] Public methods covered (not only happy path)
+- [ ] Errors, null, empty collections covered
+- [ ] Race condition tests (if applicable)
 
 ## Endpoints
-- [ ] Каждый endpoint имеет интеграционный тест
-- [ ] Проверены статусы: 200, 400, 401, 403, 404, 409, 500
-- [ ] Проверена валидация входных DTO
+- [ ] Every endpoint has an integration test
+- [ ] Statuses tested: 200, 400, 401, 403, 404, 409, 500
+- [ ] Input DTO validation tested
 
 ## Background Jobs
-- [ ] Каждый Job имеет тест
-- [ ] Покрыты пустые/частичные данные и ошибки
+- [ ] Every Job has a test
+- [ ] Empty/partial data and errors covered
 
-## Regression-тесты (BUG###_)
-- [ ] Каждый `fix:` коммит имеет `BUG*Tests.cs`
-- [ ] BUG-тесты воспроизводят баг (сломай код — тест падает)
-- [ ] Нет мёртвых BUG-тестов (проходят всегда)
+## Regression Tests (BUG###_)
+- [ ] Every `fix:` commit has `BUG*Tests.cs`
+- [ ] BUG tests reproduce the bug (break code → test fails)
+- [ ] No dead BUG tests (always pass)
 
 ## Characterization Tests
-- [ ] Есть для критичных алгоритмов
-- [ ] Актуальны (не устарели)
+- [ ] Exist for critical algorithms
+- [ ] Are current (not stale)
 
-## Архитектурные тесты
-- [ ] Все правила AGENTS.md имеют guardrail-тест
-- [ ] Ratchet-тесты не упали
+## Architectural Tests
+- [ ] Every AGENTS.md rule has a guardrail test
+- [ ] Ratchet tests did not fail

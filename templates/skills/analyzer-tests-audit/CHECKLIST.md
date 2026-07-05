@@ -1,31 +1,31 @@
-# Analyzer Tests Audit — Чеклист
+# Analyzer Tests Audit — Checklist
 
-## Перед началом
-- [ ] Список кастомных Roslyn-анализаторов проекта
-- [ ] Список diagnostic IDs
-- [ ] Версия `Microsoft.CodeAnalysis.*` пакетов
+## Before Starting
+- [ ] List of the project's custom analyzers / linters
+- [ ] List of diagnostic / rule IDs
+- [ ] Version of analyzer dependencies
 
-## Покрытие анализаторов
-- [ ] Для каждого diagnostic ID есть positive test
-- [ ] Для каждого diagnostic ID есть negative test
-- [ ] Для whitelist/исключений есть тесты
-- [ ] Настраиваемые параметры покрыты тестами
+## Analyzer Coverage
+- [ ] Every diagnostic / rule ID has a positive test
+- [ ] Every diagnostic / rule ID has a negative test
+- [ ] Whitelists / exceptions have dedicated tests
+- [ ] Configurable parameters are covered by tests
 
-## Качество тестов
-- [ ] Тесты проверяют точный span диагностики
-- [ ] Используются корректные `ReferenceAssemblies`
-- [ ] Code fix providers покрыты тестами
+## Test Quality
+- [ ] Tests verify exact diagnostic span / location
+- [ ] Correct reference fixtures / assemblies are used
+- [ ] Code fix providers / autofixes are covered by tests
 
-## Regression guard
-- [ ] Analyzer tests запускаются в CI
-- [ ] Обновление Roslyn пакетов сопровождается прогоном тестов
+## Regression Guard
+- [ ] Analyzer tests run in CI
+- [ ] Analyzer package updates are accompanied by test runs
 
-## Инвентарь
-- [ ] Список анализаторов и diagnostic IDs задокументирован
-- [ ] Для каждого ID указано: что ловит, почему, какой тест покрывает
+## Inventory
+- [ ] Analyzer list and diagnostic / rule IDs are documented
+- [ ] For each ID it is documented: what it catches, why, and which test covers it
 
-## Формат отчёта
-- [ ] Сводка по diagnostic IDs
-- [ ] Непокрытые анализаторы
-- [ ] Слабые тесты
-- [ ] Рекомендации
+## Report Format
+- [ ] Summary by diagnostic / rule IDs
+- [ ] Uncovered analyzers
+- [ ] Weak tests
+- [ ] Recommendations

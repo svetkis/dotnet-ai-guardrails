@@ -1,81 +1,84 @@
-# Адаптация скиллов под проект / Skill Adaptation Guide
+# Skill Adaptation Guide
 
-> Копировать скиллы — просто. Адаптировать — важно.
-> Этот гайд поможет вычеркнуть неприменимые проверки до первого запуска.
-
----
-
-## Быстрый чеклист (3 шага)
-
-1. **Определи стек**
-   - .NET версия, тип приложения, ORM, архитектура, тестовый фреймворк
-   - Посмотри `.csproj`, `global.json`, структуру папок
-
-2. **Вычеркни неприменимое**
-   - Для каждого скилла проверь таблицу ниже
-   - Пометь пункты N/A в CHECKLIST.md перед запуском
-
-3. **Запусти и отфильтруй**
-   - После первого прогона посмотри находки с меткой `[REVIEW]`
-   - Если находка — false positive, добавь условие в SKILL.md проекта
+> Copying skills is easy. Adapting them is important.
+> This guide will help you strike out inapplicable checks before the first run.
 
 ---
 
-## Таблица: если в проекте… → пропусти эти проверки
+## Portable core
 
-| Если в проекте… | Пропусти в скилле… | Почему |
+- Every skill is a template of checks, not a law. Before running, define the project stack and strike out what doesn't apply.
+- Mark items `N/A` in `CHECKLIST.md` before the first run.
+- If the project does not use a technology mentioned in a check, that check is not a finding.
+- After the first run, review `[REVIEW]` findings: false positives should be added as conditions in the project's `SKILL.md`.
+
+## Requires adaptation
+
+- Concrete technologies: ORM, web framework, architecture, test framework, runtime.
+- Folder, project, attribute, and guardrail-test names in the project.
+- Thresholds for complexity, coverage, size, and budgets adopted by the team.
+
+## Not applicable when
+
+- The project does not match any of the technological prerequisites of the skill (e.g., no HTTP — `api-design-audit` is not applicable).
+- More than 50% of the skill's checks require adaptation — better create a new skill via `skeptical-ai-bootstrap`.
+
+---
+
+## Quick Checklist (3 steps)
+
+1. **Define the stack**
+   - .NET/runtime version, app type, ORM, architecture, test framework
+   - Check `.csproj`, `global.json`, folder structure
+
+2. **Strike out what doesn't apply**
+   - For each skill, check the table below
+   - Mark items N/A in `CHECKLIST.md` before running
+
+3. **Run and filter**
+   - After the first run, review findings marked `[REVIEW]`
+   - If a finding is a false positive, add a condition to the project's `SKILL.md`
+
+---
+
+## Table: if the project has… → skip these checks
+
+| If the project has… | Skip in skill… | Why |
 |---|---|---|
-| Нет Clean Architecture (single-project MVP) | `code-review` → проверку слоёв (NetArchTest) | Нет проектов Domain / Infrastructure — правило неприменимо |
-| Minimal API (не MVC) | `security-audit` → `[Authorize]` / `[AllowAnonymous]` | Minimal API использует `.RequireAuthorization()` или middleware |
-| Minimal API | `code-review` → проверку `[Authorize]` | См. выше |
-| Dapper / ADO.NET (нет EF Core) | `performance-audit` → `.AsNoTracking()`, `.Include()`, `FindAsync()` | Правила EF Core неприменимы к raw SQL |
-| Dapper / ADO.NET | `dba-audit` → миграции, `Include()`, `FindAsync()` | DBA-аудит для Dapper — другой скилл |
-| Проекции `.Select()` в DTO повсюду | `performance-audit`, `code-review` → отсутствие `.AsNoTracking()` | EF Core не отслеживает проекции, AsNoTracking не нужен |
-| Raw SQL (`FromSqlRaw`, `ExecuteUpdateAsync`) | `code-review`, `performance-audit` → `.AsNoTracking()` на write-path | Change Tracker не отслеживает raw SQL |
-| Worker Service (нет HTTP) | `security-audit` → rate limiting, XSS, `[Authorize]` | Worker не имеет endpoints в классическом смысле |
-| Worker Service | `code-review` → OpenAPI snapshot, DTO API | Worker не возвращает HTTP-ответы |
-| .NET Framework 4.8 | Все скиллы → NetArchTest, TUnit, Minimal API | Стек отличается кардинально; используй `skeptical-ai-bootstrap` |
-| Razor Pages | `code-review` → проверку Minimal API | Razor Pages используют PageModel, не endpoint-роутинг |
-| Vertical Slice Architecture | `code-review` → стандартные слоёвые правила | Границы по фичам, а не по слоям; используй custom NetArchTest |
-| Нет hot path методов / не latency-sensitive | `allocation-budget-audit` | Нечего измерять |
-| Нет публичного API / docs | `spellcheck-audit` → public API names | Проверяй только markdown/comments |
-| Не релиз / не бета | `release-readiness-audit` | Won't do, документировать |
-| Нет кросс-слойных flow (single CRUD без cache/events/jobs) | `business-risk-audit` | Нет seam'ов между UI/cache/API/domain/job |
-| Нет кастомных Roslyn-анализаторов | `analyzer-tests-audit` | Нечего тестировать |
-| Нет Stryker / не TUnit-compatible | `mutation-audit` → CI gate | Запускать как periodic audit |
-| Legacy с сотнями complexity-нарушений | `complexity-audit` → error severity | Использовать baseline + ratchet, не error |
+| No layered architecture (single-project MVP) | `code-review` → dependency checks between layers | No Domain / Infrastructure projects — rule not applicable |
+| Minimal API / non-MVC framework | `security-audit` → MVC authorization attributes | Uses middleware or fluent endpoint configuration |
+| Minimal API / non-MVC | `code-review` → MVC authorization attribute checks | See above |
+| Dapper / ADO.NET / raw SQL (no EF Core) | `performance-audit`, `code-review` → ORM-specific checks (`AsNoTracking`, `Include`, `FindAsync`) | ORM rules don't apply to raw SQL |
+| Projections to DTO everywhere | `performance-audit`, `code-review` → missing `AsNoTracking` on projections | ORM doesn't track projections, `AsNoTracking` not needed |
+| Worker Service / Desktop / Game (no HTTP) | `security-audit` → rate limiting, XSS, authorization attributes | No endpoints in the classical sense |
+| Worker Service / Desktop / Game | `code-review` → OpenAPI snapshot, HTTP DTO | No HTTP responses |
+| Legacy runtime (.NET Framework, etc.) | All skills → NetArchTest, modern test frameworks, Minimal API | Stack differs radically; use `skeptical-ai-bootstrap` |
+| Vertical Slice Architecture / other module boundaries | `code-review` → standard layer rules | Boundaries by feature, not by layer; use custom architecture test |
+| No hot path methods / not latency-sensitive | `allocation-budget-audit` | Nothing to measure |
+| No public API / docs | `spellcheck-audit` → public API names | Check only markdown / comments |
+| Not a release / beta | `release-readiness-audit` | Won't do, document it |
+| No custom analyzers / Roslyn diagnostics | `analyzer-tests-audit` | Nothing to test |
+| No mutation testing in CI | `mutation-audit` → CI gate | Run as periodic audit |
+| Legacy with hundreds of complexity violations | `complexity-audit` → error severity | Use baseline + ratchet, not error |
 
 ---
 
-## Confidence Level: как интерпретировать
+## Confidence Level: how to interpret
 
-Все аудит-скиллы с версии 2026-06 помечают находки уровнем уверенности:
+All audit skills since version 2026-06 mark findings with a confidence level:
 
-| Маркер | Значение | Действие |
+| Marker | Meaning | Action |
 |---|---|---|
-| `[CERTAIN]` | Точно баг / уязвимость | Исправляй или создавай задачу сразу |
-| `[REVIEW]` | Возможен false positive | Проверь human'ом перед действием. Частые причины: проекция без AsNoTracking, endpoint без `[Authorize]` но с middleware, single-project без Clean Architecture |
+| `[CERTAIN]` | Definitely a bug / vulnerability | Fix or create a task immediately |
+| `[REVIEW]` | False positive possible | Check with a human before acting. Common reasons: projection without `AsNoTracking`, endpoint with middleware authorization, single-project without Clean Architecture |
 
-**Правило:** если агент не уверен — он ставит `[REVIEW]`. Это не слабость, это честность.
-
----
-
-## Пример адаптации
-
-Проект: **BetweenTheLines** (.NET 10, EF Core, PostgreSQL, Minimal API, single-project MVP)
-
-Адаптации:
-1. `code-review` — вычеркнуто: проверка слоёв (нет Clean Architecture). Добавлено: `.RequireAuthorization()` вместо `[Authorize]`.
-2. `performance-audit` — вычеркнуто: AsNoTracking на `.Select()`-проекциях. Добавлено: исключение для `FromSqlRaw("UPDATE...")`.
-3. `security-audit` — вычеркнуто: `[Authorize]` / `[AllowAnonymous]`. Добавлено: проверка `.RequireAuthorization()` и защита webhook'ов через secret token.
+**Rule:** if the agent is not sure — it marks `[REVIEW]`. This is not weakness, this is honesty.
 
 ---
 
-## Context Markers для скиллов
+## Skill Markers
 
-Каждый скилл имеет свой context marker (эмодзи). Когда агент работает в роли скилла, он добавляет этот маркер к `STARTER_CHARACTER`:
-
-| Скилл | Маркер |
+| Skill | Marker |
 |---|---|
 | `allocation-budget-audit` | 💸 |
 | `analyzer-tests-audit` | 🔬 |
@@ -104,18 +107,31 @@
 | `ux-audit` | 🎯 |
 | `version-audit` | 🔢 |
 
-**Зачем:** если агент вдруг начал отвечать без маркера скилла — он забыл, в какой роли работает, и скорее всего не применяет правила аудита.
+---
 
-**Re-read:** если скилл перечитывается явно (по команде пользователя или после сигнала о потере контекста), агент добавляет `♻️` перед маркером скилла: `🍀 ♻️ 🔍` = базовые правила перечитаны + code-review активен.
+## Project-specific examples
+
+> The examples below are taken from real adaptations of the methodology. Replace project names, stack, and guardrails with your own.
+
+### Example 1: Minimal API + EF Core + single-project MVP
+
+Adaptations:
+1. `code-review` — struck out: layer checks (no Clean Architecture). Added: fluent endpoint authorization instead of MVC attributes.
+2. `performance-audit` — struck out: `AsNoTracking` on `.Select()` projections. Added: exception for raw SQL queries.
+3. `security-audit` — struck out: MVC authorization attributes. Added: middleware authorization check and webhook protection via secret token.
+
+### Example 2: Custom Roslyn analyzers
+
+If the project has custom analyzers with project-specific diagnostic IDs, replace the `SAE###` examples with your own IDs and add coverage rules for positive/negative cases to `analyzer-tests-audit`.
 
 ---
 
-## Если ничего не подходит
+## If nothing fits
 
-Если готовые скиллы требуют более 50% адаптации — не адаптируй, а создай новый:
+If ready-made skills require more than 50% adaptation — don't adapt, create a new one:
 
-1. Запусти `skeptical-ai-bootstrap` — он даст фреймворк для создания нового скилла
-2. Используй `SKILL-ARCHITECTURE.md` для проектирования guardrail'а с нуля
-3. Используй `NEW-SKILL-TEMPLATE.md` для генерации файлов нового скилла
+1. Run `skeptical-ai-bootstrap` — it provides a framework for creating a new skill
+2. Use `SKILL-ARCHITECTURE.md` to design a guardrail from scratch
+3. Use `NEW-SKILL-TEMPLATE.md` to generate files for the new skill
 
-См. `templates/skills/skeptical-ai-bootstrap/SKILL-ARCHITECTURE.md`
+See `templates/skills/skeptical-ai-bootstrap/SKILL-ARCHITECTURE.md`

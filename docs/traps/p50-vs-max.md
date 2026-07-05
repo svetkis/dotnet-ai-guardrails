@@ -1,79 +1,79 @@
-# Ловушка: P50 vs Max — "средняя температура по больнице"
+# Trap: P50 vs Max — "Average Temperature in the Hospital"
 
-## Сценарий
+## Scenario
 
-Агент делает perf-коммит и пишет: "p99 latency: 2727ms → 209ms (13x improvement)". Красивая цифра. Но:
+The agent makes a perf commit and writes: "p99 latency: 2727ms → 209ms (13x improvement)". A beautiful number. But:
 
-- **P50 = опыт типичного пользователя** (медианный запрос)
-- **Max = опыт самого несчастного пользователя** (worst case)
-- **P99 = 1% пользователей получают ЭТО**
+- **P50 = experience of a typical user** (median request)
+- **Max = experience of the most unlucky user** (worst case)
+- **P99 = 1% of users get THIS**
 
-Запрос, который "в среднем" отвечает за 6ms, может зависать на 4.4 секунды. Агент оптимизирует P50, но tail latency остаётся катастрофическим.
+A query that "on average" responds in 6ms can hang for 4.4 seconds. The agent optimizes P50, but tail latency remains catastrophic.
 
-## Данные из практики
+## Data from Practice
 
-### До оптимизации (Spike test)
+### Before Optimization (Spike test)
 
-| Метрика | Global | view_profile | view_slots |
-|---------|--------|-------------|------------|
+| Metric | Global | view_profile | view_slots |
+|--------|--------|-------------|------------|
 | **P50** | 5.94ms | 0.28ms | 5.4ms |
 | **P99** | 1625ms | 868ms | 818ms |
 | **Max** | **4400ms** | **3375ms** | **1667ms** |
 | **P50→Max** | **741x** | **12057x** | **308x** |
 
-**view_profile:** P50 = 0.28ms (молниеносно!), Max = 3375ms (3.4 секунды). Расхождение в **12 тысяч раз**.
+**view_profile:** P50 = 0.28ms (lightning fast!), Max = 3375ms (3.4 seconds). Difference of **12 thousand times**.
 
-### После оптимизации (проекции + ExecuteUpdateAsync)
+### After Optimization (projections + ExecuteUpdateAsync)
 
-| Метрика | Global | view_profile | view_slots |
-|---------|--------|-------------|------------|
+| Metric | Global | view_profile | view_slots |
+|--------|--------|-------------|------------|
 | **P50** | 0.48ms | 0.26ms | 0.18ms |
 | **P99** | 24ms | 15ms | 9.9ms |
 | **Max** | **157ms** | **135ms** | **101ms** |
 
-### Сравнение
+### Comparison
 
-| Метрика | До | После | Улучшение |
-|---------|-----|-------|-----------|
+| Metric | Before | After | Improvement |
+|--------|--------|-------|-------------|
 | P50 | 5.94ms | 0.48ms | 12x |
 | P99 | 1625ms | 24ms | **67x** |
 | Max | 4400ms | 157ms | **28x** |
 
-**Ключевое:** P50 улучшился в 12 раз, а P99 — в 67 раз. Tail latency — другой мир.
+**Key:** P50 improved 12x, while P99 improved 67x. Tail latency is a different world.
 
-## Почему это опасно
+## Why This Is Dangerous
 
-Агент показывает красивые P50/P99, но:
-- Пользователь попадает в tail latency
-- Конкурентный доступ (booking attack) показывает иное поведение
-- Оптимизация read-path может сломать write-path (см. `docs/traps/silent-breakdown.md`)
+The agent shows beautiful P50/P99, but:
+- The user can hit tail latency
+- Concurrent access (booking attack) shows different behavior
+- Read-path optimization can break write-path (see `docs/traps/silent-breakdown.md`)
 
-## Паттерны из данных
+## Patterns from the Data
 
-### 1. Расхождение растёт с нагрузкой
+### 1. Divergence Grows with Load
 
-| Сценарий | RPS | P50→Max |
+| Scenario | RPS | P50→Max |
 |----------|-----|---------|
 | Baseline | 5 | 20x |
 | Peak | 30 | 49x |
 | Stress | 50→300 | 261x |
-| Spike (до оптимизации) | burst 300 | **741x** |
+| Spike (before optimization) | burst 300 | **741x** |
 
-### 2. view_profile — всегда самый проблемный
+### 2. view_profile — Always the Most Problematic
 
-Причина: `.Include()` цепочки загружали workspace + subscriptions + categories + services. После замены на `.Select()` проекции — Max упал с 3375ms до 135ms.
+Reason: `.Include()` chains loaded workspace + subscriptions + categories + services. After replacing with `.Select()` projections — Max dropped from 3375ms to 135ms.
 
-### 3. Write-path стабильнее read-path
+### 3. Write-path Is More Stable Than Read-path
 
-`create_booking` показывает меньшее расхождение (8-11x). Уникальный индекс делает запрос предсказуемым — либо INSERT, либо 409 Conflict.
+`create_booking` shows less divergence (8-11x). The unique index makes the query predictable — either INSERT or 409 Conflict.
 
-## Решение
+## Solution
 
-1. **NBomber сценарии** — всегда смотреть на $Max$, не только P50/P99
-2. **Read + Write mix** — гонять под нагрузкой оба пути одновременно
-3. **Concurrent booking attack** — проверять race conditions под нагрузкой
-4. **Правило AGENTS.md:** после perf-коммита — проверить write-path и Max latency
+1. **NBomber scenarios** — always look at $Max$, not just P50/P99
+2. **Read + Write mix** — run both paths under load simultaneously
+3. **Concurrent booking attack** — check race conditions under load
+4. **AGENTS.md rule:** after a perf commit — check write-path and Max latency
 
-## Паттерн
+## Pattern
 
-См. `tests/patterns/LoadTest.cs`
+See `tests/patterns/LoadTest.cs`

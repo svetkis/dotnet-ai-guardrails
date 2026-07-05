@@ -1,35 +1,35 @@
-# Ловушка: Ложная безопасность (False Safety)
+# Trap: False Safety
 
-## Сценарий
+## Scenario
 
-Агент обновляет TUnit или меняет `.csproj`. В результате `dotnet test` молча выдаёт:
+The agent updates TUnit or changes `.csproj`. As a result, `dotnet test` silently outputs:
 
 ```
 Build succeeded.
 Test run finished: 0 tests ran
 ```
 
-Exit code: 0. CI зелёный. Код мержится.
+Exit code: 0. CI is green. Code gets merged.
 
-## Почему это опасно
+## Why This Is Dangerous
 
-Две недели команда думает, что всё проверено. На самом деле:
-- Новый баг не пойман
-- Регрессия прошла
-- Агент сломал настройки runner'а
+For two weeks the team thinks everything is checked. In reality:
+- A new bug is not caught
+- Regression goes through
+- The agent broke the runner settings
 
 ## Root Causes
 
-- TUnit + .NET 10 + MTP: `dotnet test` не всегда корректно запускает TUnit
-- Агент удалил `<TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>`
-- Агент переименовал test project, но CI всё ещё указывает на старый путь
+- TUnit + .NET 10 + MTP: `dotnet test` doesn't always correctly run TUnit
+- The agent removed `<TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>`
+- The agent renamed the test project, but CI still points to the old path
 
-## Решение
+## Solution
 
-1. **`dotnet run --project`** вместо `dotnet test`
-2. **Verify script** — `ci/scripts/verify-tests.sh` парсит вывод и проверяет, что count > 0
-3. **CI guardrail** — отдельный шаг, который падает если "0 tests ran"
+1. **`dotnet run --project`** instead of `dotnet test`
+2. **Verify script** — `ci/scripts/verify-tests.sh` parses output and checks that count > 0
+3. **CI guardrail** — a separate step that fails if "0 tests ran"
 
-## Паттерн
+## Pattern
 
-См. `tests/conventions/TUnit_Guide.md` и `ci/github-actions/safe-ci.yml`
+See `tests/conventions/TUnit_Guide.md` and `ci/github-actions/safe-ci.yml`

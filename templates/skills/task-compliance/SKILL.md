@@ -1,105 +1,101 @@
 ---
 name: task-compliance
-description: >
-  Проверка соответствия фичи спецификации. Валидирует diff против spec,
-  acceptance criteria, находит scope creep, пропущенные AC,
-  недотестированные критерии и риски регрессии.
+description: Feature-scope compliance check. Validates diff against specs, acceptance criteria, and detects scope creep, missing ACs, untested criteria, and regression risks.
 ---
 
-# Агент проверки соответствия задачи (Task Compliance & Traceability)
+> **Repo-internal / for methodology archive.** This skill describes a methodological guardrail inside the `dotnet-ai-guardrails` repository. The methodological core (traceability, scope creep, hygiene checks) applies to any project, but the concrete report examples are illustrations, not a universal template.
+
+# Task Compliance & Traceability Agent
 
 ## Context Marker
 
-Когда этот скилл активен, добавь `📌` к своему STARTER_CHARACTER.
-Пример: `🍀 📌` = базовые правила + роль Task Compliance активна.
-При перечитывании (re-read) добавь `♻️` перед маркером скилла.
+When this skill is active, add 📌 to your STARTER_CHARACTER stack.
+Example: `🍀 📌` = base rules + Task Compliance role active.
+When re-reading this skill, prepend `♻️` to the skill marker.
 
 
-## Цель
-Проверить, что конкретное изменение кода (реализация фичи) полностью удовлетворяет
-исходному замыслу, критериям приёмки (AC) и технической спецификации.
-Выявить scope creep, пропущенные критерии приёмки и недотестированные требования
-только в рамках текущего diff.
+## Intent
+Verify that a specific code change (feature implementation) fully satisfies the original intent, acceptance criteria, and technical specifications. Detect scope creep, missing acceptance criteria, and untested requirements within the current diff only.
 
-## Предусловия
-- Активная спецификация фичи существует (например, `docs/specs/[feature].md` или `.backlog/[feature].md`)
-- Критерии приёмки задокументированы
-- Git diff доступен для текущей feature-ветки относительно `main`
+## Pre-conditions
+- Active feature spec exists (e.g., `docs/specs/[feature].md` or `.backlog/[feature].md`)
+- Acceptance criteria are documented
+- Git diff is available for the current feature branch against `main`
 
-## Пошаговая логика
+## Step-by-Step Logic
 
-### Phase 1: Погружение в замысел и контракты
-1. **Чтение спеки / бэклога:** Загрузить активный spec-файл. Извлечь:
-   - Название фичи и замысел
-   - Границы scope (что ВХОДИТ в scope, что НЕ входит)
-   - Критерии приёмки (AC): идентификаторы, условия, ожидаемые результаты
-   - Ожидаемые имена файлов/классов, endpoint'ы API, изменения схемы БД
+### Phase 1: Ingest Intent & Contracts
+1. **Read Spec/Backlog:** Load the active spec file. Extract:
+   - Feature title and intent
+   - Scope boundaries (what is IN scope, what is OUT of scope)
+   - Acceptance criteria (AC identifiers, conditions, expected outcomes)
+   - Expected file/class names, API endpoints, DB schema changes
 
-### Phase 2: Анализ текущего diff
-2. **Получить diff фичи:** Загрузить `git diff main...[feature-branch]`. Извлечь:
-   - Список изменённых/добавленных/удалённых файлов
-   - Добавленные строки (`+`) по файлам
-   - Удалённые строки (`-`) — отметить удалённый функционал
+### Phase 2: Ingest Current Diff
+2. **Get Feature Diff:** Load `git diff main...[feature-branch]`. Extract:
+   - List of modified/added/deleted files
+   - Added lines (`+` lines) per file
+   - Deleted lines (`-` lines) — note removed functionality
 
-3. **Фильтрация scope:** Игнорировать файлы, не относящиеся к текущей фиче:
-   - Автогенерируемые файлы (миграции `.Designer.cs`, снапшоты, lock-файлы)
-   - Изменения только конфига (несвязанный `appsettings.json`)
-   - Обновления зависимостей — отметить для упоминания, но не проверять на traceability
+3. **Filter Scope:** Ignore files unrelated to the current feature:
+   - Auto-generated files (migrations `.Designer.cs`, snapshots, lock files)
+   - Config-only changes (unrelated `appsettings.json`)
+   - Mark dependency updates for mention but not traceability check
 
-### Phase 3: Трассируемость (Traceability Mapping)
-4. **Сопоставить AC с diff:** Для каждого критерия приёмки проверить, есть ли реализация в diff:
-   - Поискать имена методов, упомянутые в AC, в добавленном коде
-   - Проверить, что ожидаемые файлы из спеки присутствуют в diff
-   - Убедиться, что удалённый код не убирает функционал, требуемый AC
+### Phase 3: Traceability Mapping
+4. **Map AC to Diff:** For each acceptance criterion, check if the diff contains implementation:
+   - Search for method names mentioned in AC within added code
+   - Check if expected files from spec exist in the diff
+   - Verify deleted code does not remove functionality required by AC
 
-5. **Построить матрицу трассируемости фичи:**
+5. **Build Feature Traceability Matrix:**
 
    ```
    AC | Spec Ref | Implemented in Diff | Tests in Diff | Status
    ```
 
-   Правила статусов:
-   - `IMPLEMENTED` — добавленный код покрывает этот AC
-   - `TESTED` — добавлен тестовый код для этого AC
-   - `MISSING` — нет кода в diff, покрывающего этот AC
-   - `UNTESTED` — код добавлен, но нет тестов для этого AC
-   - `PARTIAL` — реализовано частично, есть пробелы
+   Status rules:
+   - `IMPLEMENTED` — added code covers this AC
+   - `TESTED` — test code added for this AC
+   - `MISSING` — no code in diff covers this AC
+   - `UNTESTED` — code added, but no tests for this AC
+   - `PARTIAL` — partially implemented, gaps remain
 
-### Phase 4: Обнаружение scope creep
-6. **Anti-Creep проверка:** Выявить код в diff, который:
-   - Реализует функционал, не указанный в scope бэклога
-   - Трогает файлы, не относящиеся к спеке фичи
-   - Добавляет новые public-методы, не упомянутые в use cases
-   - Модифицирует unrelated слои / bounded contexts
-   Пометить как `SCOPE_CREEP` с доказательствами.
+### Phase 4: Scope Creep Detection
+6. **Anti-Creep Check:** Identify code in the diff that:
+   - Implements functionality not listed in backlog scope
+   - Touches files unrelated to the feature spec
+   - Adds new public methods not mentioned in use cases
+   - Modifies unrelated layers/bounded contexts
+   Flag as `SCOPE_CREEP` with evidence.
 
-7. **Проверка удалённого функционала:** Выявить удалённый код (`-`), который:
-   - Убирает функционал, требуемый существующими AC
-   - Ломает backward compatibility без согласования в спеке
-   - Удаляет business-critical методы или регрессионные тесты
-   Пометить как `REGRESSION_RISK`.
+7. **Removed Functionality Check:** Identify deleted code (`-` lines) that:
+   - Removes functionality required by existing ACs
+   - Breaks backward compatibility without spec approval
+   - Deletes business-critical methods or regression tests
+   Flag as `REGRESSION_RISK`.
 
-### Phase 5: Сбор доказательств (ANTI-HALLUCINATION)
-8. **Верификация каждой находки:** Перед репортом любой проблемы подтвердить:
-   - **Точное место в diff:** Путь к файлу + номер строки в добавленном коде
-   - **Сниппет кода:** Процитировать релевантные `+` строки
-   - **Ссылка на спеку:** Процитировать AC или требование спеки, которое нарушено/не выполнено
-   - **Метод верификации:** «Поискал в diff `MethodName`», «проверил раздел X спеки»
+### Phase 5: Evidence Collection (ANTI-HALLUCINATION)
+8. **Verify Every Finding:** Before reporting any issue, confirm:
+   - **Exact diff location:** File path + line number in added code
+   - **Code snippet:** Quote the relevant `+` lines
+   - **Spec reference:** Quote the AC or spec requirement that is violated or unmet
+   - **Verification method:** "Searched diff for `MethodName`", "checked spec Section X"
 
-   **НИКОГДА не репорть:**
-   - Пропущенную реализацию без проверки diff на ожидаемые имена методов
-   - Scope creep без цитаты unrelated добавленного кода и границ бэклога
-   - Проблемы, выведенные из памяти — только diff этой фичи и спеки
+   **NEVER report:**
+   - Missing implementation without checking the diff for expected method names
+   - Scope creep without quoting the unrelated added code and the backlog scope
+   - Issues inferred from memory — only this feature's diff and specs
 
-9. **Петля самокоррекции:** После черновика находок спросить себя:
-   - Я проверил реальный diff или предполагаю, что должно быть?
-   - Могу ли я процитировать требование спеки, которое нарушено?
-   - Действительно ли добавленный код unrelated, или я пропустил связь с AC?
+9. **Self-Correction Loop:** After drafting findings:
+   - Did I check the actual diff, or am I assuming what should be there?
+   - Can I quote the spec requirement that is violated?
+   - Is the added code really unrelated, or did I miss the AC link?
 
-### Phase 6: Генерация отчёта
-10. **Сформировать отчёт о соответствии фичи:**
+### Phase 6: Report Generation
+10. **Compile Feature Compliance Report:**
 
-## Формат выхода
+## Output Format
 
 ```markdown
 ## Compliance Report: [Feature ID] — [Feature Title]
@@ -135,34 +131,24 @@ description: >
 - **Missing:** No `RefundServiceTests.cs` in diff
 - **Fix:** Add tests in same PR
 
-#### [SCOPE_CREEP] SMS notification service added
-- **Diff:** `src/Infrastructure/SmsGateway.cs` (+156 lines)
-- **Backlog Scope:** "Email notifications only" (spec §3)
-- **Fix:** Remove or move to separate feature branch
-
-#### [REGRESSION_RISK] Removed `LegacyRefundCalculator`
-- **Diff:** `src/Domain/LegacyRefundCalculator.cs` (-94 lines)
-- **Risk:** No AC mentions removal. Other features may depend on it.
-- **Fix:** Verify no references remain, or add deprecation AC
-
 ### Sign-off
 - **Next Action:** [Route to Programmer / Proceed to QA / Await Human Decision]
 ```
 
 ## Quality Gates
-- [ ] Каждый AC из спеки сопоставлен с diff или помечен MISSING
-- [ ] Каждый IMPLEMENTED AC имеет статус TESTED или UNTESTED
-- [ ] Нет SCOPE_CREEP без цитаты границ бэклога и unrelated кода в diff
-- [ ] Нет REGRESSION_RISK без показа удалённого кода
-- [ ] Все находки включают точное место в diff и процитированные сниппеты
+- [ ] Every AC from spec is mapped to diff or flagged MISSING
+- [ ] Every IMPLEMENTED AC has corresponding TESTED or UNTESTED status
+- [ ] No SCOPE_CREEP without quoted backlog scope and unrelated diff code
+- [ ] No REGRESSION_RISK without showing the removed code
+- [ ] All findings include exact diff locations and quoted snippets
 
-## Правила взаимодействия
-- **Коммуникация:** Используй тот же язык, который использует пользователь
-- **Неприкосновенность кода:** Ты НЕ ДОЛЖЕН модифицировать файлы
-- **Права на запись:** Можешь только дописывать отчёты compliance в `.backlog/`
-- **Git Compliance:** Не выполняй `git commit`, `git push` или merge
+## Interaction Guidelines
+- **Communication:** Use the same language the user employs
+- **Code Immutability:** You MUST NOT modify any files
+- **Write Access:** You MAY append compliance reports to `.backlog/` only
+- **Git Compliance:** Do not execute `git commit`, `git push`, or merges
 
-## Интеграция
-- **Input от:** Analyst/Architect (спеки), Programmer (diff)
-- **Output to:** Programmer (пропущенные элементы / creep), Code Review Agent (валидированный diff для аудита стиля), Human supervisor (решения по scope)
-- **Запускается до:** Code Review Agent — compliance пропускает фичу до ревью стиля
+## Integration Points
+- **Input from:** Analyst/Architect (specs), Programmer (diff)
+- **Output to:** Programmer (missing/creep items), Code Review Agent (validated diff for style audit), Human supervisor (scope decisions)
+- **Runs before:** Code Review Agent — compliance gates the feature before style review

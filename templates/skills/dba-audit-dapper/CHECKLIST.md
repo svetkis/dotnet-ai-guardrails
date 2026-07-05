@@ -1,23 +1,23 @@
 # DBA Audit Checklist — Dapper / Raw SQL
 
 ## SQL Injection & Parameterization
-- [ ] Все SQL-запросы параметризованы (`@param`)
-- [ ] Нет C# string interpolation (`$"..."`) в SQL
-- [ ] Нет конкатенации user input с SQL
-- [ ] Динамический `IN` — через TVP или временную таблицу
-- [ ] Динамический `ORDER BY` — через whitelist, не конкатенация
+- [ ] All SQL queries are parameterized (`@param`)
+- [ ] No C# string interpolation (`$"..."`) in SQL
+- [ ] No concatenation of user input with SQL
+- [ ] Dynamic `IN` — via TVP or temp table
+- [ ] Dynamic `ORDER BY` — via whitelist, not concatenation
 
 ## Dapper Hygiene
-- [ ] `QueryAsync` / `ExecuteAsync` имеют `commandTimeout`
-- [ ] `QueryMultiple` для batch-запросов вместо N round-trip
-- [ ] `TransactionScope` с `TransactionScopeAsyncFlowOption.Enabled`
-- [ ] Write-операции в `IDbTransaction`
+- [ ] `QueryAsync` / `ExecuteAsync` have `commandTimeout`
+- [ ] `QueryMultiple` for batch queries instead of N round-trips
+- [ ] `TransactionScope` with `TransactionScopeAsyncFlowOption.Enabled`
+- [ ] Write operations inside `IDbTransaction`
 
 ## Indexes
 - [ ] FK columns have indexes
 - [ ] Frequently filtered columns have indexes
-- [ ] Composite indexes follow порядок фильтрации
-- [ ] `INCLUDE` columns для covering indexes
+- [ ] Composite indexes follow filter order
+- [ ] `INCLUDE` columns for covering indexes
 
 ## Query Performance
 - [ ] New queries checked with execution plan
@@ -25,13 +25,13 @@
 - [ ] No N+1 detected in logs / tests
 
 ## Schema
-- [ ] Типы данных адекватны: decimal для денег, datetimeoffset/timestamptz для дат, uuid/uniqueidentifier для GUID
-- [ ] Строки с ограничением длины: varchar(N), не text/max без причины
-- [ ] Обязательные поля помечены NOT NULL
-- [ ] PRIMARY KEY на каждой таблице
-- [ ] UNIQUE constraints на естественных ключах
-- [ ] CHECK constraints на бизнес-правилах
-- [ ] ON DELETE задан явно, нет accidental cascade
-- [ ] FK-колонки проиндексированы
-- [ ] Soft delete учтён: IsDeleted + partial unique indexes
-- [ ] Audit-поля: CreatedAt / UpdatedAt
+- [ ] Data types are adequate: decimal for money, datetimeoffset/timestamptz for dates, uuid/uniqueidentifier for GUIDs
+- [ ] Strings have length limits: varchar(N), not text/max without reason
+- [ ] Required fields are marked NOT NULL
+- [ ] PRIMARY KEY on every table
+- [ ] UNIQUE constraints on natural keys
+- [ ] CHECK constraints on business rules
+- [ ] ON DELETE is explicit, no accidental cascade
+- [ ] FK columns are indexed
+- [ ] Soft delete is handled: IsDeleted + partial unique indexes
+- [ ] Audit fields: CreatedAt / UpdatedAt

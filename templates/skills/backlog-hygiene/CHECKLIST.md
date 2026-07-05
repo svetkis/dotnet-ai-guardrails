@@ -1,39 +1,39 @@
 # Backlog Hygiene Checklist
 
 ## Stale
-- [ ] Нет задач старше 90 дней без обновления
-- [ ] Замерженые спеки закрыты в бэклоге
-- [ ] CHANGELOG items связаны с закрытыми задачами
+- [ ] No tasks older than 90 days without updates
+- [ ] Merged specs are closed in backlog
+- [ ] CHANGELOG items are linked to closed tasks
 
 ## Orphaned
-- [ ] Каждая спека имеет реализацию, помечена `deferred` или удалена
-- [ ] Каждый `BUG###_` тест имеет задачу или CHANGELOG entry
-- [ ] Нет спек на удалённые модули
+- [ ] Every spec has implementation, is marked `deferred`, or removed
+- [ ] Every `BUG###_` test has a task or CHANGELOG entry
+- [ ] No specs for deleted modules
 
 ## Duplicates
-- [ ] Нет duplicate задач в `.backlog/`
-- [ ] Нет duplicate AC в разных спеках
+- [ ] No duplicate tasks in `.backlog/`
+- [ ] No duplicate ACs in different specs
 
 ## Priority
-- [ ] `Must` реально блокирует ближайший релиз
-- [ ] `Won't` не превращается в скрытый tech debt
-- [ ] `Could` не реализовано молча в production
+- [ ] `Must` actually blocks upcoming release
+- [ ] `Won't` does not turn into hidden tech debt
+- [ ] `Could` is not silently implemented in production
 
 ## Traceability
-- [ ] Каждая открытая задача имеет спеку или AC
-- [ ] Каждая задача ссылается на код/тест/PR
+- [ ] Every open task has a spec or AC
+- [ ] Every task references code/test/PR
 
 ## Actionability
-- [ ] Заголовок содержит глагол + объект (не существительное одно)
-- [ ] Есть Definition of Done (1-3 пункта) или AC
-- [ ] Нет задач с заголовком < 5 слов и без AC
+- [ ] Title contains verb + object (not just a noun)
+- [ ] Has Definition of Done (1-3 items) or AC
+- [ ] No tasks with title < 5 words and no AC
 
 ## Source Tagging
-- [ ] Каждая задача помечена `[human]` или `[agent]`
-- [ ] `[agent]` без human approval > 14 дней помечены на архив
-- [ ] `[agent]` с human approval имеют explicit source
+- [ ] Every task tagged `[human]` or `[agent]`
+- [ ] `[agent]` without human approval > 14 days marked for archive
+- [ ] `[agent]` with human approval have explicit source
 
 ## Test Debt
-- [ ] Каждый новый `[HotPath]` имеет задачу на perf-тест
-- [ ] Каждый новый публичный endpoint имеет задачу на snapshot-тест
-- [ ] Каждое новое `[SensitiveData]` имеет задачу на PiiGuardTest
+- [ ] Every new `[HotPath]` has a task for perf-test
+- [ ] Every new public endpoint has a task for snapshot-test
+- [ ] Every new `[SensitiveData]` has a task for PiiGuardTest

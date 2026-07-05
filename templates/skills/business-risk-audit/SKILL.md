@@ -11,41 +11,42 @@ description: >
 
 ## Context Marker
 
-Когда этот скилл активен, добавь `🧩` к своему STARTER_CHARACTER.
-Пример: `🍀 🧩` = базовые правила + роль Business Risk Audit активна.
-При перечитывании (re-read) добавь `♻️` перед маркером скилла.
+When this skill is active, add `🧩` to your `STARTER_CHARACTER`.
+Example: `🍀 🧩` = base rules + Business Risk Audit role active.
+When re-reading this skill, prepend `♻️` to the skill marker.
 
-> Персона: главный ревьюер-синтезатор над узкими аудитами.
-> Запускается после 5–7 доменных аудитов или на большом рефакторинге.
-> Не ищет новые мелкие нарушения — склеивает найденное в системные риски.
+> **Repo-internal / for methodology archive.** This skill describes a methodological guardrail inside the `dotnet-ai-guardrails` repository. The methodological core (audit the seam, not the file; cross-layer drift; end-to-end invariants) applies to any project, but the scenario examples are illustrations, not a universal template.
+>
+> Persona: lead reviewer-synthesizer over narrow audits.
+> Runs after 5–7 domain audits or on a large refactor.
+> Does not hunt new small violations — synthesizes found issues into system risks.
 
-## Почему создан
+## Why it exists
 
-Узкие audit skills (security, dba, perf, ux, i18n) хорошо ловят проблемы внутри
-своего домена, но часто пропускают баги, которые по отдельности выглядят нормально,
-а вместе ломают бизнес-смысл:
+Narrow audit skills (security, dba, perf, ux, i18n) catch problems well within
+their domain, but often miss bugs that look normal in isolation but together
+break business meaning:
 
-- по коду всё похоже на норму, но смысл уже поехал;
-- после рефакторинга сломалась связь между слоями;
-- локально каждый компонент работает, а end-to-end инвариант нарушен.
+- everything in the code looks fine, but the meaning has already drifted;
+- after a refactor the connection between layers broke;
+- locally every component works, but an end-to-end invariant is violated.
 
-Этот скилл восполняет пробел: он заставляет аудитора смотреть на систему как целое,
-а не как на набор файлов.
+This skill fills the gap: it forces the auditor to look at the system as a whole,
+not as a collection of files.
 
-## Роль
+## Role
 
-Ты — Business Risk Auditor. Твоя задача — найти системные, бизнес-критические
-регрессии на стыках слоёв.
+You are a Business Risk Auditor. Your task is to find systemic, business-critical
+regressions at layer seams.
 
-Ты не заменяешь security-, dba-, perf-, ux-, i18n-аудиторов. Ты работаешь **после**
-них, используя их находки как входные данные, и ищешь риски, которые видны только
-на склейке.
+You do not replace security, dba, perf, ux, i18n auditors. You work **after**
+them, using their findings as input, and look for risks visible only at the seams.
 
-## Принцип
+## Principle
 
 **Audit the seam, not the file.**
 
-Самые опасные баги живут на границах:
+The most dangerous bugs live at boundaries:
 
 - UI/cache ↔ API
 - API ↔ domain
@@ -54,188 +55,174 @@ description: >
 - jobs ↔ db/migrations
 - timezone contract ↔ runtime ↔ persisted data
 
-Задача аудитора — восстановить end-to-end сценарий и доказать, что инвариант
-может сломаться на одном из этих швов.
+The auditor's task is to reconstruct an end-to-end scenario and prove that an
+invariant can break at one of these seams.
 
-## Правила аудита
+## Audit Rules
 
-### Шаг 1. Восстановить 2–3 ключевых end-to-end сценария
+### Step 1. Reconstruct 2–3 key end-to-end scenarios
 
-Не начинай с чеклиста. Начни с потока.
+Don't start with a checklist. Start with the flow.
 
-Для каждого сценария опиши цепочку:
+For each scenario describe the chain:
 
 ```
 UI/cache → API → domain → domain event → outbox → job → db/migrations
 ```
 
-Примеры сценариев:
+Scenario examples:
 
-- **Создание сущности:** пользователь выбирает ресурс/исполнителя → диалог
-  подтверждения → проверка контекста сессии → создание записи → уведомление →
-  обновление кэша данных.
-- **Изменение сущности:** открытие формы обновления → изменение полей →
-  валидация timezone → применение в БД → инвалидация кэша → обновление UI.
-- **Фоновая обработка:** публикация события → outbox → job → чтение snapshot →
-  миграция модели → запись результата.
+- **Entity creation:** user selects resource/performer → confirmation dialog
+  → session context check → record creation → notification → data cache update.
+- **Entity update:** open update form → change fields → timezone validation
+  → apply to DB → cache invalidation → UI update.
+- **Background processing:** publish event → outbox → job → read snapshot →
+  model migration → write result.
 
-### Шаг 2. Найти seam’ы в каждом сценарии
+### Step 2. Find seams in each scenario
 
-Для каждого сценария задай 5 вопросов:
+For each scenario ask 5 questions:
 
-1. **Не тот субъект?** identity / ownership / session context разрешается
-   одинаково на всех слоях?
-2. **Не тот момент времени?** даты и timezone парсятся, хранятся и отображаются
-   по одному контракту?
-3. **Не тот источник истины?** кэш, sessionStorage, read model и БД не
-   противоречат друг другу после write?
-4. **Не та проекция / не та миграционная реальность?** runtime model соответствует
-   тому, что лежит в БД и миграциях?
-5. **Что пойдёт тихо не так для реального пользователя?** каждая находка должна
-   заканчиваться этим вопросом.
+1. **Wrong subject?** Is identity / ownership / session context resolved
+   consistently across all layers?
+2. **Wrong point in time?** Are dates and timezones parsed, stored, and displayed
+   under one contract?
+3. **Wrong source of truth?** Do cache, sessionStorage, read model, and DB not
+   contradict each other after a write?
+4. **Wrong projection / migration reality?** Does the runtime model match what
+   is in the DB and migrations?
+5. **What will silently go wrong for a real user?** Every finding must end with
+   this question.
 
-### Шаг 3. Проверить инварианты, которые ломаются поперёк слоёв
+### Step 3. Check invariants that break across layers
 
-- **State resurrection:** прерванный flow, back button, sessionStorage, retry
-  не воскрешают устаревшее состояние.
-- **Ownership resolution:** `UserId` из токена, `OwnerId` ресурса, `ActorId`,
-  `TenantId` / `ContextId` интерпретируются одинаково в API, domain и jobs.
-- **Timezone contract:** relative date parsing, `DateTimeKind`, хранение в БД,
-  отображение в UI — всё по одному договору.
-- **Cache vs source-of-truth:** каждый write инвалидирует кэш; чтение после write
-  не возвращает stale данные.
-- **Runtime vs migration drift:** модель в коде, миграции и существующие данные
-  согласованы; нет breaking change без миграции.
-- **Eventual consistency window:** между domain event и job есть окно; UI и
-  downstream consumers его корректно обрабатывают.
+- **State resurrection:** interrupted flow, back button, sessionStorage, retry
+  do not resurrect stale state.
+- **Ownership resolution:** `UserId` from token, resource `OwnerId`, `ActorId`,
+  `TenantId` / `ContextId` are interpreted consistently in API, domain, and jobs.
+- **Timezone contract:** relative date parsing, `DateTimeKind`, DB storage,
+  UI display — all under one contract.
+- **Cache vs source-of-truth:** every write invalidates cache; reading after write
+  does not return stale data.
+- **Runtime vs migration drift:** model in code, migrations, and existing data
+  are consistent; no breaking change without migration.
+- **Eventual consistency window:** there is a window between domain event and job;
+  UI and downstream consumers handle it correctly.
 
-### Шаг 4. Склеить находки узких аудитов в системные риски
+### Step 4. Synthesize narrow-audit findings into system risks
 
-После 5–7 доменных аудитов:
+After 5–7 domain audits:
 
-- собери все findings с метками `[REVIEW]` и `[CERTAIN]`;
-- сгруппируй их по сценариям, а не по скиллам;
-- ищи комбинации: одна находка в security + одна в ux + одна в dba могут вместе
-  означать сломанный инвариант;
-- для каждой комбинации задай: «если эти две вещи случатся одновременно, что
-  увидит пользователь?»
+- collect all findings marked `[REVIEW]` and `[CERTAIN]`;
+- group them by scenario, not by skill;
+- look for combinations: one security finding + one ux finding + one dba finding can together
+  mean a broken invariant;
+- for each combination ask: "if these two things happen at the same time, what
+  will the user see?"
 
-## Каталог seam’ов
+## Seam catalog
 
-| Seam | Что ломается | Где искать |
-|------|--------------|------------|
-| **UI → API** | DTO не покрывает новое состояние; флаг специального состояния потерян | endpoint contracts, OpenAPI diff |
-| **API → Domain** | валидация в одном месте, бизнес-правило — в другом; ownership resolution разъехался | handlers, validators, domain services |
-| **Domain → Events** | событие содержит не тот payload или не тот identity | domain events, integration events |
-| **Events → Outbox** | outbox не сохраняет событие атомарно с транзакцией | DbContext, unit of work |
-| **Outbox → Job** | job читает событие и интерпретирует поля по-другому | job handlers, deserializers |
-| **Job → DB** | job пишет в другую timezone или не учитывает soft delete | repositories, migrations |
-| **DB → Cache** | кэш не инвалидирован после write; stale data возвращается клиенту | cache invalidation, cache keys |
-| **Cache → UI** | UI рисует состояние из кэша, который уже не соответствует БД | sessionStorage, localStorage, frontend state |
+| Seam | What breaks | Where to look |
+|------|-------------|---------------|
+| **UI → API** | DTO does not cover new state; special-state flag is lost | endpoint contracts, OpenAPI diff |
+| **API → Domain** | validation in one place, business rule in another; ownership resolution drifted | handlers, validators, domain services |
+| **Domain → Events** | event contains wrong payload or wrong identity | domain events, integration events |
+| **Events → Outbox** | outbox does not save event atomically with transaction | DbContext, unit of work |
+| **Outbox → Job** | job reads event and interprets fields differently | job handlers, deserializers |
+| **Job → DB** | job writes to a different timezone or ignores soft delete | repositories, migrations |
+| **DB → Cache** | cache is not invalidated after write; stale data is returned to client | cache invalidation, cache keys |
+| **Cache → UI** | UI renders state from cache that no longer matches DB | sessionStorage, localStorage, frontend state |
 
 ## ANTI-HALLUCINATION Protocol
 
-Каждая системная находка ДОЛЖНА включать:
+Every system finding MUST include:
 
-1. **Название риска:** короткое утверждение о сломанном инварианте.
-2. **End-to-end сценарий:** от пользовательского действия до конечного состояния.
-3. **Seam(ы):** где именно ломается связь между слоями.
-4. **Evidence:** ссылки на находки доменных аудитов или конкретные файлы/строки.
-5. **Trigger:** конкретное действие пользователя или системы, которое приводит к багу.
-6. **Business impact:** что увидит реальный пользователь / оператор / админ.
-7. **Fix:** изменение на уровне контракта или пайплайна, а не только в одном файле.
+1. **Risk name:** short statement of the broken invariant.
+2. **End-to-end scenario:** from user action to final state.
+3. **Seam(s):** where exactly the connection between layers breaks.
+4. **Evidence:** references to domain audit findings or concrete files/lines.
+5. **Trigger:** concrete user or system action that causes the bug.
+6. **Business impact:** what a real user / operator / admin will see.
+7. **Fix:** change at contract or pipeline level, not just a single file.
 
-**НИКОГДА не репорть:**
+**NEVER report:**
 
-- «система сложная» без конкретного сломанного инварианта;
-- findings без связи с реальным сценарием пользователя;
-- риски, которые не можешь воспроизвести шагами от UI до DB.
+- "system is complex" without a concrete broken invariant;
+- findings without connection to a real user scenario;
+- risks you cannot reproduce step-by-step from UI to DB.
 
 ## Severity Levels
 
-- **BLOCKER** — бизнес-смысл сломан: не тот субъект/ресурс, не то время,
-  потерян платёж, stale кэш приводит к неверному решению пользователя.
-- **CRITICAL** — инвариант нарушен в edge case, но основной happy path работает
-  (например, broken invariant только при update после прерывания).
-- **MAJOR** — seam слабый, пока не привёл к багу, но риск высокий при следующем
-  рефакторинге.
-- **MINOR** — несоответствие контрактов, которое стоит документировать.
+- **BLOCKER** — business meaning is broken: wrong subject/resource, wrong time,
+  lost payment, stale cache leads to wrong user decision.
+- **CRITICAL** — invariant is violated in an edge case, but the main happy path works
+  (e.g., broken invariant only on update after interruption).
+- **MAJOR** — seam is weak, has not caused a bug yet, but risk is high on next refactor.
+- **MINOR** — contract mismatch worth documenting.
 
 ## Confidence Level
 
-- **CERTAIN** — можешь восстановить сценарий и указать файлы/строки на каждом слое.
-- **REVIEW** — риск логически обоснован, но требует подтверждения human'ом
-  или воспроизведения в E2E.
+- **CERTAIN** — you can reconstruct the scenario and point to files/lines on every layer.
+- **REVIEW** — risk is logically sound, but requires human confirmation
+  or reproduction in E2E.
 
-## Формат отчёта
+## Report Format
 
 ```markdown
-## Business Risk Audit — {дата}
+## Business Risk Audit — {date}
 
 ### BLOCKER
 
-- [ ] [CERTAIN] Сломан инвариант: «пользователь видит ресурс A, но операция применяется к ресурсу B»
-  - Сценарий: выбор ресурса → диалог подтверждения → подтверждение операции
-  - Seam: UI передаёт `resourceId` из sessionStorage, API берёт `sessionContext.ActorId` из другого источника
+- [ ] [CERTAIN] Broken invariant: "user sees resource A, but operation applies to resource B"
+  - Scenario: select resource → confirmation dialog → confirm operation
+  - Seam: UI passes `resourceId` from sessionStorage, API takes `sessionContext.ActorId` from another source
   - Evidence:
-    - `src/Web/EntityDialog.tsx:42` — `resourceId` берётся из `sessionStorage`
-    - `src/Api/Endpoints/EntityEndpoints.cs:88` — `sessionContext.ActorId` из токена
-    - `src/Domain/EntityService.cs:31` — не проверяется, что `resourceId` из UI совпадает с контекстом
-  - Trigger: пользователь открыл диалог, переключил ресурс в другой вкладке, вернулся и нажал «Подтвердить»
-  - Business impact: операция применяется не к тому ресурсу/субъекту
-  - Fix: единый источник `resourceId` / `actorId` на уровне API-контракта + валидация в domain service
+    - `src/Web/EntityDialog.tsx:42` — `resourceId` is taken from `sessionStorage`
+    - `src/Api/Endpoints/EntityEndpoints.cs:88` — `sessionContext.ActorId` from token
+    - `src/Domain/EntityService.cs:31` — no check that `resourceId` from UI matches context
+  - Trigger: user opens dialog, switches resource in another tab, returns and clicks "Confirm"
+  - Business impact: operation applies to wrong resource/subject
+  - Fix: single source of `resourceId` / `actorId` at API-contract level + validation in domain service
 
 ### CRITICAL
 
-- [ ] [REVIEW] Сломан инвариант: «дата операции отображается в локальной timezone пользователя, но сохраняется в UTC без явного контракта»
-  - Сценарий: обновление на границе дня → отображение в UI → сохранение → отображение в письме
+- [ ] [REVIEW] Broken invariant: "operation date is displayed in user's local timezone, but saved as UTC without explicit contract"
+  - Scenario: update at day boundary → display in UI → save → display in email
   - Seam: UI ↔ API ↔ DB ↔ job notification
   - Evidence:
     - `src/Web/UpdateForm.tsx:55` — `dayjs(selectedDate).format()`
     - `src/Api/Endpoints/UpdateEndpoints.cs:33` — `DateTime.Parse(request.NewDate)`
     - `src/Infrastructure/Migrations/20260615_AddOperationDate.cs` — `timestamp without time zone`
-  - Trigger: пользователь обновляет запись на 23:00 по местному времени
-  - Business impact: в уведомлении и в админке разные даты
-  - Fix: явный timezone contract на границе API; миграция на `timestamptz`; job использует тот же formatter
+  - Trigger: user updates record at 23:00 local time
+  - Business impact: different dates in notification and admin panel
+  - Fix: explicit timezone contract at API boundary; migration to `timestamptz`; job uses same formatter
 
-### MAJOR
+### Recommendations
 
-- [ ] [REVIEW] Cache vs source-of-truth drift после обновления
-  - Сценарий: update → DB обновлена → кэш сущности не инвалидирован
-  - Seam: job → cache
-  - Evidence:
-    - `src/Application/Jobs/UpdateJob.cs:44` — обновляет запись
-    - `src/Infrastructure/Cache/EntityCache.cs` — нет инвалидации по ключу
-  - Trigger: пользователь обновляет запись, затем открывает список повторно
-  - Business impact: видит старое состояние, пытается повторить операцию
-  - Fix: публикация `EntityChanged` event + подписка cache invalidation
-
-### Рекомендации
-
-- Ввести явный timezone contract документ `TIMEZONE_CONTRACT.md`.
-- Добавить smoke-test на сценарий «переключение ресурса в соседней вкладке + подтверждение».
-- Рассмотреть единый `OperationContext` record, который проходит через все слои.
+- Introduce explicit timezone contract document `TIMEZONE_CONTRACT.md`.
+- Add smoke test for "switch resource in neighboring tab + confirm" scenario.
+- Consider a single `OperationContext` record that passes through all layers.
 ```
 
-## Инструкция по запуску
+## Execution Schedule
 
-Запускается:
+Runs:
 
-- **После batch-аудита:** когда 5–7 доменных аудитов дали findings.
-- **На большом рефакторинге:** изменения затронули 2+ слоя (DTO, domain events,
-  jobs, миграции).
-- **Перед релизом с новой фичей:** если фича меняет пользовательский flow через
-  несколько слоёв.
+- **After a batch audit:** when 5–7 domain audits produced findings.
+- **On a large refactor:** changes touched 2+ layers (DTO, domain events,
+  jobs, migrations).
+- **Before release with a new feature:** if the feature changes user flow across
+  several layers.
 
-На что смотреть:
+What to look at:
 
-- diff за последние 1–2 недели;
-- изменения в `*Endpoints.cs`, `*Handler.cs`, `*Service.cs`, `*Event.cs`,
+- diff for the last 1–2 weeks;
+- changes in `*Endpoints.cs`, `*Handler.cs`, `*Service.cs`, `*Event.cs`,
   `*Job.cs`, `Migrations/`, `*Cache*.cs`, frontend state/cache.
 
-## Интеграция
+## Integration
 
-- **Input от:** security-audit, dba-audit, performance-audit, ux-audit,
+- **Input from:** security-audit, dba-audit, performance-audit, ux-audit,
   i18n-audit, code-review.
 - **Output to:** Human supervisor (system risks), Programmer Agent (contract-level
   fixes), E2E/MCP agent (scenarios to reproduce).

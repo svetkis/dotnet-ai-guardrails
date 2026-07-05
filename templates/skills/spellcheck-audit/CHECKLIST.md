@@ -1,29 +1,29 @@
-# Spellcheck Audit — Чеклист
+# Spellcheck Audit — Checklist
 
-## Перед началом
-- [ ] Установлен `cspell` (глобально или локально)
-- [ ] Создан `cspell.json` в корне проекта
-- [ ] Создан project dictionary
+## Before Starting
+- [ ] `cspell` is installed (global or local)
+- [ ] `cspell.json` is created in the project root
+- [ ] Project dictionary is created
 
-## Конфигурация
-- [ ] `cspell.json` покрывает нужные расширения (cs, md, ts, tsx, json, yml)
-- [ ] Project dictionary подключён
-- [ ] CSpell запускается в CI / pre-commit
+## Configuration
+- [ ] `cspell.json` covers required extensions (cs, md, ts, tsx, json, yml)
+- [ ] Project dictionary is connected
+- [ ] CSpell runs in CI / pre-commit
 
-## Что проверять
-- [ ] Публичные имена типов, properties, enum values
-- [ ] Markdown документация
-- [ ] Комментарии к public API
-- [ ] Конфигурационные файлы
-- [ ] OpenAPI/JSON контракты
+## What to Check
+- [ ] Public type names, properties, enum values
+- [ ] Markdown documentation
+- [ ] Comments for public API
+- [ ] Configuration files
+- [ ] OpenAPI / JSON contracts
 
-## Baseline ratchet
-- [ ] Зафиксировано текущее количество опечаток
-- [ ] `SpellcheckGuardTest` добавлен в тестовый проект
-- [ ] Новые термины добавляются в dictionary
+## Baseline Ratchet
+- [ ] Current typo count is recorded
+- [ ] `SpellcheckGuardTest` is added to the test project
+- [ ] New terms are added to the dictionary
 
-## Формат отчёта
-- [ ] Сводка по категориям
-- [ ] Public API опечатки (BLOCKER)
-- [ ] Документация и комментарии
-- [ ] Новые слова для dictionary
+## Report Format
+- [ ] Summary by category
+- [ ] Public API typos (BLOCKER)
+- [ ] Documentation and comments
+- [ ] New words for the dictionary

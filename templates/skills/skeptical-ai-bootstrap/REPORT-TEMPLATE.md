@@ -1,130 +1,130 @@
-# Шаблон отчёта онбординга / Onboarding Report Template
+# Onboarding Report Template
 
-> Жёсткая структура итогового отчёта. Агент обязан заполнить все 6 разделов.
+> Rigid structure of the final report. The agent must fill in all 6 sections.
 
 ---
 
 ```markdown
 # Onboarding Report: {Project.Name}
 
-**Дата:** {YYYY-MM-DD}  
-**Режим:** fast / standard / paranoid  
-**Агент:** skeptical-ai-bootstrap  
-**Сканировал:** {путь к .sln}
+**Date:** {YYYY-MM-DD}  
+**Mode:** fast / standard / paranoid  
+**Agent:** skeptical-ai-bootstrap  
+**Scanned:** {path to .sln}
 
 ---
 
-## 1. Структура проверок (What we built for this project)
+## 1. Check Structure (What we built for this project)
 
-| Слой | Механизм | Файлы / Скиллы | Статус |
-|------|----------|----------------|--------|
-| 1. Компилятор | `Directory.Build.props` + `.editorconfig` | `Directory.Build.props` | ✅ Внедрено |
-| 2. Архитектура | NetArchTest | `tests/ArchitectureRules.cs` | 🚧 В бэклоге |
-| 3. Тесты | TUnit + `dotnet run` | `tests/*.cs` | ✅ Внедрено |
-| 4. Code Review | Агент по diff | `.kimi/skills/code-review/` | ✅ Адаптировано |
-| 5. E2E / MCP | OpenAPI snapshot | `tests/SnapshotTests.cs` | ❌ Не применимо |
-| 0. Инструкции | AGENTS.md | `rules/AGENTS_TEMPLATE.md` | ✅ Внедрено |
-| Внешний цикл | Аудиты пачками | `.kimi/skills/security-audit/` | 🚧 В бэклоге |
+| Layer | Mechanism | Files / Skills | Status |
+|------|-----------|----------------|--------|
+| 1. Compiler | `Directory.Build.props` + `.editorconfig` | `Directory.Build.props` | ✅ Implemented |
+| 2. Architecture | NetArchTest | `tests/ArchitectureRules.cs` | 🚧 Backlog |
+| 3. Tests | TUnit + `dotnet run` | `tests/*.cs` | ✅ Implemented |
+| 4. Code Review | Agent by diff | `.kimi/skills/code-review/` | ✅ Adapted |
+| 5. E2E / MCP | OpenAPI snapshot | `tests/SnapshotTests.cs` | ❌ Not applicable |
+| 0. Instructions | AGENTS.md | `rules/AGENTS_TEMPLATE.md` | ✅ Implemented |
+| Outer loop | Batch audits | `.kimi/skills/security-audit/` | 🚧 Backlog |
 
-**Легенда:** ✅ Внедрено / 🚧 В бэклоге / ❌ Не применимо
-
----
-
-## 2. Что сделали нового (New artifacts)
-
-Для каждого созданного скилла / теста / правила:
-
-1. **`{skill-name}`** — создан потому что:
-   - Готовый скилл `{original-skill}` не подошёл (причина: стек / архитектура / специфика)
-   - Чем заменили: {описание нового подхода}
-   - Сложность: {низкая / средняя / высокая}
-   - Положить в: `{путь}`
+**Legend:** ✅ Implemented / 🚧 Backlog / ❌ Not applicable
 
 ---
 
-## 3. Что не подошло и почему (Rejected artifacts)
+## 2. What was created (New artifacts)
 
-Для каждого отклонённого готового артефакта:
+For each created skill / test / rule:
 
-| Артефакт | Причина отклонения | Чем заменили | Статус |
-|----------|-------------------|--------------|--------|
-| `templates/skills/code-review/` (стандартный) | Проект без Clean Architecture — проверка слоёв даёт 100% false positives | Адаптирован: убрана проверка слоёв, добавлены правила Minimal API | Адаптирован |
-| `tests/patterns/SnapshotTest.cs` | Worker Service — нет HTTP, OpenAPI не существует | Создан `e2e-worker` — проверка обработки сообщений из очереди | Создан новый |
-| `templates/skills/dba-audit/` | Dapper вместо EF Core — миграции и `Include()` неприменимы | Создан `dba-audit-dapper` | Создан новый |
+1. **`{skill-name}`** — created because:
+   - Ready-made skill `{original-skill}` did not fit (reason: stack / architecture / specifics)
+   - Replaced with: {description of the new approach}
+   - Complexity: {low / medium / high}
+   - Put in: `{path}`
 
 ---
 
-## 4. Адаптации готовых артефактов (Adapted artifacts)
+## 3. What did not fit and why (Rejected artifacts)
 
-Для каждого адаптированного скилла:
+For each rejected ready-made artifact:
+
+| Artifact | Reason for rejection | Replaced with | Status |
+|----------|---------------------|---------------|--------|
+| `templates/skills/code-review/` (standard) | Project without Clean Architecture — layer checks give 100% false positives | Adapted: removed layer checks, added Minimal API rules | Adapted |
+| `tests/patterns/SnapshotTest.cs` | Worker Service — no HTTP, OpenAPI does not exist | Created `e2e-worker` — check message processing from queue | Created new |
+| `templates/skills/dba-audit/` | Dapper instead of EF Core — migrations and `Include()` are not applicable | Created `dba-audit-dapper` | Created new |
+
+---
+
+## 4. Adaptations of ready-made artifacts (Adapted artifacts)
+
+For each adapted skill:
 
 ### `templates/skills/security-audit/`
-- **Что изменено:** Заменена проверка `[Authorize]` на `.RequireAuthorization()` для Minimal API
-- **Какие проверки вычеркнуты:** MVC-атрибуты авторизации
-- **Какие добавлены:** Проверка защиты webhook'ов через secret token; проверка middleware-авторизации
+- **What changed:** Replaced `[Authorize]` check with `.RequireAuthorization()` for Minimal API
+- **What checks were removed:** MVC authorization attributes
+- **What was added:** Webhook protection check via secret token; middleware authorization check
 
 ### `templates/skills/performance-audit/`
-- **Что изменено:** Добавлено исключение для `.Select()`-проекций (не требуют AsNoTracking)
-- **Какие проверки вычеркнуты:** AsNoTracking на read-path с проекциями
-- **Какие добавлены:** Исключение для raw SQL (`FromSqlRaw`) — Change Tracker их не отслеживает
+- **What changed:** Added exception for `.Select()` projections (do not require AsNoTracking)
+- **What checks were removed:** AsNoTracking on read-path with projections
+- **What was added:** Exception for raw SQL (`FromSqlRaw`) — Change Tracker does not track them
 
 ---
 
-## 5. Экосистема скиллов (Ecosystem map)
+## 5. Skill Ecosystem (Ecosystem map)
 
-### Inner loop (каждый PR)
-| Скилл | Статус | Примечание |
-|-------|--------|------------|
-| `code-review` | ✅ Активен | Адаптирован под Minimal API |
-| `task-compliance` | ✅ Активен | Без изменений |
+### Inner loop (every PR)
+| Skill | Status | Note |
+|-------|--------|------|
+| `code-review` | ✅ Active | Adapted for Minimal API |
+| `task-compliance` | ✅ Active | No changes |
 
-### Outer loop (раз в спринт)
-| Скилл | Статус | Примечание |
-|-------|--------|------------|
-| `security-audit` | 🚧 WIP | Адаптирован под Minimal API |
-| `performance-audit` | 🚧 WIP | Адаптирован под проекции + raw SQL |
-| `dba-audit` | ❌ Пропущен | Проект на Dapper — создать `dba-audit-dapper` |
+### Outer loop (once per sprint)
+| Skill | Status | Note |
+|-------|--------|------|
+| `security-audit` | 🚧 WIP | Adapted for Minimal API |
+| `performance-audit` | 🚧 WIP | Adapted for projections + raw SQL |
+| `dba-audit` | ❌ Skipped | Project uses Dapper — create `dba-audit-dapper` |
 
-### Project-specific (уникальные)
-| Скилл | Статус | Примечание |
-|-------|--------|------------|
-| `e2e-worker` | 📋 Backlog | Проверка обработки RabbitMQ-сообщений |
+### Project-specific (unique)
+| Skill | Status | Note |
+|-------|--------|------|
+| `e2e-worker` | 📋 Backlog | Check RabbitMQ message processing |
 
 ---
 
-## 6. Бэклог внедрения
+## 6. Implementation Backlog
 
-### Sprint 0 — Слой 0 + Компилятор (1 день)
-- [ ] **Внедрить** `rules/AGENTS_TEMPLATE.md` → адаптировать под стек
-- [ ] **Внедрить** `rules/CONVENTIONS.md`
-- [ ] **Адаптировать** `Directory.Build.props`
+### Sprint 0 — Layer 0 + Compiler (1 day)
+- [ ] **Implement** `rules/AGENTS_TEMPLATE.md` → adapt to stack
+- [ ] **Implement** `rules/CONVENTIONS.md`
+- [ ] **Adapt** `Directory.Build.props`
 
-### Sprint 1 — Архитектура (3 дня)
-- [ ] **Адаптировать** `ArchitectureRules.cs` → custom rules под архитектуру проекта
+### Sprint 1 — Architecture (3 days)
+- [ ] **Adapt** `ArchitectureRules.cs` → custom rules for project architecture
 
-### Sprint 2 — Code Review + Audits (2 дня)
-- [ ] **Адаптировать** `code-review` → убрать слоёвые проверки, добавить Minimal API
-- [ ] **Адаптировать** `security-audit` → `.RequireAuthorization()`, защита webhook'ов
+### Sprint 2 — Code Review + Audits (2 days)
+- [ ] **Adapt** `code-review` → remove layer checks, add Minimal API
+- [ ] **Adapt** `security-audit` → `.RequireAuthorization()`, webhook protection
 
-### Sprint 3 — Новые скиллы (5 дней)
-- [ ] **Создать** `{skill-name}` → {описание}
+### Sprint 3 — New skills (5 days)
+- [ ] **Create** `{skill-name}` → {description}
 
 ### Backlog
-- [ ] **Создать** `dba-audit-dapper` → низкий приоритет, пока нет жалоб на БД
+- [ ] **Create** `dba-audit-dapper` → low priority, no DB complaints yet
 
 ---
 
-## Приложения
+## Appendices
 
-- `ECOSYSTEM-MAP.md` — живая карта всех скиллов проекта
-- `NEW-SKILLS/` — черновики созданных скиллов (если есть)
+- `ECOSYSTEM-MAP.md` — live map of all project skills
+- `NEW-SKILLS/` — drafts of created skills (if any)
 ```
 
 ---
 
-## Правила заполнения
+## Filling Rules
 
-1. **Все 6 разделов обязательны.** Если раздел нечем заполнить — напиши "Нет данных".
-2. **Раздел 3 (Rejected artifacts)** — самый важный. Он документирует, почему готовые артефакты не подошли. Это предотвращает повторное копирование неподходящих скиллов в будущем.
-3. **Раздел 4 (Adapted artifacts)** — должен содержать конкретику: какие строки SKILL.md изменены, какие проверки вычеркнуты.
-4. **Статусы:** используй только ✅ / 🚧 / ❌ / 📋 — для консистентности между отчётами.
+1. **All 6 sections are mandatory.** If a section has nothing to fill — write "No data".
+2. **Section 3 (Rejected artifacts)** — the most important. It documents why ready-made artifacts did not fit. This prevents re-copying unsuitable skills in the future.
+3. **Section 4 (Adapted artifacts)** — must contain specifics: which lines of SKILL.md were changed, which checks were removed.
+4. **Statuses:** use only ✅ / 🚧 / ❌ / 📋 — for consistency between reports.

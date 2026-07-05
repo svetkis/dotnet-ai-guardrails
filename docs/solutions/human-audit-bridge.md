@@ -1,185 +1,185 @@
-# Human Audit Bridge — ручной аудит с помощью AI-чеклистов
+# Human Audit Bridge — Manual Audit with AI Checklists
 
-> **Назначение:** Использовать существующие AI-скиллы для **ручного** аудита проекта.  
-> **Потребитель:** Человек (Tech Lead, Senior Dev, аудитор).  
-> **Время:** 1–2 часа на один аудит-скилл.  
-
----
-
-## Проблема
-
-Все скиллы в `templates/skills/` написаны как **роли для агентов** («Ты — Security-аудитор…»).  
-Но каждый скилл содержит `CHECKLIST.md` — структурированный список проверок, который отлично работает в руках человека.  
-Этот документ — «мост»: как взять AI-артефакт и использовать его для ручного аудита.
+> **Purpose:** Use existing AI skills for **manual** project audit.  
+> **Consumer:** Human (Tech Lead, Senior Dev, auditor).  
+> **Time:** 1–2 hours per audit skill.  
 
 ---
 
-## Карта: какой аудит — какой чеклист
+## Problem
 
-| Я хочу проверить… | Беру CHECKLIST из… | Время | Когда запускать |
+All skills in `templates/skills/` are written as **agent roles** ("You are a Security auditor…").  
+But every skill contains `CHECKLIST.md` — a structured checklist that works great in human hands.  
+This document is a "bridge": how to take an AI artifact and use it for a manual audit.
+
+---
+
+## Map: Which Audit — Which Checklist
+
+| I want to check… | Take CHECKLIST from… | Time | When to run |
 |-------------------|----------------------|-------|-----------------|
-| Утечки данных, авторизация, ввод | [`templates/skills/security-audit/CHECKLIST.md`](../../templates/skills/security-audit/CHECKLIST.md) | 1–2 ч | Перед релизом / раз в спринт |
-| Запросы БД, миграции, индексы | [`templates/skills/dba-audit/CHECKLIST.md`](../../templates/skills/dba-audit/CHECKLIST.md) | 1–2 ч | При миграциях / раз в спринт |
-| Производительность, кэш, N+1 | [`templates/skills/performance-audit/CHECKLIST.md`](../../templates/skills/performance-audit/CHECKLIST.md) | 1–2 ч | Перед релизом |
-| API контракты, DTO, OpenAPI | [`templates/skills/api-design-audit/CHECKLIST.md`](../../templates/skills/api-design-audit/CHECKLIST.md) | 1 ч | Раз в спринт |
-| Дублирование, мёртвый код, drift | [`templates/skills/tech-debt-audit/CHECKLIST.md`](../../templates/skills/tech-debt-audit/CHECKLIST.md) | 1–2 ч | Перед планированием квартала |
-| Покрытие тестами, мёртвые тесты | [`templates/skills/test-audit/CHECKLIST.md`](../../templates/skills/test-audit/CHECKLIST.md) | 1 ч | После 3–5 фич |
-| UX, accessibility, мобильная вёрстка | [`templates/skills/ux-audit/CHECKLIST.md`](../../templates/skills/ux-audit/CHECKLIST.md) | 1 ч | Перед бетой |
-| Локализация, форматы дат/чисел | [`templates/skills/i18n-audit/CHECKLIST.md`](../../templates/skills/i18n-audit/CHECKLIST.md) | 30 мин | Раз в спринт |
-| Версии SDK, NuGet, зависимостей | [`templates/skills/version-audit/CHECKLIST.md`](../../templates/skills/version-audit/CHECKLIST.md) | 30 мин | Раз в спринт |
-| Соответствие задаче (scope creep) | [`templates/skills/task-compliance/CHECKLIST.md`](../../templates/skills/task-compliance/CHECKLIST.md) | 15 мин | На каждый PR |
+| Data leaks, authorization, input | [`templates/skills/security-audit/CHECKLIST.md`](../../templates/skills/security-audit/CHECKLIST.md) | 1–2 h | Before release / once per sprint |
+| DB queries, migrations, indexes | [`templates/skills/dba-audit/CHECKLIST.md`](../../templates/skills/dba-audit/CHECKLIST.md) | 1–2 h | During migrations / once per sprint |
+| Performance, cache, N+1 | [`templates/skills/performance-audit/CHECKLIST.md`](../../templates/skills/performance-audit/CHECKLIST.md) | 1–2 h | Before release |
+| API contracts, DTO, OpenAPI | [`templates/skills/api-design-audit/CHECKLIST.md`](../../templates/skills/api-design-audit/CHECKLIST.md) | 1 h | Once per sprint |
+| Duplication, dead code, drift | [`templates/skills/tech-debt-audit/CHECKLIST.md`](../../templates/skills/tech-debt-audit/CHECKLIST.md) | 1–2 h | Before quarterly planning |
+| Test coverage, dead tests | [`templates/skills/test-audit/CHECKLIST.md`](../../templates/skills/test-audit/CHECKLIST.md) | 1 h | After 3–5 features |
+| UX, accessibility, mobile layout | [`templates/skills/ux-audit/CHECKLIST.md`](../../templates/skills/ux-audit/CHECKLIST.md) | 1 h | Before beta |
+| Localization, date/number formats | [`templates/skills/i18n-audit/CHECKLIST.md`](../../templates/skills/i18n-audit/CHECKLIST.md) | 30 min | Once per sprint |
+| SDK, NuGet, dependency versions | [`templates/skills/version-audit/CHECKLIST.md`](../../templates/skills/version-audit/CHECKLIST.md) | 30 min | Once per sprint |
+| Task compliance (scope creep) | [`templates/skills/task-compliance/CHECKLIST.md`](../../templates/skills/task-compliance/CHECKLIST.md) | 15 min | Per PR |
 
 ---
 
-## Как читать AI-скилл как человек
+## How to Read an AI Skill as a Human
 
-AI-скилл состоит из 4 секций. Человеку нужны только 2:
+An AI skill consists of 4 sections. A human only needs 2:
 
-| Секция | Нужна человеку? | Что делать |
+| Section | Needed by human? | What to do |
 |--------|----------------|------------|
-| `## Роль` | ❌ Нет | Игнорируй. Это prompt для агента. |
-| `## Адаптация под проект` | ✅ Да | Прочитай и вычеркни пункты, неприменимые к твоему стеку. |
-| `## Правила аудита` | ✅ Да | Это твой чеклист. Иди по пунктам. |
-| `## Формат отчёта` | ⚠️ Частично | Используй severity (Критично / Средне), но не копируй markdown-шаблон дословно. |
+| `## Role` | ❌ No | Ignore. This is a prompt for the agent. |
+| `## Project Adaptation` | ✅ Yes | Read and cross out items not applicable to your stack. |
+| `## Audit Rules` | ✅ Yes | This is your checklist. Go through the items. |
+| `## Report Format` | ⚠️ Partially | Use severity (Critical / Medium), but don't copy the markdown template verbatim. |
 
-**Процесс:**
+**Process:**
 
-1. **Открой** `CHECKLIST.md` (а не `SKILL.md`)
-2. **Прочитай** `ADAPTATION.md` — вычеркни неприменимое для твоего стека
-3. **Иди по чекбоксам** — отмечай `[x]` или `[-]` (N/A)
-4. **Фиксируй находки** — файлом или в бэклоге
+1. **Open** `CHECKLIST.md` (not `SKILL.md`)
+2. **Read** `ADAPTATION.md` — cross out what's not applicable to your stack
+3. **Go through checkboxes** — mark `[x]` or `[-]` (N/A)
+4. **Record findings** — in a file or in the backlog
 
 ---
 
-## Процесс ручного аудита (шаг за шагом)
+## Manual Audit Process (Step by Step)
 
-### Шаг 0. Подготовка (5 мин)
+### Step 0. Preparation (5 min)
 
-- Определи стек проекта (`.NET`, `EF/Dapper`, `Minimal API/MVC`, `Clean/VSlice`)
-- Открой `templates/skills/ADAPTATION.md` — найди свою конфигурацию в таблице
-- Выбери один аудит — не пытайся пройти всё за раз
+- Identify project stack (`.NET`, `EF/Dapper`, `Minimal API/MVC`, `Clean/VSlice`)
+- Open `templates/skills/ADAPTATION.md` — find your configuration in the table
+- Pick one audit — don't try to cover everything at once
 
-### Шаг 1. Адаптация чеклиста (10 мин)
+### Step 1. Checklist Adaptation (10 min)
 
-Пройдись по `CHECKLIST.md` и пометь:
-- `[ ]` — применимо, буду проверять
-- `[-]` — неприменимо к нашему стеку (например, EF-правила в Dapper-проекте)
-- `[?]` — не уверен, отложу
+Go through `CHECKLIST.md` and mark:
+- `[ ]` — applicable, will check
+- `[-]` — not applicable to our stack (e.g., EF rules in a Dapper project)
+- `[?]` — not sure, will defer
 
-### Шаг 2. Проходка по коду (основное время)
+### Step 2. Code Walkthrough (main time)
 
-Для каждого пункта чеклиста:
-1. Найди соответствующий код (`grep`, IDE search, или structural search)
-2. Проверь факт — не доверяй комментариям
-3. Если нашёл нарушение — зафиксируй:
-   - Файл и строка
-   - Цитата кода (3–5 строк)
-   - Почему это нарушение (с каким правилом)
-   - Что делать
+For each checklist item:
+1. Find the corresponding code (`grep`, IDE search, or structural search)
+2. Check the fact — don't trust comments
+3. If you found a violation — record it:
+   - File and line
+   - Code quote (3–5 lines)
+   - Why this is a violation (which rule)
+   - What to do
 
-### Шаг 3. Классификация (10 мин)
+### Step 3. Classification (10 min)
 
-Разложи находки по severity:
+Sort findings by severity:
 
-| Severity | Что это | Действие |
+| Severity | What it is | Action |
 |----------|---------|----------|
-| **BLOCKER** | Ломает прод или безопасность | Задача сразу, hotfix если в проде |
-| **MAJOR** | Деградация perf / корректности | Задача в текущий спринт |
-| **MINOR** | Неоптимальность, tech debt | Задача в бэклог |
-| **REVIEW** | Нужен human judgment | Обсудить с командой |
+| **BLOCKER** | Breaks prod or security | Task immediately, hotfix if in prod |
+| **MAJOR** | Perf / correctness degradation | Task in current sprint |
+| **MINOR** | Suboptimal, tech debt | Task in backlog |
+| **REVIEW** | Needs human judgment | Discuss with the team |
 
-### Шаг 4. Фиксация (10 мин)
+### Step 4. Recording (10 min)
 
-Создай задачи в бэклоге. Каждая находка — одна задача, если исправление > 15 мин.  
-Если находок много — сгруппируй по типу.
+Create tasks in the backlog. Each finding is one task if the fix takes > 15 min.  
+If there are many findings — group by type.
 
 ---
 
-## Формат отчёта для человека
+## Report Format for Humans
 
-Не нужно копировать AI-шаблоны дословно. Используй краткий формат:
+No need to copy AI templates verbatim. Use a short format:
 
 ```markdown
-## Ручной аудит: {Название} — {дата}
+## Manual Audit: {Name} — {date}
 
-### Проверял
+### Audited by
 @username
 
 ### Scope
-{какие файлы / модули проверяли}
+{which files / modules were checked}
 
-### Критично (BLOCKER)
-- [ ] {описание} → `{файл:строка}`
-  - Код: `{цитата}`
-  - Почему: {правило из чеклиста}
-  - Что делать: {конкретное действие}
+### Critical (BLOCKER)
+- [ ] {description} → `{file:line}`
+  - Code: `{quote}`
+  - Why: {rule from checklist}
+  - What to do: {specific action}
 
-### Средне (MAJOR)
-- [ ] {описание} → `{файл:строка}`
+### Medium (MAJOR)
+- [ ] {description} → `{file:line}`
 
-### Мелочи (MINOR)
-- {описание}
+### Minor (MINOR)
+- {description}
 
-### Что было неприменимо
-- {пункт чеклиста} — причина: {почему N/A}
+### What was not applicable
+- {checklist item} — reason: {why N/A}
 
-### Рекомендации
-- {общие выводы, не привязанные к строкам}
+### Recommendations
+- {general conclusions, not tied to lines}
 ```
 
 ---
 
-## Пример: Security Audit вручную
+## Example: Manual Security Audit
 
-**Стек:** .NET 10, Minimal API, EF Core, PostgreSQL  
-**Чеклист:** `templates/skills/security-audit/CHECKLIST.md`
+**Stack:** .NET 10, Minimal API, EF Core, PostgreSQL  
+**Checklist:** `templates/skills/security-audit/CHECKLIST.md`
 
-**Адаптация:**
-- ❌ Проверка `[Authorize]` на контроллерах — неприменимо (Minimal API)
-- ✅ Проверка `.RequireAuthorization()` — заменяем
-- ✅ Проверка PII в логах — оставляем
+**Adaptation:**
+- ❌ Checking `[Authorize]` on controllers — not applicable (Minimal API)
+- ✅ Checking `.RequireAuthorization()` — we replace
+- ✅ Checking PII in logs — keep
 
-**Проходка:**
+**Walkthrough:**
 ```markdown
-### Критично
-- [ ] PII в логах: `UserEmail` пишется в Info-лог → `src/Api/Endpoints/BookingEndpoints.cs:42`
-  - Код: `logger.LogInformation("Booking created for {Email}", request.Email);`
-  - Почему: Security-audit → Data Exposure → логи: нет PII
-  - Что делать: Заменить на `{UserId}` или redact через `IEmailRedactor`
+### Critical
+- [ ] PII in logs: `UserEmail` written to Info log → `src/Api/Endpoints/BookingEndpoints.cs:42`
+  - Code: `logger.LogInformation("Booking created for {Email}", request.Email);`
+  - Why: Security-audit → Data Exposure → logs: no PII
+  - What to do: Replace with `{UserId}` or redact via `IEmailRedactor`
 
-### Средне
-- [ ] Endpoint `/api/webhooks/payment` без `.RequireAuthorization()` → `src/Api/Endpoints/PaymentEndpoints.cs:15`
-  - Код: `app.MapPost("/api/webhooks/payment", HandlePayment);`
-  - Почему: Нет явной защиты webhook'а
-  - Что делать: Проверить `X-Secret-Token` в middleware или добавить `.RequireAuthorization()` + policy
+### Medium
+- [ ] Endpoint `/api/webhooks/payment` without `.RequireAuthorization()` → `src/Api/Endpoints/PaymentEndpoints.cs:15`
+  - Code: `app.MapPost("/api/webhooks/payment", HandlePayment);`
+  - Why: No explicit webhook protection
+  - What to do: Verify `X-Secret-Token` in middleware or add `.RequireAuthorization()` + policy
 ```
 
 ---
 
-## Советы по эффективности
+## Efficiency Tips
 
-| Не делай | Делай |
+| Don't | Do |
 |----------|-------|
-| Проходить все чеклисты за один день | Брать один аудит в спринт |
-| Доверять комментариям в коде | Читать код и проверять факт |
-| Создавать задачи «починить всё» | Одна находка = одна задача |
-| Игнорировать `[REVIEW]` находки | Обсуждать их на ретро |
-| Переписывать CHECKLIST.md | Отмечать `[-]` и двигаться дальше |
+| Go through all checklists in one day | Take one audit per sprint |
+| Trust comments in code | Read code and check the fact |
+| Create tasks "fix everything" | One finding = one task |
+| Ignore `[REVIEW]` findings | Discuss them at retro |
+| Rewrite CHECKLIST.md | Mark `[-]` and move on |
 
 ---
 
-## Интеграция с AI-аудитом
+## Integration with AI Audit
 
-Ручной аудит — не замена AI-скиллам, а **дополнение**:
+Manual audit is not a replacement for AI skills, but a **complement**:
 
-- **AI-аудит** — хорош для объёма: пройти 50 файлов за 10 минут, найти очевидные паттерны.
-- **Human-аудит** — нужен для контекста: «этот endpoint без авторизации — ок, он публичный по дизайну».
+- **AI audit** — good for volume: go through 50 files in 10 minutes, find obvious patterns.
+- **Human audit** — needed for context: "this endpoint without authorization is OK, it's public by design."
 
-**Гибридный подход:**
-1. Запусти AI-скилл — получи черновик находок
-2. Пройди CHECKLIST.md руками — отфильтруй false positives
-3. Дополни находками, которые AI не видит (бизнес-контекст, неявные side effects)
+**Hybrid approach:**
+1. Run the AI skill — get a draft of findings
+2. Go through CHECKLIST.md manually — filter out false positives
+3. Add findings that the AI doesn't see (business context, implicit side effects)
 
 ---
 
-> **Принцип:** Чеклисты в этом репозитории — не собственность агентов. Это проверенные списки проверок. Человек, который их использует, получает тот же результат, только с лучшим judgment.
+> **Principle:** Checklists in this repository are not the property of agents. They are proven checklists. A human who uses them gets the same result, only with better judgment.

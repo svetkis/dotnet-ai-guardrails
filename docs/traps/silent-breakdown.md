@@ -1,41 +1,41 @@
-# Ловушка: Молчаливая поломка (Silent Breakdown)
+# Trap: Silent Breakdown
 
-## Сценарий
+## Scenario
 
-Агент оптимизирует read-запросы ради перформанса. Добавляет `.AsNoTracking()` во все запросы подряд, не разбираясь в разнице между read-path и write-path.
+The agent optimizes read queries for performance. Adds `.AsNoTracking()` to all queries indiscriminately, without understanding the difference between read-path and write-path.
 
 ```csharp
-// Агент оптимизировал "список тикетов"
+// Agent optimized "ticket list"
 var tickets = await dbContext.Tickets
-    .AsNoTracking()  // ✅ Тут ок — чистый read
+    .AsNoTracking()  // ✅ OK here — pure read
     .ToListAsync();
 
-// Но затем скопировал тот же паттерн в команду
+// But then copied the same pattern into a command
 var ticket = await dbContext.Tickets
-    .AsNoTracking()  // ❌ АД! Change tracking отключён
+    .AsNoTracking()  // ❌ HORROR! Change tracking disabled
     .FirstAsync(t => t.Id == id);
 
-ticket.Resolve();     // Меняем статус
-await dbContext.SaveChangesAsync();  // Молча не сохраняет! 0 rows affected
+ticket.Resolve();     // Changing status
+await dbContext.SaveChangesAsync();  // Silently not saving! 0 rows affected
 ```
 
-## Почему InMemory тесты проглатывают
+## Why InMemory Tests Swallow It
 
-InMemory провайдер EF Core **не эмулирует change tracking**. `SaveChanges()` всегда "успешен", даже с `AsNoTracking`.
+The EF Core InMemory provider **does not emulate change tracking**. `SaveChanges()` always "succeeds", even with `AsNoTracking`.
 
-## Последствия
+## Consequences
 
-- CI зелёный
-- Юнит-тесты проходят
-- На проде write ложится на 21 час
-- Баг без эксепшена — самый дорогой
+- CI is green
+- Unit tests pass
+- In production, write fails for 21 hours
+- A bug without an exception is the most expensive one
 
-## Решение
+## Solution
 
-1. **AGENTS.md** — явное правило: `AsNoTracking` только в read-path с `.Select()`
-2. **NBomber** — гоняем read + write mix под нагрузкой. $Max$ write latency вырастает или появляются failed-запросы
-3. **Интеграционные тесты** — только на реальной БД (TestContainers), никаких InMemory для логики
+1. **AGENTS.md** — explicit rule: `AsNoTracking` only in read-path with `.Select()`
+2. **NBomber** — run read + write mix under load. $Max$ write latency spikes or failed requests appear
+3. **Integration tests** — only on a real DB (TestContainers), no InMemory for logic
 
-## Паттерн
+## Pattern
 
-См. `tests/patterns/LoadTest.cs`
+See `tests/patterns/LoadTest.cs`

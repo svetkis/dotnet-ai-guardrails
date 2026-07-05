@@ -180,7 +180,7 @@ See also [`examples/DemoProject.MinimalApi/README.md`](examples/DemoProject.Mini
 
 ## Navigation
 
-Lost? Start with [docs/README.md](docs/README.md).
+Lost? Start with [docs/README.en.md](docs/README.en.md).
 
 | What you need | Where to go |
 |---------------|-------------|
