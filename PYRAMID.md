@@ -225,6 +225,7 @@ Whitelist для исключений (write-path) сам проверяется
 | Release Readiness | `templates/skills/release-readiness-audit/` |
 | Mutation Testing | `templates/skills/mutation-audit/` |
 | Analyzer Tests | `templates/skills/analyzer-tests-audit/` |
+| Business Risk / Cross-Layer | `templates/skills/business-risk-audit/` |
 
 **График:** раз в спринт или точечно, когда чуете опасность.
 

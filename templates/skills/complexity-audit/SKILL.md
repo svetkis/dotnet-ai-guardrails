@@ -86,7 +86,7 @@ description: >
 ## ANTI-HALLUCINATION Protocol
 
 Каждая находка ДОЛЖНА включать:
-1. **Точный файл и строку:** `src/Application/BookingService.cs:142`
+1. **Точный файл и строку:** `src/Application/OrderService.cs:142`
 2. **Цитату кода:** 3–7 строк, показывающих вложенность/ветвления
 3. **Точное значение сложности:** cognitive 28, cyclomatic 19
 4. **Обоснование:** почему это проблема (читаемость, риск регрессии, review time)

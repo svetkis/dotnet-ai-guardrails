@@ -72,8 +72,30 @@ description: >
 
 ### API → Frontend contract
 - [ ] API возвращает достаточно данных для всех состояний UI?
-- [ ] API возвращает флаги для специальных состояний (`BookingPaused`, `TrialExpired`)?
-- [ ] Ошибки API имеют machine-readable коды (`slot_not_available`), а не только текст?
+- [ ] API возвращает флаги для специальных состояний (`OperationPaused`, `TrialExpired`)?
+- [ ] Ошибки API имеют machine-readable коды (`resource_unavailable`), а не только текст?
+
+### Cross-Layer Invariants / Seam Analysis
+
+UX-баги часто возникают на стыке UI, API и фоновой обработки. Для каждого
+ключевого сценария проверь:
+
+- [ ] **Interrupted flow + state resurrection:** если пользователь прервал flow
+  (закрыл вкладку, нажал назад, потерял соединение), то при возвращении UI не
+  показывает устаревшее состояние из `sessionStorage` / local state / cache.
+- [ ] **Update semantics:** изменение полей сущности/ресурса корректно протекает
+  через все слои: UI знает о новом состоянии, API валидирует актуальность
+  ресурса, БД фиксирует изменение, кэш инвалидируется.
+- [ ] **Stale cache in UI:** frontend state / cache / `sessionStorage` не
+  переиспользуют данные, которые могли устареть после write в API или после
+  background job.
+- [ ] **API → UI special states:** флаги специальных состояний (`OperationPaused`,
+  `TrialExpired`, `AlreadyUpdated`) доходят до UI и влияют на доступность
+  действий; generic error не заменяет конкретное состояние.
+- [ ] **Job → UI feedback:** длительная фоновая операция сообщает пользователю о
+  результате (push, polling, refresh), а не оставляет его в неопределённости.
+- [ ] **Что пойдёт тихо не так?** Для каждой находки задай вопрос: какой реальный
+  пользователь застрянет, увидит неактуальные данные или не поймёт, что произошло?
 
 ## ANTI-HALLUCINATION Protocol
 
@@ -113,12 +135,12 @@ description: >
   → Fix: добавить кнопку "Отмена" + обработчик `OnCancel`
 
 ### Критично
-- [ ] [CERTAIN] Generic error при отмене записи — клиент не понимает, отменилось ли
-  → `src/Api/Endpoints/BookingEndpoints.cs:88`
-  → Fix: вернуть `BookingStatus` в ответе + конкретный код ошибки
+- [ ] [CERTAIN] Generic error при отмене операции — клиент не понимает, отменилось ли
+  → `src/Api/Endpoints/EntityEndpoints.cs:88`
+  → Fix: вернуть `Status` в ответе + конкретный код ошибки
 
-- [ ] [REVIEW] Пустой список слотов — нет CTA "Выбрать другую дату"
-  → `webapp/src/components/SlotList.tsx:34`
+- [ ] [REVIEW] Пустой список элементов — нет CTA "Выбрать другую дату"
+  → `webapp/src/components/ItemList.tsx:34`
   → Fix: добавить кнопку + fallback на ближайшую доступную дату
 
 ### Средне

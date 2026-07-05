@@ -67,6 +67,30 @@
 - [ ] Проверить, что renaming column — через Add + Drop, а не Rename (блокировки)
 - [ ] Проверить, что индексы создаются `CONCURRENTLY` если большая таблица
 
+### Cross-Layer Invariants / Seam Analysis
+
+Проблемы БД часто проявляются не в одной миграции, а в рассогласовании между
+runtime model, миграциями и consumers. Для каждого изменения схемы проверь:
+
+- [ ] **Runtime vs migration drift:** модель в коде соответствует последней миграции
+  и существующим данным. Нет breaking change (переименование колонки, удаление
+  поля) без миграции и обратной совместимости.
+- [ ] **Timezone storage contract:** даты хранятся в `timestamptz` (или едином
+  `DateTimeKind`-контракте), а consumers (API, jobs, отчёты) интерпретируют их
+  одинаково. Нет `timestamp without time zone` рядом с `DateTime.UtcNow` в коде.
+- [ ] **Soft delete seam:** если в домене soft delete, то unique indexes учитывают
+  `IsDeleted = false`; jobs и read models не возвращают удалённые записи
+  неявно.
+- [ ] **FK / ownership seam:** внешние ключи и ownership constraints согласованы
+  с authZ в API. Нельзя записать `OwnerId` в БД, который не пройдёт проверку
+  ownership на уровне домена.
+- [ ] **Job → DB contract:** background jobs читают и пишут ту же модель, что и
+  API, и учитывают миграционную реальность (например, nullable колонки после
+  миграции заполнены дефолтами).
+- [ ] **Что пойдёт тихо не так?** Для каждой находки задай вопрос: какое
+  рассогласование между кодом, миграцией и данными приведёт к тихой некорректности
+  для пользователя?
+
 ## Severity Levels
 
 - **BLOCKER** — ломает прод: миграция без `CONCURRENTLY` на большой таблице (блокировка), `ON DELETE CASCADE` на важных данных, потеря данных в миграции

@@ -23,7 +23,7 @@ You are a type-safety auditor in a .NET project. Your task is to ensure the agen
 ## Audit Rules
 
 ### Strongly Typed IDs
-- [ ] All entity IDs have their own type (`BookingId`, `CustomerId`, `OrderId`), not `Guid`/`string`/`int`
+- [ ] All entity IDs have their own type (`ProductId`, `CustomerId`, `OrderId`), not `Guid`/`string`/`int`
 - [ ] ID types are `readonly record struct` (value semantics, no heap allocation)
 - [ ] ID types contain no business logic (only factories, parsing and formatting)
 - [ ] JSON serialization is configured with `JsonConverter` (System.Text.Json or Newtonsoft)
@@ -55,5 +55,5 @@ You are a type-safety auditor in a .NET project. Your task is to ensure the agen
 ```
 
 **Confidence Level:**
-- **CERTAIN** — using `Guid` instead of `BookingId` in new code, missing `JsonConverter` for strongly typed id.
+- **CERTAIN** — using `Guid` instead of `ProductId` in new code, missing `JsonConverter` for strongly typed id.
 - **REVIEW** — legacy code not yet migrated; requires human judgment on refactoring priority.

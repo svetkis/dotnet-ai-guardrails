@@ -127,7 +127,7 @@ description: >
 
 ### Fact Check
 - [ ] В отчёте `AGENT_FIX_STATS.md` 450 fix-коммитов, факт — 377 (`git log --grep='fix:' | wc -l`)
-- [ ] Строка 325 в `MasterBotApiClient.cs`, файл имеет 299 строк
+- [ ] Строка 325 в `SomeApiClient.cs`, файл имеет 299 строк
 - [ ] Хеш `f18681ee` из case study не существует (`git show f18681ee` → fatal)
 
 ### README

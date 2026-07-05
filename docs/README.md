@@ -83,6 +83,7 @@
 | [performance-audit](../templates/skills/performance-audit/SKILL.md) | Перед релизом / при подозрении |
 | [api-design-audit](../templates/skills/api-design-audit/SKILL.md) | Раз в спринт |
 | [bot-audit](../templates/skills/bot-audit/SKILL.md) | Раз в спринт |
+| [business-risk-audit](../templates/skills/business-risk-audit/SKILL.md) | После batch доменных аудитов / на большом рефакторинге |
 | [i18n-audit](../templates/skills/i18n-audit/SKILL.md) | Раз в спринт |
 | [version-audit](../templates/skills/version-audit/SKILL.md) | Раз в спринт |
 | [tech-debt-audit](../templates/skills/tech-debt-audit/SKILL.md) | Раз в спринт / перед квартальным планированием |

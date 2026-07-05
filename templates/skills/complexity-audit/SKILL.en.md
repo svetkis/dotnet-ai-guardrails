@@ -85,7 +85,7 @@ baseline and apply a “do not make it worse” ratchet.
 ## ANTI-HALLUCINATION Protocol
 
 Every finding MUST include:
-1. **Exact file and line:** `src/Application/BookingService.cs:142`
+1. **Exact file and line:** `src/Application/OrderService.cs:142`
 2. **Code quote:** 3–7 lines showing nesting / branching
 3. **Exact complexity value:** cognitive 28, cyclomatic 19
 4. **Reasoning:** why this is a problem (readability, regression risk, review time)

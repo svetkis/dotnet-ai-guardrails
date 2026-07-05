@@ -85,6 +85,7 @@ Exception: `templates/skills/skeptical-ai-bootstrap/` contains supporting templa
 | [performance-audit](../templates/skills/performance-audit/SKILL.en.md) | Before release / on suspicion |
 | [api-design-audit](../templates/skills/api-design-audit/SKILL.en.md) | Once per sprint |
 | [bot-audit](../templates/skills/bot-audit/SKILL.en.md) | Once per sprint |
+| [business-risk-audit](../templates/skills/business-risk-audit/SKILL.md) | After a batch of domain audits / on a large refactor |
 | [i18n-audit](../templates/skills/i18n-audit/SKILL.en.md) | Once per sprint |
 | [version-audit](../templates/skills/version-audit/SKILL.en.md) | Once per sprint |
 | [tech-debt-audit](../templates/skills/tech-debt-audit/SKILL.en.md) | Once per sprint / before quarterly planning |

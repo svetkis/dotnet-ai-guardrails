@@ -115,7 +115,7 @@ description: >
 - [ ] `memory-03.md`: «используем EF Core» vs `src/Payment/AGENTS.md`: «Dapper only"
 
 ### Stale Workarounds
-- [ ] `memory-09.md`: «Avoid ExecuteUpdateAsync on Booking» — нет BUG###, нет PR, > 45 дней
+- [ ] `memory-09.md`: «Avoid ExecuteUpdateAsync on Order» — нет BUG###, нет PR, > 45 дней
 
 ### Cross-project Contamination
 - [ ] `memory-02.md`: упоминает Dapper, но стек репо — EF Core

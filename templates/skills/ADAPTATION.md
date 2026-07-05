@@ -40,6 +40,7 @@
 | Нет hot path методов / не latency-sensitive | `allocation-budget-audit` | Нечего измерять |
 | Нет публичного API / docs | `spellcheck-audit` → public API names | Проверяй только markdown/comments |
 | Не релиз / не бета | `release-readiness-audit` | Won't do, документировать |
+| Нет кросс-слойных flow (single CRUD без cache/events/jobs) | `business-risk-audit` | Нет seam'ов между UI/cache/API/domain/job |
 | Нет кастомных Roslyn-анализаторов | `analyzer-tests-audit` | Нечего тестировать |
 | Нет Stryker / не TUnit-compatible | `mutation-audit` → CI gate | Запускать как periodic audit |
 | Legacy с сотнями complexity-нарушений | `complexity-audit` → error severity | Использовать baseline + ratchet, не error |
@@ -85,6 +86,7 @@
 | `release-readiness-audit` | 📦 |
 | `spellcheck-audit` | 🔤 |
 | `bot-audit` | 🤖 |
+| `business-risk-audit` | 🧩 |
 | `code-review` | 🔍 |
 | `dba-audit` | 🗄️ |
 | `dba-audit-dapper` | 🧵 |

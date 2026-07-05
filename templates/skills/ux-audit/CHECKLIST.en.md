@@ -1,7 +1,7 @@
 # UX Audit — Checklist
 
 ## Before Start
-- [ ] Key scenarios known (onboarding, booking, payment, cancellation)
+- [ ] Key scenarios known (onboarding, reservation, payment, cancellation)
 - [ ] Access to frontend / bot / API response code obtained
 
 ## Scenario: New user
@@ -11,12 +11,12 @@
 
 ## Scenario: Core action
 - [ ] Empty list / no data — explanation + CTA
-- [ ] Stale data — protected (slot taken, price changed)
+- [ ] Stale data — protected (item/resource taken, price changed)
 - [ ] Double confirmation — prevents accidental action
 
 ## Scenario: Cancel / modify
 - [ ] Already passed / already cancelled — specific feedback
-- [ ] Alternatives exist (reschedule instead of cancel)
+- [ ] Alternatives exist (modify instead of cancel)
 
 ## Scenario: Payment
 - [ ] Failed payment — specific error + retry
@@ -37,5 +37,5 @@
 
 ## API → Frontend contract
 - [ ] API returns data for all UI states
-- [ ] Flags for special states (`BookingPaused`, `TrialExpired`)
+- [ ] Flags for special states (`OperationPaused`, `TrialExpired`)
 - [ ] Errors have machine-readable codes, not just text

@@ -37,7 +37,7 @@ description: >
 | Duplicate задачи | Разные спеки описывают один и тот же баг |
 | Must, которое не блокирует релиз | Девальвация приоритетов |
 | Won't, который уже в production | Скрытый tech debt без tracking |
-| **Vague tasks** | «Fix booking» — не actionable, агент не поймёт что делать |
+| **Vague tasks** | «Fix order» — не actionable, агент не поймёт что делать |
 | **Agent-generated noise** | Агент создаёт `.backlog/refactor-please.md` без AC и забывает |
 | **Missing test debt** | Новый `[HotPath]` в коде, но в бэклоге нет задачи на perf-тест |
 
@@ -71,7 +71,7 @@ description: >
 // TRAP: Агент создаёт задачу «Fix the issue» без AC и сам же через месяц не понимает, что имелось в виду.
 // GUARDRAIL: Каждая задача имеет Definition of Done из 1-3 пунктов.
 
-- Проверить, что заголовок содержит глагол + объект (не «Booking», а «Add validation to Booking creation")
+- Проверить, что заголовок содержит глагол + объект (не «Order», а «Add validation to Order creation")
 - Проверить наличие Definition of Done (1-3 пункта) или AC
 - Задачи без AC и с заголовком < 5 слов — пометить `vague`, требовать доработки
 
@@ -115,13 +115,13 @@ description: >
 - [ ] `.backlog/api-versioning.md` — нет спеки, только заголовок
 
 ### Vague Tasks
-- [ ] `.backlog/fix-booking.md` — заголовок без глагола, нет AC
+- [ ] `.backlog/fix-order.md` — заголовок без глагола, нет AC
 
 ### Agent Noise
 - [ ] `.backlog/refactor-please.md` — `[agent]`, нет human approval, 45 дней
 
 ### Test Debt
-- [ ] `BookingService.GetPendingAsync` — `[HotPath]` без задачи на perf-тест
+- [ ] `OrderService.GetPendingAsync` — `[HotPath]` без задачи на perf-тест
 ```
 
 ## Output

@@ -62,7 +62,7 @@ and new code must not exceed it.
 ### Summary
 | Method | Baseline (bytes) | Current (bytes) | Delta | Status |
 |--------|------------------|-----------------|-------|--------|
-| GetAvailableSlots | 1024 | 1150 | +12% | 🔴 FAIL |
+| GetHotPathData | 1024 | 1150 | +12% | 🔴 FAIL |
 | GetDayTimeline | 512 | 510 | -0.4% | 🟢 OK |
 
 ### Regressions
@@ -75,7 +75,7 @@ and new code must not exceed it.
 ## ANTI-HALLUCINATION Protocol
 
 Every finding MUST include:
-1. **Exact file and line:** `src/Infrastructure/BookingQueryService.cs:88`
+1. **Exact file and line:** `src/Infrastructure/EntityQueryService.cs:88`
 2. **Code quote:** 3–5 lines showing the added allocation
 3. **Baseline/current values:** baseline 1024 bytes, current 1150 bytes
 4. **Reason:** boxing in LINQ, async state machine, closure, etc.

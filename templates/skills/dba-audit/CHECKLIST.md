@@ -38,3 +38,11 @@
 - [ ] New queries checked with EXPLAIN ANALYZE
 - [ ] No Seq Scan on large tables without фильтра
 - [ ] No N+1 detected in integration tests logs
+
+## Cross-Layer Invariants
+- [ ] Runtime model соответствует последней миграции и существующим данным
+- [ ] Даты хранятся в `timestamptz` / едином `DateTimeKind`-контракте; API, jobs, отчёты интерпретируют их одинаково
+- [ ] Soft delete учтён в unique indexes; jobs/read models не возвращают удалённые записи неявно
+- [ ] FK / ownership constraints согласованы с authZ в API
+- [ ] Background jobs читают/пишут ту же модель, что и API, с учётом миграционной реальности
+- [ ] Каждая находка оценена на вопрос: «что пойдёт тихо не так для пользователя?»

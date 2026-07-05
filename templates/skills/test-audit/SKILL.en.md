@@ -77,7 +77,7 @@ Every finding MUST include:
 
 ## Severity Levels
 
-- **BLOCKER** — critical path without tests (payments, auth, booking)
+- **BLOCKER** — critical path without tests (payments, auth, orders)
 - **CRITICAL** — service/endpoint/job without tests; dead regression test
 - **MAJOR** — uncovered edge case (error on empty collection)
 - **MINOR** — test covers only happy path

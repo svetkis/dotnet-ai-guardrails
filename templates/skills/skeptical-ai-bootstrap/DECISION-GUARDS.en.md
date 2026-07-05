@@ -35,10 +35,10 @@ Without such a journal, the agent will see "strange" code in 3 months and roll b
 ### PERF-022: QueryFilter on SoftDelete Removed
 **Date:** 2026-03-15  
 **Author:** @lead  
-**Context:** QueryFilter added a JOIN to users via Workspace.Owner.DeletedAt in every EXISTS subquery. Under load — 400ms degradation.  
+**Context:** QueryFilter added a JOIN to users via Tenant.Owner.DeletedAt in every EXISTS subquery. Under load — 400ms degradation.  
 **Decision:** Removed `HasQueryFilter(s => !s.IsDeleted)`. Soft delete implemented explicitly in queries.  
 **Consequences:** An agent seeing `HasQueryFilter` in other configs will try to "fix" this. The number stops it.  
-**Where in code:** `src/Infrastructure/Persistence/Configuration/SlotConfiguration.cs:31`
+**Where in code:** `src/Infrastructure/Persistence/Configuration/EntityConfiguration.cs:31`
 ```
 
 In code, a brief comment is left next to the decision:

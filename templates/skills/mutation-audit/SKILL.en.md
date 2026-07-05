@@ -73,7 +73,7 @@ and checks whether tests fail. If a mutant survives, the tests are not strict en
 ## ANTI-HALLUCINATION Protocol
 
 Every finding MUST include:
-1. **Exact file and line:** `src/Domain/Booking.cs:42`
+1. **Exact file and line:** `src/Domain/Order.cs:42`
 2. **Mutation type:** `>` → `>=`, `+1` → `-1`, empty string → null
 3. **Why it survived:** weak assert, missing branch test
 4. **Action:** strengthen test or document as equivalent mutant

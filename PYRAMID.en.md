@@ -211,6 +211,7 @@ This is not a "feedback level" — it's a **repeatable persona**. Without skills
 | Release Readiness | `templates/skills/release-readiness-audit/` |
 | Mutation Testing | `templates/skills/mutation-audit/` |
 | Analyzer Tests | `templates/skills/analyzer-tests-audit/` |
+| Business Risk / Cross-Layer | `templates/skills/business-risk-audit/` |
 
 **Schedule:** once per sprint or ad-hoc when you smell danger.
 

@@ -37,7 +37,7 @@ the project's current reality.
 | Duplicate tasks | Different specs describe the same bug |
 | Must that does not block release | Devaluation of priorities |
 | Won't that is already in production | Hidden tech debt without tracking |
-| **Vague tasks** | "Fix booking" — not actionable, agent won't understand what to do |
+| **Vague tasks** | "Fix order" — not actionable, agent won't understand what to do |
 | **Agent-generated noise** | Agent creates `.backlog/refactor-please.md` without AC and forgets |
 | **Missing test debt** | New `[HotPath]` in code, but no backlog task for perf-test |
 
@@ -71,7 +71,7 @@ the project's current reality.
 // TRAP: Agent creates a task "Fix the issue" without AC and a month later doesn't understand what was meant.
 // GUARDRAIL: Every task has a Definition of Done with 1-3 items.
 
-- Check that title contains verb + object (not just "Booking", but "Add validation to Booking creation")
+- Check that title contains verb + object (not just "Order", but "Add validation to Order creation")
 - Check for Definition of Done (1-3 items) or AC
 - Tasks without AC and with title < 5 words — mark `vague`, require refinement
 
@@ -115,13 +115,13 @@ the project's current reality.
 - [ ] `.backlog/api-versioning.md` — no spec, just a title
 
 ### Vague Tasks
-- [ ] `.backlog/fix-booking.md` — title without verb, no AC
+- [ ] `.backlog/fix-order.md` — title without verb, no AC
 
 ### Agent Noise
 - [ ] `.backlog/refactor-please.md` — `[agent]`, no human approval, 45 days
 
 ### Test Debt
-- [ ] `BookingService.GetPendingAsync` — `[HotPath]` without perf-test task
+- [ ] `OrderService.GetPendingAsync` — `[HotPath]` without perf-test task
 ```
 
 ## Output

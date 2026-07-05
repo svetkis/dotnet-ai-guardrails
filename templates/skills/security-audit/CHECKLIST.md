@@ -16,6 +16,13 @@
 - [ ] Проверка ownership на write-операциях
 - [ ] Нет bypass'а через параметры запроса
 
+## Cross-Layer Invariants
+- [ ] `UserId` / `OwnerId` / `ActorId` / `ContextId` разрешаются одинаково на UI → API → domain → job
+- [ ] Нет IDOR через разницу между идентификатором из запроса и идентификатором из токена/контекста
+- [ ] Публичные endpoints / webhooks не пробрасывают identity в обход authZ
+- [ ] Write-операции верифицируют права в домене, а не только в middleware/API
+- [ ] Каждая находка оценена на вопрос: «что пойдёт тихо не так для реального пользователя?»
+
 ## Input Validation
 - [ ] DTO имеют `[Required]`, `[MaxLength]`, `[Range]` где нужно
 - [ ] Raw SQL параметризован

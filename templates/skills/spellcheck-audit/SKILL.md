@@ -79,7 +79,7 @@ description: >
 ## ANTI-HALLUCINATION Protocol
 
 Каждая находка ДОЛЖНА включать:
-1. **Точный файл и строку:** `src/Application/DTOs/BookingResponse.cs:14`
+1. **Точный файл и строку:** `src/Application/DTOs/OrderResponse.cs:14`
 2. **Цитату кода:** `public string RecieveNotificationEmail { get; set; }`
 3. **Опечатку и исправление:** `Recieve` → `Receive`
 4. **Категорию:** public API / docs / comment

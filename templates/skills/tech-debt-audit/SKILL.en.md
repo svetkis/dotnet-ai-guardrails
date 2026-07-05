@@ -86,7 +86,7 @@ You are a Tech Lead in a .NET project. Your task is to find technical debt accum
 ## ANTI-HALLUCINATION Protocol
 
 Every finding MUST include:
-1. **Exact file and line:** `src/Domain/BookingService.cs:42`
+1. **Exact file and line:** `src/Domain/OrderService.cs:42`
 2. **Code quote:** 3-5 lines showing the problem
 3. **Rationale:** why this is tech debt (reference to rule above)
 4. **Fix:** specific action or code suggestion

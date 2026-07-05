@@ -23,7 +23,7 @@
 ## Правила аудита
 
 ### Strongly Typed IDs
-- [ ] Все ID-сущностей имеют собственный тип (`BookingId`, `CustomerId`, `OrderId`), а не `Guid`/`string`/`int`
+- [ ] Все ID-сущностей имеют собственный тип (`ProductId`, `CustomerId`, `OrderId`), а не `Guid`/`string`/`int`
 - [ ] Типы ID — `readonly record struct` (value semantics, не аллоцируют на heap)
 - [ ] Типы ID не содержат бизнес-логики (только фабрики, парсинг и форматирование)
 - [ ] Для сериализации JSON настроены `JsonConverter` (System.Text.Json или Newtonsoft)
@@ -55,5 +55,5 @@
 ```
 
 **Confidence Level:**
-- **CERTAIN** — использование `Guid` вместо `BookingId` в новом коде, отсутствие `JsonConverter` для strongly typed id.
+- **CERTAIN** — использование `Guid` вместо `ProductId` в новом коде, отсутствие `JsonConverter` для strongly typed id.
 - **REVIEW** — legacy-код, который ещё не мигрирован; требует human judgment по приоритету рефакторинга.

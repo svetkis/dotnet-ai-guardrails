@@ -107,6 +107,29 @@ This skill implements two concepts from [Augmented Coding Patterns](https://gith
   - Automated guard: `DuplicationGuardTest.cs` catches literal copy-paste via regex.
   - Human guard: CHECKLIST.md "Semantic Duplication" catches `IsConfirmed()` vs `Status == Confirmed` — same rule, different code.
 
+## Cross-Layer Drift Checks
+
+Рефакторинг, меняющий DTO, domain events или модель, часто ломает контракты
+между слоями. Для изменений, затрагивающих 2+ слоя, проверь:
+
+- [ ] **DTO / domain event contract:** изменение поля в DTO или domain event
+  сопровождается обновлением всех consumers (handlers, jobs, frontend,
+  OpenAPI snapshot).
+- [ ] **AuthZ / ownership drift:** изменение проверки прав в API не оставляет
+  обходной путь в domain service или background job.
+- [ ] **Cache invalidation drift:** добавление/изменение write-операции сопровождается
+  инвалидацией кэша на всех уровнях, где этот объект кэшируется.
+- [ ] **Timezone / date contract:** изменение формата хранения или передачи дат
+  согласовано между UI, API, БД и job'ами.
+- [ ] **Migration / runtime drift:** изменение domain model сопровождается
+  миграцией; breaking change не вливается без обратной совместимости.
+- [ ] **Broken invariant after refactor:** бизнес-правило, которое раньше
+  проверялось в одном месте, не было случайно удалено или размазано по
+  нескольким сервисам с противоречивой семантикой.
+- [ ] **Что пойдёт тихо не так?** Для каждой находки задай вопрос: какой
+  end-to-end инвариант сломается после мержа, хотя unit-тесты на каждый слой
+  отдельно будут зелёными?
+
 ## ANTI-HALLUCINATION Protocol
 Every finding MUST include:
 1. **Exact file path** and **line number**

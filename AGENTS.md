@@ -79,6 +79,7 @@
 | Аудит дизайна API | `templates/skills/api-design-audit/` |
 | Аудит бота | `templates/skills/bot-audit/` |
 | Аудит локализации | `templates/skills/i18n-audit/` |
+| Аудит бизнес-рисков / cross-layer drift | `templates/skills/business-risk-audit/` |
 | Pre-commit code review агент | `templates/skills/code-review/` |
 | Frontend pre-commit code review агент | `templates/skills/frontend-code-review/` |
 | Проверка scope | `templates/skills/task-compliance/` |

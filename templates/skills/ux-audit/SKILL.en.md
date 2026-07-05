@@ -41,16 +41,16 @@ For each key scenario, walk through from start to finish:
 - [ ] Field validation — is there a specific error (not generic)?
 - [ ] Empty states — is there a CTA (what to do next)?
 
-**Scenario 2: Core action (booking, purchase, creation)**
+**Scenario 2: Core action (reservation, purchase, creation)**
 - [ ] Path: select → confirm → result
-- [ ] No data? (empty list, no slots, no products)
-- [ ] Stale data? (slot taken while choosing, price changed)
+- [ ] No data? (empty list, no items, no products)
+- [ ] Stale data? (item/resource taken while choosing, price changed)
 - [ ] Double confirmation — does it prevent accidental action?
 
 **Scenario 3: Cancel / modify**
 - [ ] Path: find → cancel / modify → confirm
 - [ ] Already passed / already cancelled — what feedback?
-- [ ] No alternatives? (reschedule instead of cancel)
+- [ ] No alternatives? (modify instead of cancel)
 
 **Scenario 4: Payment**
 - [ ] Path: select plan → pay → activate
@@ -72,8 +72,8 @@ For each key scenario, walk through from start to finish:
 
 ### API → Frontend Contract
 - [ ] API returns enough data for all UI states?
-- [ ] API returns flags for special states (`BookingPaused`, `TrialExpired`)?
-- [ ] API errors have machine-readable codes (`slot_not_available`), not just text?
+- [ ] API returns flags for special states (`OperationPaused`, `TrialExpired`)?
+- [ ] API errors have machine-readable codes (`resource_unavailable`), not just text?
 
 ## ANTI-HALLUCINATION Protocol
 
@@ -113,12 +113,12 @@ Every finding MUST include:
   → Fix: add "Cancel" button + `OnCancel` handler
 
 ### Critical
-- [ ] [CERTAIN] Generic error on booking cancellation — client does not know if cancelled
-  → `src/Api/Endpoints/BookingEndpoints.cs:88`
-  → Fix: return `BookingStatus` in response + specific error code
+- [ ] [CERTAIN] Generic error on cancellation — client does not know if cancelled
+  → `src/Api/Endpoints/EntityEndpoints.cs:88`
+  → Fix: return `Status` in response + specific error code
 
-- [ ] [REVIEW] Empty slot list — no CTA "Choose another date"
-  → `webapp/src/components/SlotList.tsx:34`
+- [ ] [REVIEW] Empty item list — no CTA "Choose another date"
+  → `webapp/src/components/ItemList.tsx:34`
   → Fix: add button + fallback to nearest available date
 
 ### Major

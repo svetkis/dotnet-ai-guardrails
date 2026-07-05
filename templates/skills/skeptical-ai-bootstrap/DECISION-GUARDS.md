@@ -35,10 +35,10 @@
 ### PERF-022: Удалён QueryFilter на SoftDelete
 **Дата:** 2026-03-15  
 **Автор:** @lead  
-**Контекст:** QueryFilter добавлял JOIN к users через Workspace.Owner.DeletedAt в каждом EXISTS-подзапросе. Под нагрузкой — деградация на 400ms.  
+**Контекст:** QueryFilter добавлял JOIN к users через Tenant.Owner.DeletedAt в каждом EXISTS-подзапросе. Под нагрузкой — деградация на 400ms.  
 **Решение:** Убрали `HasQueryFilter(s => !s.IsDeleted)`. Soft delete реализован явно в запросах.  
 **Последствия:** Агент, видя `HasQueryFilter` в других конфигах, попытается «исправить» это. Номер останавливает.  
-**Где в коде:** `src/Infrastructure/Persistence/Configuration/SlotConfiguration.cs:31`
+**Где в коде:** `src/Infrastructure/Persistence/Configuration/EntityConfiguration.cs:31`
 ```
 
 В коде рядом с решением оставляют краткий комментарий:

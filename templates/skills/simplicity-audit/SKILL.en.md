@@ -132,7 +132,7 @@ If the project tracks metrics — monitor dynamics:
 ## ANTI-HALLUCINATION Protocol
 
 Every finding MUST include:
-1. **Exact file and line:** `src/Application/BookingPipeline.cs:42`
+1. **Exact file and line:** `src/Application/OrderPipeline.cs:42`
 2. **Code quote:** 3-5 lines showing the problem
 3. **Rationale:** why this is excessive complexity (reference rule above)
 4. **Simple solution:** what the minimal version would look like

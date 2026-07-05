@@ -57,8 +57,8 @@ graph LR
 
 | Фича / Модуль | Публичный API (что экспортирует) | Может вызывать | НЕ может вызывать |
 |---------------|----------------------------------|----------------|-------------------|
-| `Features.Booking` | `CreateBooking`, `GetBooking` | `Features.Payment` (через интеграционные события) | `Features.Payment.Internal.*` |
-| `Features.Payment` | `ProcessPayment`, `Refund` | `Features.Notification` (через события) | `Features.Booking.Repository` |
+| `Features.Order` | `CreateOrder`, `GetOrder` | `Features.Payment` (через интеграционные события) | `Features.Payment.Internal.*` |
+| `Features.Payment` | `ProcessPayment`, `Refund` | `Features.Notification` (через события) | `Features.Order.Repository` |
 
 > **Где хранить:** Эта таблица копируется в комментарий к `ArchitectureRules.cs` — она становится «контрактом», который ломает тест при нарушении.
 

@@ -57,8 +57,8 @@ Fill in the table: what projects/assemblies exist and what dependencies are **al
 
 | Feature / Module | Public API (what it exports) | Can call | Cannot call |
 |------------------|------------------------------|----------|-------------|
-| `Features.Booking` | `CreateBooking`, `GetBooking` | `Features.Payment` (via integration events) | `Features.Payment.Internal.*` |
-| `Features.Payment` | `ProcessPayment`, `Refund` | `Features.Notification` (via events) | `Features.Booking.Repository` |
+| `Features.Order` | `CreateOrder`, `GetOrder` | `Features.Payment` (via integration events) | `Features.Payment.Internal.*` |
+| `Features.Payment` | `ProcessPayment`, `Refund` | `Features.Notification` (via events) | `Features.Order.Repository` |
 
 > **Where to store:** This table is copied into a comment in `ArchitectureRules.cs` — it becomes the "contract" that breaks the test when violated.
 

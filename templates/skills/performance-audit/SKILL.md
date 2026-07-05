@@ -51,6 +51,26 @@
 
 > **Note:** Проекции `.Select()` в DTO не нуждаются в `.AsNoTracking()` — EF Core не отслеживает их. Raw SQL (`FromSqlRaw`, `ExecuteSqlRaw`) и bulk update API (`ExecuteUpdateAsync`) тоже не отслеживаются Change Tracker.
 
+### Cross-Layer Invariants / Seam Analysis
+
+Перформанс-проблемы часто — следствие рассогласования между слоями. Для каждого
+горячего пути проверь:
+
+- [ ] **Cache vs source-of-truth:** каждый write-операция инвалидирует кэш на всех
+  слоях (in-memory, distributed, frontend state / sessionStorage). Чтение сразу
+  после write не возвращает stale данные.
+- [ ] **State resurrection:** прерванный flow, retry или back button не приводят к
+  повторной отправке старого состояния в API, которое уже неактуально.
+- [ ] **Job → DB → Cache seam:** background job обновляет БД, но не инвалидирует
+  кэш, или инвалидирует не тот ключ; downstream consumers видят старые данные.
+- [ ] **Hot path read/write contract:** read-оптимизации (`AsNoTracking`, проекции,
+  кэш) не просочились на write-path и не ломают бизнес-инварианты.
+- [ ] **Timezone / ordering seam:** даты фильтруются/сортируются одинаково в БД,
+  API и кэше; нет смещения из-за разных timezone или precision.
+- [ ] **Что пойдёт тихо не так?** Для каждой находки задай вопрос: при какой
+  последовательности действий пользователь увидит устаревшие/неверные данные или
+  получит деградацию под нагрузкой?
+
 ## Формат отчёта
 
 ```markdown

@@ -78,7 +78,7 @@ in an API name becomes a breaking change after release.
 ## ANTI-HALLUCINATION Protocol
 
 Every finding MUST include:
-1. **Exact file and line:** `src/Application/DTOs/BookingResponse.cs:14`
+1. **Exact file and line:** `src/Application/DTOs/OrderResponse.cs:14`
 2. **Code quote:** `public string RecieveNotificationEmail { get; set; }`
 3. **Typo and fix:** `Recieve` → `Receive`
 4. **Category:** public API / docs / comment
