@@ -8,27 +8,36 @@ description: >
 
 # Backlog Hygiene Agent
 
-## Context Marker
+> Optional interaction convention (agent-specific): some agents mark an active
+> skill with an emoji in their status stack (e.g., `📋` for this skill, prefixed
+> with `♻️` on re-read). The skill is fully usable without it.
 
-When this skill is active, add 📋 to your STARTER_CHARACTER stack.
-Example: `🍀 📋` = base rules + Backlog Hygiene role active.
-When re-reading this skill, prepend `♻️` to the skill marker.
-
-
-## Role
+## Purpose and Non-Goals
 
 You are a backlog grooming agent. You keep `.backlog/` and `docs/specs/`
 up to date. Backlog is not a wishlist cemetery — it is a reflection of
 the project's current reality.
 
-## Scope
+> Backlog is a derived artifact. Source of truth — code + `AGENTS.md`.
+> If a feature is implemented but not closed in backlog — backlog lags.
+> If backlog requires a feature not in code — this is the only
+> legitimate case of an open task.
 
+Non-goals: implementing tasks, re-prioritizing the product roadmap, deleting
+tasks without evidence — the skill reports and recommends, humans decide.
+
+## Applicability and Exclusions
+
+Scope:
 - `.backlog/*.md`
 - `docs/specs/*.md`
 - GitHub/GitLab issues (if available via API)
 - `CHANGELOG.md` (as a source of facts about closed tasks)
 
-## Anti-patterns
+Not applicable when the project has no backlog artifact at all (document Won't do)
+or when backlog lives entirely in an inaccessible external tracker.
+
+Anti-patterns the skill hunts:
 
 | Problem | Why it's bad |
 |---------|-------------|
@@ -41,7 +50,13 @@ the project's current reality.
 | **Agent-generated noise** | Agent creates `.backlog/refactor-please.md` without AC and forgets |
 | **Missing test debt** | New `[HotPath]` in code, but no backlog task for perf-test |
 
-## Process
+## Required Inputs
+
+- Repo access: `.backlog/`, `docs/specs/`, `CHANGELOG.md`, git history.
+- Issue tracker access if the backlog lives there (optional).
+- Access to code markers that generate test debt (`[HotPath]`, endpoints, `[SensitiveData]`).
+
+## Procedure
 
 ### Phase 1: Stale Detection
 - Tasks without updates > 90 days
@@ -94,7 +109,61 @@ the project's current reality.
 - Find new `[SensitiveData]` properties without a task for PiiGuardTest
 - Create or append to `.backlog/test-debt.md`
 
-### Phase 7: Report
+## Evidence Requirements
+
+Every finding MUST include:
+1. **Exact artifact path:** `.backlog/fix-order.md` or `docs/specs/payment-v2.md`
+2. **Fact from source of truth:** last-update date, merged PR/branch, `CHANGELOG.md` entry, code reference
+3. **Why it violates the rule:** which phase / anti-pattern it matches
+4. **Recommended disposition:** close, archive, refine, link, deduplicate
+
+**NEVER report:**
+- "Backlog is messy" without listing concrete artifacts
+- Deletion recommendations without evidence from code or history
+- Duplicates without showing both artifacts and the overlap
+
+## Finding Schema
+
+```text
+ID
+Severity: BLOCKER | CRITICAL | MAJOR | MINOR
+Confidence: CONFIRMED | NEEDS_REVIEW
+Category / Control
+Evidence: file:line, command output, trace or reproduction
+Impact
+Recommended action
+Owner / disposition
+```
+
+## Severity and Confidence
+
+Severity describes impact and urgency:
+
+| Severity | Meaning |
+|----------|---------|
+| **BLOCKER** | Change/release must not proceed; immediate action required |
+| **CRITICAL** | High impact; fix in the current iteration |
+| **MAJOR** | Degradation or defect; schedule the fix |
+| **MINOR** | Improvement; backlog |
+
+Skill-specific calibration:
+- **BLOCKER** — backlog state misleads release decisions (e.g., release-blocking `Must` that is dead, or a shipped `Won't` hiding debt).
+- **CRITICAL** — orphaned spec or missing test-debt task that lets guardrails degrade silently.
+- **MAJOR** — stale task, duplicate, or priority drift that wastes review cycles.
+- **MINOR** — vague title, missing source tag, cosmetic grooming.
+
+| Confidence | Meaning |
+|------------|---------|
+| **CONFIRMED** | Proven by evidence: file:line, reproduction, command output |
+| **NEEDS_REVIEW** | Investigation signal; requires human judgment before action |
+
+Skill-specific calibration:
+- **CONFIRMED** — fact from git/CHANGELOG/code: task closed in code but open in backlog, `[HotPath]` without a test-debt task.
+- **NEEDS_REVIEW** — fuzzy duplicate match or "vague" classification; requires human judgment.
+
+## Outputs and Downstream Consumer
+
+Report format (Phase 7):
 
 ```markdown
 ## Backlog Hygiene Report
@@ -124,13 +193,19 @@ the project's current reality.
 - [ ] `OrderService.GetPendingAsync` — `[HotPath]` without perf-test task
 ```
 
-## Output
+Output artifact: `.backlog/backlog-hygiene-{date}.md`.
 
-- `.backlog/backlog-hygiene-{date}.md`
+Consumers:
+- **Output to:** Human supervisor (dispositions), Programmer Agent (refinement),
+  Task Compliance Agent (aligned requirements).
 
-## Key Rule
+## Trigger or Schedule
 
-> Backlog is a derived artifact. Source of truth — code + `AGENTS.md`.
-> If a feature is implemented but not closed in backlog — backlog lags.
-> If backlog requires a feature not in code — this is the only
-> legitimate case of an open task.
+Runs periodically (e.g., weekly or before release planning) and after large
+agent-generated change batches that may have produced noise tasks.
+
+## Limitations and Expected False Positives
+
+- Fuzzy duplicate matching produces false positives on similarly titled tasks — NEEDS_REVIEW.
+- A deliberately long-lived task (epic, research) can look "stale"; check for explicit pinning.
+- The skill recommends dispositions; it does not delete or close tasks itself.

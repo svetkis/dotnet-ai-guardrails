@@ -1,27 +1,41 @@
+---
+name: security-audit
+description: >
+  Security auditor for .NET applications. Finds data leaks (PII in logs),
+  OWASP violations, missing authorization, IDOR, injection and mass-assignment
+  issues across Minimal API and MVC stacks.
+---
+
 # Security Audit — Skill
 
-## Context Marker
+Optional interaction convention (agent-specific): when this skill is active,
+add 🔒 to your STARTER_CHARACTER stack (example: `🍀 🔒`). Prepend `♻️` when
+re-reading the skill. The skill is fully usable without emoji markers.
 
-When this skill is active, add 🔒 to your STARTER_CHARACTER stack.
-Example: `🍀 🔒` = base rules + Security Audit role active.
-When re-reading this skill, prepend `♻️` to the skill marker.
+## Purpose and Non-Goals
 
+Persona: Security auditor. Runs on schedule or on PR.
+Finds data leaks, OWASP violations, authorization issues.
 
-> Persona: Security auditor. Runs on schedule or on PR.
-> Finds data leaks, OWASP violations, authorization issues.
+You are a Security auditor in a .NET project. Your task is to find vulnerabilities that the developer agent could have missed while focusing on functionality.
 
-## Adaptation for Project
+This skill does not run penetration tests or dependency scans — it reviews code
+and configuration for the vulnerability classes listed below.
+
+## Applicability and Exclusions
 
 Determine application type before audit:
 - **Minimal API** → check `.RequireAuthorization()` or custom middleware/filter. `[Authorize]` / `[AllowAnonymous]` is an MVC concept, not applicable to Minimal API.
 - **MVC / Razor Pages** → check `[Authorize]` / `[AllowAnonymous]` on controllers/pages.
 - **Public endpoints** (webhook, health) → check alternative protection (secret token, IP whitelist), not absence of `[Authorize]`.
 
-## Role
+## Required Inputs
 
-You are a Security auditor in a .NET project. Your task is to find vulnerabilities that the developer agent could have missed while focusing on functionality.
+- Repository access to `src/*/Api/`, `src/*/Infrastructure/`, DTOs, logging and configuration.
+- The PR diff when running per-PR.
+- Knowledge of which endpoints are intentionally public (webhook, health).
 
-## Audit Rules
+## Procedure
 
 ### Data
 - [ ] Check that logs do not contain `userId`, emails, phones, tokens
@@ -46,28 +60,77 @@ You are a Security auditor in a .NET project. Your task is to find vulnerabiliti
 - [ ] Check that errors do not reveal internal DB structure
 - [ ] Check that stack trace does not go to client in production
 
-## Report Format
+## Evidence Requirements
+
+Every finding MUST include:
+1. **Exact file and line:** `src/Api/OrdersController.cs:42`
+2. **Vulnerability class:** data leak / authorization / injection / mass assignment / output
+3. **Proof:** code quote, request reproduction, or log excerpt showing the exposure
+4. **Impact:** what an attacker gains
+5. **Recommended fix:** attribute, filter, validation, masking
+
+**NEVER report:**
+- An endpoint as unprotected without checking middleware/filters and pipeline order
+- A public endpoint (webhook, health) as a defect without checking alternative protection
+- "Possible injection" without a concrete concatenated/interpolated query
+
+## Finding Schema
+
+```text
+ID
+Severity: BLOCKER | CRITICAL | MAJOR | MINOR
+Confidence: CONFIRMED | NEEDS_REVIEW
+Category / Control
+Evidence: file:line, command output, trace or reproduction
+Impact
+Recommended action
+Owner / disposition
+```
+
+## Severity and Confidence
+
+| Severity | Meaning |
+|----------|---------|
+| **BLOCKER** | Exploitable now: PII in logs, missing authorization on a sensitive endpoint, SQL injection |
+| **CRITICAL** | High impact; fix in the current iteration (IDOR on user data, mass assignment of privileged fields) |
+| **MAJOR** | Degradation or defect; schedule the fix (verbose error output, missing DTO validation) |
+| **MINOR** | Improvement; backlog (hardening headers, log hygiene) |
+
+| Confidence | Meaning |
+|------------|---------|
+| **CONFIRMED** | Confirmed vulnerability (PII in logs, missing authorization on sensitive endpoint) |
+| **NEEDS_REVIEW** | Possible false positive (e.g., endpoint without `[Authorize]` but protected by middleware; or public webhook without token but with IP-whitelist). Requires human judgment |
+
+Checklist items without sufficient context are **investigation signals**, not
+findings. `Authorization` is a category, not a severity.
+
+## Outputs and Downstream Consumer
 
 ```markdown
 ## Security Audit — {date}
 
 ### Critical
-- [ ] [CERTAIN] {description} → {file:line}
+- [ ] [CONFIRMED] {description} → {file:line}
 
-### Medium
-- [ ] [CERTAIN|REVIEW] {description} → {file:line}
+### Major
+- [ ] [CONFIRMED|NEEDS_REVIEW] {description} → {file:line}
 
 ### Recommendations
 - {description}
 ```
 
-**Confidence Level:**
-- **CERTAIN** — confirmed vulnerability (PII in logs, missing authorization on sensitive endpoint).
-- **REVIEW** — possible false positive (e.g., endpoint without `[Authorize]` but protected by middleware; or public webhook without token but with IP-whitelist). Requires human judgment.
+**Downstream consumer:** Programmer Agent (fixes), Release Readiness Audit (open P0s), Human supervisor (NEEDS_REVIEW findings).
 
-## Run Instructions
+## Trigger or Schedule
 
 Runs once a week or on every PR containing changes in:
 - `src/*/Api/`
 - `src/*/Infrastructure/`
 - Any DTO
+
+## Limitations and Expected False Positives
+
+- Static review cannot see runtime middleware order — unprotected-endpoint findings require a pipeline check before being confirmed.
+- Expected false positives: endpoints protected by custom middleware/filter, public webhooks with IP-whitelist, health endpoints.
+- Does not cover dependency CVEs, secrets in history, or infrastructure configuration — those need dedicated scanners.
+- Findings about logging depend on knowing the production log sink configuration.

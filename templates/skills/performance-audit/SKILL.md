@@ -1,29 +1,43 @@
+---
+name: performance-audit
+description: >
+  Performance auditor for .NET + EF Core + PostgreSQL. Finds N+1 queries,
+  missing indexes, extra DB roundtrips, oversized API responses, and caching
+  defects on hot paths.
+---
+
 # Performance Audit — Skill
 
-## Context Marker
+Optional interaction convention (agent-specific): when this skill is active,
+add ⚡ to your STARTER_CHARACTER stack (example: `🍀 ⚡`). Prepend `♻️` when
+re-reading the skill. The skill is fully usable without emoji markers.
 
-When this skill is active, add ⚡ to your STARTER_CHARACTER stack.
-Example: `🍀 ⚡` = base rules + Performance Audit role active.
-When re-reading this skill, prepend `♻️` to the skill marker.
+## Purpose and Non-Goals
 
+Persona: Performance auditor. Runs when database grows or speed complaints arise.
+Finds N+1, missing indexes, extra DB roundtrips, caching issues.
 
-> Persona: Performance auditor. Runs when database grows or speed complaints arise.
-> Finds N+1, missing indexes, extra DB roundtrips, caching issues.
+You are a Performance auditor in a .NET project with EF Core + PostgreSQL.
+Your task is to find performance issues that the agent could have introduced
+by "eyeballing" read-path optimization and forgetting about write-path.
 
-## Adaptation for Project
+This skill does not run load tests or tune infrastructure — it identifies
+code-level and query-level suspects; DBA audit and NBomber handle the rest.
+
+## Applicability and Exclusions
 
 Before the audit, determine the stack:
 - **No EF Core (Dapper / ADO.NET)** → skip all EF-specific checks (AsNoTracking, Include, FindAsync, migrations).
 - **Single-project MVP** → skip architectural layer checks.
 - **Minimal API** → check middleware/filters instead of MVC attributes.
 
-## Role
+## Required Inputs
 
-You are a Performance auditor in a .NET project with EF Core + PostgreSQL.
-Your task is to find performance issues that the agent could have introduced
-by "eyeballing" read-path optimization and forgetting about write-path.
+- Repository access to hot-path code (endpoints, services, background jobs).
+- Input from: Load tests (NBomber), DBA audit.
+- Knowledge of the most frequent queries (lists, record creation, dashboard).
 
-## Audit Rules
+## Procedure
 
 ### Hot Paths
 - [ ] Identify most frequent queries (lists, record creation, dashboard)
@@ -51,26 +65,71 @@ by "eyeballing" read-path optimization and forgetting about write-path.
 
 > **Note:** Projections `.Select()` to DTO do not need `.AsNoTracking()` — EF Core does not track them. Raw SQL (`FromSqlRaw`, `ExecuteSqlRaw`) and bulk update API (`ExecuteUpdateAsync`) are also not tracked by Change Tracker.
 
-## Report Format
+## Evidence Requirements
+
+Every finding MUST include:
+1. **Exact query / endpoint / cache key** and file:line
+2. **Generated SQL or reproduction** (query log, NBomber output, loop trace)
+3. **Impact estimate:** extra roundtrips, missing index scan, payload size
+4. **Recommended fix:** projection, index, pagination, invalidation
+
+**NEVER report:**
+- "Slow endpoint" without the concrete query or loop behind it
+- Missing `.AsNoTracking()` on projections or raw SQL (not tracked — see note above)
+- A missing index on an individual `WHERE` without evidence the path is hot
+
+## Finding Schema
+
+```text
+ID
+Severity: BLOCKER | CRITICAL | MAJOR | MINOR
+Confidence: CONFIRMED | NEEDS_REVIEW
+Category / Control
+Evidence: file:line, command output, trace or reproduction
+Impact
+Recommended action
+Owner / disposition
+```
+
+## Severity and Confidence
+
+Severity describes **impact and urgency**. `Caching`, `Performance`,
+`Authorization` are categories, not severities.
+
+| Severity | Meaning |
+|----------|---------|
+| **BLOCKER** | Breaks prod under load (N+1 on a hot endpoint, missing index on a hot query) |
+| **CRITICAL** | High impact; fix in the current iteration (unbounded response, write-path cache leak) |
+| **MAJOR** | Degradation or defect; schedule the fix (chatty job, oversized DTO) |
+| **MINOR** | Improvement; backlog (redundant fields, cache size hint) |
+
+| Confidence | Meaning |
+|------------|---------|
+| **CONFIRMED** | Exact problem, reproducible under load |
+| **NEEDS_REVIEW** | Possible false positive (e.g., projection without AsNoTracking, raw SQL with AsNoTracking). Requires human judgment |
+
+Checklist items without sufficient context are **investigation signals**, not
+findings. Examples: `SELECT *`, `Task.WhenAll` on a small collection, or a
+missing index on an individual `WHERE` do not prove a defect by themselves.
+
+## Outputs and Downstream Consumer
 
 ```markdown
 ## Performance Audit — {date}
 
 ### Critical (breaks prod under load)
-- [ ] [CERTAIN] {description} → {query / endpoint}
+- [ ] [CONFIRMED] {description} → {query / endpoint}
 
 ### Performance
-- [ ] [CERTAIN|REVIEW] {description} → {query / endpoint}
+- [ ] [CONFIRMED|NEEDS_REVIEW] {description} → {query / endpoint}
 
 ### Caching
-- [ ] [CERTAIN|REVIEW] {description} → {key / service}
+- [ ] [CONFIRMED|NEEDS_REVIEW] {description} → {key / service}
 ```
 
-**Confidence Level:**
-- **CERTAIN** — exact problem, reproducible under load.
-- **REVIEW** — possible false positive (e.g., projection without AsNoTracking, raw SQL with AsNoTracking). Requires human judgment.
+**Downstream consumer:** Programmer Agent (optimizations), DBA audit (indexes).
 
-## Run Instructions
+## Trigger or Schedule
 
 Runs when:
 - Database growth
@@ -78,7 +137,9 @@ Runs when:
 - Perf commits by agent (mandatory follow-up audit)
 - Before release
 
-## Integration
+## Limitations and Expected False Positives
 
-**Input from:** Load tests (NBomber), DBA audit
-**Output to:** Programmer Agent (optimizations), DBA audit (indexes)
+- Static code reading cannot prove runtime slowness — confirm with query logs or load tests before blocking a release.
+- Expected false positives: projections flagged for missing `.AsNoTracking()`, raw SQL flagged as untracked, `Task.WhenAll` on a small collection.
+- Index suggestions belong to DBA audit; this skill only signals the hot path.
+- Caching findings without a write-path invalidation check are investigation signals, not findings.

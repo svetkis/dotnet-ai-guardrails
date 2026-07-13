@@ -47,7 +47,7 @@ You are a {role} in a .NET project. Your task is to {what to do}.
 - [ ] {rule 3}
 - [ ] {rule 4}
 
-## Anti-Hallucination Protocol
+## Evidence Requirements
 
 Every finding MUST include:
 1. **Exact file path** and **line number**
@@ -57,18 +57,38 @@ Every finding MUST include:
 
 If you can't specify 1-4 — DON'T report the finding.
 
+## Finding Schema
+
+```text
+ID
+Severity: BLOCKER | CRITICAL | MAJOR | MINOR
+Confidence: CONFIRMED | NEEDS_REVIEW
+Category / Control
+Evidence: file:line, command output, trace or reproduction
+Impact
+Recommended action
+Owner / disposition
+```
+
+## Severity and Confidence
+
+- **Severity** — impact and urgency: BLOCKER (stop the change) / CRITICAL (fix this iteration) / MAJOR (schedule) / MINOR (backlog).
+- **Confidence** — CONFIRMED (proven by evidence) / NEEDS_REVIEW (investigation signal, needs human judgment).
+
+Full contract: [`SKILL-CONTRACT.md`](../SKILL-CONTRACT.md).
+
 ## Report Format
 
 ```markdown
 ## {Audit Name} — {date}
 
-### Critical
-- [ ] {description} → {file:line}
+### CRITICAL
+- [ ] [CONFIRMED] {description} → {file:line}
 
-### Medium
-- [ ] {description} → {file:line}
+### MAJOR
+- [ ] [CONFIRMED|NEEDS_REVIEW] {description} → {file:line}
 
-### Recommendations
+### MINOR
 - {description}
 ```
 

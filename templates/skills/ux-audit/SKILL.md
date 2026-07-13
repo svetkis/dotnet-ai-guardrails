@@ -8,31 +8,35 @@ description: >
 
 # UX Audit — Skill
 
-## Context Marker
-
-When this skill is active, add 🎯 to your STARTER_CHARACTER stack.
-Example: `🍀 🎯` = base rules + UX Audit role active.
-When re-reading this skill, prepend `♻️` to the skill marker.
-
+> Optional interaction convention (agent-specific): when this skill is active,
+> some agents add 🎯 to their STARTER_CHARACTER stack (e.g. `🍀 🎯` = base
+> rules + UX Audit role active; prepend `♻️` when re-reading). The skill is
+> fully usable without this marker.
 
 > **Repo-internal / for methodology archive.** This skill describes a methodological guardrail inside the `dotnet-ai-guardrails` repository. The methodological core (scenario analysis, states and feedback, UI race conditions, cross-layer invariants) applies to any project, but the examples are illustrations, not a universal template.
->
-> Persona: UX auditor. Runs when redesigning UI or before public beta.
-> Finds friction points: dead ends, empty states, generic errors, lack of feedback.
 
-## Project Adaptation
-
-- **No frontend (API only)** → focus on API error responses and client edge cases.
-- **Telegram bot** → check message flow, buttons, callback handling. See also `templates/skills/bot-audit/`.
-- **Web/Mobile** → check screen states, CTAs, loading indicators, validation feedback.
-
-## Role
+## Purpose and Non-Goals
 
 You are a UX auditor. Your task is to find places where the user gets stuck,
 does not understand what is happening, or cannot complete an action.
 Do not hunt bugs — hunt friction in user experience.
 
-## Audit Rules
+> Persona: UX auditor. Runs when redesigning UI or before public beta.
+> Finds friction points: dead ends, empty states, generic errors, lack of feedback.
+
+## Applicability and Exclusions
+
+- **No frontend (API only)** → focus on API error responses and client edge cases.
+- **Telegram bot** → check message flow, buttons, callback handling. See also `templates/skills/bot-audit/`.
+- **Web/Mobile** → check screen states, CTAs, loading indicators, validation feedback.
+
+## Required Inputs
+
+- Access to the relevant handlers, UI components, and API contracts.
+- List of key user scenarios (or permission to derive them from the codebase).
+- Ability to trace the API → frontend contract for each scenario.
+
+## Procedure
 
 ### Scenario Analysis
 For each key scenario, walk through from start to finish:
@@ -77,7 +81,7 @@ For each key scenario, walk through from start to finish:
 - [ ] API returns flags for special states (`OperationPaused`, `TrialExpired`)?
 - [ ] API errors have machine-readable codes (`resource_unavailable`), not just text?
 
-## ANTI-HALLUCINATION Protocol
+## Evidence Requirements
 
 Every finding MUST include:
 1. **Exact file and line:** `src/.../Handler.cs:42`
@@ -91,43 +95,58 @@ Every finding MUST include:
 - "Text is unclear" without quoting the text and explaining what is unclear
 - Problems you cannot confirm with code or behavior description
 
-## Severity Levels
+## Finding Schema
+
+```text
+ID
+Severity: BLOCKER | CRITICAL | MAJOR | MINOR
+Confidence: CONFIRMED | NEEDS_REVIEW
+Category / Control
+Evidence: file:line, command output, trace or reproduction
+Impact
+Recommended action
+Owner / disposition
+```
+
+## Severity and Confidence
 
 - **BLOCKER** — user cannot complete action (dead end without exit, payment without feedback, duplicates on double press)
 - **CRITICAL** — confusion, data loss, unclear error (generic error, empty screen without CTA, orphaned state)
 - **MAJOR** — inconvenience, extra click, illogical label
 - **MINOR** — cosmetic, minor text inaccuracy
 
-## Confidence Level
+- **CONFIRMED** — found specific dead end, empty screen without CTA, generic error instead of specifics, duplicates on double-submit
+- **NEEDS_REVIEW** — subjective assessment: "clarity" of text, "logic" of flow. Requires human judgment.
 
-- **CERTAIN** — found specific dead end, empty screen without CTA, generic error instead of specifics, duplicates on double-submit
-- **REVIEW** — subjective assessment: "clarity" of text, "logic" of flow. Requires human judgment.
-
-## Report Format
+## Outputs and Downstream Consumer
 
 ```markdown
 ## UX Audit — {date}
 
-### Blocker
-- [ ] [CERTAIN] {description of dead end} → `{file:line}`
+### BLOCKER
+- [ ] [CONFIRMED] {description of dead end} → `{file:line}`
 
-### Critical
-- [ ] [CERTAIN] {generic error — client does not know the result of the operation} → `{file:line}`
+### CRITICAL
+- [ ] [CONFIRMED] {generic error — client does not know the result of the operation} → `{file:line}`
   → Fix: return `Status` in response + specific error code
 
-### Major
-- [ ] [REVIEW] {missing loading indicator for a long operation} → `{file:line}`
+### MAJOR
+- [ ] [NEEDS_REVIEW] {missing loading indicator for a long operation} → `{file:line}`
   → Fix: `isLoading` state + spinner
 ```
 
-## Execution
+**Input from:** Bot Audit (Telegram-specific findings), Code Review Agent (UI diff).
+**Output to:** Programmer Agent (flow/text fixes), Frontend Agent (UI fixes).
+
+## Trigger or Schedule
 
 Runs:
 - When redesigning UI.
 - Before public beta.
 - When users complain about "confusing" flow.
 
-## Integration
+## Limitations and Expected False Positives
 
-**Input from:** Bot Audit (Telegram-specific findings), Code Review Agent (UI diff).
-**Output to:** Programmer Agent (flow/text fixes), Frontend Agent (UI fixes).
+- Text "clarity" and flow "logic" are subjective — mark `NEEDS_REVIEW`.
+- A state may be handled on the client rather than the API (or vice versa); verify the full path before flagging a missing state.
+- Without a running UI, race-condition findings are inferred from code, not observed.

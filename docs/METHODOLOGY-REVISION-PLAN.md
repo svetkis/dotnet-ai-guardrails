@@ -228,7 +228,16 @@ ADR описана явно.
 
 **Готово, когда:** читатель понимает происхождение и точный смысл каждого термина.
 
-#### METH-012 — Нормализовать skill contracts
+#### METH-012 — Нормализовать skill contracts ✅
+
+> **Сделано:** создан `templates/skills/SKILL-CONTRACT.md` (11 обязательных разделов,
+> каноническая finding schema, severity/confidence). Все 25 устанавливаемых скиллов
+> нормализованы: frontmatter добавлен (dba-audit, dba-audit-dapper, performance-audit,
+> security-audit, type-safety), `ANTI-HALLUCINATION` → `Evidence Requirements`,
+> CERTAIN/REVIEW → CONFIRMED/NEEDS_REVIEW, severity → BLOCKER/CRITICAL/MAJOR/MINOR,
+> emoji context markers → optional interaction convention. Bootstrap bundle явно
+> оформлен как неустанавливаемый (README + исключение в линте). Автоматический
+> schema-lint: `ci/scripts/check-skills.sh` — проходит для всех скиллов.
 
 - Добавить отсутствующий frontmatter.
 - Унифицировать разделы, finding schema, severity и confidence.

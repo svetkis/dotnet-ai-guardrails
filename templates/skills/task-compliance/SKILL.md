@@ -7,22 +7,29 @@ description: Feature-scope compliance check. Validates diff against specs, accep
 
 # Task Compliance & Traceability Agent
 
-## Context Marker
+> Optional interaction convention (agent-specific): when this skill is active,
+> some agents add 📌 to their STARTER_CHARACTER stack (e.g. `🍀 📌` = base
+> rules + Task Compliance role active; prepend `♻️` when re-reading). The skill
+> is fully usable without this marker.
 
-When this skill is active, add 📌 to your STARTER_CHARACTER stack.
-Example: `🍀 📌` = base rules + Task Compliance role active.
-When re-reading this skill, prepend `♻️` to the skill marker.
+## Purpose and Non-Goals
 
-
-## Intent
 Verify that a specific code change (feature implementation) fully satisfies the original intent, acceptance criteria, and technical specifications. Detect scope creep, missing acceptance criteria, and untested requirements within the current diff only.
 
-## Pre-conditions
+Non-goals: do not review code style (that is the Code Review Agent's job) and do not modify code.
+
+## Applicability and Exclusions
+
+- **Applies to:** projects with written feature specs and acceptance criteria, where a git diff against a base branch is available.
+- **Exclusions:** does not apply when no spec/AC document exists for the change; exploratory prototypes without a declared scope cannot be checked for creep.
+
+## Required Inputs
+
 - Active feature spec exists (e.g., `docs/specs/[feature].md` or `.backlog/[feature].md`)
 - Acceptance criteria are documented
 - Git diff is available for the current feature branch against `main`
 
-## Step-by-Step Logic
+## Procedure
 
 ### Phase 1: Ingest Intent & Contracts
 1. **Read Spec/Backlog:** Load the active spec file. Extract:
@@ -75,17 +82,8 @@ Verify that a specific code change (feature implementation) fully satisfies the 
    - Deletes business-critical methods or regression tests
    Flag as `REGRESSION_RISK`.
 
-### Phase 5: Evidence Collection (ANTI-HALLUCINATION)
-8. **Verify Every Finding:** Before reporting any issue, confirm:
-   - **Exact diff location:** File path + line number in added code
-   - **Code snippet:** Quote the relevant `+` lines
-   - **Spec reference:** Quote the AC or spec requirement that is violated or unmet
-   - **Verification method:** "Searched diff for `MethodName`", "checked spec Section X"
-
-   **NEVER report:**
-   - Missing implementation without checking the diff for expected method names
-   - Scope creep without quoting the unrelated added code and the backlog scope
-   - Issues inferred from memory — only this feature's diff and specs
+### Phase 5: Evidence Collection (see Evidence Requirements)
+8. **Verify Every Finding:** Before reporting any issue, confirm the evidence items listed below.
 
 9. **Self-Correction Loop:** After drafting findings:
    - Did I check the actual diff, or am I assuming what should be there?
@@ -93,9 +91,56 @@ Verify that a specific code change (feature implementation) fully satisfies the 
    - Is the added code really unrelated, or did I miss the AC link?
 
 ### Phase 6: Report Generation
-10. **Compile Feature Compliance Report:**
+10. **Compile Feature Compliance Report** (see Outputs and Downstream Consumer).
 
-## Output Format
+### Quality Gates
+- [ ] Every AC from spec is mapped to diff or flagged MISSING
+- [ ] Every IMPLEMENTED AC has corresponding TESTED or UNTESTED status
+- [ ] No SCOPE_CREEP without quoted backlog scope and unrelated diff code
+- [ ] No REGRESSION_RISK without showing the removed code
+- [ ] All findings include exact diff locations and quoted snippets
+
+## Evidence Requirements
+
+Before reporting any issue, confirm:
+- **Exact diff location:** File path + line number in added code
+- **Code snippet:** Quote the relevant `+` lines
+- **Spec reference:** Quote the AC or spec requirement that is violated or unmet
+- **Verification method:** "Searched diff for `MethodName`", "checked spec Section X"
+
+**NEVER report:**
+- Missing implementation without checking the diff for expected method names
+- Scope creep without quoting the unrelated added code and the backlog scope
+- Issues inferred from memory — only this feature's diff and specs
+
+## Finding Schema
+
+```text
+ID
+Severity: BLOCKER | CRITICAL | MAJOR | MINOR
+Confidence: CONFIRMED | NEEDS_REVIEW
+Category / Control
+Evidence: file:line, command output, trace or reproduction
+Impact
+Recommended action
+Owner / disposition
+```
+
+## Severity and Confidence
+
+| Severity | Meaning |
+|----------|---------|
+| **BLOCKER** | MISSING AC on a critical path, or REGRESSION_RISK removing business-critical functionality; the feature must not proceed |
+| **CRITICAL** | MISSING or UNTESTED acceptance criterion, or confirmed SCOPE_CREEP; fix in the current iteration |
+| **MAJOR** | PARTIAL implementation with gaps; schedule the fix |
+| **MINOR** | Traceability or hygiene improvement; backlog |
+
+| Confidence | Meaning |
+|------------|---------|
+| **CONFIRMED** | Proven by evidence: diff location, spec quote, verification method |
+| **NEEDS_REVIEW** | Possible misread of intent; requires human judgment before action |
+
+## Outputs and Downstream Consumer
 
 ```markdown
 ## Compliance Report: [Feature ID] — [Feature Title]
@@ -135,20 +180,22 @@ Verify that a specific code change (feature implementation) fully satisfies the 
 - **Next Action:** [Route to Programmer / Proceed to QA / Await Human Decision]
 ```
 
-## Quality Gates
-- [ ] Every AC from spec is mapped to diff or flagged MISSING
-- [ ] Every IMPLEMENTED AC has corresponding TESTED or UNTESTED status
-- [ ] No SCOPE_CREEP without quoted backlog scope and unrelated diff code
-- [ ] No REGRESSION_RISK without showing the removed code
-- [ ] All findings include exact diff locations and quoted snippets
+**Input from:** Analyst/Architect (specs), Programmer (diff)
+**Output to:** Programmer (missing/creep items), Code Review Agent (validated diff for style audit), Human supervisor (scope decisions)
+**Runs before:** Code Review Agent — compliance gates the feature before style review
+
+## Trigger or Schedule
+
+Runs per feature branch before the diff goes to code review, when spec, diff, and acceptance criteria are all available.
+
+## Limitations and Expected False Positives
+
+- Specs that are vague, outdated, or contradict the code produce false MISSING/SCOPE_CREEP flags — mark them `NEEDS_REVIEW`.
+- Indirect implementations (AC satisfied via an existing shared component, not new diff code) may look MISSING.
+- Large diffs mixing refactor + feature make scope filtering approximate.
 
 ## Interaction Guidelines
 - **Communication:** Use the same language the user employs
 - **Code Immutability:** You MUST NOT modify any files
 - **Write Access:** You MAY append compliance reports to `.backlog/` only
 - **Git Compliance:** Do not execute `git commit`, `git push`, or merges
-
-## Integration Points
-- **Input from:** Analyst/Architect (specs), Programmer (diff)
-- **Output to:** Programmer (missing/creep items), Code Review Agent (validated diff for style audit), Human supervisor (scope decisions)
-- **Runs before:** Code Review Agent — compliance gates the feature before style review

@@ -10,18 +10,28 @@ description: >
 
 # Memory Hygiene Agent
 
-## Context Marker
+Optional interaction convention (agent-specific): when this skill is active,
+add 🧹 to your STARTER_CHARACTER stack (example: `🍀 🧹`). Prepend `♻️` when
+re-reading the skill. The skill is fully usable without emoji markers.
 
-When this skill is active, add 🧹 to your STARTER_CHARACTER stack.
-Example: `🍀 🧹` = base rules + Memory Hygiene role active.
-When re-reading this skill, prepend `♻️` to the skill marker.
-
-
-## Role
+## Purpose and Non-Goals
 
 You are a memory grooming agent. Your task is to clean up flat notes
 that the agent has accumulated about the project and eliminate duplication
 with hierarchical guardrails.
+
+This skill does not write new architectural rules or modify code — it flags
+memory issues and recommends moves, merges, and deletions for human approval.
+
+## Applicability and Exclusions
+
+Applies to any project where an AI agent maintains flat auto-memory alongside
+hierarchical `AGENTS.md` guardrails.
+
+- **No flat agent memory** → this skill is not applicable (Won't do).
+- **Memory perfectly mirrors AGENTS.md** → deduplication only, other phases N/A.
+- The concrete memory sources below (`.serena/memories/`, `.kimi/`, etc.) are
+  examples — adapt to the memory system actually in use.
 
 ## Preconditions
 
@@ -30,6 +40,12 @@ with hierarchical guardrails.
 - **AGENTS.md** is hierarchical. Context-dependent for each folder.
   Designed by the developer.
 - **Auto Memory ≠ AGENTS.md**. They are orthogonal.
+
+## Required Inputs
+
+- Repository access to flat memory sources (`.claude/CLAUDE.md`, `.kimi/skills/README.md`, `.serena/memories/`, root `.md` context files).
+- Access to hierarchical `AGENTS.md` files and `global.json` / `.csproj` for stack verification.
+- Access to bug/PR references used to validate workarounds and preferences.
 
 ## Anti-patterns
 
@@ -44,7 +60,7 @@ with hierarchical guardrails.
 | **TODO accumulation** | "Consider…", "Need to…" accumulate for months and interfere with prioritization |
 | **One-shot generalization** | One-off PR decision generalized as team preference |
 
-## Process
+## Procedure
 
 ### Phase 1: Inventory
 1. Find all sources of flat memory:
@@ -108,6 +124,55 @@ with hierarchical guardrails.
 
 ### Phase 6: Cleanup Recommendations
 
+Produce the report (see Outputs) and the cleanup recommendations file.
+
+## Evidence Requirements
+
+Every finding MUST include:
+1. **Exact memory source:** file path of the flat-memory note (`memory-09.md`)
+2. **Quoted note content:** the exact text being flagged
+3. **Contradicting or confirming source:** `AGENTS.md` path, `global.json`, `global.json`/`.csproj` stack fact, bug/PR/ticket reference, or "source not found"
+4. **Age of the note** where staleness is claimed (> 30 / > 60 days)
+5. **Recommended action:** merge / move / delete / archive / track
+
+**NEVER report:**
+- Notes as "duplicates" without stating which guardrail or note they duplicate
+- Staleness without an age or missing-source check
+- Preferences as wrong without checking for an explicit source first
+
+## Finding Schema
+
+```text
+ID
+Severity: BLOCKER | CRITICAL | MAJOR | MINOR
+Confidence: CONFIRMED | NEEDS_REVIEW
+Category / Control
+Evidence: file:line, command output, trace or reproduction
+Impact
+Recommended action
+Owner / disposition
+```
+
+## Severity and Confidence
+
+| Severity | Meaning |
+|----------|---------|
+| **BLOCKER** | Memory actively misleads the agent (contradiction with AGENTS.md, wrong stack from another project) |
+| **CRITICAL** | Fossilized workaround treated as best practice; architectural rule living only in flat memory |
+| **MAJOR** | Semantic duplicates, stale file references, todo graveyard |
+| **MINOR** | Unverified preferences, minor redundancy |
+
+| Confidence | Meaning |
+|------------|---------|
+| **CONFIRMED** | Proven by evidence: file:line, reproduction, command output |
+| **NEEDS_REVIEW** | Investigation signal; requires human judgment before action |
+
+Checklist items without sufficient context are **investigation signals**, not
+findings. A negative recommendation or a preference note is not a defect by
+itself — only after the source check fails.
+
+## Outputs and Downstream Consumer
+
 ```markdown
 ## Memory Hygiene Report
 
@@ -133,9 +198,20 @@ with hierarchical guardrails.
 - [ ] `memory-04.md`: "Team prefers JSON over MessagePack" — source not found
 ```
 
-## Output
+- Report file: `.backlog/memory-hygiene-{date}.md`
+- **Downstream consumer:** Human supervisor approves cleanup actions; Doc Hygiene Agent moves architectural rules into `AGENTS.md`.
 
-- `.backlog/memory-hygiene-{date}.md`
+## Trigger or Schedule
+
+Run periodically (e.g., once per month or per sprint) and after major
+refactorings, stack changes, or when the agent starts citing outdated facts.
+
+## Limitations and Expected False Positives
+
+- Detects semantic duplication by intent — clustering may miss paraphrases or merge unrelated notes.
+- Age-based staleness (> 30 / > 60 days) is a heuristic: an old note may still be correct.
+- Cross-project contamination check relies on `global.json` / `.csproj`; polyglot repos may trigger false positives — mark them NEEDS_REVIEW.
+- The skill recommends deletions; final decisions stay with the human.
 
 ## Key Rule
 

@@ -35,5 +35,5 @@
 ## Quality Gates
 - [ ] Every finding includes: file, line, hardcoded quote, context (UI/log/exception)
 - [ ] No MAJOR without an exact string quote from code
-- [ ] REVIEW findings marked as requiring human judgment
+- [ ] NEEDS_REVIEW findings marked as requiring human judgment
 - [ ] Technical strings (logs, exceptions) excluded from report

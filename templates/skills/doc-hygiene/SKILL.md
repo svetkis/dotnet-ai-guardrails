@@ -6,21 +6,28 @@ description: >
   Catches dead rules and guardrail bloat.
 ---
 
-> **Repo-internal / for methodology archive.** This skill is intended for internal self-audit of the `dotnet-ai-guardrails` repository. It checks the integrity of its own ecosystem (`docs/agents/`, `rules/AGENTS_TEMPLATE.md`, `templates/skills/`, `examples/`). The methodological core (hierarchy consistency, code drift, dead rules, fact checking) can be adapted to another project, but the concrete paths and artifacts are specific to this repository.
-
 # Doc Hygiene Agent
 
-## Context Marker
+> **Repo-internal / for methodology archive.** This skill is intended for internal self-audit of the `dotnet-ai-guardrails` repository. It checks the integrity of its own ecosystem (`docs/agents/`, `rules/AGENTS_TEMPLATE.md`, `templates/skills/`, `examples/`). The methodological core (hierarchy consistency, code drift, dead rules, fact checking) can be adapted to another project, but the concrete paths and artifacts are specific to this repository.
 
-When this skill is active, add 📝 to your STARTER_CHARACTER stack.
-Example: `🍀 📝` = base rules + Doc Hygiene role active.
-When re-reading this skill, prepend `♻️` to the skill marker.
+## Purpose and Non-Goals
 
+- Persona: documentation grooming agent. Checks that hierarchical guardrails do not contradict each other and match the code.
+- Catches dead rules (no enforcement), internal contradictions, guardrail bloat, and drift between docs and code.
+- **Key rule:** AGENTS.md is the single source of truth for architectural guardrails. Everything else (docs/agents/, templates/skills/) is derived. If it diverges — update the derived docs, not the root. A dead rule is worse than no rule: if there is no enforcement, remove it or add a guardrail.
+- **Non-goals:** writing new documentation; changing the guardrail rules themselves (recommendations only); reviewing code correctness.
 
-## Role
+## Applicability and Exclusions
 
-You are a documentation grooming agent. You check that hierarchical
-guardrails do not contradict each other and match the code.
+- Applies to repositories with hierarchical agent documentation (`AGENTS.md` at root and in subfolders) plus `docs/`, `README`, and examples.
+- Concrete paths below are specific to `dotnet-ai-guardrails`; adapt the file list when applying to another project.
+- Not applicable: repositories without agent-facing rule files, or where docs are generated from a single source.
+
+## Required Inputs
+
+- Read access to the full repository (docs, rules, templates, examples, tests).
+- Ability to search the codebase for enforcement of each rule (tests, analyzers, CI config).
+- Optional: git history to determine rule age for the `dead-rule` (> 90 days without enforcement) check.
 
 ## Scope
 
@@ -48,7 +55,7 @@ guardrails do not contradict each other and match the code.
 | **Dead rules** | Rule exists, but no enforcement (test, compiler, CI) |
 | **Internal contradictions** | Two rules in one AGENTS.md contradict each other |
 
-## Process
+## Procedure
 
 ### Phase 1: Hierarchy Consistency
 1. Root `AGENTS.md` → `rules/AGENTS_TEMPLATE.md` — no conflicts?
@@ -104,6 +111,57 @@ guardrails do not contradict each other and match the code.
 - If > 200 lines — mark `size-budget-exceeded`, suggest splitting into module-specific files
 - Count module-level AGENTS.md: if > 80 lines — suggest refactoring
 
+## Evidence Requirements
+
+Every finding MUST include:
+1. **Exact file and section/line:** `AGENTS.md §2.1` or `docs/agents/KIMI.md:42`
+2. **Quoted fragment** of the contradicting / dead / outdated content
+3. **Counter-evidence:** the conflicting file:line, or the missing enforcement (no test/analyzer/CI found by an explicit search)
+4. **Recommended action:** update the derived doc, add a guardrail, or remove the rule
+
+**NEVER report:** "docs are inconsistent" without both quoted sides; "rule is dead" without an explicit enforcement search.
+
+## Finding Schema
+
+```text
+ID
+Severity: BLOCKER | CRITICAL | MAJOR | MINOR
+Confidence: CONFIRMED | NEEDS_REVIEW
+Category / Control
+Evidence: file:line, command output, trace or reproduction
+Impact
+Recommended action
+Owner / disposition
+```
+
+Categories: `hierarchy`, `internal-contradiction`, `code-drift`, `dead-rule`,
+`cross-agent`, `readme`, `size-budget`.
+
+## Severity and Confidence
+
+| Severity | Meaning |
+|----------|---------|
+| **BLOCKER** | Change/release must not proceed; immediate action required |
+| **CRITICAL** | High impact; fix in the current iteration |
+| **MAJOR** | Degradation or defect; schedule the fix |
+| **MINOR** | Improvement; backlog |
+
+Project-specific mapping:
+- **BLOCKER** — root AGENTS.md contradicts a module one, or documents a pipeline/guardrail that does not exist (agent onboarding starts with a lie).
+- **CRITICAL** — internal contradiction within one rule file; dead rule on a safety-critical guardrail.
+- **MAJOR** — code drift (rule without enforcement, non-critical), outdated build commands, broken links to deleted sections.
+- **MINOR** — size-budget warnings, glossary/CHANGELOG staleness, link hygiene.
+
+| Confidence | Meaning |
+|------------|---------|
+| **CONFIRMED** | Proven by evidence: file:line, reproduction, command output |
+| **NEEDS_REVIEW** | Investigation signal; requires human judgment before action |
+
+**CONFIRMED** — both quoted sides exist, or an enforcement search returned nothing.
+**NEEDS_REVIEW** — apparent contradiction that may be an intentional, documented override.
+
+## Outputs and Downstream Consumer
+
 ### Phase 6: Report
 
 ```markdown
@@ -131,14 +189,18 @@ guardrails do not contradict each other and match the code.
 - [ ] Root guardrail — 230 lines, exceeds budget of 200
 ```
 
-## Output
+**Output:** `.backlog/doc-hygiene-{date}.md`.
+**Consumer:** repository maintainer / Backlog Hygiene Agent — findings become backlog items to update docs, add guardrails, or remove dead rules.
 
-- `.backlog/doc-hygiene-{date}.md`
+## Trigger or Schedule
 
-## Key Rule
+- On schedule (e.g., monthly) for the full documentation surface.
+- After changes to `AGENTS.md`, `rules/`, `templates/skills/`, `docs/agents/`, or a release (CHANGELOG check).
 
-> AGENTS.md is the single source of truth for architectural guardrails.
-> Everything else (docs/agents/, templates/skills/) — derived. If it diverges —
-> update derived, not the root.
-> A dead rule is worse than no rule. If there is no enforcement —
-> remove it or add a guardrail.
+## Limitations and Expected False Positives
+
+- Apparent contradictions may be intentional, documented overrides (deeper AGENTS.md wins) — mark **NEEDS_REVIEW** unless the override is undocumented.
+- "No enforcement found" depends on search coverage; enforcement may live in CI or external tooling — verify before declaring a rule dead.
+- Size budgets are heuristics; a long but well-structured AGENTS.md may be acceptable.
+
+> Optional interaction convention (agent-specific): some agents add `📝` to their starter-character stack while this skill is active. Not required — the skill is fully usable without emoji.

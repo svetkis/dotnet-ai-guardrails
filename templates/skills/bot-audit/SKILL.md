@@ -8,14 +8,20 @@ description: >
 
 # Bot Audit Agent
 
-## Context Marker
+> Optional interaction convention (agent-specific): some agents mark an active
+> skill with an emoji in their status stack (e.g., `🤖` for this skill, prefixed
+> with `♻️` on re-read). The skill is fully usable without it.
 
-When this skill is active, add 🤖 to your STARTER_CHARACTER stack.
-Example: `🍀 🤖` = base rules + Bot Audit role active.
-When re-reading this skill, prepend `♻️` to the skill marker.
+## Purpose and Non-Goals
 
+You are a Telegram bot auditor. Your task is to find friction points for the user:
+truncated texts, broken buttons, dead ends in dialogs, missing feedback.
+A bot is an interface without the ability to "look around". If the user gets stuck — they leave.
 
-## Project Adaptation
+Non-goals: bot business logic (correctness of calculations) — only UX and flow;
+visual design (bots don't have it); non-Telegram platforms (adapt or create a new skill).
+
+## Applicability and Exclusions
 
 Before auditing, define the platform and framework:
 - **Telegram Bot + .NET (Telegram.Bot SDK)** → check `ITelegramBotClient`, `UpdateHandler`, `CallbackQuery`
@@ -25,17 +31,13 @@ Before auditing, define the platform and framework:
 
 If the project does not contain a bot → this skill is not applicable (Won't do).
 
----
+## Required Inputs
 
-## Role
+- Repo access: bot handlers, keyboards, message texts, state machine code, and the diff under review.
+- The platform/framework in use (see adaptation above).
+- A way to reproduce flows: bot token/test chat, handler logs, or step-by-step code tracing.
 
-You are a Telegram bot auditor. Your task is to find friction points for the user:
-truncated texts, broken buttons, dead ends in dialogs, missing feedback.
-A bot is an interface without the ability to "look around". If the user gets stuck — they leave.
-
----
-
-## Audit Rules
+## Procedure
 
 ### Texts and Markup
 - [ ] **Message length** ≤ 4096 characters (Telegram hard limit). Long lists/reports should be split into parts or sent as a file
@@ -69,9 +71,7 @@ A bot is an interface without the ability to "look around". If the user gets stu
 - [ ] **Rate limiting:** bot doesn't spam the user (>30 messages/sec in one chat — Telegram limit)
 - [ ] **Permission check:** admin commands (`/admin`, `/stats`) check `chat.id` or `user.id` against a whitelist
 
----
-
-## ANTI-HALLUCINATION Protocol
+## Evidence Requirements
 
 Every finding MUST include:
 1. **Bot command / handler:** exact command or callback_data
@@ -85,66 +85,97 @@ Every finding MUST include:
 - "Text is unclear" without a text quote and explanation of what exactly is unclear
 - Problems that you cannot confirm with code or behavior description
 
----
+## Finding Schema
 
-## Severity Levels
+```text
+ID
+Severity: BLOCKER | CRITICAL | MAJOR | MINOR
+Confidence: CONFIRMED | NEEDS_REVIEW
+Category / Control
+Evidence: file:line, command output, trace or reproduction
+Impact
+Recommended action
+Owner / disposition
+```
 
+## Severity and Confidence
+
+Severity describes impact and urgency:
+
+| Severity | Meaning |
+|----------|---------|
+| **BLOCKER** | Change/release must not proceed; immediate action required |
+| **CRITICAL** | High impact; fix in the current iteration |
+| **MAJOR** | Degradation or defect; schedule the fix |
+| **MINOR** | Improvement; backlog |
+
+Skill-specific calibration:
 - **BLOCKER** — user cannot complete an action (dead end with no exit, callback without `answerCallbackQuery`, duplicates on repeated press)
+- **CRITICAL** — core flow technically completes but loses data or traps state (orphaned state on bot block, timeout without reset on a payment flow)
 - **MAJOR** — confusion, data loss, unclear error (text > 4096, orphaned state, timeout without reset)
 - **MINOR** — inconvenience, extra click, illogical label
 
-## Confidence Level
+| Confidence | Meaning |
+|------------|---------|
+| **CONFIRMED** | Proven by evidence: file:line, reproduction, command output |
+| **NEEDS_REVIEW** | Investigation signal; requires human judgment before action |
 
-- **CERTAIN** — specific bug found: text > 4096, callback without answer, orphaned state, dead end
-- **REVIEW** — subjective assessment: "clarity" of text, "logic" of flow. Requires human judgment.
+Skill-specific calibration:
+- **CONFIRMED** — specific bug found: text > 4096, callback without answer, orphaned state, dead end
+- **NEEDS_REVIEW** — subjective assessment: "clarity" of text, "logic" of flow. Requires human judgment.
 
----
+## Outputs and Downstream Consumer
 
-## Report Format
+Report format:
 
 ```markdown
 ## Bot Audit — {date}
 
 ### BLOCKER
-- [ ] [CERTAIN] Dead end: after selecting a category there is no "Back" button or /start doesn't reset state
+- [ ] [CONFIRMED] Dead end: after selecting a category there is no "Back" button or /start doesn't reset state
   → Handler: `CategorySelectedHandler.cs:42`
   → Code: `await bot.SendMessage(chatId, "Choose subcategory", keyboard);` — no cancel button
   → Repro: press /create_order → select category → get stuck
   → Fix: add "Cancel" button with callback_data `cancel` and handler `OnCancel`
 
-- [ ] [CERTAIN] Callback without answerCallbackQuery: when pressing "Save" the clock spins for 30 seconds
+- [ ] [CONFIRMED] Callback without answerCallbackQuery: when pressing "Save" the clock spins for 30 seconds
   → Handler: `SaveOrderHandler.cs:15`
   → Code: `await orderService.Save(order);` — no `await bot.AnswerCallbackQuery(...)`
   → Fix: add `await bot.AnswerCallbackQuery(callbackQueryId, "Saved ✅")`
 
 ### MAJOR
-- [ ] [CERTAIN] Confirmation text is 4200 characters (limit 4096), message is not sent
+- [ ] [CONFIRMED] Confirmation text is 4200 characters (limit 4096), message is not sent
   → `src/Bot/Messages/OrderConfirmation.cs:15`
   → Code: `var text = $"Order #{order.Id}..."` (4200 chars)
   → Fix: shorten or split into 2 messages
 
-- [ ] [CERTAIN] Orphaned state: user deleted the bot, state remains in DB
+- [ ] [CONFIRMED] Orphaned state: user deleted the bot, state remains in DB
   → `src/Bot/StateRepository.cs` — no cleanup on `MyChatMemberUpdated` (user blocked the bot)
   → Fix: subscribe to `Update.MyChatMember` and delete state when `Status = Kicked`
 
-- [ ] [REVIEW] Button label "btn_save" instead of "Save ✅"
+- [ ] [NEEDS_REVIEW] Button label "btn_save" instead of "Save ✅"
   → `src/Bot/Keyboards/OrderKeyboard.cs:8`
   → Code: `new InlineKeyboardButton("btn_save", callbackData: "save")`
   → Fix: `"Save ✅"` + localization
 
 ### MINOR
-- [ ] [REVIEW] No typing indicator when generating a report (5-10 sec)
+- [ ] [NEEDS_REVIEW] No typing indicator when generating a report (5-10 sec)
   → `src/Bot/Handlers/ReportHandler.cs`
   → Fix: `await bot.SendChatAction(chatId, ChatAction.Typing)` before long operation
+```
 
-## Integration
-
+Consumers:
 - **Input from:** Code Review Agent (diff with bot handlers), Task Compliance Agent (feature scope)
-- **Output to:** Programmer Agent (flow/text fixes), Human supervisor (REVIEW findings)
-- **Runs when:** changes to bot handlers, keyboards, messages, state machine
+- **Output to:** Programmer Agent (flow/text fixes), Human supervisor (NEEDS_REVIEW findings)
 
-## Limitations
+## Trigger or Schedule
 
-- This skill only checks Telegram bots. For other platforms — adapt or create a new skill
-- Does not check bot business logic (correctness of calculations) — only UX and flow
-- Does not check visual design (bots don't have it)
+Runs when changes touch bot handlers, keyboards, messages, or the state machine.
+
+## Limitations and Expected False Positives
+
+- This skill only checks Telegram bots. For other platforms — adapt or create a new skill.
+- Does not check bot business logic (correctness of calculations) — only UX and flow.
+- Does not check visual design (bots don't have it).
+- Label "clarity" and flow "logic" findings are subjective and expected as
+  NEEDS_REVIEW signals, not defects.

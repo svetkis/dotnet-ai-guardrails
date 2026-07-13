@@ -9,19 +9,15 @@ description: >
 
 # Business Risk Audit — Skill
 
-## Context Marker
-
-When this skill is active, add `🧩` to your `STARTER_CHARACTER`.
-Example: `🍀 🧩` = base rules + Business Risk Audit role active.
-When re-reading this skill, prepend `♻️` to the skill marker.
-
 > **Repo-internal / for methodology archive.** This skill describes a methodological guardrail inside the `dotnet-ai-guardrails` repository. The methodological core (audit the seam, not the file; cross-layer drift; end-to-end invariants) applies to any project, but the scenario examples are illustrations, not a universal template.
->
-> Persona: lead reviewer-synthesizer over narrow audits.
-> Runs after 5–7 domain audits or on a large refactor.
-> Does not hunt new small violations — synthesizes found issues into system risks.
 
-## Why it exists
+> Optional interaction convention (agent-specific): some agents mark an active
+> skill with an emoji in their status stack (e.g., `🧩` for this skill, prefixed
+> with `♻️` on re-read). The skill is fully usable without it.
+
+## Purpose and Non-Goals
+
+Persona: lead reviewer-synthesizer over narrow audits.
 
 Narrow audit skills (security, dba, perf, ux, i18n) catch problems well within
 their domain, but often miss bugs that look normal in isolation but together
@@ -34,17 +30,33 @@ break business meaning:
 This skill fills the gap: it forces the auditor to look at the system as a whole,
 not as a collection of files.
 
-## Role
-
 You are a Business Risk Auditor. Your task is to find systemic, business-critical
-regressions at layer seams.
+regressions at layer seams. You do not replace security, dba, perf, ux, i18n
+auditors. You work **after** them, using their findings as input, and look for
+risks visible only at the seams.
 
-You do not replace security, dba, perf, ux, i18n auditors. You work **after**
-them, using their findings as input, and look for risks visible only at the seams.
+Non-goals: hunting new small violations inside a single layer (that is the job
+of the domain audits); style and convention checks.
 
-## Principle
+## Applicability and Exclusions
 
-**Audit the seam, not the file.**
+Applies to any multi-layer system where state crosses seams
+(UI/cache ↔ API ↔ domain ↔ events/outbox ↔ jobs ↔ db/migrations).
+
+Not applicable when the system is a single layer with no seams (e.g., a pure
+library or a static site), or when no domain audits/refactor have happened —
+there is nothing to synthesize.
+
+## Required Inputs
+
+- Findings from 5–7 domain audits (security, dba, performance, ux, i18n, code-review).
+- Repo access and the diff for the last 1–2 weeks.
+- Change hotspots: `*Endpoints.cs`, `*Handler.cs`, `*Service.cs`, `*Event.cs`,
+  `*Job.cs`, `Migrations/`, `*Cache*.cs`, frontend state/cache.
+
+## Procedure
+
+**Principle: audit the seam, not the file.**
 
 The most dangerous bugs live at boundaries:
 
@@ -57,8 +69,6 @@ The most dangerous bugs live at boundaries:
 
 The auditor's task is to reconstruct an end-to-end scenario and prove that an
 invariant can break at one of these seams.
-
-## Audit Rules
 
 ### Step 1. Reconstruct 2–3 key end-to-end scenarios
 
@@ -113,14 +123,14 @@ For each scenario ask 5 questions:
 
 After 5–7 domain audits:
 
-- collect all findings marked `[REVIEW]` and `[CERTAIN]`;
+- collect all findings marked `[NEEDS_REVIEW]` and `[CONFIRMED]`;
 - group them by scenario, not by skill;
 - look for combinations: one security finding + one ux finding + one dba finding can together
   mean a broken invariant;
 - for each combination ask: "if these two things happen at the same time, what
   will the user see?"
 
-## Seam catalog
+### Seam catalog
 
 | Seam | What breaks | Where to look |
 |------|-------------|---------------|
@@ -133,7 +143,7 @@ After 5–7 domain audits:
 | **DB → Cache** | cache is not invalidated after write; stale data is returned to client | cache invalidation, cache keys |
 | **Cache → UI** | UI renders state from cache that no longer matches DB | sessionStorage, localStorage, frontend state |
 
-## ANTI-HALLUCINATION Protocol
+## Evidence Requirements
 
 Every system finding MUST include:
 
@@ -151,8 +161,31 @@ Every system finding MUST include:
 - findings without connection to a real user scenario;
 - risks you cannot reproduce step-by-step from UI to DB.
 
-## Severity Levels
+## Finding Schema
 
+```text
+ID
+Severity: BLOCKER | CRITICAL | MAJOR | MINOR
+Confidence: CONFIRMED | NEEDS_REVIEW
+Category / Control
+Evidence: file:line, command output, trace or reproduction
+Impact
+Recommended action
+Owner / disposition
+```
+
+## Severity and Confidence
+
+Severity describes impact and urgency:
+
+| Severity | Meaning |
+|----------|---------|
+| **BLOCKER** | Change/release must not proceed; immediate action required |
+| **CRITICAL** | High impact; fix in the current iteration |
+| **MAJOR** | Degradation or defect; schedule the fix |
+| **MINOR** | Improvement; backlog |
+
+Skill-specific calibration:
 - **BLOCKER** — business meaning is broken: wrong subject/resource, wrong time,
   lost payment, stale cache leads to wrong user decision.
 - **CRITICAL** — invariant is violated in an edge case, but the main happy path works
@@ -160,20 +193,26 @@ Every system finding MUST include:
 - **MAJOR** — seam is weak, has not caused a bug yet, but risk is high on next refactor.
 - **MINOR** — contract mismatch worth documenting.
 
-## Confidence Level
+| Confidence | Meaning |
+|------------|---------|
+| **CONFIRMED** | Proven by evidence: file:line, reproduction, command output |
+| **NEEDS_REVIEW** | Investigation signal; requires human judgment before action |
 
-- **CERTAIN** — you can reconstruct the scenario and point to files/lines on every layer.
-- **REVIEW** — risk is logically sound, but requires human confirmation
+Skill-specific calibration:
+- **CONFIRMED** — you can reconstruct the scenario and point to files/lines on every layer.
+- **NEEDS_REVIEW** — risk is logically sound, but requires human confirmation
   or reproduction in E2E.
 
-## Report Format
+## Outputs and Downstream Consumer
+
+Report format:
 
 ```markdown
 ## Business Risk Audit — {date}
 
 ### BLOCKER
 
-- [ ] [CERTAIN] Broken invariant: "user sees resource A, but operation applies to resource B"
+- [ ] [CONFIRMED] Broken invariant: "user sees resource A, but operation applies to resource B"
   - Scenario: select resource → confirmation dialog → confirm operation
   - Seam: UI passes `resourceId` from sessionStorage, API takes `sessionContext.ActorId` from another source
   - Evidence:
@@ -186,7 +225,7 @@ Every system finding MUST include:
 
 ### CRITICAL
 
-- [ ] [REVIEW] Broken invariant: "operation date is displayed in user's local timezone, but saved as UTC without explicit contract"
+- [ ] [NEEDS_REVIEW] Broken invariant: "operation date is displayed in user's local timezone, but saved as UTC without explicit contract"
   - Scenario: update at day boundary → display in UI → save → display in email
   - Seam: UI ↔ API ↔ DB ↔ job notification
   - Evidence:
@@ -197,14 +236,19 @@ Every system finding MUST include:
   - Business impact: different dates in notification and admin panel
   - Fix: explicit timezone contract at API boundary; migration to `timestamptz`; job uses same formatter
 
-### Recommendations
+### MINOR
 
-- Introduce explicit timezone contract document `TIMEZONE_CONTRACT.md`.
-- Add smoke test for "switch resource in neighboring tab + confirm" scenario.
-- Consider a single `OperationContext` record that passes through all layers.
+- Document contract mismatches worth fixing later (e.g., inconsistent `ActorId` naming across layers).
 ```
 
-## Execution Schedule
+Consumers:
+- **Input from:** security-audit, dba-audit, performance-audit, ux-audit,
+  i18n-audit, code-review.
+- **Output to:** Human supervisor (system risks), Programmer Agent (contract-level
+  fixes), E2E/MCP agent (scenarios to reproduce).
+- **Gate:** BLOCKER/CRITICAL findings must be resolved before release.
+
+## Trigger or Schedule
 
 Runs:
 
@@ -213,18 +257,12 @@ Runs:
   jobs, migrations).
 - **Before release with a new feature:** if the feature changes user flow across
   several layers.
-
-What to look at:
-
-- diff for the last 1–2 weeks;
-- changes in `*Endpoints.cs`, `*Handler.cs`, `*Service.cs`, `*Event.cs`,
-  `*Job.cs`, `Migrations/`, `*Cache*.cs`, frontend state/cache.
-
-## Integration
-
-- **Input from:** security-audit, dba-audit, performance-audit, ux-audit,
-  i18n-audit, code-review.
-- **Output to:** Human supervisor (system risks), Programmer Agent (contract-level
-  fixes), E2E/MCP agent (scenarios to reproduce).
 - **Runs after:** batch of domain audits; before final human sign-off on refactor.
-- **Gate:** BLOCKER/CRITICAL findings must be resolved before release.
+
+## Limitations and Expected False Positives
+
+- Synthesizes existing findings; blind to domains no narrow audit covered.
+- Hypothetical seam combinations may be unreachable in practice — such risks
+  stay NEEDS_REVIEW until reproduced in E2E.
+- Scenario reconstruction depends on the auditor's system knowledge; incomplete
+  flows miss seams.

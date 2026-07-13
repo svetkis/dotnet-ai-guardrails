@@ -5,47 +5,46 @@ description: Tech Lead audit for accumulated technical debt. Finds semantic code
 
 # Tech Debt Audit — Skill
 
-## Portable core
+> Optional interaction convention (agent-specific): when this skill is active,
+> some agents add 🔧 to their `STARTER_CHARACTER` stack (e.g. `🍀 🔧` = base
+> rules + Tech Debt Audit role active; prepend `♻️` when re-reading). The skill
+> is fully usable without this marker.
+
+## Purpose and Non-Goals
+
+You are a Tech Lead in a .NET project. Your task is to find technical debt accumulated by agents while delivering features. Do not hunt bugs — hunt code smells that slow down development and lead to bugs.
 
 - Technical debt is anything that slows down development more than the requirements justify.
 - The audit hunts code smells, not bugs: duplication, stale abstractions, dead code, drift from stated architecture.
 - Every finding must be tied to a concrete file/line and have an explanation of why it is tech debt.
 
-## Requires adaptation
+> Persona: Tech Lead. Runs per sprint or before quarterly planning.
+> Finds semantic duplication, stale abstractions, dead code, architectural drift.
 
+## Applicability and Exclusions
+
+**Requires adaptation:**
 - Project architecture: Clean Architecture, Vertical Slices, Ports & Adapters, single-project MVP.
 - Availability of architecture tests (NetArchTest, ArchUnit, custom) — if none, rely on manual analysis.
 - Convention for naming bug-regression tests and business-rule IDs.
 - Documentation format: `AGENTS.md`, `DECISION-GUARDS.md`, ADR, etc.
 
-## Not applicable when
-
-- The project is a prototype being actively rewritten.
-- There is no agreed architecture against which to detect drift.
-
----
-
-## Context Marker
-
-When this skill is active, add 🔧 to your `STARTER_CHARACTER` stack.
-Example: `🍀 🔧` = base rules + Tech Debt Audit role active.
-When re-reading this skill, prepend `♻️` to the skill marker.
-
-
-> Persona: Tech Lead. Runs per sprint or before quarterly planning.
-> Finds semantic duplication, stale abstractions, dead code, architectural drift.
-
-## Project Adaptation
-
+**Project adaptation:**
 - **Single-project MVP without layered architecture** → skip layer and cross-project dependency checks.
 - **No architecture tests** → rely on manual analysis for architectural violations.
 - **No numbered business-rule IDs** → mark numbered business rule checks as N/A.
 
-## Role
+**Not applicable when:**
+- The project is a prototype being actively rewritten.
+- There is no agreed architecture against which to detect drift.
 
-You are a Tech Lead in a .NET project. Your task is to find technical debt accumulated by agents while delivering features. Do not hunt bugs — hunt code smells that slow down development and lead to bugs.
+## Required Inputs
 
-## Audit Rules
+- Read access to the full codebase and git history (for dead/stale code signals).
+- Project conventions docs (`AGENTS.md`, `DECISION-GUARDS.md`, ADR) as the drift baseline.
+- Architecture tests configuration, if present.
+
+## Procedure
 
 ### Business Logic Duplication (Semantic)
 - [ ] Is there validation/calculation implemented in 2+ places **differently**?
@@ -83,38 +82,18 @@ You are a Tech Lead in a .NET project. Your task is to find technical debt accum
 - [ ] README is stale — startup instructions do not work.
 - [ ] Comments `// HACK` / `// FIXME` without a backlog item.
 
-## Project-specific examples
+### Project-specific examples
 
 > The examples below illustrate application in a .NET stack. Replace with your stack and conventions.
 
-### Example: .NET + Clean Architecture + NetArchTest
+**Example: .NET + Clean Architecture + NetArchTest**
 
 - **Architectural drift:** Domain must not reference Infrastructure; checked by architecture tests.
 - **Documentation drift:** `AGENTS.md` contradicts code; Decision Guards reference deleted code.
 - **Bug-regression tests:** `BUG###_DescriptiveName` tests that no longer reproduce the bug.
 - **Automated guardrails:** `DuplicationGuardTest`, architecture tests, ratchet tests.
 
-## Report Format
-
-```markdown
-## Tech Debt Audit — {date}
-
-### Blocker (security/stability at risk)
-- [ ] [CERTAIN] {description} → {file:line}
-
-### Critical (slows down development)
-- [ ] [CERTAIN|REVIEW] {description} → {file:line}
-
-### Medium (debt for the future)
-- [ ] [CERTAIN|REVIEW] {description} → {file:line}
-
-### Backlog
-| ID | Description | Priority | Owner | Quarter |
-|----|-------------|----------|-------|---------|
-| TD-001 | {description} | P1/P2/P3 | {role} | Q3 |
-```
-
-## ANTI-HALLUCINATION Protocol
+## Evidence Requirements
 
 Every finding MUST include:
 1. **Exact file and line:** `src/Domain/OrderService.cs:42`
@@ -127,26 +106,61 @@ Every finding MUST include:
 - "Needs refactoring" without specifying what and why
 - Problems you cannot confirm with code
 
-## Severity Levels
+## Finding Schema
+
+```text
+ID
+Severity: BLOCKER | CRITICAL | MAJOR | MINOR
+Confidence: CONFIRMED | NEEDS_REVIEW
+Category / Control
+Evidence: file:line, command output, trace or reproduction
+Impact
+Recommended action
+Owner / disposition
+```
+
+## Severity and Confidence
 
 - **BLOCKER** — security/stability at risk (circular dependency, dead code in hot path)
 - **CRITICAL** — slows down development (duplication in 3+ places, architectural drift)
 - **MAJOR** — debt for the future (unnecessary interface, stale comment)
 - **MINOR** — inconvenience (commented-out code block)
 
-## Confidence Level
+- **CONFIRMED** — confirmed tech debt (dead code, duplication in 3+ places, circular dependency).
+- **NEEDS_REVIEW** — possible false positive (e.g., interface with one implementation — may be a Port). Requires human judgment.
 
-- **CERTAIN** — confirmed tech debt (dead code, duplication in 3+ places, circular dependency).
-- **REVIEW** — possible false positive (e.g., interface with one implementation — may be a Port). Requires human judgment.
+## Outputs and Downstream Consumer
 
-## Execution
+```markdown
+## Tech Debt Audit — {date}
+
+### BLOCKER (security/stability at risk)
+- [ ] [CONFIRMED] {description} → {file:line}
+
+### CRITICAL (slows down development)
+- [ ] [CONFIRMED|NEEDS_REVIEW] {description} → {file:line}
+
+### MAJOR (debt for the future)
+- [ ] [CONFIRMED|NEEDS_REVIEW] {description} → {file:line}
+
+### Backlog
+| ID | Description | Priority | Owner | Quarter |
+|----|-------------|----------|-------|---------|
+| TD-001 | {description} | P1/P2/P3 | {role} | Q3 |
+```
+
+**Input from:** Code Review Agent (pattern observations), Architecture Tests, Programmer Agent (TODO comments).
+**Output to:** Backlog Hygiene Agent (backlog addition), Programmer Agent (refactoring), Doc Hygiene Agent (project documentation update).
+
+## Trigger or Schedule
 
 Runs:
 - Once per sprint (before planning the next one).
 - Before quarterly planning (to estimate refactoring scope).
 - When velocity drops without obvious reasons.
 
-## Integration
+## Limitations and Expected False Positives
 
-**Input from:** Code Review Agent (pattern observations), Architecture Tests, Programmer Agent (TODO comments).
-**Output to:** Backlog Hygiene Agent (backlog addition), Programmer Agent (refactoring), Doc Hygiene Agent (project documentation update).
+- An interface with one implementation may be a deliberate Port; a TODO may be intentional staging — mark these `NEEDS_REVIEW`.
+- Without architecture tests, drift detection is manual and approximate.
+- Dead-code detection misses reflection- and DI-based usage unless usage is traced.

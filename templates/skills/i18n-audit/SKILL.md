@@ -8,14 +8,20 @@ description: >
 
 # i18n Audit Agent
 
-## Context Marker
+Optional interaction convention (agent-specific): when this skill is active,
+add 🌐 to your STARTER_CHARACTER stack (example: `🍀 🌐`). Prepend `♻️` when
+re-reading the skill. The skill is fully usable without emoji markers.
 
-When this skill is active, add 🌐 to your STARTER_CHARACTER stack.
-Example: `🍀 🌐` = base rules + i18n Audit role active.
-When re-reading this skill, prepend `♻️` to the skill marker.
+## Purpose and Non-Goals
 
+You are an i18n auditor. Your task is to find strings and UI elements that are not ready
+for multilingual support. The developer agent often forgets to extract new strings into resources
+or copies hardcoded strings from other modules.
 
-## Project Adaptation
+This skill does not translate strings and does not check translation quality — it finds
+missing keys, hardcoded strings, RTL hazards and format/pluralization defects only.
+
+## Applicability and Exclusions
 
 Before auditing, define the localization format:
 - **.NET + .resx** → check `Resources.*.resx`, `IStringLocalizer`, `IHtmlLocalizer`
@@ -25,17 +31,13 @@ Before auditing, define the localization format:
 
 Project languages (example): `ru` (primary), `en`, `ar` (RTL).
 
----
+## Required Inputs
 
-## Role
+- Repository access to locale/resource files and UI/backend sources.
+- Defined localization format and the list of project languages.
+- Input from: UX audit (new texts), Code review (diff with UI changes).
 
-You are an i18n auditor. Your task is to find strings and UI elements that are not ready
-for multilingual support. The developer agent often forgets to extract new strings into resources
-or copies hardcoded strings from other modules.
-
----
-
-## Check Mechanisms
+## Procedure
 
 ### 1. Key Synchronization
 
@@ -84,9 +86,7 @@ or copies hardcoded strings from other modules.
 - Numbers: `.toString()` on money → `i18n.currency()`
 - Pluralization: `"${count} records"` → `i18n.pluralize(count, 'record_one', 'record_few', 'record_many')`
 
----
-
-## ANTI-HALLUCINATION Protocol
+## Evidence Requirements
 
 Every finding MUST include:
 1. **Exact file and line:** `src/Services/OrderService.cs:42`
@@ -102,31 +102,43 @@ Every finding MUST include:
 - Strings without context (can't determine if it's UI or not)
 - Problems that you cannot confirm with a code quote
 
----
+## Finding Schema
 
-## Severity Levels
+```text
+ID
+Severity: BLOCKER | CRITICAL | MAJOR | MINOR
+Confidence: CONFIRMED | NEEDS_REVIEW
+Category / Control
+Evidence: file:line, command output, trace or reproduction
+Impact
+Recommended action
+Owner / disposition
+```
 
-- **BLOCKER** — new language is completely unusable (entire locale file missing, or hardcoded in critical UI)
-- **MAJOR** — missing keys in one of the languages, hardcoded in user-facing strings
-- **MINOR** — pluralization without i18n, inconsistent translations between languages
+## Severity and Confidence
 
-## Confidence Level
+| Severity | Meaning |
+|----------|---------|
+| **BLOCKER** | New language is completely unusable (entire locale file missing, or hardcoded in critical UI) |
+| **CRITICAL** | Widespread user-facing defects across a whole locale or feature area |
+| **MAJOR** | Missing keys in one of the languages, hardcoded user-facing strings |
+| **MINOR** | Pluralization without i18n, inconsistent translations between languages |
 
-- **CERTAIN** — specific string found in UI without `IStringLocalizer`/`t()`, or key exists in `ru.json` but not in `en.json`
-- **REVIEW** — string in a gray context (possibly a log or exception; requires human judgment)
+| Confidence | Meaning |
+|------------|---------|
+| **CONFIRMED** | Specific string found in UI without `IStringLocalizer`/`t()`, or key exists in `ru.json` but not in `en.json` |
+| **NEEDS_REVIEW** | String in a gray context (possibly a log or exception; requires human judgment) |
 
----
-
-## Report Format
+## Outputs and Downstream Consumer
 
 ```markdown
 ## i18n Audit — {date}
 
 ### Missing Keys
-| Key | Missing in | CERTAIN/REVIEW |
+| Key | Missing in | Confidence |
 |------|---------------|----------------|
-| `OrderStatus_Confirmed` | `Resources.en.resx` | CERTAIN |
-| `checkout.buttonText` | `locales/en.json` | CERTAIN |
+| `OrderStatus_Confirmed` | `Resources.en.resx` | CONFIRMED |
+| `checkout.buttonText` | `locales/en.json` | CONFIRMED |
 
 ### Hardcoded Strings
 | File | String | Should be | Severity |
@@ -152,14 +164,15 @@ Every finding MUST include:
 - Use `i18n-extract` for automatic missing key checking
 ```
 
-## Integration
+**Downstream consumer:** Programmer Agent (strings for localization), Human supervisor (NEEDS_REVIEW findings).
 
-- **Input from:** UX audit (new texts), Code review (diff with UI changes)
-- **Output to:** Programmer Agent (strings for localization), Human supervisor (REVIEW findings)
-- **Runs when:** adding new strings, before entering a new market, after UI redesign
+## Trigger or Schedule
 
-## Limitations
+Runs when: adding new strings, before entering a new market, after UI redesign.
+
+## Limitations and Expected False Positives
 
 - This skill does not translate strings — only finds missing keys and hardcoded strings
 - Does not check translation quality (accuracy, context) — only presence
 - Does not check RTL rendering visually — only CSS/Tailwind properties
+- Expected false positives: strings in gray context (log vs UI), bot commands, technical constants — mark them NEEDS_REVIEW

@@ -10,25 +10,11 @@ description: >
 
 # API Design Audit Agent
 
-## Context Marker
+> Optional interaction convention (agent-specific): some agents mark an active
+> skill with an emoji in their status stack (e.g., `🎨` for this skill, prefixed
+> with `♻️` on re-read). The skill is fully usable without it.
 
-When this skill is active, add 🎨 to your STARTER_CHARACTER stack.
-Example: `🍀 🎨` = base rules + API Design Audit role active.
-When re-reading this skill, prepend `♻️` to the skill marker.
-
-
-## Project Adaptation
-
-Before auditing, define the API type:
-- **REST / Web API** → check HTTP statuses, pagination, OpenAPI, JSON DTO
-- **gRPC** → check proto contracts, backward compatibility, status codes
-- **GraphQL** → check schema, query depth, N+1 in resolvers
-- **Webhook / Callback API** → check retry policy, idempotency keys, timeout handling
-- **No HTTP (Worker, Desktop)** → this skill is not applicable (Won't do)
-
----
-
-## Role
+## Purpose and Non-Goals
 
 You are an API design auditor. Your task is to find problems in contracts
 that an agent could have introduced, focusing on functionality:
@@ -37,9 +23,27 @@ breaking changes in DTOs.
 
 You don't check business logic, you check the **contract** between backend and consumer.
 
----
+Non-goals:
+- Business logic correctness (calculation results).
+- Production performance (latency, throughput) — that's `performance-audit`.
+- Security (authorization, SQL injection) — that's `security-audit`.
 
-## Check Contexts
+## Applicability and Exclusions
+
+Before auditing, define the API type:
+- **REST / Web API** → check HTTP statuses, pagination, OpenAPI, JSON DTO
+- **gRPC** → check proto contracts, backward compatibility, status codes
+- **GraphQL** → check schema, query depth, N+1 in resolvers
+- **Webhook / Callback API** → check retry policy, idempotency keys, timeout handling
+- **No HTTP (Worker, Desktop)** → this skill is not applicable (Won't do)
+
+## Required Inputs
+
+- Repo access: controllers / handlers, DTOs, OpenAPI spec, and the diff under review.
+- The API type and conventions of the project (see adaptation above).
+- A way to verify behavior: running app, tests, or curl/HTTP request examples.
+
+## Procedure
 
 ### A. HTTP Statuses and Errors (REST / Web API)
 
@@ -106,9 +110,7 @@ You don't check business logic, you check the **contract** between backend and c
 - [ ] Empty search result → `200 OK` + empty array, not an error
 - [ ] On 500 — ProblemDetails with `traceId` / `requestId` for logs, but without stack trace
 
----
-
-## ANTI-HALLUCINATION Protocol
+## Evidence Requirements
 
 Every finding MUST include:
 1. **Endpoint:** `GET /api/orders/{id}` or `POST /api/orders`
@@ -123,73 +125,103 @@ Every finding MUST include:
 - "DTO is bad" without a specific field and explanation why
 - Problems that you cannot confirm with code or a test request
 
----
+## Finding Schema
 
-## Severity Levels
+```text
+ID
+Severity: BLOCKER | CRITICAL | MAJOR | MINOR
+Confidence: CONFIRMED | NEEDS_REVIEW
+Category / Control
+Evidence: file:line, command output, trace or reproduction
+Impact
+Recommended action
+Owner / disposition
+```
 
+## Severity and Confidence
+
+Severity describes impact and urgency:
+
+| Severity | Meaning |
+|----------|---------|
+| **BLOCKER** | Change/release must not proceed; immediate action required |
+| **CRITICAL** | High impact; fix in the current iteration |
+| **MAJOR** | Degradation or defect; schedule the fix |
+| **MINOR** | Improvement; backlog |
+
+Skill-specific calibration:
 - **BLOCKER** — client cannot work with API (500 on critical endpoint, breaking change without versioning, missing CORS on public API)
+- **CRITICAL** — contract violation affecting real clients now (500 with stack trace, breaking DTO change shipped unversioned)
 - **MAJOR** — confusion, data loss, wrong handling (wrong HTTP status, pagination with duplicates, missing `total`)
 - **MINOR** — inconvenience, convention mismatch (illogical DTO naming, missing example in OpenAPI)
 
-## Confidence Level
+| Confidence | Meaning |
+|------------|---------|
+| **CONFIRMED** | Proven by evidence: file:line, reproduction, command output |
+| **NEEDS_REVIEW** | Investigation signal; requires human judgment before action |
 
-- **CERTAIN** — specific bug found: 500 with stack trace, `page=2` returned duplicates, `401` instead of `403`, breaking change without versioning
-- **REVIEW** — subjective assessment: "logic" of sorting, "clarity" of message. Requires human judgment.
+Skill-specific calibration:
+- **CONFIRMED** — specific bug found: 500 with stack trace, `page=2` returned duplicates, `401` instead of `403`, breaking change without versioning
+- **NEEDS_REVIEW** — subjective assessment: "logic" of sorting, "clarity" of message. Requires human judgment.
 
----
+## Outputs and Downstream Consumer
 
-## Report Format
+Report format:
 
 ```markdown
 ## API Design Audit — {date}
 
 ### BLOCKER
-- [ ] [CERTAIN] 500 on `POST /api/orders` returns stack trace to client
+- [ ] [CONFIRMED] 500 on `POST /api/orders` returns stack trace to client
   → `src/Api/OrdersController.cs:88`
   → Code: `return StatusCode(500, ex.ToString());`
   → Evidence: `"detail": "System.NullReferenceException at..."`
   → Fix: `return Problem(title: "Internal error", statusCode: 500, instance: traceId)`
 
-- [ ] [CERTAIN] Breaking change: field `customerEmail` removed from `OrderResponse` without versioning
+- [ ] [CONFIRMED] Breaking change: field `customerEmail` removed from `OrderResponse` without versioning
   → `src/Api/Dto/OrderResponse.cs:-15`
   → Evidence: field existed in v1, removed in current PR
   → Fix: return field with `[Obsolete]`, add `/v2/orders` with new DTO
 
 ### MAJOR
-- [ ] [CERTAIN] Pagination duplicates records: `page=1` and `page=2` contain the same `orderId`
+- [ ] [CONFIRMED] Pagination duplicates records: `page=1` and `page=2` contain the same `orderId`
   → `src/Infrastructure/OrderRepository.cs:42`
   → Code: `.OrderBy(o => o.CreatedAt)` without secondary key
   → Fix: `.OrderBy(o => o.CreatedAt).ThenBy(o => o.Id)`
 
-- [ ] [CERTAIN] `401` instead of `403` when accessing another user's order
+- [ ] [CONFIRMED] `401` instead of `403` when accessing another user's order
   → `src/Api/OrdersController.cs:55`
   → Code: `if (order.OwnerId != userId) return Unauthorized();`
   → Fix: `return Forbid()` (403)
 
-- [ ] [CERTAIN] Empty order list returns `404 Not Found`
+- [ ] [CONFIRMED] Empty order list returns `404 Not Found`
   → `src/Api/OrdersController.cs:30`
   → Code: `if (!orders.Any()) return NotFound();`
   → Fix: `return Ok(new PagedResponse { Items = [], Total = 0 });`
 
-- [ ] [REVIEW] Default sort `CreatedAt desc` — client doesn't see old records
+- [ ] [NEEDS_REVIEW] Default sort `CreatedAt desc` — client doesn't see old records
   → `src/Api/OrdersController.cs:42`
   → Code: `OrderByDescending(o => o.CreatedAt)`
   → Evidence: spec requires "oldest first", but code has `desc`
   → Fix: `OrderBy(o => o.CreatedAt)` or add `sort` parameter
 
 ### MINOR
-- [ ] [REVIEW] {naming convention mismatch for DTO} → `{file}`
-- [ ] [CERTAIN] {missing example in API schema for field} → `{file}`
+- [ ] [NEEDS_REVIEW] {naming convention mismatch for DTO} → `{file}`
+- [ ] [CONFIRMED] {missing example in API schema for field} → `{file}`
 ```
 
-## Integration
-
+Consumers:
 - **Input from:** Code Review Agent (diff with API changes), Task Compliance Agent (feature scope)
-- **Output to:** Programmer Agent (contract fixes), Human supervisor (REVIEW findings)
-- **Runs when:** changes to API endpoints, DTOs, controllers, OpenAPI spec
+- **Output to:** Programmer Agent (contract fixes), Human supervisor (NEEDS_REVIEW findings)
 
-## Limitations
+## Trigger or Schedule
 
-- This skill does not check business logic (correctness of calculations)
-- Does not check production performance (latency, throughput) — that's `performance-audit`
-- Does not check security (authorization, SQL injection) — that's `security-audit`
+Runs when changes touch API endpoints, DTOs, controllers, or the OpenAPI spec.
+
+## Limitations and Expected False Positives
+
+- Does not check business logic (correctness of calculations).
+- Does not check production performance (latency, throughput) — that's `performance-audit`.
+- Does not check security (authorization, SQL injection) — that's `security-audit`.
+- Convention mismatches (naming, sort "logic", message "clarity") are subjective
+  and expected as NEEDS_REVIEW signals, not defects.

@@ -8,28 +8,32 @@ description: >
 
 # Test Audit — Skill
 
-## Context Marker
+> Optional interaction convention (agent-specific): when this skill is active,
+> some agents add 🧪 to their STARTER_CHARACTER stack (e.g. `🍀 🧪` = base
+> rules + Test Audit role active; prepend `♻️` when re-reading). The skill is
+> fully usable without this marker.
 
-When this skill is active, add 🧪 to your STARTER_CHARACTER stack.
-Example: `🍀 🧪` = base rules + Test Audit role active.
-When re-reading this skill, prepend `♻️` to the skill marker.
+## Purpose and Non-Goals
 
+You are a QA Lead in a .NET project. Your task is to find gaps in test coverage
+created by agents focused on features. Do not write new tests — find gaps.
 
 > Persona: QA Lead / Tech Lead. Runs after 3-5 new features or before release.
 > Finds coverage gaps, dead tests, and uncovered critical paths.
 
-## Project Adaptation
+## Applicability and Exclusions
 
 - **Single-project MVP** → skip cross-project architectural test checks.
 - **No integration tests** → focus on unit + architectural tests.
 - **No Jobs** → skip Background Jobs section.
 
-## Role
+## Required Inputs
 
-You are a QA Lead in a .NET project. Your task is to find gaps in test coverage
-created by agents focused on features. Do not write new tests — find gaps.
+- Read access to the full codebase (`src/` and `tests/`).
+- Git history (to map `fix:` commits to `BUG###_` tests).
+- Project test conventions from `AGENTS.md` (naming, ratchets, architecture tests).
 
-## Audit Rules
+## Procedure
 
 ### Services
 - [ ] Walk through all services in `src/*/Application/` and `src/*/Infrastructure/Services/`
@@ -62,7 +66,7 @@ created by agents focused on features. Do not write new tests — find gaps.
 - [ ] Does every rule in `AGENTS.md` have a corresponding architectural test?
 - [ ] Ratchet tests: has the number of public types and tests not decreased?
 
-## ANTI-HALLUCINATION Protocol
+## Evidence Requirements
 
 Every finding MUST include:
 1. **Exact file and line:** `src/.../ServiceName.cs:42`
@@ -75,34 +79,45 @@ Every finding MUST include:
 - "Coverage is low" without a specific uncovered path
 - Problems you cannot confirm with code
 
-## Severity Levels
+## Finding Schema
+
+```text
+ID
+Severity: BLOCKER | CRITICAL | MAJOR | MINOR
+Confidence: CONFIRMED | NEEDS_REVIEW
+Category / Control
+Evidence: file:line, command output, trace or reproduction
+Impact
+Recommended action
+Owner / disposition
+```
+
+## Severity and Confidence
 
 - **BLOCKER** — critical path without tests (payments, auth, orders)
 - **CRITICAL** — service/endpoint/job without tests; dead regression test
 - **MAJOR** — uncovered edge case (error on empty collection)
 - **MINOR** — test covers only happy path
 
-## Confidence Level
+- **CONFIRMED** — service without test file; `BUG###_` test passes with broken code; endpoint without integration test
+- **NEEDS_REVIEW** — service covered indirectly; edge case is debatable; Job covered via integration test of calling service
 
-- **CERTAIN** — service without test file; `BUG###_` test passes with broken code; endpoint without integration test
-- **REVIEW** — service covered indirectly; edge case is debatable; Job covered via integration test of calling service
-
-## Report Format
+## Outputs and Downstream Consumer
 
 ```markdown
 ## Test Audit — {date}
 
-### Blocker (critical path without tests)
-- [ ] [CERTAIN] `{ServiceName}` — no tests → `src/.../ServiceName.cs`
+### BLOCKER (critical path without tests)
+- [ ] [CONFIRMED] `{ServiceName}` — no tests → `src/.../ServiceName.cs`
   → Fix: add `ServiceNameTests.cs` with happy path + errors
 
-### Critical (service/endpoint/job without tests)
-- [ ] [CERTAIN] `{EndpointName}` — no integration test
+### CRITICAL (service/endpoint/job without tests)
+- [ ] [CONFIRMED] `{EndpointName}` — no integration test
   → `src/.../Endpoints/EndpointName.cs`
   → Fix: add to `IntegrationTests/`
 
-### Major (edge cases)
-- [ ] [REVIEW] `{ServiceName}` — no test for empty collection
+### MAJOR (edge cases)
+- [ ] [NEEDS_REVIEW] `{ServiceName}` — no test for empty collection
   → `src/.../ServiceName.cs:42`
 
 ### Backlog
@@ -111,14 +126,18 @@ Every finding MUST include:
 | TD-TEST-001 | Cover `DataRetentionJob` | P2 | Q3 |
 ```
 
-## Execution
+**Input from:** Code Review Agent (observations on missed tests), Architecture Tests.
+**Output to:** Programmer Agent (adding tests), Backlog Hygiene Agent (backlog items).
+
+## Trigger or Schedule
 
 Runs:
 - After 3-5 new features.
 - Before release.
 - When CI pass rate drops due to flaky tests.
 
-## Integration
+## Limitations and Expected False Positives
 
-**Input from:** Code Review Agent (observations on missed tests), Architecture Tests.
-**Output to:** Programmer Agent (adding tests), Backlog Hygiene Agent (backlog items).
+- Indirect coverage (service exercised through another test) may look like a gap — mark `NEEDS_REVIEW`.
+- Whether an edge case is worth a test is often debatable — mark `NEEDS_REVIEW`.
+- Coverage percentage tools do not detect happy-path-only tests; this audit is structural, not metric-based.

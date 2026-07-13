@@ -8,37 +8,43 @@ description: >
 
 # Simplicity Audit — Skill
 
-## Context Marker
-
-When this skill is active, add ✂️ to your STARTER_CHARACTER stack.
-Example: `🍀 ✂️` = base rules + Simplicity Audit role active.
-When re-reading this skill, prepend `♻️` to the skill marker.
-
+Optional interaction convention (agent-specific): when this skill is active,
+add ✂️ to your STARTER_CHARACTER stack (example: `🍀 ✂️`). Prepend `♻️` when
+re-reading the skill. The skill is fully usable without emoji markers.
 
 > **Repo-internal / for methodology archive.** This skill describes a methodological guardrail inside the `dotnet-ai-guardrails` repository. The methodological core (accidental complexity, pattern overuse, data bloat) applies to any project, but the metrics and examples are illustrations, not a universal template.
->
-> Persona: Staff Engineer / Tech Lead. Run once per sprint or when
-> "everything works, but nobody understands how".
->
-> **Principle:** Engineering is the art of making solutions as simple as possible.
-> Simplicity = reliability. AI agents, like inexperienced developers, often
-> generate accidental complexity because "that's the right way" or "that's how the book says".
 
-## Project Adaptation
+## Purpose and Non-Goals
 
-- **Single-project MVP** → skip microservice, layer, and CQRS checks.
-- **No Clean Architecture** → check only pattern fetishism and data bloat.
-- **Legacy with high complexity** → establish a baseline; goal is not to reduce
-  in one sprint, but to stop growth.
+Persona: Staff Engineer / Tech Lead. Run once per sprint or when
+"everything works, but nobody understands how".
 
-## Role
+**Principle:** Engineering is the art of making solutions as simple as possible.
+Simplicity = reliability. AI agents, like inexperienced developers, often
+generate accidental complexity because "that's the right way" or "that's how the book says".
 
 You are a Staff Engineer in a .NET project. Your task is to find **accidental complexity**:
 complexity that does not follow from requirements but arises from an agent's
 "engineering pride" or desire to apply a pattern. Don't catch bugs — catch solutions
 that are more complex than they need to be.
 
-## Audit Rules
+This skill does not judge naming style or enforce a specific architecture —
+it flags complexity with no requirements behind it.
+
+## Applicability and Exclusions
+
+- **Single-project MVP** → skip microservice, layer, and CQRS checks.
+- **No Clean Architecture** → check only pattern fetishism and data bloat.
+- **Legacy with high complexity** → establish a baseline; goal is not to reduce
+  in one sprint, but to stop growth.
+
+## Required Inputs
+
+- Repository access to application code, tests and project structure.
+- Input from: Code Review Agent (pattern observations), Architecture Tests, Tech Debt Agent (stale abstractions).
+- Knowledge of actual business requirements behind flagged abstractions (to distinguish essential from accidental complexity).
+
+## Procedure
 
 ### 1. Abstraction Bloat
 - [ ] Interface with one implementation and no second one expected (not a Port/Adapter).
@@ -97,7 +103,7 @@ that are more complex than they need to be.
 - [ ] Class violates SRP (2+ unrelated responsibilities).
 - [ ] Method > 50 lines without compelling reason.
 
-## Metric: Simplicity Score (Optional)
+### Metric: Simplicity Score (Optional)
 
 If the project tracks metrics — monitor dynamics:
 
@@ -111,27 +117,7 @@ If the project tracks metrics — monitor dynamics:
 | `Async Void Count` | async void in production assemblies | > 0 |
 | `File Effective Lines` | Lines excluding using/blank/comments | > 300 |
 
-## Report Format
-
-```markdown
-## Simplicity Audit — {date}
-
-### Blocker (solution is 10x more complex than the problem)
-- [ ] [CERTAIN] {description} → {file:line}
-
-### Critical (hard to explain to a junior)
-- [ ] [CERTAIN|REVIEW] {description} → {file:line}
-
-### Major (can be simplified on next touch)
-- [ ] [CERTAIN|REVIEW] {description} → {file:line}
-
-### Simplifications Backlog
-| ID | Description | Current Complexity | Target Simplicity | Quarter |
-|----|-------------|--------------------|--------------------|---------|
-| SIMP-001 | {description} | {1-5} | {1-5} | Q3 |
-```
-
-## ANTI-HALLUCINATION Protocol
+## Evidence Requirements
 
 Every finding MUST include:
 1. **Exact file and line:** `src/Application/OrderPipeline.cs:42`
@@ -144,24 +130,61 @@ Every finding MUST include:
 - "Needs simplification" without stating what exactly to remove / collapse
 - Issues you cannot confirm with code
 
-## Severity Levels
+## Finding Schema
 
-- **BLOCKER** — solution is an order of magnitude more complex than the problem
-  (CQRS for 2 fields, microservice for 1 endpoint, Expression Tree for simple Where).
-- **CRITICAL** — slows down reading and review (DTO matryoshkas, LINQ chains of 8+,
-  interfaces without reason).
-- **MAJOR** — tech debt for the future (unnecessary generic, builder for a simple object).
-- **MINOR** — style (method name 45 chars, extra using).
+```text
+ID
+Severity: BLOCKER | CRITICAL | MAJOR | MINOR
+Confidence: CONFIRMED | NEEDS_REVIEW
+Category / Control
+Evidence: file:line, command output, trace or reproduction
+Impact
+Recommended action
+Owner / disposition
+```
 
-## Confidence Level
+## Severity and Confidence
 
-- **CERTAIN** — excess confirmed: interface with 1 implementation and no DI tests,
-  CQRS without read/write separation, DTO nesting > 3.
-- **REVIEW** — possible false positive (interface with 1 implementation = Port for
-  a future adapter; Expression Tree = ORM provider requirement). Requires
-  human judgment.
+| Severity | Meaning |
+|----------|---------|
+| **BLOCKER** | Solution is an order of magnitude more complex than the problem (CQRS for 2 fields, microservice for 1 endpoint, Expression Tree for simple Where) |
+| **CRITICAL** | Slows down reading and review (DTO matryoshkas, LINQ chains of 8+, interfaces without reason) |
+| **MAJOR** | Tech debt for the future (unnecessary generic, builder for a simple object) |
+| **MINOR** | Style (method name 45 chars, extra using) |
 
-## Execution Schedule
+| Confidence | Meaning |
+|------------|---------|
+| **CONFIRMED** | Excess confirmed: interface with 1 implementation and no DI tests, CQRS without read/write separation, DTO nesting > 3 |
+| **NEEDS_REVIEW** | Possible false positive (interface with 1 implementation = Port for a future adapter; Expression Tree = ORM provider requirement). Requires human judgment |
+
+Checklist items without sufficient context are **investigation signals**, not
+findings. An interface with one implementation, CQRS, or `Task.WhenAll` on a
+small collection do not prove a defect by themselves.
+
+## Outputs and Downstream Consumer
+
+```markdown
+## Simplicity Audit — {date}
+
+### Blocker (solution is 10x more complex than the problem)
+- [ ] [CONFIRMED] {description} → {file:line}
+
+### Critical (hard to explain to a junior)
+- [ ] [CONFIRMED|NEEDS_REVIEW] {description} → {file:line}
+
+### Major (can be simplified on next touch)
+- [ ] [CONFIRMED|NEEDS_REVIEW] {description} → {file:line}
+
+### Simplifications Backlog
+| ID | Description | Current Complexity | Target Simplicity | Quarter |
+|----|-------------|--------------------|--------------------|---------|
+| SIMP-001 | {description} | {1-5} | {1-5} | Q3 |
+```
+
+**Downstream consumer:** Backlog Hygiene Agent (add to backlog), Programmer Agent
+(simplification), Doc Hygiene Agent (update AGENTS.md with "simplicity > pattern" rule).
+
+## Trigger or Schedule
 
 Run:
 - Once per sprint (before planning the next one).
@@ -182,9 +205,9 @@ If in your project:
 
 **Rule:** keep only those guardrails that have caught a **real** bug or that **actually** occur in your codebase. Delete the rest without regret.
 
-## Integration
+## Limitations and Expected False Positives
 
-**Input from:** Code Review Agent (pattern observations), Architecture Tests,
-Tech Debt Agent (stale abstractions).
-**Output to:** Backlog Hygiene Agent (add to backlog), Programmer Agent
-(simplification), Doc Hygiene Agent (update AGENTS.md with "simplicity > pattern" rule).
+- Complexity judgments depend on requirements — an abstraction may exist for a planned second consumer. Confirm intent before reporting; mark NEEDS_REVIEW.
+- Expected false positives: interface with 1 implementation that is a Port for a future adapter, Expression Tree required by an ORM provider, `Span<T>` inside a proven hot path.
+- Metric thresholds (> 0.8 interface ratio, > 300 effective lines) are heuristics, not defects — treat as investigation signals.
+- Legacy baselines: pre-existing complexity is tracked for growth, not flagged for immediate removal.

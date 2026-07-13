@@ -8,46 +8,47 @@ description: >
 
 # Release Readiness Audit — Skill
 
+Optional interaction convention (agent-specific): when this skill is active,
+add `📦` to your STARTER_CHARACTER stack (example: `🍀 📦`). Prepend `♻️` when
+re-reading the skill. The skill is fully usable without emoji markers.
+
+## Purpose and Non-Goals
+
+You are a release manager / Staff engineer. Before a public release or beta, you
+must verify that critical guardrails are in place, there are no unresolved
+BLOCKER / CRITICAL findings, and all required artifacts exist.
+
+This is a meta-audit: you do not repeat deep checks, you aggregate their results
+and add your own cross-cutting findings. It does not replace security,
+performance, DBA or API design audits — it consumes them.
+
 ## Portable core
 
 - Before a public release or beta, critical guardrails must be in place, P0 findings closed, and release artifacts must exist.
 - This is a meta-audit: it does not repeat deep checks, it aggregates results from other audits and adds cross-cutting findings.
 - Verdict: `READY` / `CONDITIONAL` / `NOT READY` with explicit P0/P1, owners, and deadlines.
 
-## Requires adaptation
+## Applicability and Exclusions
 
+**Requires adaptation:**
 - Application type: Web API, Worker, Desktop, Mobile, Game — adapt HTTP-specific checks to messaging / UI / game loop.
 - Release type: public beta, internal release, pilot — shorten the checklist accordingly.
 - Set of mandatory audits and artifacts in the project.
-
-## Not applicable when
-
-- The project is not preparing for a release / beta launch.
-- There are no public users / production deployment.
-
----
-
-## Context Marker
-
-When this skill is active, add `📦` to your `STARTER_CHARACTER` stack.
-Example: `🍀 📦` = base rules + Release Readiness Audit role active.
-When re-reading this skill, prepend `♻️` to the skill marker.
-
-## Role
-
-You are a release manager / Staff engineer. Before a public release or beta, you
-must verify that critical guardrails are in place, there are no unresolved P0 / P1
-findings, and all required artifacts exist. This is a meta-audit: you do not
-repeat deep checks, you aggregate their results and add your own cross-cutting findings.
-
-## Adaptation for Project
-
 - **Public beta / release** → use the full checklist.
 - **Internal release** → reduce to smoke + security + deployment artifacts.
 - **Worker / Desktop / Game** → adapt HTTP-specific checks to messaging / UI / game loop.
-- **No public users** → Won't do, document it.
 
-## Audit Rules
+**Not applicable when:**
+- The project is not preparing for a release / beta launch.
+- There are no public users / production deployment → Won't do, document it.
+
+## Required Inputs
+
+- Reports from: Security Audit, Performance Audit, DBA Audit, API Design Audit, Test Audit, Version Audit, Smoke Tests.
+- Access to release artifacts: `AGENTS.md`, `docs/DEPLOYMENT.md`, CI/CD pipeline, API schema snapshot.
+- Named owners for product / ops sign-off.
+
+## Procedure
 
 ### 1. Release blockers (P0)
 - [ ] Security audit has no open P0s.
@@ -84,7 +85,47 @@ repeat deep checks, you aggregate their results and add your own cross-cutting f
 - **OpenAPI snapshot:** current and committed.
 - **Security headers:** CSP, X-Frame-Options, HSTS configured in middleware.
 
-## Report Format
+## Evidence Requirements
+
+Every finding MUST include:
+1. **Release risk ID:** `REL-###`
+2. **Source:** which audit / test / artifact confirms the problem
+3. **Release impact:** why this is a blocker / important
+4. **Owner and deadline**
+
+**NEVER report:**
+- “It seems not ready” without concrete checklist items
+- Problems already closed in other audits
+- Subjective judgments without artifact evidence
+
+## Finding Schema
+
+```text
+ID
+Severity: BLOCKER | CRITICAL | MAJOR | MINOR
+Confidence: CONFIRMED | NEEDS_REVIEW
+Category / Control
+Evidence: file:line, command output, trace or reproduction
+Impact
+Recommended action
+Owner / disposition
+```
+
+## Severity and Confidence
+
+| Severity | Meaning |
+|----------|---------|
+| **BLOCKER** (P0) | Release is impossible without a fix |
+| **CRITICAL** (P1) | Release is possible only with mitigation and explicit acceptance |
+| **MAJOR** (P2) | Release is possible, but it must enter the first-week backlog |
+| **MINOR** (P3) | Nice-to-have |
+
+| Confidence | Meaning |
+|------------|---------|
+| **CONFIRMED** | Confirmed by a failing test, audit, or missing artifact |
+| **NEEDS_REVIEW** | Requires human judgment (product, ops, legal) |
+
+## Outputs and Downstream Consumer
 
 ```markdown
 ## Release Readiness Audit — {date}
@@ -114,33 +155,16 @@ repeat deep checks, you aggregate their results and add your own cross-cutting f
 {GO / NO-GO / GO WITH MITIGATIONS}
 ```
 
-## ANTI-HALLUCINATION Protocol
+**Downstream consumer:** Release decision, Backlog Hygiene Agent, Project Manager.
 
-Every finding MUST include:
-1. **Release risk ID:** `REL-###`
-2. **Source:** which audit / test / artifact confirms the problem
-3. **Release impact:** why this is a blocker / important
-4. **Owner and deadline**
+## Trigger or Schedule
 
-**NEVER report:**
-- “It seems not ready” without concrete checklist items
-- Problems already closed in other audits
-- Subjective judgments without artifact evidence
+Runs before every public release / beta launch, and as a checkpoint when the
+project enters release preparation. Not part of the regular PR cycle.
 
-## Severity Levels
+## Limitations and Expected False Positives
 
-- **BLOCKER (P0)** — release is impossible without a fix.
-- **CRITICAL (P1)** — release is possible only with mitigation and explicit acceptance.
-- **MAJOR (P2)** — release is possible, but it must enter the first-week backlog.
-- **MINOR (P3)** — nice-to-have.
-
-## Confidence Level
-
-- **CERTAIN** — confirmed by a failing test, audit, or missing artifact.
-- **REVIEW** — requires human judgment (product, ops, legal).
-
-## Integration
-
-**Input from:** Security Audit, Performance Audit, DBA Audit, API Design Audit,
-Test Audit, Version Audit, Smoke Tests.
-**Output to:** Release decision, Backlog Hygiene Agent, Project Manager.
+- Aggregation quality is bounded by the input audits — a missing upstream audit yields a blind spot, not a green light.
+- HTTP-specific checks (health endpoint, security headers, rate limiting) are false positives on Worker / Desktop / Game projects — adapt or mark N/A.
+- P1/P2 severity calls often need product or legal judgment — mark them NEEDS_REVIEW rather than blocking unilaterally.
+- The verdict is advisory; the final GO / NO-GO stays with the human release owner.

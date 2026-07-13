@@ -7,19 +7,20 @@ description: >
 
 # Mutation Audit — Skill
 
-## Context Marker
+Optional interaction convention (agent-specific): when this skill is active,
+add `🧬` to your STARTER_CHARACTER stack (example: `🍀 🧬`). Prepend `↻` when
+re-reading the skill. The skill is fully usable without emoji markers.
 
-When this skill is active, add `🧬` to your STARTER_CHARACTER stack.
-Example: `🍀 🧬` = base rules + Mutation Audit role active.
-When re-reading this skill, prepend `↻` to the skill marker.
-
-## Role
+## Purpose and Non-Goals
 
 You are a test quality engineer. Your task is to find weak tests that pass but do
 not verify real logic. Mutation testing introduces small code changes (mutants)
 and checks whether tests fail. If a mutant survives, the tests are not strict enough.
 
-## Adaptation for Project
+This skill does not write the missing tests or measure line coverage — it reports
+surviving mutants and score regressions for the Programmer Agent to act on.
+
+## Applicability and Exclusions
 
 - **Critical assemblies (Domain, core services)** → mutation testing is Must.
 - **A lot of legacy code** → start with one critical assembly and fix a baseline.
@@ -27,7 +28,13 @@ and checks whether tests fail. If a mutant survives, the tests are not strict en
   Run as a periodic audit or a separate CI job with `dotnet test`.
 - **No budget for long runs** → run once per sprint, not on every PR.
 
-## Audit Rules
+## Required Inputs
+
+- Access to the test suite and 1–3 critical assemblies selected for mutation testing.
+- A `stryker-config.json` per target assembly and a recorded mutation score baseline.
+- Input from: Test Audit, Code Coverage Report.
+
+## Procedure
 
 ### 1. Target assemblies
 - [ ] 1–3 critical assemblies are selected for mutation testing (for example, Domain).
@@ -49,7 +56,47 @@ and checks whether tests fail. If a mutant survives, the tests are not strict en
 - [ ] The report is stored as a CI artifact.
 - [ ] It does not block a regular PR because of duration.
 
-## Report Format
+## Evidence Requirements
+
+Every finding MUST include:
+1. **Exact file and line:** `src/Domain/Order.cs:42`
+2. **Mutation type:** `>` → `>=`, `+1` → `-1`, empty string → null
+3. **Why it survived:** weak assert, missing branch test
+4. **Action:** strengthen test or document as equivalent mutant
+
+**NEVER report:**
+- “Tests are weak” without a concrete mutant
+- Mutation score drop without explaining why
+- Recommendations to enable Stryker in CI if it does not support the project stack
+
+## Finding Schema
+
+```text
+ID
+Severity: BLOCKER | CRITICAL | MAJOR | MINOR
+Confidence: CONFIRMED | NEEDS_REVIEW
+Category / Control
+Evidence: file:line, command output, trace or reproduction
+Impact
+Recommended action
+Owner / disposition
+```
+
+## Severity and Confidence
+
+| Severity | Meaning |
+|----------|---------|
+| **BLOCKER** | Mutation score of a critical assembly falls below 60% |
+| **CRITICAL** | Score dropped relative to baseline |
+| **MAJOR** | Many surviving mutants in critical code |
+| **MINOR** | Equivalent mutants or mutants in trivial code |
+
+| Confidence | Meaning |
+|------------|---------|
+| **CONFIRMED** | Stryker report shows a concrete surviving mutant |
+| **NEEDS_REVIEW** | Mutant may be equivalent. Needs human analysis |
+
+## Outputs and Downstream Consumer
 
 ```markdown
 ## Mutation Audit — {date}
@@ -67,35 +114,19 @@ and checks whether tests fail. If a mutant survives, the tests are not strict en
 | MUT-002 | ... | `+1` → `-1` | Missing boundary test | Add test |
 
 ### False positives
-- [ ] [REVIEW] `{File}` — equivalent mutant, add to ignore-list
+- [ ] [NEEDS_REVIEW] `{File}` — equivalent mutant, add to ignore-list
 ```
 
-## ANTI-HALLUCINATION Protocol
+**Downstream consumer:** Backlog Hygiene Agent, Programmer Agent (strengthening tests).
 
-Every finding MUST include:
-1. **Exact file and line:** `src/Domain/Order.cs:42`
-2. **Mutation type:** `>` → `>=`, `+1` → `-1`, empty string → null
-3. **Why it survived:** weak assert, missing branch test
-4. **Action:** strengthen test or document as equivalent mutant
+## Trigger or Schedule
 
-**NEVER report:**
-- “Tests are weak” without a concrete mutant
-- Mutation score drop without explaining why
-- Recommendations to enable Stryker in CI if it does not support the project stack
+Run before release or once per sprint (and in a separate CI job when Stryker
+does not support the project's test platform); not on every PR because of duration.
 
-## Severity Levels
+## Limitations and Expected False Positives
 
-- **BLOCKER** — mutation score of a critical assembly falls below 60%.
-- **CRITICAL** — score dropped relative to baseline.
-- **MAJOR** — many surviving mutants in critical code.
-- **MINOR** — equivalent mutants or mutants in trivial code.
-
-## Confidence Level
-
-- **CERTAIN** — Stryker report shows a concrete surviving mutant.
-- **REVIEW** — mutant may be equivalent. Needs human analysis.
-
-## Integration
-
-**Input from:** Test Audit, Code Coverage Report.
-**Output to:** Backlog Hygiene Agent, Programmer Agent (strengthening tests).
+- Equivalent mutants (behavior-identical code changes) are unavoidable — document them, do not chase them.
+- Stryker.NET may not support TUnit / Microsoft Testing Platform — adapt the runner before reporting tool failures.
+- Mutation score is assembly-scoped: a good overall score can hide weak tests in a new module.
+- A single surviving mutant is an investigation signal, not proof of a defect — strengthen the test or mark NEEDS_REVIEW.
