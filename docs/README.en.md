@@ -145,6 +145,15 @@ Read before implementation — each trap explains **why** a guardrail exists.
 
 ---
 
+## Case Studies (docs/case-studies/)
+
+| Document | What's inside |
+|----------|---------------|
+| [small-project-minimal-api.md](case-studies/small-project-minimal-api.md) | Small project (single-project MVP): risk profile, selected/rejected controls, false positives, cost |
+| [production-like-layered-service.md](case-studies/production-like-layered-service.md) | Production-like layered service: full level set, removed/rejected guardrails, maintenance cost |
+
+---
+
 ## Agent Integrations (docs/agents/)
 
 > **⚠️ Agents:** Read [BOOTSTRAP-PROTOCOL.md](agents/BOOTSTRAP-PROTOCOL.md) before starting work.  

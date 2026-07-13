@@ -356,7 +356,19 @@ ADR описана явно.
 - Один источник test-running logic вместо дублирования scripts и workflow.
 - Не запускать один test project дважды в CI без причины.
 
-#### METH-024 — Добавить case studies
+#### METH-024 — Добавить case studies ✅
+
+> **Сделано:** `docs/case-studies/` — два кейса:
+> - `small-project-minimal-api.md` (observed case, воспроизводимый на
+>   examples/DemoProject.MinimalApi): risk profile, selected/rejected controls
+>   (Periodic Assurance и System Checks отклонены как неоправданные), false
+>   positives, стоимость.
+> - `production-like-layered-service.md` (illustrative composite на
+>   examples/DemoProject + docs/traps): полный набор уровней, **removed** guardrails
+>   (NuGetAuditSuppress, «index for every WHERE»), rejected audits (i18n, bot, E2E
+>   MCP), maintenance cost.
+> Оба кейса показывают удалённые/неприменимые guardrails, не только успехи;
+> evidence-класс указан явно. Залинкованы в knowledge map.
 
 - Минимум один небольшой проект и один production-like сценарий.
 - Показать risk profile, selected/rejected controls, стоимость, findings,

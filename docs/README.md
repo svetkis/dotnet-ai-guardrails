@@ -143,6 +143,15 @@
 
 ---
 
+## Кейс-стади (docs/case-studies/)
+
+| Документ | Что внутри |
+|----------|------------|
+| [small-project-minimal-api.md](case-studies/small-project-minimal-api.md) | Малый проект (single-project MVP): risk profile, selected/rejected controls, false positives, стоимость |
+| [production-like-layered-service.md](case-studies/production-like-layered-service.md) | Production-like layered service: полный набор уровней, removed/rejected guardrails, maintenance cost |
+
+---
+
 ## Интеграции с агентами (docs/agents/)
 
 > **⚠️ Агентам:** Прочитайте [BOOTSTRAP-PROTOCOL.md](agents/BOOTSTRAP-PROTOCOL.md) перед началом работы.  
