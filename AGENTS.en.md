@@ -88,7 +88,7 @@ If you are an AI agent reading this file in the context of a **different** repos
 | Trap description | `docs/traps/` |
 | Architecture tests | `docs/solutions/architecture-tests.md` |
 | AI development patterns | `docs/solutions/ai-patterns.md` |
-| Intentional deviations (Decision Guards / ADR) | `templates/skills/skeptical-ai-bootstrap/DECISION-GUARDS.md` |
+| Intentional deviations (Decision Guards) | `templates/skills/skeptical-ai-bootstrap/DECISION-GUARDS.md` |
 | Project onboarding | `templates/skills/skeptical-ai-bootstrap/` |
 | Kimi integration | `docs/agents/KIMI.md` |
 | Claude Code integration | `docs/agents/CLAUDE-CODE.md` |

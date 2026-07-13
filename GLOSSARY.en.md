@@ -31,7 +31,7 @@
 |------|------------|---------|
 | **Read-path** | Data read path: read-only queries. `.Select()` + `.AsNoTracking()` are **mandatory**. `.Include()`, `.FindAsync()` are forbidden. | [rules/AGENTS_TEMPLATE.md](rules/AGENTS_TEMPLATE.md) |
 | **Write-path** | Data write path: commands that change state. Change tracking is required, `.AsNoTracking()` is forbidden. | [rules/AGENTS_TEMPLATE.md](rules/AGENTS_TEMPLATE.md) |
-| **Numbered Decision (ADR)** | Intentional deviation from standard, documented by an ID in a comment: `PERF-###`, `DB-###`, `AUD-###`. Implementation of the **ADR (Architecture Decision Records)** pattern. Checked by an architecture test for uniqueness. | [rules/AGENTS_TEMPLATE.md](rules/AGENTS_TEMPLATE.md), [tests/patterns/ArchitectureRules.cs](tests/patterns/ArchitectureRules.cs) |
+| **Decision Guard** | SAE-specific: intentional deviation from standard, documented by an ID in a comment (`PERF-###`, `DB-###`, `AUD-###`) plus a short registry entry. **Not a synonym for ADR** — a lightweight reference to a decision; when full ADRs exist, the entry links to them. Checked by an architecture test for uniqueness. | [rules/AGENTS_TEMPLATE.md](rules/AGENTS_TEMPLATE.md), [templates/skills/skeptical-ai-bootstrap/DECISION-GUARDS.md](templates/skills/skeptical-ai-bootstrap/DECISION-GUARDS.md) |
 | **Semantic Anchors** | Established terms instead of descriptions. Each term activates a specific methodology (e.g., "read-path" = `.Select()` + `.AsNoTracking()`). | [rules/AGENTS_TEMPLATE.md](rules/AGENTS_TEMPLATE.md) |
 
 ## Agents and Tools

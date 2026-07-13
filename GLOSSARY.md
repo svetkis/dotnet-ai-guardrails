@@ -31,7 +31,7 @@
 |--------|-------------|------------------|
 | **Read-path** | Путь чтения данных: read-only запросы. `.Select()` + `.AsNoTracking()` **обязательны**. `.Include()`, `.FindAsync()` запрещены. | [rules/AGENTS_TEMPLATE.md](rules/AGENTS_TEMPLATE.md) |
 | **Write-path** | Путь записи данных: команды, изменяющие состояние. Change tracking обязателен, `.AsNoTracking()` запрещён. | [rules/AGENTS_TEMPLATE.md](rules/AGENTS_TEMPLATE.md) |
-| **Numbered Decision (ADR)** | Осознанное отклонение от стандарта, зафиксированное ID в комментарии: `PERF-###`, `DB-###`, `AUD-###`. Реализация паттерна **ADR (Architecture Decision Records)**. Проверяется архитектурным тестом на уникальность. | [rules/AGENTS_TEMPLATE.md](rules/AGENTS_TEMPLATE.md), [tests/patterns/ArchitectureRules.cs](tests/patterns/ArchitectureRules.cs) |
+| **Decision Guard** | SAE-specific: осознанное отклонение от стандарта, зафиксированное ID в комментарии (`PERF-###`, `DB-###`, `AUD-###`) и короткой записью в реестре. **Не синоним ADR** — это лёгкая ссылка на решение; при наличии полноценных ADR запись ссылается на них. Проверяется архитектурным тестом на уникальность. | [rules/AGENTS_TEMPLATE.md](rules/AGENTS_TEMPLATE.md), [templates/skills/skeptical-ai-bootstrap/DECISION-GUARDS.md](templates/skills/skeptical-ai-bootstrap/DECISION-GUARDS.md) |
 | **Semantic Anchors** | Устоявшиеся термины вместо описаний. Каждый термин активирует конкретную методологию (например, "read-path" = `.Select()` + `.AsNoTracking()`). | [rules/AGENTS_TEMPLATE.md](rules/AGENTS_TEMPLATE.md) |
 
 ## Агенты и инструменты

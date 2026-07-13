@@ -8,7 +8,7 @@
 ---
 
 <a name="layer-0"></a>
-## Layer 0. Agent Instructions (AGENTS.md + Decision Guards / ADR)
+## Layer 0. Agent Instructions (AGENTS.md + Decision Guards)
 
 This is not a "feedback layer" — it's the **ground rules**. Everything else is just enforcement.
 
@@ -151,7 +151,7 @@ From practice: 8 review commits with findings:
           │   + Snapshot        │
           ├─────────────────────┤
           │   AGENTS.md         │  ← Layer 0: Instructions before code
-          │  + Decision Guards (ADR)  │
+          │  + Decision Guards  │
           └─────────────────────┘
 ```
 
@@ -278,7 +278,7 @@ Anything that got here passed Layer 1 (fast feedback) + Layer 2 (acceptance cycl
           │   (Fast feedback)   │
           ├─────────────────────┤
           │   AGENTS.md         │  ← Layer 0: Rules before code
-          │  + Decision Guards (ADR)  │
+          │  + Decision Guards  │
           └─────────────────────┘
 ```
 

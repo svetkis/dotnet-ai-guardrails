@@ -26,7 +26,7 @@ Three verification loops: inner (on every change), outer (on schedule or before 
 
 | Sub-layer | Speed | Tool |
 |-----------|-------|------|
-| 0. Instructions | — | `rules/AGENTS_TEMPLATE.md` + Decision Guards (ADR) |
+| 0. Instructions | — | `rules/AGENTS_TEMPLATE.md` + Decision Guards |
 | 1.1 Compiler | ~sec | `dotnet build`, `tsc --noEmit` |
 | 1.2 Architecture | ~10 sec | NetArchTest |
 | 1.3 Tests | ~30 sec | TUnit + `dotnet run` |

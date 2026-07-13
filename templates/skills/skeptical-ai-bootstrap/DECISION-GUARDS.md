@@ -1,6 +1,7 @@
-# Decision Guards — Conscious Deviation Registry Template (ADR)
+# Decision Guards — Conscious Deviation Registry Template
 
-> **Purpose:** Implementation of the **ADR (Architecture Decision Records)** pattern — document every conscious deviation from the "standard" with a number and rationale, so the agent doesn't try to "fix" it.  
+> **Purpose:** Document every conscious deviation from the "standard" with a unique ID and rationale, so the agent doesn't try to "fix" it.  
+> **Relationship to ADR:** a **Decision Guard is not an ADR** and not a synonym for one. It is a lightweight, code-anchored *reference* to a decision: the inline `PERF-###` comment plus a short registry entry. If your team already keeps full ADRs (context/options/decision in `docs/adr/`), a Decision Guard entry should *link to* the ADR (`Supersedes` / `ADR:` fields), not duplicate it.  
 > **Consumer:** Human (Tech Lead) writes, agent reads comments in code.  
 > **Result:** Registry of decisions like `PERF-###`, `DB-###`, `AUD-###` that are checked by an architecture uniqueness test.
 
@@ -9,7 +10,7 @@
 ## Why This Is a Separate File
 
 `ARCHITECTURE-INVENTORY.md` is the "terrain map" (C4, assemblies, stack).  
-And `DECISION-GUARDS.md` is the **compromise journal**: why there is no index here, why `QueryFilter` was removed, why `SELECT *` is justified in this place.
+And `DECISION-GUARDS.md` is the **compromise journal**: why there is no index here, why the global `QueryFilter` is not used, why `SELECT *` is justified in this place.
 
 Without such a journal, the agent will see "strange" code in 3 months and roll back the optimization.
 
@@ -19,33 +20,50 @@ Without such a journal, the agent will see "strange" code in 3 months and roll b
 
 ```markdown
 ### {PREFIX}-###: {Short Name}
+**Status:** active | superseded | retired  
 **Date:** YYYY-MM-DD  
-**Author:** @username  
+**Owner:** @username  
+**Review date:** YYYY-MM-DD  
+**Superseded by:** {PREFIX-### or ADR link, if status = superseded}  
+**ADR:** {link to full ADR, if one exists}  
 **Context:** {why we came to this decision}  
 **Decision:** {what exactly we did}  
 **Consequences:** {what will break if rolled back}  
 **Where in code:** {file:line}
 ```
 
+Lifecycle rules:
+
+- **active** — the decision is in force; the inline comment must match the code.
+- **superseded** — a newer decision replaced it; keep the entry for history, fill in `Superseded by`, and remove the inline comment from code.
+- **retired** — the deviation no longer exists (code removed/refactored); remove the inline comment from code.
+- **Review date** — the date when the decision must be re-evaluated. An expired review date does not invalidate the decision, but is a finding for Control Maintenance.
+
 ---
 
 ## Example
 
 ```markdown
-### PERF-022: QueryFilter on SoftDelete Removed
+### PERF-022: Global QueryFilter on SoftDelete Not Used
+**Status:** active  
 **Date:** 2026-03-15  
-**Author:** @lead  
-**Context:** QueryFilter added a JOIN to users via Tenant.Owner.DeletedAt in every EXISTS subquery. Under load — 400ms degradation.  
-**Decision:** Removed `HasQueryFilter(s => !s.IsDeleted)`. Soft delete implemented explicitly in queries.  
-**Consequences:** An agent seeing `HasQueryFilter` in other configs will try to "fix" this. The number stops it.  
+**Owner:** @lead  
+**Review date:** 2026-09-15  
+**Context:** A global query filter added a JOIN to users via Tenant.Owner.DeletedAt in every EXISTS subquery. Under load — 400ms degradation.  
+**Decision:** Do not call `HasQueryFilter(s => !s.IsDeleted)` for this entity. Soft delete is implemented explicitly (`Where(s => !s.IsDeleted)`) in the affected queries.  
+**Consequences:** An agent seeing `HasQueryFilter` in other configs will try to "fix" this by adding a global filter. The number stops it.  
 **Where in code:** `src/Infrastructure/Persistence/Configuration/EntityConfiguration.cs:31`
 ```
 
-In code, a brief comment is left next to the decision:
+In code, a brief comment is left next to the decision. Note: the filter is **not called** — the comment replaces the removed code, it does not annotate a live call:
 
 ```csharp
-// PERF-022: QueryFilter removed — JOIN added 3ms to every query, see docs/DECISION-GUARDS.md
-builder.HasQueryFilter(s => !s.IsDeleted); // REMOVED — see PERF-022
+// PERF-022: global QueryFilter intentionally NOT configured here — JOIN added
+// 400ms under load, see docs/DECISION-GUARDS.md. Soft delete is explicit in queries.
+protected override void OnModelCreating(ModelBuilder builder)
+{
+    builder.Entity<Session>(b => { /* no HasQueryFilter — PERF-022 */ });
+}
 ```
 
 ---
@@ -79,4 +97,4 @@ If there are many decisions — they can be split by domain: `docs/decisions/PER
 
 ---
 
-> **Principle:** The comment `// PERF-022` in code stops the agent. And this file explains to a human why.
+> **Principle:** The comment `// PERF-022` in code stops the agent. And this file explains to a human why — and whether the decision is still in force.

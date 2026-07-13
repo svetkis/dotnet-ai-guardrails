@@ -22,7 +22,7 @@
 
 | Слой | Подслой | Что это | Главный документ | Артефакты |
 |------|---------|---------|------------------|-----------|
-| **0** | — | Инструкции для агента перед кодом | [PYRAMID.md §Слой 0](../PYRAMID.md#layer-0) | `rules/AGENTS_TEMPLATE.md` + Decision Guards (ADR) |
+| **0** | — | Инструкции для агента перед кодом | [PYRAMID.md §Слой 0](../PYRAMID.md#layer-0) | `rules/AGENTS_TEMPLATE.md` + Decision Guards |
 | **1** | 1.1 Компилятор | Быстрая обратная связь от типов | [PYRAMID.md §1.1](../PYRAMID.md#layer-1-compiler) | `.editorconfig`, `Directory.Build.props`, `DemoProject.Analyzers` (кастомный Roslyn-анализатор) |
 | **1** | 1.2 Архитектура | Авто-проверка слоёв и антипаттернов | [PYRAMID.md §1.2](../PYRAMID.md#layer-1-architecture) | [tests/patterns/ArchitectureRules.cs](../tests/patterns/ArchitectureRules.cs), [RatchetTest.cs](../tests/patterns/RatchetTest.cs), [ArchUnitNetSliceTest.cs](../tests/patterns/ArchUnitNetSliceTest.cs) |
 | **1** | 1.3 Тесты | Регрессии, snapshot, vibe-refactoring, контракты API | [PYRAMID.md §1.3](../PYRAMID.md#layer-1-tests) | [tests/patterns/](#тестовые-паттерны) |
