@@ -336,7 +336,18 @@ ADR описана явно.
 - Удалить ненужные context-window comparisons.
 - Проверять устаревшие configuration formats периодическим audit.
 
-#### METH-023 — Автоматизировать качество репозитория
+#### METH-023 — Автоматизировать качество репозитория ✅
+
+> **Сделано:**
+> - `ci/scripts/check-links.sh` — markdown link check (все ссылки резолвятся).
+> - `ci/scripts/check-skills.sh` — schema/frontmatter check (METH-012), подключён к CI.
+> - `ci/scripts/check-knowledge-map.sh` — completeness check docs/README.md.
+> - `ci/scripts/check-guardrail-lifecycle.sh` — stale suppressions (owner + review date)
+>   и expired decision guards (warning).
+> - `ci/scripts/run-and-verify-tests.sh` — единый источник test-running logic
+>   (run + verify + expect-failure режим); verify-tests.sh делегирует в него.
+> - Workflow: test project больше не запускается дважды (Run Tests + Verify Tests Ran
+>   объединены в один вызов скрипта); добавлен job `repo-quality` со всеми проверками.
 
 - Markdown link check.
 - Skill schema/frontmatter check.

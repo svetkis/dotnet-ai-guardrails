@@ -38,32 +38,10 @@ jobs:
         run: dotnet build ${{ matrix.solution }} --no-restore --configuration Release -p:TreatWarningsAsErrors=true
 
       # GUARDRAIL: dotnet test опасен — используем dotnet run --project
-      # Каждый проект запускаем отдельно, чтобы точно знать, что он реально бежал
-      - name: Run Tests
-        run: dotnet run --project ${{ matrix.test_project }} --configuration Release
-
       # GUARDRAIL: Проверяем, что тесты реально запустились (не 0 ran)
-      - name: Verify Tests Ran
-        run: |
-          TEST_OUTPUT=$(dotnet run --project ${{ matrix.test_project }} --configuration Release 2>&1)
-          echo "$TEST_OUTPUT"
-
-          if echo "$TEST_OUTPUT" | grep -qi "0 tests ran\|no tests found\|discovered: 0"; then
-              echo "ERROR: Tests did not run! Output shows 0 tests."
-              exit 1
-          fi
-
-          if ! echo "$TEST_OUTPUT" | grep -qi "passed\|failed\|skipped"; then
-              echo "ERROR: Cannot determine test results. TUnit may be misconfigured."
-              exit 1
-          fi
-
-          if echo "$TEST_OUTPUT" | grep -q "failed: [1-9]"; then
-              echo "ERROR: Tests failed!"
-              exit 1
-          fi
-
-          echo "OK: Tests were executed and passed."
+      # Единый источник test-running logic: ci/scripts/run-and-verify-tests.sh
+      - name: Run Tests + Verify
+        run: bash ci/scripts/run-and-verify-tests.sh ${{ matrix.test_project }}
 
   traps-guardrails:
     runs-on: ubuntu-latest
@@ -87,22 +65,23 @@ jobs:
       # GUARDRAIL: Traps — намеренно сломанный код. Тесты ДОЛЖНЫ падать.
       # Если тесты проходят — значит guardrails сломаны и ловушки больше не ловятся.
       - name: Run Traps Tests (Expect Failure)
-        run: |
-          set +e
-          TEST_OUTPUT=$(dotnet run --project examples/DemoProject.Traps/tests/DemoProject.Traps.Tests/DemoProject.Traps.Tests.csproj --configuration Release 2>&1)
-          EXIT_CODE=$?
-          set -e
+        run: bash ci/scripts/run-and-verify-tests.sh examples/DemoProject.Traps/tests/DemoProject.Traps.Tests/DemoProject.Traps.Tests.csproj --expect-failure
 
-          echo "$TEST_OUTPUT"
+  repo-quality:
+    runs-on: ubuntu-latest
+    name: Repo Quality (docs & skills)
 
-          if [ "$EXIT_CODE" -eq 0 ]; then
-              echo "ERROR: Traps tests passed! Guardrails are broken — traps are no longer caught."
-              exit 1
-          fi
+    steps:
+      - uses: actions/checkout@v4
 
-          if ! echo "$TEST_OUTPUT" | grep -q "failed:"; then
-              echo "ERROR: Tests crashed or did not run properly. Expected test failures, but got an unexpected error."
-              exit 1
-          fi
+      - name: Markdown link check
+        run: bash ci/scripts/check-links.sh
 
-          echo "OK: Traps correctly caught by guardrails (exit code $EXIT_CODE)."
+      - name: Skill schema check
+        run: bash ci/scripts/check-skills.sh
+
+      - name: Knowledge-map completeness
+        run: bash ci/scripts/check-knowledge-map.sh
+
+      - name: Guardrail lifecycle (suppressions, decision guards)
+        run: bash ci/scripts/check-guardrail-lifecycle.sh

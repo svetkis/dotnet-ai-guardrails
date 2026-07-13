@@ -1,54 +1,30 @@
-#!/bin/bash
-# GUARDRAIL: Проверяем, что dotnet run --project реально запустил тесты.
-# Ловит ситуацию, когда тестовый раннер сломан и выдаёт 0 tests ran с exit code 0.
+#!/usr/bin/env bash
+# verify-tests.sh — local helper. Delegates to run-and-verify-tests.sh
+# (single source of test-running logic).
 #
-# Использование:
-#   ./verify-tests.sh <path-to-test.csproj>     # проверить один проект
-#   ./verify-tests.sh                           # проверить все проекты в tests/
-
+# Usage:
+#   ./verify-tests.sh <path-to-test.csproj>     # verify one project
+#   ./verify-tests.sh                           # verify all projects in tests/
 set -e
 
-verify_project() {
-    local proj="$1"
-    echo "Verifying tests ran for: $proj"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-    TEST_OUTPUT=$(dotnet run --project "$proj" --configuration Release 2>&1)
+if [ -n "${1:-}" ]; then
+    exec "$SCRIPT_DIR/run-and-verify-tests.sh" "$1"
+fi
 
-    echo "$TEST_OUTPUT"
+if [ ! -d "tests" ]; then
+    echo "ERROR: tests/ directory not found. Pass a .csproj path or adapt this script."
+    exit 1
+fi
 
-    # Проверяем, что в выводе есть упоминание о запущенных тестах
-    if echo "$TEST_OUTPUT" | grep -qi "0 tests ran\|no tests found\|discovered: 0"; then
-        echo "ERROR: Tests did not run in $proj! Output shows 0 tests."
-        exit 1
-    fi
+FOUND=0
+while IFS= read -r -d '' proj; do
+    FOUND=1
+    "$SCRIPT_DIR/run-and-verify-tests.sh" "$proj"
+done < <(find tests -name "*.csproj" -print0)
 
-    # Проверяем, что есть упоминание о passed/failed (TUnit/xUnit/NUnit выводит статистику)
-    if ! echo "$TEST_OUTPUT" | grep -qi "passed\|failed\|skipped\|total:"; then
-        echo "ERROR: Cannot determine test results for $proj. Test runner may be misconfigured."
-        exit 1
-    fi
-
-    echo "OK: Tests were executed and results detected for $proj."
-}
-
-if [ -n "$1" ]; then
-    # Один проект
-    verify_project "$1"
-else
-    # Все проекты в tests/
-    if [ ! -d "tests" ]; then
-        echo "ERROR: tests/ directory not found. Pass a .csproj path or adapt this script."
-        exit 1
-    fi
-
-    FOUND=0
-    while IFS= read -r -d '' proj; do
-        FOUND=1
-        verify_project "$proj"
-    done < <(find tests -name "*.csproj" -print0)
-
-    if [ "$FOUND" -eq 0 ]; then
-        echo "ERROR: No test projects found in tests/."
-        exit 1
-    fi
+if [ "$FOUND" -eq 0 ]; then
+    echo "ERROR: No test projects found in tests/."
+    exit 1
 fi
