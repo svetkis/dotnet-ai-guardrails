@@ -213,7 +213,13 @@ ADR описана явно.
 
 **Готово, когда:** каждый артефакт относится к одному уровню или supporting process.
 
-#### METH-011 — Создать нормативный glossary
+#### METH-011 — Создать нормативный glossary ✅
+
+> **Сделано:** раздел «Normative Terminology» в GLOSSARY(.en) определяет check, test,
+> gate, audit, assurance, validation, governance, maintenance, ratchet, baseline с
+> метками происхождения (`industry-standard` / `borrowed` / `SAE-specific` / `informal`).
+> Claim «Extending DORA practices» удалён из README.en; Zero Trust переоформлен как
+> явная аналогия (borrowed), а не утверждение. Decision Guard ≠ ADR — см. METH-002.
 
 - Определить `check`, `test`, `gate`, `audit`, `assurance`, `validation`,
   `governance`, `maintenance`, `ratchet`, `baseline`.

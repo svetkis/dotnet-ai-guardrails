@@ -6,6 +6,30 @@
 
 ---
 
+## Нормативная терминология
+
+> Происхождение термина: `industry-standard` (общепринятый), `borrowed`
+> (заимствован из другой области, используется по аналогии), `SAE-specific`
+> (введён методологией), `informal` (разговорный, не для нормативных документов).
+
+| Термин | Происхождение | Определение |
+|--------|---------------|-------------|
+| **check** | industry-standard | Автоматическая детерминированная проверка: одинаковый вход → одинаковый результат, без инженерного суждения. |
+| **test** | industry-standard | Check, проверяющий поведение кода через исполнение (unit, integration, E2E). |
+| **gate** | industry-standard | Обязательная точка прохождения: изменение не идёт дальше, пока gate не пройден (`commit gate`, `PR gate`, `release gate`). |
+| **audit** | industry-standard | Исследовательская проверка узкой области, требующая evidence и инженерного суждения. Результат — findings, а не pass/fail. |
+| **assurance** | industry-standard | Совокупность мер, дающих обоснованную уверенность, что система соответствует требованиям. |
+| **validation** | industry-standard | Подтверждение, что система решает нужную задачу («built the right thing»); не путать с verification («built it right»). |
+| **governance** | industry-standard | Принятие решений о рисках: residual risk acceptance, release decision, приоритеты. |
+| **maintenance** | industry-standard | Поддержание артефактов контроля в актуальном состоянии (см. Control Maintenance). |
+| **ratchet** | borrowed | Check на монотонность метрики: значение не должно ухудшаться (количество публичных типов, тестов, complexity). От механического «храповика». |
+| **baseline** | industry-standard | Зафиксированное текущее состояние метрики, от которого ratchet запрещает деградацию. |
+| **guardrail** | SAE-specific | Любой артефакт контроля (check, gate, audit, инструкция), ограничивающий пространство действий агента или разработчика. |
+| **Decision Guard** | SAE-specific | См. раздел «Паттерны кода». |
+| **Zero Trust (аналогия)** | borrowed | Security-модель «never trust, always verify»; в SAE — аналогия: ни один артефакт агента не считается корректным без проверки. Не утверждение о реализации Zero Trust Architecture. |
+| **skill** | SAE-specific | Инструкция + чеклист для роли агента (аудит, ревью, онбординг). |
+| **persona** | informal | Именованная роль агента внутри skill («DBA Auditor»). Не нормативный термин. |
+
 ## Engineering Assurance Levels (модель контроля)
 
 | Термин | Определение | Где используется |

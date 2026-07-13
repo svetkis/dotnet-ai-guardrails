@@ -6,6 +6,30 @@
 
 ---
 
+## Normative Terminology
+
+> Term origin: `industry-standard` (widely accepted), `borrowed` (taken from another
+> domain, used by analogy), `SAE-specific` (introduced by this methodology),
+> `informal` (colloquial, not for normative documents).
+
+| Term | Origin | Definition |
+|------|--------|------------|
+| **check** | industry-standard | Automated deterministic check: same input → same result, no engineering judgment. |
+| **test** | industry-standard | A check that verifies code behavior through execution (unit, integration, E2E). |
+| **gate** | industry-standard | Mandatory passage point: a change does not proceed until the gate passes (`commit gate`, `PR gate`, `release gate`). |
+| **audit** | industry-standard | Investigative review of a narrow area, requiring evidence and engineering judgment. Output is findings, not pass/fail. |
+| **assurance** | industry-standard | The body of measures giving justified confidence that the system meets its requirements. |
+| **validation** | industry-standard | Confirmation that the system solves the right problem ("built the right thing"); not to be confused with verification ("built it right"). |
+| **governance** | industry-standard | Risk decision-making: residual risk acceptance, release decision, priorities. |
+| **maintenance** | industry-standard | Keeping control artifacts up to date (see Control Maintenance). |
+| **ratchet** | borrowed | A check on metric monotonicity: the value must not degrade (public type count, test count, complexity). From the mechanical ratchet. |
+| **baseline** | industry-standard | The recorded current value of a metric from which a ratchet forbids degradation. |
+| **guardrail** | SAE-specific | Any control artifact (check, gate, audit, instruction) that constrains the action space of an agent or developer. |
+| **Decision Guard** | SAE-specific | See "Code Patterns". |
+| **Zero Trust (analogy)** | borrowed | The "never trust, always verify" security model; in SAE — an analogy: no agent artifact is considered correct without a check. Not a claim of implementing Zero Trust Architecture. |
+| **skill** | SAE-specific | Instruction + checklist for an agent role (audit, review, onboarding). |
+| **persona** | informal | A named agent role inside a skill ("DBA Auditor"). Not a normative term. |
+
 ## Engineering Assurance Levels (control model)
 
 | Term | Definition | Used in |
