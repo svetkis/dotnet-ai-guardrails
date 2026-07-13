@@ -18,7 +18,7 @@ It prevents situations where an agent tries to create a `DemoProject` in the tar
 | **Kimi Code CLI** | [KIMI.md](KIMI.md) | `.kimi/skills/{name}/SKILL.md` | Skill system, marketplace |
 | **Claude Code** | [CLAUDE-CODE.md](CLAUDE-CODE.md) | `.claude/CLAUDE.md` + commands | Tools (bash, edit), 200k context |
 | **Cursor** | [CURSOR.md](CURSOR.md) | `.cursorrules` + `.cursor/rules/` | IDE-integrated, context-aware rules |
-| **Codex (OpenAI)** | [CODEX.md](CODEX.md) | `.codex/instructions.md` | Single file, git integration |
+| **Codex (OpenAI)** | [CODEX.md](CODEX.md) | `AGENTS.md` + `~/.codex/config.toml` | AGENTS.md standard, skills, custom agents |
 | **OpenCode** | [OPENCODE.md](OPENCODE.md) | `.opencode/instructions.md` | Open-source, self-hosted |
 
 ## How to Read These Guides

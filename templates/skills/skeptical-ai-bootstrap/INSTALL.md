@@ -82,7 +82,7 @@ The report contains links to artifacts from `dotnet-ai-guardrails`. These links 
 The skill automatically determines which AI agent is used in the project:
 - **Kimi Code CLI** → `.kimi/skills/`
 - **Claude Code** → `.claude/CLAUDE.md` + commands
-- **Codex** → `.codex/instructions.md`
+- **Codex** → `AGENTS.md` + `~/.codex/config.toml` (+ `.agents/skills/`)
 - **OpenCode** → `.opencode/`
 - **Multiple** → universal `AGENTS.md` + specific configs
 

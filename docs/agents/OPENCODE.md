@@ -127,7 +127,7 @@ Onboarding first builds the review artifact for your OpenCode setup. Only after 
 
 | Aspect | Kimi | Claude Code | Codex | OpenCode |
 |--------|------|-------------|-------|----------|
-| Format | `.kimi/skills/*.md` | `.claude/CLAUDE.md` | `.codex/instructions.md` | Depends on implementation |
+| Format | `.kimi/skills/*.md` | `.claude/CLAUDE.md` | `AGENTS.md` | Depends on implementation |
 | Open Source | No | No | No | Yes |
 | Self-hosted | No | No | No | Possible |
 | Model choice | Fixed | Claude | GPT-4o | Any (Ollama, etc.) |
@@ -166,7 +166,7 @@ Since OpenCode has no single standard, a **hybrid approach** is recommended:
 │       └── security-audit.md
 ├── .kimi/skills/                  # If Kimi is used
 ├── .claude/                       # If Claude Code is used
-└── .codex/instructions.md         # If Codex is used
+└── AGENTS.md                      # If Codex is used (shared standard)
 ```
 
 ### Universal Constitution `AGENTS.md`

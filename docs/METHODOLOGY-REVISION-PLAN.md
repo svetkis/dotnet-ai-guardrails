@@ -176,7 +176,15 @@ ADR описана явно.
 **Готово, когда:** правила допускают proactive security/compliance controls и
 редкие high-impact risks.
 
-#### METH-004 — Актуализировать Codex integration guide
+#### METH-004 — Актуализировать Codex integration guide ✅
+
+> **Сделано:** гайд переписан под актуальный Codex CLI — `AGENTS.md` (root + nested +
+> `AGENTS.override.md`) вместо legacy `.codex/instructions.md`; убраны неподтверждённые
+> утверждения об отсутствии extensibility (есть skills, custom agents, MCP, hooks) и о
+> фиксированном context window; добавлены `last_verified: 2026-07-14` и ссылки на
+> primary docs. Устаревшие упоминания `.codex/instructions.md` синхронно исправлены в
+> docs/agents/README.md, docs/README(.en).md, OPENCODE.md, bootstrap skill, INSTALL.md,
+> EXAMPLE-REPORT.md.
 
 - Проверить configuration format и capabilities по official documentation.
 - Удалить неподтверждённые утверждения про `.codex/instructions.md`, отсутствие

@@ -153,7 +153,7 @@
 | Kimi Code CLI | [KIMI.md](agents/KIMI.md) | `.kimi/skills/{name}/SKILL.md` |
 | Claude Code | [CLAUDE-CODE.md](agents/CLAUDE-CODE.md) | `.claude/CLAUDE.md` + commands |
 | Cursor | [CURSOR.md](agents/CURSOR.md) | `.cursorrules` + `.cursor/rules/` |
-| Codex (OpenAI) | [CODEX.md](agents/CODEX.md) | `.codex/instructions.md` |
+| Codex (OpenAI) | [CODEX.md](agents/CODEX.md) | `AGENTS.md` + `~/.codex/config.toml` |
 | OpenCode | [OPENCODE.md](agents/OPENCODE.md) | `.opencode/instructions.md` |
 | Bootstrap Protocol | [BOOTSTRAP-PROTOCOL.md](agents/BOOTSTRAP-PROTOCOL.md) | Правила поведения агента при онбординге |
 | Сравнение | [README.md](agents/README.md) | Таблица сравнения всех агентов |

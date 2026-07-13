@@ -56,7 +56,7 @@ The project uses **Claude Code**. Therefore, guardrails configuration will be in
 ```
 
 If the project used **Kimi** — skills would be in `.kimi/skills/`.
-If **Codex** — single `.codex/instructions.md` with built-in checklists.
+If **Codex** — rules in `AGENTS.md`, audits as skills in `.agents/skills/`.
 
 ---
 
