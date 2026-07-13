@@ -388,17 +388,18 @@ April:     + audits (in batches) → + NBomber → + ratchet tests
 
 Every new layer is a reaction to a bug class that previous layers missed.
 
-### Principle: Guardrails are born from pain
+### Principle: Guardrails must be justified by risk
 
-> Do not add a guardrail for a problem that has not yet occurred.
+> A guardrail is justified by a real incident, a credible threat model, a regulatory
+> requirement, or a documented high-impact failure scenario.
 
-Every guardrail — Roslyn analyzer, architecture check, test, artifact regex or linter rule — must answer: **"What specific bug does this catch?"**
+Every guardrail — Roslyn analyzer, architecture check, test, artifact regex or linter rule — must answer: **"What specific risk does this cover?"** "A real bug" is the strongest answer, but not the only valid one: proactive security and compliance controls are justified by a threat model or a regulatory requirement before the first incident.
 
-A dead guardrail (0 triggers in 3 sprints) is not protection — it is tech debt. It creates a false sense of security, wastes CI time, and dilutes team attention. Delete it without regret.
+Zero triggers is **not sufficient grounds** for removal. When reviewing a guardrail, weigh risk severity, likelihood, maintenance cost, false-positive rate, and the presence of compensating controls. A guardrail covering a rare high-impact risk (security, data loss) may never fire and still be justified. A removal candidate: low impact + high maintenance cost + existing compensating checks.
 
 ## 4 rules for Monday
 
-1. **Every bug-fix = `BUG###_` test.** No test — no fix.
+1. **Every reproducible bug-fix = `BUG###_` test.** For configuration, documentation, operational, and process defects, another regression control is allowed (a check, a runbook, an ADR) — with an explicit explanation of why an automated test does not apply.
 2. **Every PR = `dotnet run --project` tests + code review by agent + smoke.**
 3. **Every sprint = acceptance cycle (E2E + audits + NBomber) before release.** An agent does not see cross-cutting issues — a persona does.
 4. **Every sprint = groom artifacts.** Memory-hygiene, doc-hygiene, backlog-hygiene — agent artifacts rot too.

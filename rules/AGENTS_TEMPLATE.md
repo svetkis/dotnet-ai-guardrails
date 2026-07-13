@@ -105,7 +105,7 @@ When I tell you're a committer, add ✅ to STARTER_CHARACTER emojis. Make sure t
 
 - **Framework** — `[ADAPT]`: TUnit / xUnit / NUnit / MSTest
 - Run command — `[ADAPT]`: for TUnit use `dotnet run --project tests/...`; for another framework, define the exact command explicitly.
-- Every bug fix must include a test: `BUG###_DescriptiveName`
+- Every reproducible, automatable bug fix must include a test: `BUG###_DescriptiveName` (for configuration/documentation/operational/process defects, another regression control is allowed with an explicit rationale)
 - Failing test first → then fix → test passes
 
 ## Database Conventions
@@ -209,13 +209,14 @@ When I tell you're a committer, add ✅ to STARTER_CHARACTER emojis. Make sure t
 - Tests must verify exact diagnostic span/location
 - Run analyzer tests in CI when `Microsoft.CodeAnalysis.*` packages update
 
-## Guardrails: Born from Pain
+## Guardrails: Justified by Risk
 
-> Any guardrail (test, regex scan, arch-test, linter rule) must answer: **"What specific bug does this catch?"**
+> Any guardrail (test, regex scan, arch-test, linter rule) must answer: **"What specific risk does this cover?"**
 
-- ❌ Guardrail for a problem that has never occurred — **FORBIDDEN** (dead guardrail = over-engineering)
-- ✅ Guardrail created **after** a real bug was caught and fixed — **MANDATORY**
-- ✅ Deleting a guardrail with zero triggers after 3 sprints — **MANDATORY**
+- ✅ Guardrail justified by a real incident, a credible threat model, a regulatory requirement, or a documented high-impact failure scenario — **REQUIRED**
+- ✅ Regression test for every reproducible, automatable defect — **REQUIRED** (for configuration/documentation/operational/process defects, another regression control is allowed with an explicit rationale)
+- ⚠️ Zero triggers is **not** sufficient grounds for removal — weigh risk severity, likelihood, maintenance cost, false-positive rate, and compensating controls
+- ❌ Guardrail with no risk justification at all ("just in case") — **FORBIDDEN** (unjustified guardrail = over-engineering)
 
 ## Hard Prohibitions
 

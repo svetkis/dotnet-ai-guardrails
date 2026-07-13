@@ -161,7 +161,13 @@ high-severity vulnerability бессрочным suppression.
 **Готово, когда:** record и код не противоречат друг другу, связь Decision Guard ↔
 ADR описана явно.
 
-#### METH-003 — Убрать опасные абсолютные правила
+#### METH-003 — Убрать опасные абсолютные правила ✅
+
+> **Сделано:** «born from pain» / «0 triggers in 3 sprints» заменены на risk-based
+> правило (инцидент, threat model, нормативное требование или high-impact сценарий;
+> ноль срабатываний — не основание для удаления). «No test — no fix» ограничено
+> воспроизводимыми автоматизируемыми дефектами. Изменения синхронно внесены в
+> PYRAMID.md, PYRAMID.en.md, rules/AGENTS_TEMPLATE.md.
 
 - Переписать `born from pain`, `0 triggers in 3 sprints`, `no test — no fix`.
 - Синхронно обновить README, PYRAMID, AGENTS template, onboarding и skills.
