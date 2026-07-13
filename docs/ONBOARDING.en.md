@@ -18,10 +18,10 @@
 | Mode | Time | What we implement | When to choose |
 |------|------|-------------------|----------------|
 | **Fast** | 1–2 days | Layer 0 (AGENTS.md) + Layer 1.1 (compiler) + Layer 1.2 (basic arch tests) | Pilot. Want to quickly check if the methodology works. |
-| **Standard** | 1–2 weeks | Layers 0→2 + 2–3 audits | Main scenario. Most projects start here. |
-| **High-assurance** | 3–4 weeks | All layers + outer loop + artifact grooming | High-risk project (fintech, health, high-load). |
+| **Standard** | 2–4 weeks, incrementally | Layer 0 → Change Checks → Behavior Checks; then one sub-layer/audit per sprint | Main scenario. Most projects start here. |
+| **High-assurance** | 1–2 months, incrementally | All levels + Engineering Governance + Control Maintenance | High-risk project (fintech, health, high-load). |
 
-> **Do not try to implement everything in one day.** Guardrails work only if the team understands and supports them.
+> **Do not try to implement everything in one day.** Guardrails work only if the team understands and supports them. Timelines above are calendar estimates; adoption is always incremental: one control at a time, verified working before the next.
 
 ---
 
@@ -279,9 +279,9 @@ Go through this list after implementation. If everything is checked — guardrai
 - [ ] `verify-tests.sh` checks that tests actually ran
 
 ### Layer 1.3–1.5 + Layer 2.1 (Should have)
-- [ ] At least 3 `BUG###_` regression tests exist
+- [ ] Regression tests cover all reproducible bug fixes (capability: no closed bug without a `BUG###_` test or a justified alternative)
 - [ ] OpenAPI snapshot test (if there is an API) or equivalent contract test
-- [ ] Code review by agent was performed on the last 5 PRs
+- [ ] Agent code review is part of the PR process (built into every PR's workflow, not a one-off exercise)
 - [ ] Smoke tests pass on every PR
 - [ ] E2E ran at least once and found or confirmed a critical path
 

@@ -73,12 +73,17 @@ dotnet run --project tests/DemoProject.Tests
 # 4. Адаптируй скиллы под свой стек
 # См. templates/skills/ADAPTATION.md — вычеркни неприменимые проверки.
 
-# 5. Скопируй нужные артефакты
-cp rules/AGENTS_TEMPLATE.md /your/project/
+# 5. Скопируй ТОЛЬКО выбранные артефакты (не всё подряд)
+# Путь: inventory → risk profile → selected controls → validation.
+# Конституция (Control Foundation):
+cp rules/AGENTS_TEMPLATE.md /your/project/AGENTS.md   # затем отредактируй под стек
+# По одному контролю на спринт, например pre-commit review:
 cp -r templates/skills/code-review /your/project/.kimi/skills/
 # Для React/TypeScript фронтенда:
 # cp -r templates/skills/frontend-code-review /your/project/.kimi/skills/
-cp tests/patterns/*.cs /your/project/tests/
+# Тестовые паттерны — бери по одному, когда он покрывает реальный риск
+# (tests/patterns/*.cs — шаблоны для чтения, а не пакет для массового копирования):
+# cp tests/patterns/ArchitectureRules.cs /your/project/tests/
 ```
 
 ## Структура

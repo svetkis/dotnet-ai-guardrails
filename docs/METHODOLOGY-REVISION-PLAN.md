@@ -274,7 +274,15 @@ ADR описана явно.
 **Готово, когда:** `CONFIRMED` finding доказывается evidence, а эвристика не
 получает severity автоматически.
 
-#### METH-014 — Свести onboarding к одному безопасному пути
+#### METH-014 — Свести onboarding к одному безопасному пути ✅
+
+> **Сделано:** массовое `cp tests/patterns/*.cs` убрано из quick start README(.en) —
+> заменено на selective copy по пути inventory → risk profile → selected controls →
+> validation (паттерны — шаблоны для чтения, по одному под реальный риск).
+> `3 BUG tests` → capability «все воспроизводимые баг-фиксы покрыты»;
+> `last 5 PRs` → «review встроен в PR-процесс». Сроки режимов согласованы с запретом
+> Big Bang: Standard 2–4 недели и High-assurance 1–2 месяца, явно инкрементально
+> (один control за раз). `Paranoid` → `High-assurance` — см. METH-010.
 
 - Убрать массовое `cp tests/patterns/*.cs` из quick start.
 - Использовать путь inventory → risk profile → selected controls → validation.

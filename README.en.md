@@ -73,12 +73,17 @@ dotnet run --project tests/DemoProject.Tests
 # 4. Adapt skills to your stack
 # See templates/skills/ADAPTATION.md — cross out irrelevant checks.
 
-# 5. Copy needed artifacts
-cp rules/AGENTS_TEMPLATE.md /your/project/
+# 5. Copy ONLY selected artifacts (not everything)
+# Path: inventory → risk profile → selected controls → validation.
+# Constitution (Control Foundation):
+cp rules/AGENTS_TEMPLATE.md /your/project/AGENTS.md   # then edit for your stack
+# One control per sprint, e.g. pre-commit review:
 cp -r templates/skills/code-review /your/project/.kimi/skills/
 # For React/TypeScript frontend:
 # cp -r templates/skills/frontend-code-review /your/project/.kimi/skills/
-cp tests/patterns/*.cs /your/project/tests/
+# Test patterns — take one at a time, when it covers a real risk
+# (tests/patterns/*.cs are templates to read, not a bulk-copy package):
+# cp tests/patterns/ArchitectureRules.cs /your/project/tests/
 ```
 
 ## Structure
