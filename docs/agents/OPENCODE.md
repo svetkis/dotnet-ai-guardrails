@@ -1,5 +1,9 @@
 # OpenCode — Guardrails Integration
 
+> **last_verified:** 2026-07-14
+> **Primary documentation:** [opencode.ai/docs](https://opencode.ai/docs) ·
+> [github.com/sst/opencode](https://github.com/sst/opencode)
+>
 > OpenCode — open-source agent for development (open-source alternative to proprietary tools).
 > Can work as a VS Code extension or standalone.
 > Configuration format depends on the specific implementation.
@@ -141,7 +145,7 @@ Onboarding first builds the review artifact for your OpenCode setup. Only after 
    - Document the format in the project's `README.md`
 
 2. **Self-hosted models.** If OpenCode works with local models (Ollama, LM Studio):
-   - Context may be smaller (4k-32k tokens)
+   - Context size depends on the configured model — check its limits
    - Instructions should be shorter and more specific
    - More examples are needed (few-shot learning)
 

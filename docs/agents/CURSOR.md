@@ -1,6 +1,9 @@
 # Cursor — Guardrails Integration
 
-> Cursor IDE uses `.cursorrules` (project rules) and `.cursor/rules/` for
+> **last_verified:** 2026-07-14
+> **Primary documentation:** [docs.cursor.com](https://docs.cursor.com)
+>
+> Cursor IDE uses `.cursorrules` (legacy project rules) and `.cursor/rules/` for
 > context-dependent instructions. This is a VS Code-based editor with AI chat
 > and Composer mode.
 
@@ -186,7 +189,7 @@ Onboarding first fixes review rules and prompts in the project. Only after that 
 | Launch | `kimi run {name}` | `/{command}` in chat | Chat / Composer / Tab |
 | IDE | CLI | CLI | VS Code-based GUI |
 | Tools | Limited | Bash, edit, read | Inline edits, chat, composer |
-| Context | ~200k tokens | ~200k tokens | ~200k tokens |
+| Context | Model-dependent (check current docs) | Model-dependent | Model-dependent |
 
 ### Cursor Nuances
 
@@ -197,7 +200,7 @@ Onboarding first fixes review rules and prompts in the project. Only after that 
    - `.cursor/rules/` — new format, supports multiple files with YAML frontmatter
    - It is recommended to use `.cursor/rules/` for large projects
 
-3. **Inline edits.** Cursor can edit code directly in the editor (Tab completion, Cmd+K). This changes the anti-hallucination protocol format: the agent sees the context of the open file.
+3. **Inline edits.** Cursor can edit code directly in the editor (Tab completion, Cmd+K). This changes the evidence-requirements format: the agent sees the context of the open file.
 
 4. **Composer mode.** Multi-step tasks (creating a feature end-to-end) are better done in Composer, not Chat. Composer remembers context between steps.
 
@@ -209,5 +212,5 @@ Onboarding first fixes review rules and prompts in the project. Only after that 
 - No skill marketplace
 - No CLI interface for automatic launch (unlike `kimi run` or `claude`)
 - Rules do not auto-launch — you need to explicitly work with the file for the rule to connect
-- Context is limited by the model window (~200k tokens)
+- Context is limited by the model window (model-dependent — check current docs)
 - Cannot execute bash commands unlike Claude Code

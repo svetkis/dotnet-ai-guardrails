@@ -1,6 +1,11 @@
 # Kimi Code CLI — Guardrails Integration
 
-> Kimi Code CLI uses the skill system in `.kimi/skills/`.
+> **last_verified:** 2026-07-14
+> **Primary documentation:** [moonshotai.github.io/kimi-cli](https://moonshotai.github.io/kimi-cli/) ·
+> [Skills customization](https://moonshotai.github.io/kimi-cli/en/customization/skills.html) ·
+> [github.com/MoonshotAI/kimi-cli](https://github.com/MoonshotAI/kimi-cli)
+>
+> Kimi Code CLI uses the skill system in `.kimi/skills/` (project) / `~/.kimi/skills/` (user).
 > This is the native format for the `dotnet-ai-guardrails` repository.
 
 ## Integration Structure
@@ -169,4 +174,4 @@ done
 
 - Kimi must be installed locally (`kimi` CLI)
 - Skills do not auto-launch on PR — a CI wrapper or manual launch is needed
-- Context is limited by the model window (~200k tokens)
+- Context is limited by the model window (model-dependent — check current docs)

@@ -99,7 +99,7 @@ Are you in the target project?
 
 ---
 
-## 5. Anti-Hallucination Checklist for the Agent
+## 5. Evidence Checklist for the Agent
 
 Before creating ANY file, ask yourself:
 

@@ -23,6 +23,7 @@
 - [ ] All `docs/agents/*.md` are consistent with root `AGENTS.md`
 - [ ] Pipeline descriptions are identical for all agents (format differs, substance does not)
 - [ ] No links to deleted templates/skills/modules
+- [ ] Every integration guide (`docs/agents/*.md`) has `last_verified` no older than 6 months; stale guides are re-verified against primary vendor docs before use
 
 ## Fact Check (Documentation vs Code)
 - [ ] All numbers in reports/docs verified via `git log` / `wc` / `grep`

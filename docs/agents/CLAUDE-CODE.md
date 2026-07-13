@@ -1,5 +1,8 @@
 # Claude Code — Guardrails Integration
 
+> **last_verified:** 2026-07-14
+> **Primary documentation:** [code.claude.com/docs](https://code.claude.com/docs)
+>
 > Claude Code (Anthropic) uses `CLAUDE.md` for project instructions
 > and `.claude/commands/` for custom slash commands.
 > It has a different mental model: not "skills", but "project instructions + commands".
@@ -165,7 +168,7 @@ Onboarding first creates or adapts the review command for the project. Only afte
 |--------|------|-------------|
 | Rules format | `.kimi/skills/{name}/SKILL.md` | `.claude/CLAUDE.md` + `.claude/commands/*.md` |
 | Skill launch | `kimi run {name}` | `/{command-name}` in chat |
-| Context | Limited by window | 200k tokens + tools (read, edit, bash) |
+| Context | Limited by model window | Model window + tools (read, edit, bash) |
 | CI integration | Manual launch | Can run bash scripts |
 | Auto-launch | No | No (but has tools) |
 
@@ -179,7 +182,7 @@ Onboarding first creates or adapts the review command for the project. Only afte
    - `read_file` — reads files
    - `edit_file` — edits files
    - `bash` — executes commands
-   - This changes the anti-hallucination protocol format: the agent actually sees files
+   - This changes the evidence-requirements format: the agent actually sees files
 
 3. **Context management.** Claude can `/add` files to context and `/compact` history. This is implicit in skills.
 

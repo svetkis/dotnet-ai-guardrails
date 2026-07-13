@@ -323,7 +323,14 @@ ADR описана явно.
   `data matryoshkas`, `anathema`, `delete without regret`.
 - Унифицировать capitalization, hyphenation и названия ролей.
 
-#### METH-022 — Устранить drift integration guides
+#### METH-022 — Устранить drift integration guides ✅
+
+> **Сделано:** `last_verified: 2026-07-14` + ссылки на primary docs добавлены в KIMI,
+> CLAUDE-CODE, CURSOR, OPENCODE (CODEX — в METH-004). Context-window comparisons
+> (`~200k tokens`, `128-200k`, `4k-32k`) удалены из сравнительных таблиц — заменены
+> на «model-dependent, check current docs». Периодический контроль: раздел
+> «Guide Freshness» в docs/agents/README.md (stale = >6 месяцев) + пункт в
+> doc-hygiene CHECKLIST.
 
 - Хранить `last_verified`, primary docs и tested version.
 - Удалить ненужные context-window comparisons.
