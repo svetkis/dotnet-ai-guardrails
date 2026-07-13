@@ -186,7 +186,7 @@ From practice: 8 review commits with findings:
 
 **Trap:** Agent does not see that shift mode shows all days as "Day Off" due to stale cache.
 
-**Fix:** 20+ MCP tools: Telegram, VK, browser, API. Agent pokes the app itself through full user scenarios.
+**Fix:** 20+ MCP tools: Telegram, VK, browser, API. The agent exercises the app itself through full user scenarios.
 
 | Bug | How it was found |
 |-----|------------------|
@@ -206,9 +206,9 @@ From practice: 8 review commits with findings:
 <a name="layer-2-audits"></a>
 ### 2.2 Audits (~1–2 hours)
 
-This is not a "feedback level" — it's a **repeatable persona**. Without skills, outer loop becomes chaotic manual browsing.
+This is not a "feedback level" — it is a **repeatable audit procedure**. Without skills, the assurance review becomes chaotic manual browsing.
 
-- `templates/skills/security-audit/`, `templates/skills/dba-audit/` etc. — narrow personas with `CHECKLIST.md`
+- `templates/skills/security-audit/`, `templates/skills/dba-audit/` etc. — narrow audit roles with `CHECKLIST.md`
 - Run in batches — cross-pollination of findings between security and UX, performance and DB schema
 - Each skill = an agent role you can run anytime with the same result
 
@@ -258,7 +258,7 @@ Addendum: **allocation budget tests** for `[HotPath]` methods catch allocation r
           │   Load              │  ← 2.3: NBomber, read+write mix
           │   (NBomber)         │
           ├─────────────────────┤
-          │   Audits            │  ← 2.2: Batch narrow personas
+          │   Audits            │  ← 2.2: Batch audit roles   
           │   (batch)           │
           ├─────────────────────┤
           │   E2E MCP           │  ← 2.1: Full scenarios, real hands
@@ -426,5 +426,5 @@ Zero triggers is **not sufficient grounds** for removal. When reviewing a guardr
 
 1. **Every reproducible bug-fix = `BUG###_` test.** For configuration, documentation, operational, and process defects, another regression control is allowed (a check, a runbook, an ADR) — with an explicit explanation of why an automated test does not apply.
 2. **Every PR = `dotnet run --project` tests + code review by agent + smoke.**
-3. **Every sprint = acceptance cycle (E2E + audits + NBomber) before release.** An agent does not see cross-cutting issues — a persona does.
+3. **Every sprint = acceptance cycle (E2E + audits + NBomber) before release.** An agent does not see cross-cutting issues — a scoped audit role does.
 4. **Every sprint = groom artifacts.** Memory-hygiene, doc-hygiene, backlog-hygiene — agent artifacts rot too.

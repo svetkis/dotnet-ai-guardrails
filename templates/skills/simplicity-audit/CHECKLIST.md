@@ -12,14 +12,14 @@
 - [ ] Strategy / protocol for 2 branches without expansion roadmap
 - [ ] Wrapper around a wrapper around a standard API
 
-## Pattern Fetishism
+## Pattern Overuse
 - [ ] CQRS for CRUD with < 5 fields
 - [ ] Event Sourcing / Outbox without audit requirements
 - [ ] MediatR / PipelineBehavior for synchronous calls
 - [ ] Repository + UnitOfWork on top of EF Core with no DB tests
 - [ ] Specification pattern for a single `Where`
 
-## Data Matryoshkas
+## Data Bloat (Nested DTOs)
 - [ ] DTO nesting > 2 levels
 - [ ] API returns > 15 fields, client uses < 5
 - [ ] Include chain > 2 levels in a list query

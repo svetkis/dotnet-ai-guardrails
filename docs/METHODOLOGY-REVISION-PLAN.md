@@ -308,7 +308,14 @@ ADR описана явно.
 - Разделять measured result, observed case, estimate и hypothesis.
 - Неподтверждённые точные числа удалить или маркировать illustrative.
 
-#### METH-021 — Отредактировать английский
+#### METH-021 — Отредактировать английский ✅
+
+> **Сделано (targeted pass по normative docs):** `pokes the app` → «exercises the app»;
+> `repeatable persona` → «repeatable audit procedure»; `persona` в PYRAMID(.en) →
+> audit roles; `Pattern Fetishism` → `Pattern Overuse`; `Data Matryoshkas` →
+> `Data Bloat (Nested DTOs)`; `anathema` → нейтральная формулировка. `delete without
+> regret` уже устранён в METH-003/013. Яркий язык сохранён в narrative-документах
+> (traps, ai-patterns); glossary фиксирует `persona` как informal.
 
 - Сохранить яркий язык в talk/manifesto материалах.
 - В normative docs использовать neutral scoped statements.
