@@ -308,7 +308,7 @@ Full report: `.backlog/onboarding-{date}.md`
 
 ## Integration
 
-- **Input:** Human (project path + fast/standard/paranoid mode)
+- **Input:** Human (project path + fast/standard/high-assurance mode)
 - **Output:** `.backlog/onboarding-{date}.md` + list of new skills to create
 - **Next step:** Human decides: a) start with adapting ready-made, b) create new skills, c) skip layer
 

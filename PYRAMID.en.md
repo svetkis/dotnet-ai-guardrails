@@ -1,5 +1,24 @@
 # Skeptical AI Engineering Control Pyramid
 
+> **Legacy / visual metaphor.** This document is the extended illustration of the talk
+> "AI is confident. I'm not". The canonical artifact classifier is the
+> **Engineering Assurance Levels** model in [`README.en.md`](README.en.md#how-it-works).
+> Mapping of legacy names to levels:
+>
+> | Pyramid (legacy) | Engineering Assurance Level |
+> |------------------|-----------------------------|
+> | Layer 0. Agent instructions (AGENTS.md + Decision Guards) | Control Foundation |
+> | 1.1 Compiler + types | 1. Change Checks |
+> | 1.4 Pre-commit code review | 1. Change Checks |
+> | 1.2 Architecture + Ratchet | 2. Behavior Checks |
+> | 1.3 Tests | 2. Behavior Checks |
+> | 1.5 Smoke | 3. System Checks |
+> | 2.1 E2E / MCP | 3. System Checks |
+> | 2.3 Load (NBomber) | 3. System Checks |
+> | 2.2 Audits | 4. Periodic Assurance |
+> | Outer loop (human) | Engineering Governance (process, not a level) |
+> | Artifact grooming | Control Maintenance (process, not a level) |
+
 > **Skeptical AI Engineering (SAE)** — methodology from the talk "AI is confident. I'm not" (Dotnext 2026).
 > Feedback speed determines how far the agent gets before you stop it.
 > Compiler catches in seconds. Smoke in minutes. Anything longer is not the dev cycle — it's acceptance.

@@ -8,7 +8,7 @@
 # Onboarding Report: {Project.Name}
 
 **Date:** {YYYY-MM-DD}  
-**Mode:** fast / standard / paranoid  
+**Mode:** fast / standard / high-assurance  
 **Agent:** skeptical-ai-bootstrap  
 **Scanned:** {path to .sln}
 

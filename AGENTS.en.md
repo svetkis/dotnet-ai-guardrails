@@ -18,11 +18,12 @@ Do not write domain code here — only guardrails, skills, patterns, and example
 - ❌ Do not use `dotnet test` in examples — only `dotnet run --project`
 
 ### Always
-- ✅ Update `PYRAMID.md` when adding a new layer (currently 3 layers 0–2 + outer loop)
+- ✅ Update the Engineering Assurance Levels model in README when adding a new control level (PYRAMID.en.md is a legacy/visual metaphor, mapping in its header)
 - ✅ Update `docs/agents/` when adding support for a new AI agent
 - ✅ Update `docs/README.md` (knowledge map) when adding a new artifact
 - ✅ Every new skill in `templates/skills/` must contain `SKILL.md` + `CHECKLIST.md`
 - ✅ Every new test pattern — with comments `// TRAP: ...` and `// GUARDRAIL: ...`
+- ✅ Every test must be self-validating: it must fail when the behavior promised by its name/scenario breaks. Zero-assert, `IsNotNull()`-only, conditionally skipped, and tautological checks require explicit justification. See [`docs/traps/non-validating-tests.md`](docs/traps/non-validating-tests.md)
 - ✅ Code examples compile (minimal `examples/DemoProject/` if verification needed)
 
 ## Repository Stack
@@ -86,6 +87,7 @@ If you are an AI agent reading this file in the context of a **different** repos
 | Failing demo (guardrails) | `examples/DemoProject.Traps/` |
 | CI security | `ci/github-actions/safe-ci.yml` |
 | Trap description | `docs/traps/` |
+| Empty and non-validating tests | `docs/traps/non-validating-tests.md` |
 | Architecture tests | `docs/solutions/architecture-tests.md` |
 | AI development patterns | `docs/solutions/ai-patterns.md` |
 | Intentional deviations (Decision Guards) | `templates/skills/skeptical-ai-bootstrap/DECISION-GUARDS.md` |

@@ -8,7 +8,7 @@ AI-accelerated quality control methodology for .NET teams. Extending DORA practi
 ![License MIT](https://img.shields.io/badge/License-MIT-green.svg)
 ![CI](https://github.com/svetkis/dotnet-ai-guardrails/workflows/Examples%20CI/badge.svg)
 
-> Although examples and tests are implemented in .NET, the methodology itself — Decision Guards, three-layer verification loops, and prompt hygiene — applies to any stack.
+> Although examples and tests are implemented in .NET, the methodology itself — Decision Guards, Engineering Assurance Levels, and prompt hygiene — applies to any stack.
 
 This repository contains ready-made artifacts for .NET projects: rules, skills, test patterns, and CI workflows.
 
@@ -20,44 +20,40 @@ AI agents (Cursor, Claude, Copilot) speed up code writing, but generate hidden t
 
 ## How it works
 
-Three verification loops: inner (on every change), outer (on schedule or before release), and artifact grooming (per sprint).
+The control model is **Engineering Assurance Levels**. An artifact is classified by
+what it verifies, not by where it runs: a unit test does not become a System Check
+just because it runs in CI.
 
-### Layer 1. Development cycle (fast feedback)
+| Level | When it triggers | What it includes | Key question |
+|-------|------------------|------------------|--------------|
+| **Control Foundation** | Before code changes | `AGENTS.md`, architecture boundaries, Decision Guards, policies | Which constraints and decisions are already made? |
+| **1. Change Checks** | IDE, build, pre-commit | Compiler, nullable, analyzers, formatting, banned APIs, dependency checks, pre-commit review | Can the change technically exist? |
+| **2. Behavior Checks** | Local or CI test run | Unit, regression, contract, characterization, architecture tests, ratchets | Are expected properties and behavior preserved? |
+| **3. System Checks** | PR, CI, release pipeline | Integration, E2E, smoke, Testcontainers, load (NBomber), deployment verification | Does the system work as a whole? |
+| **4. Periodic Assurance** | On schedule or risk-trigger | Security, database, performance, UX, API, i18n, tech-debt audits | Which systemic risks are invisible to automated checks? |
 
-| Sub-layer | Speed | Tool |
-|-----------|-------|------|
-| 0. Instructions | — | `rules/AGENTS_TEMPLATE.md` + Decision Guards |
-| 1.1 Compiler | ~sec | `dotnet build`, `tsc --noEmit` |
-| 1.2 Architecture | ~10 sec | NetArchTest |
-| 1.3 Tests | ~30 sec | TUnit + `dotnet run` |
-| 1.4 Pre-commit code review | ~2 min | Separate agent (staged diff) |
-| 1.5 Smoke | ~5 min | 10 critical scenarios |
+Separate processes, not levels:
 
-### Layer 2. Acceptance cycle
+- **Engineering Governance** — residual risk acceptance, release decision, business and product decisions.
+- **Control Maintenance** — keeping instructions, agent memory, backlog, baselines, suppressions, and guardrails themselves up to date (skills `memory-hygiene`, `doc-hygiene`, `backlog-hygiene`).
 
-| Sub-layer | Frequency | Tool |
-|-----------|-----------|------|
-| 2.1 E2E MCP | Before release | Telegram, browser, API tools |
-| 2.2 Audits | Per sprint / on PR in risk area | Security, DBA, UX, perf, i18n |
-| 2.3 Load | Before release | NBomber |
+> **Legacy:** `PYRAMID.en.md` (layers 0–2 + outer loop) is the talk's visual metaphor.
+> The canonical classifier is the table above; the layer-to-level mapping is given at
+> the top of [`PYRAMID.en.md`](PYRAMID.en.md).
 
-### Outer loop
+### Artifact map by level
 
-| Level | Frequency | Tool |
-|-------|-----------|------|
-| Human | After release | Business and product decisions |
+| Level / process | Repository artifacts |
+|-----------------|----------------------|
+| Control Foundation | `rules/AGENTS_TEMPLATE.md` (+ efcore/dapper add-ons), `rules/CONVENTIONS.md`, Decision Guards (`PERF-###`/`DB-###`) |
+| 1. Change Checks | Banned APIs, Roslyn analyzers (`examples/DemoProject/src/DemoProject.Analyzers/`), `ci/github-actions/safe-ci.yml`, `templates/skills/code-review/`, `templates/skills/frontend-code-review/`, `templates/skills/task-compliance/` |
+| 2. Behavior Checks | `tests/patterns/` (Ratchet, NetArchTest, Snapshot, Analyzer tests), `tests/conventions/` |
+| 3. System Checks | E2E/smoke patterns, NBomber (`tests/patterns/LoadTest.cs`) |
+| 4. Periodic Assurance | `templates/skills/*-audit/` (security, dba, performance, api-design, bot, i18n, tech-debt, simplicity, complexity, version, test, mutation, spellcheck, business-risk) |
+| Control Maintenance | `templates/skills/memory-hygiene/`, `doc-hygiene/`, `backlog-hygiene/` |
+| Engineering Governance | `docs/solutions/human-audit-bridge.md`, release decision |
 
-`templates/skills/` — ready-made prompts for audits. Run on schedule or when code changes in their area.
-
-### Grooming loop
-
-Agent artifacts degrade: AGENTS.md drifts from code, Auto Memory accumulates duplicates, backlog becomes a graveyard.
-
-| Skill | What it cleans | Frequency |
-|-------|---------------|-----------|
-| memory-hygiene | Auto Memory: duplicates, drift, stale refs | Per sprint |
-| doc-hygiene | AGENTS.md: hierarchy consistency, code drift | Per sprint |
-| backlog-hygiene | Backlog: stale, orphaned, duplicates | Per sprint |
+`templates/skills/` — ready-made instructions for audits. Run on schedule or when code changes in their area.
 
 ## Quick start
 
@@ -97,19 +93,19 @@ cp tests/patterns/*.cs /your/project/tests/
 │   ├── AGENTS_TEMPLATE.dapper.md # Add-on: Dapper / Raw SQL-specific rules
 │   └── CONVENTIONS.md            # Commits, workflow, tests
 ├── templates/skills/                        # Agent roles
-│   ├── memory-hygiene/            # Grooming: Auto Memory
-│   ├── doc-hygiene/               # Grooming: documentation
-│   ├── backlog-hygiene/           # Grooming: backlog
+│   ├── memory-hygiene/            # Control Maintenance: Auto Memory
+│   ├── doc-hygiene/               # Control Maintenance: documentation
+│   ├── backlog-hygiene/           # Control Maintenance: backlog
 │   ├── skeptical-ai-bootstrap/    # Maturity assessment + guardrails backlog
-│   ├── code-review/               # Inner loop: pre-commit / PR review (.NET)
-│   ├── task-compliance/           # Inner loop: scope check
-│   ├── security-audit/            # Outer loop: trigger-based
-│   ├── dba-audit/                 # Outer loop: trigger-based (EF Core)
-│   ├── dba-audit-dapper/          # Outer loop: trigger-based (Dapper / Raw SQL)
-│   ├── api-design-audit/          # Outer loop: trigger-based
-│   ├── bot-audit/                 # Outer loop: trigger-based
-│   ├── performance-audit/         # Outer loop: trigger-based
-│   └── i18n-audit/                # Outer loop: trigger-based
+│   ├── code-review/               # Change Checks: pre-commit / PR review (.NET)
+│   ├── task-compliance/           # Change Checks: scope check
+│   ├── security-audit/            # Periodic Assurance: trigger-based
+│   ├── dba-audit/                 # Periodic Assurance: trigger-based (EF Core)
+│   ├── dba-audit-dapper/          # Periodic Assurance: trigger-based (Dapper / Raw SQL)
+│   ├── api-design-audit/          # Periodic Assurance: trigger-based
+│   ├── bot-audit/                 # Periodic Assurance: trigger-based
+│   ├── performance-audit/         # Periodic Assurance: trigger-based
+│   └── i18n-audit/                # Periodic Assurance: trigger-based
 ├── docs/
 │   ├── traps/                     # Agent traps
 │   └── solutions/

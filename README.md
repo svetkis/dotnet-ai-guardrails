@@ -8,7 +8,7 @@
 ![License MIT](https://img.shields.io/badge/License-MIT-green.svg)
 ![CI](https://github.com/svetkis/dotnet-ai-guardrails/workflows/Examples%20CI/badge.svg)
 
-> Хотя примеры и тесты реализованы на .NET, сама методология Decision Guards, трёхуровневых циклов проверок и гигиены промптов применима к любому стеку.
+> Хотя примеры и тесты реализованы на .NET, сама методология Decision Guards, уровней контроля (Engineering Assurance Levels) и гигиены промптов применима к любому стеку.
 
 Репозиторий содержит готовые артефакты для .NET-проектов: правила, скиллы, тестовые паттерны и CI-воркфлоу.
 
@@ -20,44 +20,40 @@ AI-агенты (Cursor, Claude, Copilot) ускоряют написание к
 
 ## Как это работает
 
-Три контура проверки: внутренний (на каждом изменении), внешний (по расписанию или перед релизом) и груминг артефактов (раз в спринт).
+Модель контроля — **Engineering Assurance Levels**. Артефакт классифицируется по
+области проверки, а не по месту запуска: unit-тест не становится System Check
+только потому, что запущен в CI.
 
-### Слой 1. Цикл разработки (быстрая обратная связь)
+| Уровень | Когда срабатывает | Что входит | Главный вопрос |
+|---------|-------------------|------------|----------------|
+| **Control Foundation** | До изменения кода | `AGENTS.md`, architecture boundaries, Decision Guards, policies | Какие ограничения и решения уже приняты? |
+| **1. Change Checks** | IDE, build, pre-commit | Компилятор, nullable, analyzers, formatting, banned APIs, dependency checks, pre-commit review | Может ли изменение технически существовать? |
+| **2. Behavior Checks** | Локальный или CI test run | Unit, regression, contract, characterization, architecture tests, ratchets | Сохранились ли ожидаемые свойства и поведение? |
+| **3. System Checks** | PR, CI, release pipeline | Integration, E2E, smoke, Testcontainers, load (NBomber), deployment verification | Работает ли система целиком? |
+| **4. Periodic Assurance** | По расписанию или risk-trigger | Security, database, performance, UX, API, i18n, tech-debt audits | Какие системные риски не видны автоматическим проверкам? |
 
-| Подслой | Скорость | Инструмент |
-|---------|----------|-----------|
-| 0. Инструкции | — | `rules/AGENTS_TEMPLATE.md` + Decision Guards |
-| 1.1 Компилятор | ~сек | `dotnet build`, `tsc --noEmit` |
-| 1.2 Архитектура | ~10 сек | NetArchTest |
-| 1.3 Тесты | ~30 сек | TUnit + `dotnet run` |
-| 1.4 Pre-commit code review | ~2 мин | Отдельный агент (staged diff) |
-| 1.5 Smoke | ~5 мин | 10 критичных сценариев |
+Отдельные процессы, не являющиеся уровнями:
 
-### Слой 2. Приёмочный цикл
+- **Engineering Governance** — принятие остаточного риска, release decision, бизнес- и продуктовые решения.
+- **Control Maintenance** — актуализация инструкций, agent memory, backlog, baselines, suppressions и самих guardrails (скиллы `memory-hygiene`, `doc-hygiene`, `backlog-hygiene`).
 
-| Подслой | Частота | Инструмент |
-|---------|---------|-----------|
-| 2.1 E2E MCP | Перед релизом | Telegram, browser, API тулы |
-| 2.2 Аудиты | Раз в спринт / на PR в зоне риска | Security, DBA, UX, perf, i18n |
-| 2.3 Нагрузка | Перед релизом | NBomber |
+> **Legacy:** `PYRAMID.md` (слои 0–2 + внешний цикл) — визуальная метафора доклада.
+> Канонический классификатор — таблица выше; маппинг слоёв на уровни дан в
+> начале [`PYRAMID.md`](PYRAMID.md).
 
-### Внешний цикл
+### Карта артефактов по уровням
 
-| Уровень | Частота | Инструмент |
-|---------|---------|-----------|
-| Человек | После релиза | Бизнес- и продуктовые решения |
+| Уровень / процесс | Артефакты репозитория |
+|-------------------|-----------------------|
+| Control Foundation | `rules/AGENTS_TEMPLATE.md` (+ efcore/dapper add-ons), `rules/CONVENTIONS.md`, Decision Guards (`PERF-###`/`DB-###`) |
+| 1. Change Checks | Banned APIs, Roslyn-анализаторы (`examples/DemoProject/src/DemoProject.Analyzers/`), `ci/github-actions/safe-ci.yml`, `templates/skills/code-review/`, `templates/skills/frontend-code-review/`, `templates/skills/task-compliance/` |
+| 2. Behavior Checks | `tests/patterns/` (Ratchet, NetArchTest, Snapshot, Analyzer tests), `tests/conventions/` |
+| 3. System Checks | E2E/smoke паттерны, NBomber (`tests/patterns/LoadTest.cs`) |
+| 4. Periodic Assurance | `templates/skills/*-audit/` (security, dba, performance, api-design, bot, i18n, tech-debt, simplicity, complexity, version, test, mutation, spellcheck, business-risk) |
+| Control Maintenance | `templates/skills/memory-hygiene/`, `doc-hygiene/`, `backlog-hygiene/` |
+| Engineering Governance | `docs/solutions/human-audit-bridge.md`, release decision |
 
-`templates/skills/` — готовые промпты для аудитов. Запускаются по расписанию или когда меняется код в зоне ответственности.
-
-### Цикл груминга
-
-Артефакты агента устаревают: AGENTS.md отстаёт от кода, Auto Memory накапливает дубли, бэклог превращается в кладбище.
-
-| Скилл | Что чистит | Периодичность |
-|-------|-----------|---------------|
-| memory-hygiene | Auto Memory: дубли, drift, stale refs | Раз в спринт |
-| doc-hygiene | AGENTS.md: консистентность иерархии, code drift | Раз в спринт |
-| backlog-hygiene | Бэклог: stale, orphaned, duplicates | Раз в спринт |
+`templates/skills/` — готовые инструкции для аудитов. Запускаются по расписанию или когда меняется код в зоне ответственности.
 
 ## Быстрый старт
 
@@ -97,19 +93,19 @@ cp tests/patterns/*.cs /your/project/tests/
 │   ├── AGENTS_TEMPLATE.dapper.md # Add-on: Dapper / Raw SQL-специфичные правила
 │   └── CONVENTIONS.md            # Коммиты, воркфлоу, тесты
 ├── templates/skills/                        # Роли агента
-│   ├── memory-hygiene/            # Grooming: Auto Memory
-│   ├── doc-hygiene/               # Grooming: документация
-│   ├── backlog-hygiene/           # Grooming: бэклог
+│   ├── memory-hygiene/            # Control Maintenance: Auto Memory
+│   ├── doc-hygiene/               # Control Maintenance: документация
+│   ├── backlog-hygiene/           # Control Maintenance: бэклог
 │   ├── skeptical-ai-bootstrap/    # Оценка зрелости + бэклог guardrails
-│   ├── code-review/               # Inner loop: pre-commit / PR review (.NET)
-│   ├── task-compliance/           # Inner loop: проверка scope
-│   ├── security-audit/            # Outer loop: по триггеру
-│   ├── dba-audit/                 # Outer loop: по триггеру (EF Core)
-│   ├── dba-audit-dapper/          # Outer loop: по триггеру (Dapper / Raw SQL)
-│   ├── api-design-audit/          # Outer loop: по триггеру
-│   ├── bot-audit/                 # Outer loop: по триггеру
-│   ├── performance-audit/         # Outer loop: по триггеру
-│   └── i18n-audit/                # Outer loop: по триггеру
+│   ├── code-review/               # Change Checks: pre-commit / PR review (.NET)
+│   ├── task-compliance/           # Change Checks: проверка scope
+│   ├── security-audit/            # Periodic Assurance: по триггеру
+│   ├── dba-audit/                 # Periodic Assurance: по триггеру (EF Core)
+│   ├── dba-audit-dapper/          # Periodic Assurance: по триггеру (Dapper / Raw SQL)
+│   ├── api-design-audit/          # Periodic Assurance: по триггеру
+│   ├── bot-audit/                 # Periodic Assurance: по триггеру
+│   ├── performance-audit/         # Periodic Assurance: по триггеру
+│   └── i18n-audit/                # Periodic Assurance: по триггеру
 ├── docs/
 │   ├── traps/                     # Ловушки агента
 │   └── solutions/

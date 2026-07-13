@@ -6,14 +6,19 @@
 
 ---
 
-## Feedback Architecture
+## Engineering Assurance Levels (control model)
 
 | Term | Definition | Used in |
 |------|------------|---------|
-| **Layer 1 (development cycle)** | Fast feedback: Compiler → Architecture → Tests → Code Review → Smoke. Runs on every change, from seconds to minutes. | [PYRAMID.en.md §Layer 1](PYRAMID.en.md#layer-1) |
-| **Outer loop** | Final human verification, business and product decisions. Not part of the daily feedback loop. | [PYRAMID.en.md §Outer loop](PYRAMID.en.md#outer-loop) |
-| **Layer 0** | Instructions for the agent: `AGENTS.md` + numbered decisions. The agent reads before code. | [PYRAMID.en.md §Layer 0](PYRAMID.en.md#layer-0) |
+| **Control Foundation** | The control base: `AGENTS.md`, architecture boundaries, Decision Guards, policies. Applies before code changes. | [README.en.md](README.en.md#how-it-works), [rules/AGENTS_TEMPLATE.md](rules/AGENTS_TEMPLATE.md) |
+| **1. Change Checks** | Change-level checks: compiler, nullable, analyzers, formatting, banned APIs, dependency checks, pre-commit review. IDE, build, pre-commit. | [README.en.md](README.en.md#how-it-works) |
+| **2. Behavior Checks** | Behavior checks: unit, regression, contract, characterization, architecture tests, ratchets. Local or CI test run. | [README.en.md](README.en.md#how-it-works), [tests/patterns/](tests/patterns/) |
+| **3. System Checks** | Whole-system checks: integration, E2E, smoke, Testcontainers, load, deployment verification. PR, CI, release pipeline. | [README.en.md](README.en.md#how-it-works) |
+| **4. Periodic Assurance** | Investigative audits on schedule or risk-trigger: security, database, performance, UX, API, i18n, tech-debt. | `templates/skills/*-audit/` |
+| **Engineering Governance** | Process (not a level): residual risk acceptance, release decision, business and product decisions. | [docs/solutions/human-audit-bridge.md](docs/solutions/human-audit-bridge.md) |
+| **Control Maintenance** | Process (not a level): keeping instructions, agent memory, backlog, baselines, suppressions, and guardrails up to date. | `templates/skills/memory-hygiene/`, `doc-hygiene/`, `backlog-hygiene/` |
 | **AGENTS.md** | File with rules for AI agents. Read by the agent before every task. Can be hierarchical (root + per-module). | [rules/AGENTS_TEMPLATE.md](rules/AGENTS_TEMPLATE.md) |
+| **Layers 0–2 / Inner-Outer loop** | *Legacy:* names from the talk's visual metaphor (PYRAMID.en.md). Mapping to levels — at the top of [PYRAMID.en.md](PYRAMID.en.md). | [PYRAMID.en.md](PYRAMID.en.md) |
 
 ## Test Patterns
 

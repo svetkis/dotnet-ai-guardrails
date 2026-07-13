@@ -3,6 +3,13 @@
 > Step-by-step guide for implementing guardrails in an existing .NET project.  
 > **Audience:** Tech Lead, CTO, Lead Developer.  
 > **Format:** do it yourself or delegate to an agent using this document.
+>
+> **Control model:** Engineering Assurance Levels — see [README.en.md](../README.en.md#how-it-works).
+> The steps below use legacy layer names (0, 1.1–2.3) from `PYRAMID.en.md` as
+> references to concrete steps; mapping: Layer 0 → Control Foundation,
+> 1.1/1.4 → Change Checks, 1.2/1.3 → Behavior Checks, 1.5/2.1/2.3 → System Checks,
+> 2.2 → Periodic Assurance, outer loop → Engineering Governance,
+> artifact grooming → Control Maintenance.
 
 ---
 
@@ -12,7 +19,7 @@
 |------|------|-------------------|----------------|
 | **Fast** | 1–2 days | Layer 0 (AGENTS.md) + Layer 1.1 (compiler) + Layer 1.2 (basic arch tests) | Pilot. Want to quickly check if the methodology works. |
 | **Standard** | 1–2 weeks | Layers 0→2 + 2–3 audits | Main scenario. Most projects start here. |
-| **Paranoid** | 3–4 weeks | All layers + outer loop + artifact grooming | High-risk project (fintech, health, high-load). |
+| **High-assurance** | 3–4 weeks | All layers + outer loop + artifact grooming | High-risk project (fintech, health, high-load). |
 
 > **Do not try to implement everything in one day.** Guardrails work only if the team understands and supports them.
 

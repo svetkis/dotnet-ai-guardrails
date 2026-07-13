@@ -6,14 +6,19 @@
 
 ---
 
-## Архитектура обратной связи
+## Engineering Assurance Levels (модель контроля)
 
 | Термин | Определение | Где используется |
 |--------|-------------|------------------|
-| **Слой 1 (development cycle)** | Быстрая обратная связь: Компилятор → Архитектура → Тесты → Code Review → Smoke. Запускается на каждое изменение, от секунд до минут. | [PYRAMID.md §Слой 1](PYRAMID.md#layer-1) |
-| **Внешний цикл (Outer loop)** | Финальная проверка человеком, бизнес- и продуктовые решения. Не часть ежедневного цикла обратной связи. | [PYRAMID.md §Внешний цикл](PYRAMID.md#outer-loop) |
-| **Слой 0** | Инструкции для агента: `AGENTS.md` + нумерованные решения. Агент читает перед кодом. | [PYRAMID.md §Слой 0](PYRAMID.md#layer-0) |
+| **Control Foundation** | Основание контроля: `AGENTS.md`, архитектурные границы, Decision Guards, policies. Действует до изменения кода. | [README.md](README.md#как-это-работает), [rules/AGENTS_TEMPLATE.md](rules/AGENTS_TEMPLATE.md) |
+| **1. Change Checks** | Проверки изменения: компилятор, nullable, analyzers, formatting, banned APIs, dependency checks, pre-commit review. IDE, build, pre-commit. | [README.md](README.md#как-это-работает) |
+| **2. Behavior Checks** | Проверки поведения: unit, regression, contract, characterization, architecture tests, ratchets. Локальный или CI test run. | [README.md](README.md#как-это-работает), [tests/patterns/](tests/patterns/) |
+| **3. System Checks** | Проверки системы целиком: integration, E2E, smoke, Testcontainers, load, deployment verification. PR, CI, release pipeline. | [README.md](README.md#как-это-работает) |
+| **4. Periodic Assurance** | Исследовательские аудиты по расписанию или risk-trigger: security, database, performance, UX, API, i18n, tech-debt. | `templates/skills/*-audit/` |
+| **Engineering Governance** | Процесс (не уровень): принятие остаточного риска, release decision, бизнес- и продуктовые решения. | [docs/solutions/human-audit-bridge.md](docs/solutions/human-audit-bridge.md) |
+| **Control Maintenance** | Процесс (не уровень): актуализация инструкций, agent memory, backlog, baselines, suppressions, guardrails. | `templates/skills/memory-hygiene/`, `doc-hygiene/`, `backlog-hygiene/` |
 | **AGENTS.md** | Файл с правилами для AI-агентов. Читается агентом перед каждой задачей. Может быть иерархическим (корневой + по модулям). | [rules/AGENTS_TEMPLATE.md](rules/AGENTS_TEMPLATE.md) |
+| **Слои 0–2 / Inner-Outer loop** | *Legacy:* имена из визуальной метафоры доклада (PYRAMID.md). Маппинг на уровни — в начале [PYRAMID.md](PYRAMID.md). | [PYRAMID.md](PYRAMID.md) |
 
 ## Тестовые паттерны
 

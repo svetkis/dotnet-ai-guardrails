@@ -1,5 +1,24 @@
 # Пирамида контроля Skeptical AI Engineering
 
+> **Legacy / визуальная метафора.** Этот документ — развёрнутая иллюстрация доклада
+> «ИИ уверен. Я нет». Канонический классификатор артефактов — модель
+> **Engineering Assurance Levels** в [`README.md`](README.md#как-это-работает).
+> Маппинг старых имён на уровни:
+>
+> | Пирамида (legacy) | Engineering Assurance Level |
+> |-------------------|-----------------------------|
+> | Слой 0. Инструкции (AGENTS.md + Decision Guards) | Control Foundation |
+> | 1.1 Компилятор + типы | 1. Change Checks |
+> | 1.4 Pre-commit code review | 1. Change Checks |
+> | 1.2 Архитектура + Ratchet | 2. Behavior Checks |
+> | 1.3 Тесты | 2. Behavior Checks |
+> | 1.5 Smoke | 3. System Checks |
+> | 2.1 E2E / MCP | 3. System Checks |
+> | 2.3 Нагрузка (NBomber) | 3. System Checks |
+> | 2.2 Аудиты | 4. Periodic Assurance |
+> | Внешний цикл (человек) | Engineering Governance (процесс, не уровень) |
+> | Груминг артефактов | Control Maintenance (процесс, не уровень) |
+
 > **Skeptical AI Engineering (SAE)** — методология из доклада «ИИ уверен. Я нет» (Dotnext 2026).
 > Скорость обратной связи определяет стоимость ошибки. Чем раньше находишь — тем дешевле чинишь.
 > AI позволяет добавить слои контроля, которые раньше были слишком дороги: аудиты, нагрузка, второй review.

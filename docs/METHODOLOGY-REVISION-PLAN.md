@@ -196,7 +196,15 @@ ADR описана явно.
 
 ### P1 — сделать методологию последовательной
 
-#### METH-010 — Внедрить Engineering Assurance Levels
+#### METH-010 — Внедрить Engineering Assurance Levels ✅
+
+> **Сделано:** модель (Control Foundation + Change/Behavior/System Checks + Periodic
+> Assurance + процессы Engineering Governance и Control Maintenance) введена в
+> README.md/README.en.md как канонический классификатор с картой артефактов.
+> PYRAMID.md/PYRAMID.en.md помечены как legacy/визуальная метафора с таблицей
+> маппинга слоёв на уровни. GLOSSARY обновлён (уровни + процессы, legacy-термины
+> помечены). ONBOARDING получил примечание о маппинге; `Paranoid` → `High-assurance`
+> во всех артефактах. Правило AGENTS.md обновлено.
 
 - Переписать модель в README, PYRAMID, GLOSSARY и ONBOARDING.
 - Убрать противоречия между Layer 2, audits и Outer Loop.

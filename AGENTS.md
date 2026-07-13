@@ -18,11 +18,12 @@
 - ❌ Не используй `dotnet test` в примерах — только `dotnet run --project`
 
 ### Всегда
-- ✅ Обновляй `PYRAMID.md` при добавлении нового слоя (сейчас 3 слоя 0–2 + внешний цикл)
+- ✅ Обновляй модель Engineering Assurance Levels в README при добавлении нового уровня контроля (PYRAMID.md — legacy/визуальная метафора, маппинг в её шапке)
 - ✅ Обновляй `docs/agents/` при добавлении поддержки нового AI-агента
 - ✅ Обновляй `docs/README.md` (карта знаний) при добавлении нового артефакта
 - ✅ Каждый новый скилл в `templates/skills/` должен содержать `SKILL.md` + `CHECKLIST.md`
 - ✅ Каждый новый паттерн теста — с комментарием `// TRAP: ...` и `// GUARDRAIL: ...`
+- ✅ Каждый тест должен быть self-validating: падать при нарушении поведения, заявленного в имени/сценарии. Запрещены zero-assert, `IsNotNull()`-only, условно пропускаемые и тавтологические проверки без явного обоснования. См. [`docs/traps/non-validating-tests.md`](docs/traps/non-validating-tests.md)
 - ✅ Примеры кода компилируются (минимальный `examples/DemoProject/` если нужна проверка)
 
 ## Стек репозитория
@@ -89,6 +90,7 @@
 | Failing demo (guardrails) | `examples/DemoProject.Traps/` |
 | CI безопасность | `ci/github-actions/safe-ci.yml` |
 | Описание ловушки | `docs/traps/` |
+| Пустые и non-validating тесты | `docs/traps/non-validating-tests.md` |
 | Архитектурные тесты | `docs/solutions/architecture-tests.md` |
 | Паттерны AI-разработки | `docs/solutions/ai-patterns.md` |
 | Осознанные отклонения (Decision Guards) | `templates/skills/skeptical-ai-bootstrap/DECISION-GUARDS.md` |
