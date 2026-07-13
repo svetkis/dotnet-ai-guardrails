@@ -1,6 +1,6 @@
 # AI-Driven Development Patterns
 
-> Proven practices from projects where 100% of code is written by an agent.
+> Practices observed in projects where all application code is written by an agent (observed cases, not a controlled study).
 
 ---
 

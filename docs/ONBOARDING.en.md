@@ -309,7 +309,7 @@ A: Not layers, but conventions: naming, forbidden API calls, ratchet on public t
 A: Start with Fast mode (1–2 days). Show how `AGENTS.md` prevents the agent from rewriting code. Guardrails save time, not waste it.
 
 **Q: Can we implement without an AI agent (just for the team)?**  
-A: Yes, but 50% of the value is protection FROM agents. Without an agent it is just good engineering practices.
+A: Yes, but a significant part of the value (estimate) is protection FROM agents. Without an agent it is just good engineering practices.
 
 **Q: How much does maintenance cost?**  
 A: Layers 0 + 1.1–1.2 are "set and forget" (minimal maintenance). Audits — 1–2 hours per sprint. E2E — setup 1 day, then self-running.

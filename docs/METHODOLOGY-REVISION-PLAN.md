@@ -295,7 +295,14 @@ ADR описана явно.
 
 ### P2 — доказательность и поддерживаемость
 
-#### METH-020 — Добавить evidence model
+#### METH-020 — Добавить evidence model ✅
+
+> **Сделано:** таблица «Что поймал каждый слой» в PYRAMID(.en) получила evidence note:
+> классификация `observed case` (один проект автора, ~6 месяцев, знаменатель ~450
+> fix-коммитов), явный запрет экстраполяции; ROI-оценки помечены `~` как estimates.
+> «catches 80% of loops» (agent-circles) → формулировка без точного числа + пометка
+> estimate; «100% of code written by an agent» (ai-patterns) → observed case, не
+> controlled study; «50% ценности» (ONBOARDING) → estimate.
 
 - Для процентов и ROI указывать dataset, period, denominator и classification.
 - Разделять measured result, observed case, estimate и hypothesis.

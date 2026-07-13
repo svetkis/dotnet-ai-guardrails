@@ -55,7 +55,7 @@ refactor: replace Include/FirstOrDefaultAsync with Select projections (11 files)
 
 ### Prevention
 
-1. **E2E testing after perf commits** — catches 80% of loops (stale cache, layout breaks)
+1. **E2E testing after perf commits** — catches most loops of this class (stale cache, layout breaks; *estimate from observed cases, not a measured rate*)
 2. **Integration tests instead of mocks** — for cross-service interactions
 3. **Rule: after an agent's perf commit — manual audit of write-paths**
 4. **Ratchet tests** — prevent removal of critical attributes during refactoring

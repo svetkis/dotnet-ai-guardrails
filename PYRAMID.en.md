@@ -305,7 +305,13 @@ Anything that got here passed Layer 1 (fast feedback) + Layer 2 (acceptance cycl
 
 ## Effectiveness metrics
 
-### What each layer caught (from git history)
+> **Evidence note.** Data classification below: **observed case** — a single project
+> of the author (talk material), git history of fix commits over ~6 months,
+> denominator ~450 commits. The numbers are a single observation, not a reproducible
+> measurement or a benchmark; do not extrapolate to your project. Cost figures in the
+> ROI tables are **estimates** (expert judgment), marked `~`.
+
+### What each layer caught (from git history, observed case)
 
 | Cycle | Layer | Bugs found | % of fixes |
 |-------|-------|-----------|------------|
