@@ -126,8 +126,11 @@ Owner / disposition
 - **MAJOR** — debt for the future (unnecessary interface, stale comment)
 - **MINOR** — inconvenience (commented-out code block)
 
-- **CONFIRMED** — confirmed tech debt (dead code, duplication in 3+ places, circular dependency).
+- **CONFIRMED** — debt proven by evidence: dead code with no references traced (incl. reflection/DI), duplication with divergent implementations (`>= 100` vs `> 100`), circular dependency shown in the project graph.
 - **NEEDS_REVIEW** — possible false positive (e.g., interface with one implementation — may be a Port). Requires human judgment.
+
+Checklist items without evidence are **investigation signals**, not findings: an
+interface with one implementation or a `// TODO` comment does not prove debt by itself.
 
 ## Outputs and Downstream Consumer
 

@@ -42,7 +42,7 @@ Before the audit, determine the stack:
 ### Hot Paths
 - [ ] Identify most frequent queries (lists, record creation, dashboard)
 - [ ] For each: how many SQL queries does EF generate? (check Include chains)
-- [ ] Are there indexes on all WHERE conditions?
+- [ ] Are hot-path queries backed by suitable indexes? Verify with query logs / `EXPLAIN` — a missing index on a cold or small-table query is **not** a defect (see Evidence Requirements)
 - [ ] Is there no SELECT * where SELECT of a few fields is enough?
 
 ### N+1 Problems
@@ -117,14 +117,17 @@ missing index on an individual `WHERE` do not prove a defect by themselves.
 ```markdown
 ## Performance Audit — {date}
 
-### Critical (breaks prod under load)
+### BLOCKER
 - [ ] [CONFIRMED] {description} → {query / endpoint}
 
-### Performance
-- [ ] [CONFIRMED|NEEDS_REVIEW] {description} → {query / endpoint}
+### CRITICAL
+- [ ] [CONFIRMED] {description} → {query / endpoint}
 
-### Caching
-- [ ] [CONFIRMED|NEEDS_REVIEW] {description} → {key / service}
+### MAJOR
+- [ ] [CONFIRMED|NEEDS_REVIEW] {description} → {query / endpoint / cache key}
+
+### MINOR
+- [ ] [NEEDS_REVIEW] {description} → {query / endpoint / cache key}
 ```
 
 **Downstream consumer:** Programmer Agent (optimizations), DBA audit (indexes).

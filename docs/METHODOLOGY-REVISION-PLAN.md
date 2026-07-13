@@ -247,7 +247,20 @@ ADR описана явно.
 
 **Готово, когда:** автоматический schema-lint проверяет любой skill.
 
-#### METH-013 — Пересмотреть эвристические audits
+#### METH-013 — Пересмотреть эвристические audits ✅
+
+> **Сделано (5 приоритетных скиллов):**
+> - `performance-audit`: правило «индекс для каждого WHERE» заменено на проверку
+>   hot-path через query logs/EXPLAIN; report format приведён к severity-шкале.
+> - `security-audit`: добавлен шаг 0 — data classification + threat model; severity
+>   = (sensitivity × exploitability), а не класс уязвимости; report format → severity.
+> - `simplicity-audit`: thresholds помечены как defaults с требованием project baseline;
+>   severity переформулирован через impact (defects, скорость изменений), не риторику;
+>   Meta-Trap синхронизирован с risk-based правилом METH-003.
+> - `tech-debt-audit`: CONFIRMED требует evidence (divergent duplication, traced dead
+>   code); эвристики явно названы investigation signals.
+> - `dba-audit`: «FK is indexed» смягчено до FK used in joins/filters + EXPLAIN.
+> Schema-lint проходит.
 
 Приоритет: `simplicity-audit`, `performance-audit`, `security-audit`,
 `dba-audit`, `tech-debt-audit`.

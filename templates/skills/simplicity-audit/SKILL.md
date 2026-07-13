@@ -107,7 +107,7 @@ it flags complexity with no requirements behind it.
 
 If the project tracks metrics — monitor dynamics:
 
-| Metric | How to Count | Alert Threshold |
+| Metric | How to Count | Default Threshold (adapt to project baseline) |
 |--------|--------------|-----------------|
 | `Interface-to-Class Ratio` | # interfaces / # classes | > 0.8 in a project with < 50 classes |
 | `Generic Depth` | Max generic parameters on a public type | > 3 |
@@ -116,6 +116,10 @@ If the project tracks metrics — monitor dynamics:
 | `Method Parameter Count` | Max parameters on a public method | > 5 |
 | `Async Void Count` | async void in production assemblies | > 0 |
 | `File Effective Lines` | Lines excluding using/blank/comments | > 300 |
+
+> Thresholds are starting points, not universal rules. Establish the project baseline
+> first (current values), then alert on growth beyond baseline, not on absolute numbers.
+> Except `Async Void Count` — that one is a defect, not a heuristic.
 
 ## Evidence Requirements
 
@@ -147,10 +151,10 @@ Owner / disposition
 
 | Severity | Meaning |
 |----------|---------|
-| **BLOCKER** | Solution is an order of magnitude more complex than the problem (CQRS for 2 fields, microservice for 1 endpoint, Expression Tree for simple Where) |
-| **CRITICAL** | Slows down reading and review (DTO matryoshkas, LINQ chains of 8+, interfaces without reason) |
-| **MAJOR** | Tech debt for the future (unnecessary generic, builder for a simple object) |
-| **MINOR** | Style (method name 45 chars, extra using) |
+| **BLOCKER** | Complexity causes defects or blocks changes: nobody can safely modify the code (evidence: reverted PRs, bugs from misunderstood abstraction) |
+| **CRITICAL** | Measurably slows reading and review: DTO nesting chains, 8+ LINQ chains, unjustified indirection on a changed-often path |
+| **MAJOR** | Future maintenance cost: unnecessary generic, builder for a simple object |
+| **MINOR** | Style: long method name, extra using |
 
 | Confidence | Meaning |
 |------------|---------|
@@ -192,7 +196,7 @@ Run:
 - After architectural refactoring ("we made it beautiful" → check if it's overkill).
 - Before quarterly planning (assess tech-debt from complexity).
 
-## Meta-Trap: Dead Guardrail
+## Meta-Trap: Unjustified Guardrail
 
 > The most dangerous form of over-engineering is a guardrail that checks for a problem that doesn't exist.
 
@@ -203,7 +207,7 @@ If in your project:
 
 ...then `SimplicityGuardTest` with these checks is **dead code**. It creates a false sense of security, wastes CI time, and dilutes attention.
 
-**Rule:** keep only those guardrails that have caught a **real** bug or that **actually** occur in your codebase. Delete the rest without regret.
+**Rule:** a guardrail must be justified by a real incident, a credible threat model, a regulatory requirement, or a documented high-impact failure scenario. Zero triggers alone is not grounds for removal — weigh impact, maintenance cost, false-positive rate, and compensating checks. Removal candidate: low impact + high maintenance cost + existing compensating checks.
 
 ## Limitations and Expected False Positives
 

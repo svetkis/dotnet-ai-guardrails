@@ -34,8 +34,14 @@ Determine application type before audit:
 - Repository access to `src/*/Api/`, `src/*/Infrastructure/`, DTOs, logging and configuration.
 - The PR diff when running per-PR.
 - Knowledge of which endpoints are intentionally public (webhook, health).
+- **Data classification and threat model** (or establish them in step 0): which data is sensitive (credentials, PII, financial), who the attackers are, and what they gain. Severity of every finding is derived from this, not from the vulnerability class alone.
 
 ## Procedure
+
+### 0. Data Classification and Threat Model
+- [ ] List data categories handled by the audited code: credentials, PII, financial, operational, public.
+- [ ] Mark the sensitive data stores, endpoints and log sinks.
+- [ ] A finding's severity is set by (data sensitivity × exploitability), not by vulnerability class rhetoric. If classification is unknown, findings are NEEDS_REVIEW until classified.
 
 ### Data
 - [ ] Check that logs do not contain `userId`, emails, phones, tokens
@@ -91,10 +97,13 @@ Owner / disposition
 
 | Severity | Meaning |
 |----------|---------|
-| **BLOCKER** | Exploitable now: PII in logs, missing authorization on a sensitive endpoint, SQL injection |
-| **CRITICAL** | High impact; fix in the current iteration (IDOR on user data, mass assignment of privileged fields) |
-| **MAJOR** | Degradation or defect; schedule the fix (verbose error output, missing DTO validation) |
-| **MINOR** | Improvement; backlog (hardening headers, log hygiene) |
+| **BLOCKER** | Exploitable now against sensitive data: credentials/PII in logs, missing authorization on a sensitive-data endpoint, SQL injection reaching sensitive tables |
+| **CRITICAL** | High impact on sensitive data; fix in the current iteration (IDOR on user data, mass assignment of privileged fields) |
+| **MAJOR** | Weakens protection; schedule the fix (verbose error output, missing DTO validation on non-sensitive input) |
+| **MINOR** | Hardening; backlog (headers, log hygiene on non-sensitive data) |
+
+Severity follows (data sensitivity × exploitability): the same defect class is BLOCKER
+on credentials and MAJOR on public data.
 
 | Confidence | Meaning |
 |------------|---------|
@@ -109,13 +118,16 @@ findings. `Authorization` is a category, not a severity.
 ```markdown
 ## Security Audit — {date}
 
-### Critical
+### BLOCKER
 - [ ] [CONFIRMED] {description} → {file:line}
 
-### Major
+### CRITICAL
+- [ ] [CONFIRMED] {description} → {file:line}
+
+### MAJOR
 - [ ] [CONFIRMED|NEEDS_REVIEW] {description} → {file:line}
 
-### Recommendations
+### MINOR
 - {description}
 ```
 

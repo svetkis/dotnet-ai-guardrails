@@ -57,7 +57,7 @@ Default stack: **.NET + EF Core + PostgreSQL**. Before auditing, define the stac
   - `PRIMARY KEY` exists on every table
   - `UNIQUE` on natural keys (email, username, external_id)
   - `CHECK` constraints on business rules (positive sums, ranges)
-- [ ] **Relations and cascades:** `ON DELETE` is set explicitly. No accidental cascade delete on important data. FK is indexed
+- [ ] **Relations and cascades:** `ON DELETE` is set explicitly. No accidental cascade delete on important data. FKs used in joins/filters are indexed — verify with `EXPLAIN`; a missing index on an unused FK is not a defect
 - [ ] **Soft delete:** if spec has soft delete → there is `IsDeleted` / `DeletedAt`. Unique indexes account for soft delete (partial unique index `WHERE IsDeleted = false`)
 - [ ] **Audit fields:** `CreatedAt`, `UpdatedAt` are present (if adopted in project). `CreatedBy` / `UpdatedBy` — if audit is required
 - [ ] **Schema naming:** tables, columns, constraints — `snake_case`. Indexes with prefix `ix_`, unique — `ux_`, PK — `pk_`
