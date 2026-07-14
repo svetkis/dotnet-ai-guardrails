@@ -129,6 +129,7 @@ Read before implementation — each trap explains **why** a guardrail exists.
 | [code-duplication](traps/code-duplication.md) | Agent duplicates business logic instead of reuse | [DuplicationGuardTest.cs](../tests/patterns/DuplicationGuardTest.cs) |
 | [dependency-drift](traps/dependency-drift.md) | +1 using/#include closes a cycle in the dependency graph | [DependencyDriftTest.cs](../tests/patterns/DependencyDriftTest.cs) |
 | [over-engineering](traps/over-engineering.md) | Agent builds an architectural cathedral instead of a simple solution | [simplicity-audit](../templates/skills/simplicity-audit/SKILL.md) |
+| [non-validating-tests](traps/non-validating-tests.md) | Test is green but cannot fail when behavior breaks | [test-audit](../templates/skills/test-audit/SKILL.md), [mutation-audit](../templates/skills/mutation-audit/SKILL.md) |
 
 ---
 
@@ -151,6 +152,8 @@ Read before implementation — each trap explains **why** a guardrail exists.
 |----------|---------------|
 | [small-project-minimal-api.md](case-studies/small-project-minimal-api.md) | Small project (single-project MVP): risk profile, selected/rejected controls, false positives, cost |
 | [production-like-layered-service.md](case-studies/production-like-layered-service.md) | Production-like layered service: full level set, removed/rejected guardrails, maintenance cost |
+
+Active plans: [METHODOLOGY-REVISION-PLAN.md](METHODOLOGY-REVISION-PLAN.md) (revision), [SELF-VALIDATING-TESTS-WORKSTREAM.md](SELF-VALIDATING-TESTS-WORKSTREAM.md) (self-validating tests).
 
 ---
 

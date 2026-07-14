@@ -1,0 +1,64 @@
+# Non-Validating Tests — Green Without Verification
+
+> **Status:** draft, part of the [Self-Validating Tests workstream](../SELF-VALIDATING-TESTS-WORKSTREAM.md).
+
+A test can be discovered, executed, and green while proving nothing about the
+behavior named by the test.
+
+## The trap
+
+AI agents are good at producing tests that look structurally complete:
+
+```text
+Arrange → Act → Assert → green build
+```
+
+The presence of an assertion is not enough. A test is useful only if a relevant
+defect makes it fail. Non-validating tests preserve the appearance of coverage
+while allowing broken behavior through CI.
+
+## Common forms
+
+| Pattern | Why it stays green |
+|---------|--------------------|
+| Zero-assert test | Nothing is verified; execution without exception passes |
+| `IsNotNull()` as the only check | Any non-null wrong result passes |
+| Assertion inside a conditional branch | The branch may never execute |
+| Tautological assertion (`x == x`, `expect(true)`) | Cannot fail by construction |
+| Negative-only fixture without positive control | Proves absence of one defect, not presence of behavior |
+| Mock-of-mock | The test verifies mock wiring, not system behavior |
+| Test name promises more than assertions check | Readers trust the name; the gap is invisible |
+| `waitForTimeout` instead of condition wait (frontend) | Timing races pass on fast machines, and body-only checks miss behavior |
+
+## Why agents produce them
+
+- The instruction says "add tests" — the cheapest compliant artifact is a test
+  that cannot fail.
+- The agent optimizes for green, not for fault sensitivity, unless the rule
+  explicitly demands it.
+- Reviewing diffs, humans see `Assert.` and move on.
+
+## Guardrails
+
+1. **Constitution rule** (`rules/AGENTS_TEMPLATE.md`): every test must be
+   self-validating — it must fail when the behavior promised by its name is
+   broken. Zero-assert, `IsNotNull()`-only, conditional, tautological, and
+   negative-only tests are forbidden unless the weaker check *is* the contract
+   and the reason is documented.
+2. **Deliberate fault injection:** for critical behavior, break the production
+   code locally and confirm the test fails. If it doesn't — the test is dead.
+3. **Mutation testing** (risk-trigger / release): mutation score on critical
+   assemblies measures fault sensitivity of the whole suite. See
+   `templates/skills/mutation-audit/`.
+4. **Test audit checklist** (`templates/skills/test-audit/`): scan for the
+   forms above; each hit is an investigation signal, not an automatic defect.
+5. **Review anchor:** in code review, check that assertions verify observable
+   postconditions (state, output, effects) — not merely execution or object
+   existence.
+
+## Relation to other traps
+
+- [false-safety](false-safety.md) — green CI ≠ working code; non-validating
+  tests are the test-level instance of that trap.
+- [over-engineering](over-engineering.md) — the opposite failure: test fixtures
+  so complex that nobody notices they verify mocks, not behavior.

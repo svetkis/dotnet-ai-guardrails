@@ -127,6 +127,7 @@
 | [code-duplication](traps/code-duplication.md) | Агент дублирует бизнес-логику вместо реюза | [DuplicationGuardTest.cs](../tests/patterns/DuplicationGuardTest.cs) |
 | [dependency-drift](traps/dependency-drift.md) | +1 using/#include замыкает цикл в графе зависимостей | [DependencyDriftTest.cs](../tests/patterns/DependencyDriftTest.cs) |
 | [over-engineering](traps/over-engineering.md) | Агент строит архитектурный собор вместо простого решения | [simplicity-audit](../templates/skills/simplicity-audit/SKILL.md) |
+| [non-validating-tests](traps/non-validating-tests.md) | Тест зелёный, но не способен упасть при поломке | [test-audit](../templates/skills/test-audit/SKILL.md), [mutation-audit](../templates/skills/mutation-audit/SKILL.md) |
 
 ---
 
@@ -149,6 +150,8 @@
 |----------|------------|
 | [small-project-minimal-api.md](case-studies/small-project-minimal-api.md) | Малый проект (single-project MVP): risk profile, selected/rejected controls, false positives, стоимость |
 | [production-like-layered-service.md](case-studies/production-like-layered-service.md) | Production-like layered service: полный набор уровней, removed/rejected guardrails, maintenance cost |
+
+Активные планы: [METHODOLOGY-REVISION-PLAN.md](METHODOLOGY-REVISION-PLAN.md) (revision), [SELF-VALIDATING-TESTS-WORKSTREAM.md](SELF-VALIDATING-TESTS-WORKSTREAM.md) (self-validating tests).
 
 ---
 
