@@ -65,7 +65,8 @@ created by agents focused on features. Do not write new tests — find gaps.
 ### Test Validity (non-validating tests)
 - [ ] No tests without assertions (a discovered, executed, green test can still verify nothing)
 - [ ] No `IsNotNull()`-only assertions where the test name promises a concrete postcondition
-- [ ] No conditional or tautological assertions (`if (...) Assert`, `expect(true)`)
+- [ ] No tautological assertions (`x == x`, `expect(true)`)
+- [ ] Assertions are reachable on every successful path — an assert inside an `if` is an investigation signal, not a defect: it is a problem only if a successful path can bypass it (check control flow before reporting)
 - [ ] No `waitForTimeout`-style fixed waits in UI tests instead of condition waits
 - [ ] Negative-only assertions (`does NOT contain X`) paired with a positive control
 - [ ] For each critical test: break the promised behavior — does the test fail? (mutation check)
@@ -107,8 +108,8 @@ Owner / disposition
 - **MAJOR** — uncovered edge case (error on empty collection)
 - **MINOR** — test covers only happy path
 
-- **CONFIRMED** — service without test file; `BUG###_` test passes with broken code; endpoint without integration test; test without assertions or with tautological/conditional assertions
-- **NEEDS_REVIEW** — service covered indirectly; edge case is debatable; Job covered via integration test of calling service
+- **CONFIRMED** — service without test file; `BUG###_` test passes with broken code; endpoint without integration test; test without assertions; tautological assertion; conditional assertion where control-flow evidence shows a successful path bypasses it
+- **NEEDS_REVIEW** — service covered indirectly; edge case is debatable; Job covered via integration test of calling service; conditional assertion without control-flow analysis (may be reachable on every successful path)
 
 ## Outputs and Downstream Consumer
 

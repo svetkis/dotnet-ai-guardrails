@@ -16,6 +16,9 @@
 |--------|---------------|-------------|
 | **check** | industry-standard | Автоматическая детерминированная проверка: одинаковый вход → одинаковый результат, без инженерного суждения. |
 | **test** | industry-standard | Check, проверяющий поведение кода через исполнение (unit, integration, E2E). |
+| **Self-Checking Test** | industry-standard | Тест, который сам определяет pass/fail без ручной интерпретации результата (xUnit Test Patterns, Meszaros). Базовое свойство; не гарантирует обнаружение дефекта. |
+| **Assertion Reachability** | SAE-specific | Свойство теста: ни один успешный путь исполнения не обходит assertions. Нарушение — assertion внутри `if`, который может не выполниться. |
+| **Fault Sensitivity** | borrowed | Свойство теста/набора: падает при наличии релевантного дефекта (мутация или исходный баг). Из mutation testing; проверяется fault injection или mutation score. |
 | **gate** | industry-standard | Обязательная точка прохождения: изменение не идёт дальше, пока gate не пройден (`commit gate`, `PR gate`, `release gate`). |
 | **audit** | industry-standard | Исследовательская проверка узкой области, требующая evidence и инженерного суждения. Результат — findings, а не pass/fail. |
 | **assurance** | industry-standard | Совокупность мер, дающих обоснованную уверенность, что система соответствует требованиям. |

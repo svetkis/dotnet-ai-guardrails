@@ -5,6 +5,20 @@
 A test can be discovered, executed, and green while proving nothing about the
 behavior named by the test.
 
+## Terminology
+
+Three distinct properties (do not merge them):
+
+| Term | Origin | Meaning |
+|------|--------|---------|
+| **Self-Checking Test** | industry-standard (xUnit Test Patterns, Meszaros) | The test determines pass/fail automatically, without manual interpretation of results |
+| **Assertion Reachability** | SAE-specific | No successful execution path bypasses the assertions |
+| **Fault Sensitivity** | borrowed (mutation testing) | The test fails when a relevant defect is present (mutation, or the original bug) |
+
+Self-checking is the baseline this trap assumes. The trap itself lives in the
+other two: assertions exist but are unreachable on the green path, or reachable
+but insensitive to the defect.
+
 ## The trap
 
 AI agents are good at producing tests that look structurally complete:
@@ -32,19 +46,23 @@ while allowing broken behavior through CI.
 
 ## Why agents produce them
 
-- The instruction says "add tests" — the cheapest compliant artifact is a test
-  that cannot fail.
-- The agent optimizes for green, not for fault sensitivity, unless the rule
-  explicitly demands it.
-- Reviewing diffs, humans see `Assert.` and move on.
+Observed mechanism (no mind-reading required):
+
+- The task says "add tests" but does not state what must be verified. The
+  formal completion criteria — file exists, test discovered, run green — are
+  satisfiable without behavior checks.
+- Review diffs show `Assert.` calls; whether the assertion is reachable and
+  sensitive to the defect is not visible without control-flow analysis or
+  fault injection, so reviews pass.
 
 ## Guardrails
 
-1. **Constitution rule** (`rules/AGENTS_TEMPLATE.md`): every test must be
-   self-checking — it must fail when the behavior promised by its name is
-   broken. Zero-assert, `IsNotNull()`-only, conditional, tautological, and
-   negative-only tests are forbidden unless the weaker check *is* the contract
-   and the reason is documented.
+1. **Constitution rule** (`rules/AGENTS_TEMPLATE.md`): tests must be
+   self-checking with assertion reachability and fault sensitivity — a test
+   must fail when the behavior promised by its name is broken. Zero-assert,
+   `IsNotNull()`-only, bypassed, tautological, and negative-only tests are
+   forbidden unless the weaker check *is* the contract and the reason is
+   documented.
 2. **Deliberate fault injection:** for critical behavior, break the production
    code locally and confirm the test fails. If it doesn't — the test is dead.
 3. **Mutation testing** (risk-trigger / release): mutation score on critical

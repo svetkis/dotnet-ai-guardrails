@@ -31,7 +31,8 @@
 ## Test Validity (non-validating tests)
 - [ ] No tests without assertions
 - [ ] No `IsNotNull()`-only assertions where a postcondition is promised
-- [ ] No conditional/tautological assertions (`if (...) Assert`, `expect(true)`)
+- [ ] No tautological assertions (`x == x`, `expect(true)`)
+- [ ] Assertions reachable on every successful path (assert-in-`if` = signal; CONFIRMED only with control-flow evidence of bypass)
 - [ ] No `waitForTimeout` fixed waits in UI tests
 - [ ] Negative-only assertions have a positive control
 - [ ] Break the promised behavior → the test fails (mutation check on critical tests)

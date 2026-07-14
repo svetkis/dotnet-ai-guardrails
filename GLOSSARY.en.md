@@ -16,6 +16,9 @@
 |------|--------|------------|
 | **check** | industry-standard | Automated deterministic check: same input → same result, no engineering judgment. |
 | **test** | industry-standard | A check that verifies code behavior through execution (unit, integration, E2E). |
+| **Self-Checking Test** | industry-standard | A test that determines pass/fail automatically, without manual interpretation of results (xUnit Test Patterns, Meszaros). Baseline property; does not guarantee defect detection. |
+| **Assertion Reachability** | SAE-specific | Test property: no successful execution path bypasses the assertions. Violation — an assert inside an `if` that may not execute. |
+| **Fault Sensitivity** | borrowed | Test/suite property: fails when a relevant defect is present (a mutation or the original bug). From mutation testing; verified by fault injection or mutation score. |
 | **gate** | industry-standard | Mandatory passage point: a change does not proceed until the gate passes (`commit gate`, `PR gate`, `release gate`). |
 | **audit** | industry-standard | Investigative review of a narrow area, requiring evidence and engineering judgment. Output is findings, not pass/fail. |
 | **assurance** | industry-standard | The body of measures giving justified confidence that the system meets its requirements. |
