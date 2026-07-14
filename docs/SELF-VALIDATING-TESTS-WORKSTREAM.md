@@ -1,7 +1,7 @@
 # Self-Validating Tests — план усиления Behavior Checks
 
 > Дочерний workstream плана [`METHODOLOGY-REVISION-PLAN.md`](METHODOLOGY-REVISION-PLAN.md).
-> **Статус:** план. Не начат.
+> **Статус:** частично выполнен (SV-001…SV-003 done; SV-004, SV-005 — pending).
 > **Источник практики:** незавершённые изменения в `D:\Repos\Slotik` на 2026-07-14.
 > Исходный код оттуда **не копировать** до стабилизации и фиксации source revision;
 > в этом репозитории живут только принципы, правила и шаблоны.
@@ -31,7 +31,7 @@ pattern-шаблон и воспроизводимая демонстрация 
 
 ## Backlog
 
-### SV-001 — Правило в конституции (Control Foundation)
+### SV-001 — Правило в конституции (Control Foundation) ✅ done
 
 - Добавить в `rules/AGENTS_TEMPLATE.md` секцию Tests:
   - каждый тест self-validating: падает при поломке поведения из имени теста;
@@ -43,13 +43,13 @@ pattern-шаблон и воспроизводимая демонстрация 
     deliberate fault injection).
 - **Готово, когда:** правило есть в шаблоне + ссылка на trap-документ.
 
-### SV-002 — Trap-документ
+### SV-002 — Trap-документ ✅ done
 
 - `docs/traps/non-validating-tests.md`: каталог форм невалидирующих тестов,
   почему они остаются зелёными, как ловить.
 - **Готово, когда:** документ в knowledge map, cross-link из `false-safety.md`.
 
-### SV-003 — Аудит-чеклисты (Periodic Assurance)
+### SV-003 — Аудит-чеклисты (Periodic Assurance) ✅ done
 
 - `templates/skills/test-audit/`: пункты на zero-assert / IsNotNull-only /
   conditional assert / tautology / negative-only.
@@ -57,7 +57,7 @@ pattern-шаблон и воспроизводимая демонстрация 
   критичных тестов.
 - **Готово, когда:** пункты есть, schema-lint проходит.
 
-### SV-004 — Pattern + демонстрация (Behavior Checks)
+### SV-004 — Pattern + демонстрация (Behavior Checks) ⏳ pending
 
 - `tests/patterns/` — шаблон fault-injection проверки (тест, который ломает
   прод-код локально и доказывает чувствительность набора).
@@ -65,7 +65,7 @@ pattern-шаблон и воспроизводимая демонстрация 
   (невалидирующий тест, который guardrail ловит).
 - **Готово, когда:** CI зелёный на DemoProject, Traps падает по design.
 
-### SV-005 — Frontend (опционально)
+### SV-005 — Frontend (опционально) ⏳ pending
 
 - `templates/skills/frontend-code-review/`: пункты про `expect(true)`,
   body-only checks, `waitForTimeout` как замену condition-wait.

@@ -28,6 +28,14 @@
 - [ ] Exist for critical algorithms
 - [ ] Are current (not stale)
 
+## Test Validity (non-validating tests)
+- [ ] No tests without assertions
+- [ ] No `IsNotNull()`-only assertions where a postcondition is promised
+- [ ] No conditional/tautological assertions (`if (...) Assert`, `expect(true)`)
+- [ ] No `waitForTimeout` fixed waits in UI tests
+- [ ] Negative-only assertions have a positive control
+- [ ] Break the promised behavior → the test fails (mutation check on critical tests)
+
 ## Architectural Tests
 - [ ] Every AGENTS.md rule has a guardrail test
 - [ ] Ratchet tests did not fail

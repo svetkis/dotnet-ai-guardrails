@@ -62,6 +62,14 @@ created by agents focused on features. Do not write new tests — find gaps.
 - [ ] Are there characterization tests for critical algorithms?
 - [ ] Are they current? (behavior changed — tests updated or fail)
 
+### Test Validity (non-validating tests)
+- [ ] No tests without assertions (a discovered, executed, green test can still verify nothing)
+- [ ] No `IsNotNull()`-only assertions where the test name promises a concrete postcondition
+- [ ] No conditional or tautological assertions (`if (...) Assert`, `expect(true)`)
+- [ ] No `waitForTimeout`-style fixed waits in UI tests instead of condition waits
+- [ ] Negative-only assertions (`does NOT contain X`) paired with a positive control
+- [ ] For each critical test: break the promised behavior — does the test fail? (mutation check)
+
 ### Architectural Tests
 - [ ] Does every rule in `AGENTS.md` have a corresponding architectural test?
 - [ ] Ratchet tests: has the number of public types and tests not decreased?
@@ -94,12 +102,12 @@ Owner / disposition
 
 ## Severity and Confidence
 
-- **BLOCKER** — critical path without tests (payments, auth, orders)
+- **BLOCKER** — critical path without tests (payments, auth, orders); non-validating test on a critical path (green test that cannot fail when the promised behavior breaks)
 - **CRITICAL** — service/endpoint/job without tests; dead regression test
 - **MAJOR** — uncovered edge case (error on empty collection)
 - **MINOR** — test covers only happy path
 
-- **CONFIRMED** — service without test file; `BUG###_` test passes with broken code; endpoint without integration test
+- **CONFIRMED** — service without test file; `BUG###_` test passes with broken code; endpoint without integration test; test without assertions or with tautological/conditional assertions
 - **NEEDS_REVIEW** — service covered indirectly; edge case is debatable; Job covered via integration test of calling service
 
 ## Outputs and Downstream Consumer
