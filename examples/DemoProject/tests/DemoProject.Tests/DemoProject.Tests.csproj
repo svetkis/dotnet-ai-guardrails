@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
     <OutputType>Exe</OutputType>
     <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
+    <WarningsAsErrors>SAE006;SAE007;SAE008;SAE009</WarningsAsErrors>
   </PropertyGroup>
 
   <ItemGroup>

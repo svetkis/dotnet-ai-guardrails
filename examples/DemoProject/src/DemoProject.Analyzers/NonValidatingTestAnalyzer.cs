@@ -140,39 +140,60 @@ public class NonValidatingTestAnalyzer : DiagnosticAnalyzer
     }
 
     // Uses the compiler control-flow graph to prove that every successful path
-    // from entry to exit passes through at least one assertion. If the CFG is
-    // unavailable (e.g., expression-bodied members in older Roslyn), falls back
-    // to a conservative syntax approximation.
+    // from entry to exit passes through at least one assertion.
     private static bool HasGuaranteedAssertion(
         MethodDeclarationSyntax method,
         SemanticModel semanticModel,
         IReadOnlyList<InvocationExpressionSyntax> assertions)
     {
-        // CFG for async methods includes state-machine branches that make a
-        // simple entry→exit proof unreliable; use the syntax fallback there.
-        if (method.Modifiers.Any(SyntaxKind.AsyncKeyword))
+        // Roslyn CFG models exceptional edges (catch/finally) differently across
+        // versions; for methods with try/catch we use the syntax fallback to
+        // avoid missing bypasses on the exceptional path.
+        if (method.DescendantNodes().OfType<TryStatementSyntax>().Any())
             return FallbackHasGuaranteedAssertion(method, assertions);
 
         var cfg = ControlFlowGraph.Create(method, semanticModel);
-        if (cfg is null)
-            return FallbackHasGuaranteedAssertion(method, assertions);
+        return cfg is not null
+            ? HasGuaranteedAssertionViaCfg(cfg, assertions)
+            : FallbackHasGuaranteedAssertion(method, assertions);
+    }
 
-        var assertionBlocks = new HashSet<BasicBlock>();
-
-        foreach (var block in cfg.Blocks)
-        {
-            if (block.Operations.Any(op => op is not null && assertions.Any(a => op.Syntax.Span.Contains(a.Span))))
-                assertionBlocks.Add(block);
-        }
-
+    private static bool HasGuaranteedAssertionViaCfg(
+        ControlFlowGraph cfg,
+        IReadOnlyList<InvocationExpressionSyntax> assertions)
+    {
+        var assertionBlocks = CollectAssertionBlocks(cfg, assertions);
         var entryBlock = cfg.Blocks.FirstOrDefault(b => b.Kind == BasicBlockKind.Entry);
         var exitBlock = cfg.Blocks.FirstOrDefault(b => b.Kind == BasicBlockKind.Exit);
-        if (entryBlock is null || exitBlock is null)
-            return FallbackHasGuaranteedAssertion(method, assertions);
 
-        // Backward reachability from the exit block, refusing to traverse
-        // assertion blocks. If the entry block is reachable without crossing an
-        // assertion, a green path bypasses every check.
+        if (entryBlock is null || exitBlock is null)
+            return false;
+
+        return !IsEntryReachableFromExitWithoutAssertion(entryBlock, exitBlock, assertionBlocks);
+    }
+
+    private static HashSet<BasicBlock> CollectAssertionBlocks(
+        ControlFlowGraph cfg,
+        IReadOnlyList<InvocationExpressionSyntax> assertions)
+    {
+        var assertionBlocks = new HashSet<BasicBlock>();
+
+        foreach (var block in cfg.Blocks.Where(b => b.Operations.Any(op => op is not null && assertions.Any(a => op.Syntax.Span.Contains(a.Span)))))
+        {
+            assertionBlocks.Add(block);
+        }
+
+        return assertionBlocks;
+    }
+
+    // Backward reachability from the exit block, refusing to traverse assertion
+    // blocks. If the entry block is reachable without crossing an assertion, a
+    // green path bypasses every check.
+    private static bool IsEntryReachableFromExitWithoutAssertion(
+        BasicBlock entryBlock,
+        BasicBlock exitBlock,
+        HashSet<BasicBlock> assertionBlocks)
+    {
         var reachableWithoutAssert = new HashSet<BasicBlock>();
         var stack = new Stack<BasicBlock>();
         stack.Push(exitBlock);
@@ -186,14 +207,13 @@ public class NonValidatingTestAnalyzer : DiagnosticAnalyzer
             if (assertionBlocks.Contains(block))
                 continue;
 
-            foreach (var predecessor in block.Predecessors)
+            foreach (var predecessor in block.Predecessors.Where(p => p.Source is not null))
             {
-                if (predecessor.Source is not null)
-                    stack.Push(predecessor.Source);
+                stack.Push(predecessor.Source!);
             }
         }
 
-        return !reachableWithoutAssert.Contains(entryBlock);
+        return reachableWithoutAssert.Contains(entryBlock);
     }
 
     private static bool FallbackHasGuaranteedAssertion(MethodDeclarationSyntax method, IReadOnlyList<InvocationExpressionSyntax> assertions)
@@ -212,26 +232,40 @@ public class NonValidatingTestAnalyzer : DiagnosticAnalyzer
         if (IsDirectAssertionStatement(statement, assertions))
             return true;
 
-        switch (statement)
+        return statement switch
         {
-            case BlockSyntax block:
-                return block.Statements.Any(s => StatementGuaranteesAssertion(s, assertions));
+            BlockSyntax block => BlockGuaranteesAssertion(block, assertions),
+            IfStatementSyntax ifStatement when ifStatement.Else is not null => IfElseGuaranteesAssertion(ifStatement, assertions),
+            TryStatementSyntax tryStatement => TryGuaranteesAssertion(tryStatement, assertions),
+            SwitchStatementSyntax switchStatement => SwitchGuaranteesAssertion(switchStatement, assertions),
+            _ => false,
+        };
+    }
 
-            case IfStatementSyntax ifStatement when ifStatement.Else is not null:
-                return StatementGuaranteesAssertion(ifStatement.Statement, assertions) &&
-                       StatementGuaranteesAssertion(ifStatement.Else.Statement, assertions);
+    private static bool BlockGuaranteesAssertion(BlockSyntax block, IReadOnlyList<InvocationExpressionSyntax> assertions)
+    {
+        return block.Statements.Any(s => StatementGuaranteesAssertion(s, assertions));
+    }
 
-            case TryStatementSyntax tryStatement:
-                return StatementGuaranteesAssertion(tryStatement.Block, assertions) ||
-                       (tryStatement.Finally is not null && StatementGuaranteesAssertion(tryStatement.Finally.Block, assertions));
+    private static bool IfElseGuaranteesAssertion(IfStatementSyntax ifStatement, IReadOnlyList<InvocationExpressionSyntax> assertions)
+    {
+        return StatementGuaranteesAssertion(ifStatement.Statement, assertions) &&
+               StatementGuaranteesAssertion(ifStatement.Else!.Statement, assertions);
+    }
 
-            case SwitchStatementSyntax switchStatement:
-                return switchStatement.Sections.Any(s => s.Labels.Any(l => l.IsKind(SyntaxKind.DefaultSwitchLabel))) &&
-                       switchStatement.Sections.All(s => SwitchSectionGuaranteesAssertion(s, assertions));
+    private static bool TryGuaranteesAssertion(TryStatementSyntax tryStatement, IReadOnlyList<InvocationExpressionSyntax> assertions)
+    {
+        if (tryStatement.Finally is not null && StatementGuaranteesAssertion(tryStatement.Finally.Block, assertions))
+            return true;
 
-            default:
-                return false;
-        }
+        return StatementGuaranteesAssertion(tryStatement.Block, assertions) &&
+               tryStatement.Catches.All(c => StatementGuaranteesAssertion(c.Block, assertions));
+    }
+
+    private static bool SwitchGuaranteesAssertion(SwitchStatementSyntax switchStatement, IReadOnlyList<InvocationExpressionSyntax> assertions)
+    {
+        return switchStatement.Sections.Any(s => s.Labels.Any(l => l.IsKind(SyntaxKind.DefaultSwitchLabel))) &&
+               switchStatement.Sections.All(s => SwitchSectionGuaranteesAssertion(s, assertions));
     }
 
     private static bool SwitchSectionGuaranteesAssertion(SwitchSectionSyntax section, IReadOnlyList<InvocationExpressionSyntax> assertions)

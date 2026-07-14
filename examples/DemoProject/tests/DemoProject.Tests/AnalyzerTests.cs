@@ -2,6 +2,7 @@
 // Этот файл — рабочая адаптация шаблона из tests/patterns/AnalyzerTests.cs
 
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using DemoProject.Analyzers;
 using DemoProject.Domain;
 using Microsoft.CodeAnalysis;
@@ -504,6 +505,290 @@ public class AnalyzerTests
     }
 
     [Test]
+    public async Task NonValidatingTestAnalyzer_FlagsEarlyReturnBeforeAssertion()
+    {
+        const string code = """
+            using System;
+
+            [AttributeUsage(AttributeTargets.Method)]
+            public class TestAttribute : Attribute { }
+
+            public static class Assert
+            {
+                public static AssertBuilder That(object? value) => new();
+                public class AssertBuilder
+                {
+                    public void IsEqualTo(object? expected) { }
+                }
+            }
+
+            public class PaymentServiceTests
+            {
+                [Test]
+                public void PaymentReturnsAmount()
+                {
+                    var payment = new object();
+                    var flag = true;
+                    if (flag)
+                    {
+                        return;
+                    }
+                    Assert.That(payment).IsEqualTo(1);
+                }
+            }
+            """;
+
+        var diagnostics = await RunAnalyzerAsync<NonValidatingTestAnalyzer>(code);
+
+        await Assert.That(diagnostics)
+            .Contains(d => d.Id == NonValidatingTestAnalyzer.BypassedDiagnosticId)
+            .Because("An early return before the assertion creates a green path without verification.");
+    }
+
+    [Test]
+    public async Task NonValidatingTestAnalyzer_FlagsTryCatchWithoutAssertionInCatch()
+    {
+        const string code = """
+            using System;
+
+            [AttributeUsage(AttributeTargets.Method)]
+            public class TestAttribute : Attribute { }
+
+            public static class Assert
+            {
+                public static AssertBuilder That(object? value) => new();
+                public class AssertBuilder
+                {
+                    public void IsEqualTo(object? expected) { }
+                }
+            }
+
+            public class PaymentServiceTests
+            {
+                [Test]
+                public void PaymentReturnsAmount()
+                {
+                    var payment = new object();
+                    try
+                    {
+                        Assert.That(payment).IsEqualTo(1);
+                    }
+                    catch (Exception)
+                    {
+                        // no assertion here
+                    }
+                }
+            }
+            """;
+
+        var diagnostics = await RunAnalyzerAsync<NonValidatingTestAnalyzer>(code);
+
+        await Assert.That(diagnostics)
+            .Contains(d => d.Id == NonValidatingTestAnalyzer.BypassedDiagnosticId)
+            .Because("A catch block without assertion swallows the failure path.");
+    }
+
+    [Test]
+    public async Task NonValidatingTestAnalyzer_FlagsSwitchWithoutDefaultAssertion()
+    {
+        const string code = """
+            using System;
+
+            [AttributeUsage(AttributeTargets.Method)]
+            public class TestAttribute : Attribute { }
+
+            public static class Assert
+            {
+                public static AssertBuilder That(object? value) => new();
+                public class AssertBuilder
+                {
+                    public void IsEqualTo(object? expected) { }
+                }
+            }
+
+            public class PaymentServiceTests
+            {
+                [Test]
+                public void PaymentReturnsAmount()
+                {
+                    var payment = new object();
+                    var code = 1;
+                    switch (code)
+                    {
+                        case 1:
+                            Assert.That(payment).IsEqualTo(1);
+                            break;
+                    }
+                }
+            }
+            """;
+
+        var diagnostics = await RunAnalyzerAsync<NonValidatingTestAnalyzer>(code);
+
+        await Assert.That(diagnostics)
+            .Contains(d => d.Id == NonValidatingTestAnalyzer.BypassedDiagnosticId)
+            .Because("A switch without a default asserting branch can bypass verification.");
+    }
+
+    [Test]
+    public async Task NonValidatingTestAnalyzer_FlagsAsyncBypassViaEarlyReturn()
+    {
+        const string code = """
+            using System;
+            using System.Threading.Tasks;
+
+            [AttributeUsage(AttributeTargets.Method)]
+            public class TestAttribute : Attribute { }
+
+            public static class Assert
+            {
+                public static AssertBuilder That(object? value) => new();
+                public class AssertBuilder
+                {
+                    public void IsEqualTo(object? expected) { }
+                }
+            }
+
+            public class PaymentServiceTests
+            {
+                [Test]
+                public async Task PaymentReturnsAmount()
+                {
+                    var payment = new object();
+                    var flag = true;
+                    if (flag)
+                    {
+                        return;
+                    }
+                    await Task.Yield();
+                    Assert.That(payment).IsEqualTo(1);
+                }
+            }
+            """;
+
+        var diagnostics = await RunAnalyzerAsync<NonValidatingTestAnalyzer>(code);
+
+        await Assert.That(diagnostics)
+            .Contains(d => d.Id == NonValidatingTestAnalyzer.BypassedDiagnosticId)
+            .Because("An async early return before the assertion creates a green path without verification.");
+    }
+
+    [Test]
+    public async Task NonValidatingTestAnalyzer_IgnoresAssertionBeforeAwait()
+    {
+        const string code = """
+            using System;
+            using System.Threading.Tasks;
+
+            [AttributeUsage(AttributeTargets.Method)]
+            public class TestAttribute : Attribute { }
+
+            public static class Assert
+            {
+                public static AssertBuilder That(object? value) => new();
+                public class AssertBuilder
+                {
+                    public void IsEqualTo(object? expected) { }
+                }
+            }
+
+            public class PaymentServiceTests
+            {
+                [Test]
+                public async Task PaymentReturnsAmount()
+                {
+                    var payment = new object();
+                    Assert.That(payment).IsEqualTo(1);
+                    await Task.Yield();
+                }
+            }
+            """;
+
+        var diagnostics = await RunAnalyzerAsync<NonValidatingTestAnalyzer>(code);
+
+        await Assert.That(diagnostics)
+            .DoesNotContain(d => d.Id == NonValidatingTestAnalyzer.BypassedDiagnosticId)
+            .Because("An assertion before await is reached on every successful path.");
+    }
+
+    [Test]
+    public async Task NonValidatingTestAnalyzer_IgnoresAssertionAfterAwait()
+    {
+        const string code = """
+            using System;
+            using System.Threading.Tasks;
+
+            [AttributeUsage(AttributeTargets.Method)]
+            public class TestAttribute : Attribute { }
+
+            public static class Assert
+            {
+                public static AssertBuilder That(object? value) => new();
+                public class AssertBuilder
+                {
+                    public void IsEqualTo(object? expected) { }
+                }
+            }
+
+            public class PaymentServiceTests
+            {
+                [Test]
+                public async Task PaymentReturnsAmount()
+                {
+                    var payment = new object();
+                    await Task.Yield();
+                    Assert.That(payment).IsEqualTo(1);
+                }
+            }
+            """;
+
+        var diagnostics = await RunAnalyzerAsync<NonValidatingTestAnalyzer>(code);
+
+        await Assert.That(diagnostics)
+            .DoesNotContain(d => d.Id == NonValidatingTestAnalyzer.BypassedDiagnosticId)
+            .Because("An assertion after await is reached on every successful path.");
+    }
+
+    [Test]
+    public async Task NonValidatingTestAnalyzer_UsesAdditionalAssertionPrefixesFromConfig()
+    {
+        const string code = """
+            using System;
+
+            [AttributeUsage(AttributeTargets.Method)]
+            public class TestAttribute : Attribute { }
+
+            public class PaymentServiceTests
+            {
+                [Test]
+                public void PaymentReturnsAmount()
+                {
+                    var payment = new object();
+                    CheckThat(payment).IsEqualTo(1);
+                }
+
+                private static CheckBuilder CheckThat(object? value) => new();
+
+                public class CheckBuilder
+                {
+                    public void IsEqualTo(object? expected) { }
+                }
+            }
+            """;
+
+        var options = new Dictionary<string, string>
+        {
+            ["dotnet_diagnostic.SAE006.additional_assertion_prefixes"] = "Check"
+        };
+
+        var diagnostics = await RunAnalyzerAsync<NonValidatingTestAnalyzer>(code, options);
+
+        await Assert.That(diagnostics)
+            .DoesNotContain(d => d.Id == NonValidatingTestAnalyzer.MustAssertDiagnosticId)
+            .Because("Custom assertion prefixes from config must be recognized.");
+    }
+
+    [Test]
     public async Task NonValidatingTestAnalyzer_IgnoresNonTestMethod()
     {
         const string code = """
@@ -567,6 +852,15 @@ public class AnalyzerTests
     private static async Task<IReadOnlyList<Diagnostic>> RunAnalyzerAsync<T>(string sourceCode, params MetadataReference[] additionalReferences)
         where T : DiagnosticAnalyzer, new()
     {
+        return await RunAnalyzerAsync<T>(sourceCode, new Dictionary<string, string>(), additionalReferences);
+    }
+
+    private static async Task<IReadOnlyList<Diagnostic>> RunAnalyzerAsync<T>(
+        string sourceCode,
+        IReadOnlyDictionary<string, string> analyzerConfigOptions,
+        params MetadataReference[] additionalReferences)
+        where T : DiagnosticAnalyzer, new()
+    {
         var references = new List<MetadataReference>
         {
             MetadataReference.CreateFromFile(GetSystemRuntimeReference())
@@ -588,7 +882,11 @@ public class AnalyzerTests
             throw new InvalidOperationException($"Analyzer test input failed to compile: {string.Join(Environment.NewLine, compilationErrors)}");
 
         var analyzer = new T();
-        var compilationWithAnalyzers = compilation.WithAnalyzers(ImmutableArray.Create<DiagnosticAnalyzer>(analyzer));
+        var optionsProvider = new TestAnalyzerConfigOptionsProvider(analyzerConfigOptions);
+        var analyzerOptions = new AnalyzerOptions(ImmutableArray<AdditionalText>.Empty, optionsProvider);
+        var compilationWithAnalyzers = compilation.WithAnalyzers(
+            ImmutableArray.Create<DiagnosticAnalyzer>(analyzer),
+            analyzerOptions);
 
         return await compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync();
     }
@@ -632,5 +930,36 @@ public class AnalyzerTests
         }
 
         return (line, character);
+    }
+
+    private sealed class TestAnalyzerConfigOptionsProvider : AnalyzerConfigOptionsProvider
+    {
+        private readonly AnalyzerConfigOptions _options;
+
+        public TestAnalyzerConfigOptionsProvider(IReadOnlyDictionary<string, string> options)
+        {
+            _options = new TestAnalyzerConfigOptions(options);
+        }
+
+        public override AnalyzerConfigOptions GlobalOptions => _options;
+
+        public override AnalyzerConfigOptions GetOptions(SyntaxTree tree) => _options;
+
+        public override AnalyzerConfigOptions GetOptions(AdditionalText textFile) => _options;
+    }
+
+    private sealed class TestAnalyzerConfigOptions : AnalyzerConfigOptions
+    {
+        private readonly IReadOnlyDictionary<string, string> _options;
+
+        public TestAnalyzerConfigOptions(IReadOnlyDictionary<string, string> options)
+        {
+            _options = options;
+        }
+
+        public override bool TryGetValue(string key, [NotNullWhen(true)] out string? value)
+        {
+            return _options.TryGetValue(key, out value);
+        }
     }
 }

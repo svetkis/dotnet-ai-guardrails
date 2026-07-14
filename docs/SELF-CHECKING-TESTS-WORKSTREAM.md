@@ -130,6 +130,15 @@ source project is stabilized and its revision fixed.
 - [x] Assertion recognition is still name-based and not configurable.
 - [x] Red demo does not assert the exact SAE006–SAE009 diagnostic set.
 
+#### Known limitations
+
+- Try/catch reachability uses the syntax fallback instead of CFG (Roslyn
+  models exceptional edges differently across versions); catch blocks without
+  assertions are still caught by the fallback.
+- SAE006–SAE009 are `Warning` severity by default; `DemoProject.Tests`
+  promotes them to errors via `WarningsAsErrors` to keep the local Change
+  Check mandatory.
+
 ## Non-goals
 
 - No rewriting of existing DemoProject tests for mutation coverage.

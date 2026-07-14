@@ -31,6 +31,8 @@ public class SnapshotTests
         {
             Directory.CreateDirectory(SnapshotDir);
             await File.WriteAllTextAsync(SnapshotPath, currentJson);
+            await Assert.That(File.Exists(SnapshotPath)).IsTrue()
+                .Because("Snapshot file must be created on first run.");
             return;
         }
 
