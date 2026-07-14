@@ -63,14 +63,18 @@ Observed mechanism (no mind-reading required):
    `IsNotNull()`-only, bypassed, tautological, and negative-only tests are
    forbidden unless the weaker check *is* the contract and the reason is
    documented.
-2. **Deliberate fault injection:** for critical behavior, break the production
+2. **Compile-time analyzers** (`examples/DemoProject/src/DemoProject.Analyzers/`):
+   SAE006-SAE009 detect non-validating tests directly in the IDE / build:
+   zero-assert, null-only, bypassed, tautological. See
+   `tests/conventions/AnalyzerDiagnostics.md` for the full diagnostic catalog.
+3. **Deliberate fault injection:** for critical behavior, break the production
    code locally and confirm the test fails. If it doesn't — the test is dead.
-3. **Mutation testing** (risk-trigger / release): mutation score on critical
+4. **Mutation testing** (risk-trigger / release): mutation score on critical
    assemblies measures fault sensitivity of the whole suite. See
    `templates/skills/mutation-audit/`.
-4. **Test audit checklist** (`templates/skills/test-audit/`): scan for the
+5. **Test audit checklist** (`templates/skills/test-audit/`): scan for the
    forms above; each hit is an investigation signal, not an automatic defect.
-5. **Review anchor:** in code review, check that assertions verify observable
+6. **Review anchor:** in code review, check that assertions verify observable
    postconditions (state, output, effects) — not merely execution or object
    existence.
 

@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\DemoProject.Traps\DemoProject.Traps.csproj" />
+    <ProjectReference Include="..\..\..\DemoProject\src\DemoProject.Analyzers\DemoProject.Analyzers.csproj" />
   </ItemGroup>
 
 </Project>

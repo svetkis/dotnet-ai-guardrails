@@ -62,7 +62,8 @@
 | **StronglyTypedIds** | Domain-сущности используют strongly typed IDs, а не голые Guid/string/int | [tests/patterns/StronglyTypedIds.cs](../tests/patterns/StronglyTypedIds.cs) | `examples/DemoProject/tests/DemoProject.Tests/StronglyTypedIds.cs` |
 | **BUG_TEMPLATE** | Формат regression-теста | [tests/conventions/BUG_TEMPLATE.cs](../tests/conventions/BUG_TEMPLATE.cs) | — |
 | **TUnit_Guide** | Соглашения по тестам | [tests/conventions/TUnit_Guide.md](../tests/conventions/TUnit_Guide.md) | — |
-| **Traps Demo** | Специально сломанный код для демонстрации guardrails (7 failing tests) | — | `examples/DemoProject.Traps/` |
+| **AnalyzerDiagnostics** | Каталог диагностик кастомных Roslyn-анализаторов (SAE001-SAE009) | [tests/conventions/AnalyzerDiagnostics.md](../tests/conventions/AnalyzerDiagnostics.md) | `examples/DemoProject/src/DemoProject.Analyzers/` |
+| **Traps Demo** | Специально сломанный код для демонстрации guardrails (9 failing tests) | — | `examples/DemoProject.Traps/` |
 | **MinimalApi Demo** | Single-project MVP без Clean Architecture — naming, banned APIs, ratchet | — | `examples/DemoProject.MinimalApi/` |
 
 ---

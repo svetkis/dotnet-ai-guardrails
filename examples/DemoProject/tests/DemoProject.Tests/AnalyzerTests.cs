@@ -85,40 +85,6 @@ public class AnalyzerTests
         await AssertNoAnalyzerDiagnosticsAsync(code);
     }
 
-    private static async Task AssertSingleDiagnosticAsync(string sourceCode, string expectedId, string expectedSnippet)
-    {
-        var diagnostics = await RunAnalyzerAsync(sourceCode);
-
-        await Assert.That(diagnostics.Count)
-            .IsEqualTo(1)
-            .Because("The positive analyzer case should produce exactly one diagnostic.");
-
-        var diagnostic = diagnostics.Single();
-        await Assert.That(diagnostic.Id)
-            .IsEqualTo(expectedId)
-            .Because("The analyzer should report the expected diagnostic ID.");
-
-        var expectedLocation = FindSnippetLocation(sourceCode, expectedSnippet);
-        var actualLocation = diagnostic.Location.GetLineSpan().StartLinePosition;
-
-        await Assert.That(actualLocation.Line)
-            .IsEqualTo(expectedLocation.Line)
-            .Because("The diagnostic should point to the exact line of the offending syntax.");
-
-        await Assert.That(actualLocation.Character)
-            .IsEqualTo(expectedLocation.Character)
-            .Because("The diagnostic should point to the exact column of the offending syntax.");
-    }
-
-    private static async Task AssertNoAnalyzerDiagnosticsAsync(string sourceCode)
-    {
-        var diagnostics = await RunAnalyzerAsync(sourceCode);
-
-        await Assert.That(diagnostics)
-            .IsEmpty()
-            .Because("Valid strongly typed ID usage must not trigger analyzer diagnostics.");
-    }
-
     [Test]
     public async Task HotPathAnalyzer_FlagsNewAllocationInHotPath()
     {
@@ -197,6 +163,293 @@ public class AnalyzerTests
         await Assert.That(diagnostics)
             .IsEmpty()
             .Because("Allocations outside [HotPath] methods must not trigger HotPathAnalyzer diagnostics.");
+    }
+
+    [Test]
+    public async Task NonValidatingTestAnalyzer_FlagsZeroAssertTest()
+    {
+        const string code = """
+            using System;
+            using System.Threading.Tasks;
+
+            [AttributeUsage(AttributeTargets.Method)]
+            public class TestAttribute : Attribute { }
+
+            public static class Assert
+            {
+                public static AssertBuilder That(object? value) => new();
+                public class AssertBuilder
+                {
+                    public void IsEqualTo(object? expected) { }
+                }
+            }
+
+            public class PaymentServiceTests
+            {
+                [Test]
+                public async Task PaymentIsProcessed()
+                {
+                    var payment = new object();
+                    await Task.CompletedTask;
+                }
+            }
+            """;
+
+        var diagnostics = await RunAnalyzerAsync<NonValidatingTestAnalyzer>(code);
+
+        await Assert.That(diagnostics)
+            .Contains(d => d.Id == NonValidatingTestAnalyzer.MustAssertDiagnosticId)
+            .Because("A test with no assertion must trigger SAE006.");
+    }
+
+    [Test]
+    public async Task NonValidatingTestAnalyzer_FlagsNullOnlyAssertion()
+    {
+        const string code = """
+            using System;
+
+            [AttributeUsage(AttributeTargets.Method)]
+            public class TestAttribute : Attribute { }
+
+            public static class Assert
+            {
+                public static AssertBuilder That(object? value) => new();
+                public class AssertBuilder
+                {
+                    public void IsNotNull() { }
+                }
+            }
+
+            public class PaymentServiceTests
+            {
+                [Test]
+                public void PaymentReturnsAmount()
+                {
+                    var payment = new object();
+                    Assert.That(payment).IsNotNull();
+                }
+            }
+            """;
+
+        var diagnostics = await RunAnalyzerAsync<NonValidatingTestAnalyzer>(code);
+
+        await Assert.That(diagnostics)
+            .Contains(d => d.Id == NonValidatingTestAnalyzer.NullOnlyDiagnosticId)
+            .Because("A test that only checks non-null must trigger SAE007.");
+    }
+
+    [Test]
+    public async Task NonValidatingTestAnalyzer_FlagsBypassedAssertion()
+    {
+        const string code = """
+            using System;
+
+            [AttributeUsage(AttributeTargets.Method)]
+            public class TestAttribute : Attribute { }
+
+            public static class Assert
+            {
+                public static AssertBuilder That(object? value) => new();
+                public class AssertBuilder
+                {
+                    public void IsEqualTo(object? expected) { }
+                }
+            }
+
+            public class PaymentServiceTests
+            {
+                [Test]
+                public void PaymentReturnsAmount()
+                {
+                    var payment = new object();
+                    var flag = true;
+                    if (flag)
+                    {
+                        Assert.That(payment).IsEqualTo(1);
+                    }
+                }
+            }
+            """;
+
+        var diagnostics = await RunAnalyzerAsync<NonValidatingTestAnalyzer>(code);
+
+        await Assert.That(diagnostics)
+            .Contains(d => d.Id == NonValidatingTestAnalyzer.BypassedDiagnosticId)
+            .Because("An assertion inside an unconditional `if` branch can be bypassed on the green path; must trigger SAE008.");
+    }
+
+    [Test]
+    public async Task NonValidatingTestAnalyzer_FlagsTautologicalAssertion()
+    {
+        const string code = """
+            using System;
+
+            [AttributeUsage(AttributeTargets.Method)]
+            public class TestAttribute : Attribute { }
+
+            public static class Assert
+            {
+                public static AssertBuilder That(object? value) => new();
+                public class AssertBuilder
+                {
+                    public void IsEqualTo(object? expected) { }
+                }
+            }
+
+            public class PaymentServiceTests
+            {
+                [Test]
+                public void PaymentReturnsAmount()
+                {
+                    var payment = new object();
+                    Assert.That(payment).IsEqualTo(payment);
+                }
+            }
+            """;
+
+        var diagnostics = await RunAnalyzerAsync<NonValidatingTestAnalyzer>(code);
+
+        await Assert.That(diagnostics)
+            .Contains(d => d.Id == NonValidatingTestAnalyzer.TautologicalDiagnosticId)
+            .Because("An assertion comparing a value to itself must trigger SAE009.");
+    }
+
+    [Test]
+    public async Task NonValidatingTestAnalyzer_IgnoresValidTest()
+    {
+        const string code = """
+            using System;
+
+            [AttributeUsage(AttributeTargets.Method)]
+            public class TestAttribute : Attribute { }
+
+            public static class Assert
+            {
+                public static AssertBuilder That(object? value) => new();
+                public class AssertBuilder
+                {
+                    public void IsEqualTo(object? expected) { }
+                    public void IsNotNull() { }
+                }
+            }
+
+            public class PaymentServiceTests
+            {
+                [Test]
+                public void PaymentReturnsAmount()
+                {
+                    var payment = new object();
+                    Assert.That(payment).IsNotNull();
+                    Assert.That(payment).IsEqualTo(42);
+                }
+            }
+            """;
+
+        var diagnostics = await RunAnalyzerAsync<NonValidatingTestAnalyzer>(code);
+
+        await Assert.That(diagnostics)
+            .IsEmpty()
+            .Because("A valid self-checking test with guaranteed, non-tautological assertions must not trigger diagnostics.");
+    }
+
+    [Test]
+    public async Task NonValidatingTestAnalyzer_IgnoresBothBranchesAsserting()
+    {
+        const string code = """
+            using System;
+
+            [AttributeUsage(AttributeTargets.Method)]
+            public class TestAttribute : Attribute { }
+
+            public static class Assert
+            {
+                public static AssertBuilder That(object? value) => new();
+                public class AssertBuilder
+                {
+                    public void IsEqualTo(object? expected) { }
+                }
+            }
+
+            public class PaymentServiceTests
+            {
+                [Test]
+                public void PaymentReturnsAmount()
+                {
+                    var payment = new object();
+                    var flag = true;
+                    if (flag)
+                    {
+                        Assert.That(payment).IsEqualTo(1);
+                    }
+                    else
+                    {
+                        Assert.That(payment).IsEqualTo(2);
+                    }
+                }
+            }
+            """;
+
+        var diagnostics = await RunAnalyzerAsync<NonValidatingTestAnalyzer>(code);
+
+        await Assert.That(diagnostics)
+            .DoesNotContain(d => d.Id == NonValidatingTestAnalyzer.BypassedDiagnosticId)
+            .Because("When both if-branches assert, every path reaches a check.");
+    }
+
+    [Test]
+    public async Task NonValidatingTestAnalyzer_IgnoresNonTestMethod()
+    {
+        const string code = """
+            using System;
+
+            public class PaymentServiceTests
+            {
+                public void JustAMethod()
+                {
+                    var payment = new object();
+                }
+            }
+            """;
+
+        var diagnostics = await RunAnalyzerAsync<NonValidatingTestAnalyzer>(code);
+
+        await Assert.That(diagnostics)
+            .IsEmpty()
+            .Because("Only methods decorated with a test attribute are analyzed.");
+    }
+
+    private static async Task AssertSingleDiagnosticAsync(string sourceCode, string expectedId, string expectedSnippet)
+    {
+        var diagnostics = await RunAnalyzerAsync(sourceCode);
+
+        await Assert.That(diagnostics.Count)
+            .IsEqualTo(1)
+            .Because("The positive analyzer case should produce exactly one diagnostic.");
+
+        var diagnostic = diagnostics.Single();
+        await Assert.That(diagnostic.Id)
+            .IsEqualTo(expectedId)
+            .Because("The analyzer should report the expected diagnostic ID.");
+
+        var expectedLocation = FindSnippetLocation(sourceCode, expectedSnippet);
+        var actualLocation = diagnostic.Location.GetLineSpan().StartLinePosition;
+
+        await Assert.That(actualLocation.Line)
+            .IsEqualTo(expectedLocation.Line)
+            .Because("The diagnostic should point to the exact line of the offending syntax.");
+
+        await Assert.That(actualLocation.Character)
+            .IsEqualTo(expectedLocation.Character)
+            .Because("The diagnostic should point to the exact column of the offending syntax.");
+    }
+
+    private static async Task AssertNoAnalyzerDiagnosticsAsync(string sourceCode)
+    {
+        var diagnostics = await RunAnalyzerAsync(sourceCode);
+
+        await Assert.That(diagnostics)
+            .IsEmpty()
+            .Because("Valid strongly typed ID usage must not trigger analyzer diagnostics.");
     }
 
     private static async Task<IReadOnlyList<Diagnostic>> RunAnalyzerAsync(string sourceCode)

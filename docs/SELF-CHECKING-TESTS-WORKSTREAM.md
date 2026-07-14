@@ -2,7 +2,7 @@
 
 > Follow-up of the completed methodology revision 2026-07-14 (METH-001…METH-024;
 > the plan document was removed after full execution — see `CHANGELOG.md` and git history).
-> **Status:** partially done (SV-001…SV-003 done; SV-004…SV-006 — pending).
+> **Status:** almost done (SV-001…SV-004, SV-006 done; SV-005 — pending).
 > **Practice source:** a production .NET project under SAE audit (2026-07-14).
 > The source revision is not yet fixed — **do not copy code, fixtures, or
 > configs from it**; port analyzers from principles and re-implement.
@@ -74,7 +74,7 @@ a reproducible green/trap demonstration.
   fault sensitivity of critical tests.
 - **Done when:** items present, schema-lint passes. ✅
 
-### SV-004 — Pattern + demonstration (Behavior Checks) ⏳ pending — depends on SV-006
+### SV-004 — Pattern + demonstration (Behavior Checks) ✅ done — depends on SV-006
 
 - `tests/patterns/` — fault-injection check template (a test that breaks
   production code locally and proves suite sensitivity).
@@ -82,7 +82,7 @@ a reproducible green/trap demonstration.
   (a non-validating test **caught by the SV-006 analyzers** — without them the
   trap test would stay green and the demonstration proves nothing).
 - **Done when:** CI green on DemoProject, Traps fails by design on the
-  analyzer diagnostic (not only because other trap tests fail).
+  analyzer diagnostic (not only because other trap tests fail). ✅
 
 ### SV-005 — Frontend (optional) ⏳ pending
 
@@ -90,7 +90,7 @@ a reproducible green/trap demonstration.
   body-only checks, `waitForTimeout` as a replacement for condition waits.
 - **Done when:** items present, schema-lint passes.
 
-### SV-006 — Compile-time analyzers (Change Checks) ⏳ pending — core of the workstream
+### SV-006 — Compile-time analyzers (Change Checks) ✅ done — core of the workstream
 
 Port the analyzer family observed in the audited project (`SLK004`–`SLK007`)
 to `examples/DemoProject/src/DemoProject.Analyzers/` (which already ships
@@ -118,7 +118,7 @@ source project is stabilized and its revision fixed.
   `analyzer-tests-audit` skill; ratchet on diagnostic coverage.
 - **Done when:** analyzers build with warnings-as-errors, analyzer tests green,
   SV-004 red demo fails on these diagnostics, diagnostics documented in
-  `tests/conventions/` and the trap document's guardrail list.
+  `tests/conventions/` and the trap document's guardrail list. ✅
 
 ## Non-goals
 
