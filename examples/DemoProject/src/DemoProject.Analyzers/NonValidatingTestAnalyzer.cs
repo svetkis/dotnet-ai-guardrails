@@ -224,7 +224,7 @@ public class NonValidatingTestAnalyzer : DiagnosticAnalyzer
         if (method.Body is null)
             return false;
 
-        return method.Body.Statements.Any(s => StatementGuaranteesAssertion(s, assertions));
+        return StatementsGuaranteeAssertion(method.Body.Statements, assertions);
     }
 
     private static bool StatementGuaranteesAssertion(StatementSyntax statement, IReadOnlyList<InvocationExpressionSyntax> assertions)
@@ -234,7 +234,7 @@ public class NonValidatingTestAnalyzer : DiagnosticAnalyzer
 
         return statement switch
         {
-            BlockSyntax block => BlockGuaranteesAssertion(block, assertions),
+            BlockSyntax block => StatementsGuaranteeAssertion(block.Statements, assertions),
             IfStatementSyntax ifStatement when ifStatement.Else is not null => IfElseGuaranteesAssertion(ifStatement, assertions),
             TryStatementSyntax tryStatement => TryGuaranteesAssertion(tryStatement, assertions),
             SwitchStatementSyntax switchStatement => SwitchGuaranteesAssertion(switchStatement, assertions),
@@ -242,9 +242,30 @@ public class NonValidatingTestAnalyzer : DiagnosticAnalyzer
         };
     }
 
-    private static bool BlockGuaranteesAssertion(BlockSyntax block, IReadOnlyList<InvocationExpressionSyntax> assertions)
+    private static bool StatementsGuaranteeAssertion(SyntaxList<StatementSyntax> statements, IReadOnlyList<InvocationExpressionSyntax> assertions)
     {
-        return block.Statements.Any(s => StatementGuaranteesAssertion(s, assertions));
+        foreach (var statement in statements)
+        {
+            if (StatementGuaranteesAssertion(statement, assertions))
+                return true;
+
+            if (StatementCanInterruptFlow(statement))
+                return false;
+        }
+
+        return false;
+    }
+
+    private static bool StatementCanInterruptFlow(StatementSyntax statement)
+    {
+        return statement switch
+        {
+            ReturnStatementSyntax => true,
+            ThrowStatementSyntax => true,
+            IfStatementSyntax ifStatement when ifStatement.Else is null => StatementCanInterruptFlow(ifStatement.Statement),
+            BlockSyntax block => block.Statements.Any(StatementCanInterruptFlow),
+            _ => false,
+        };
     }
 
     private static bool IfElseGuaranteesAssertion(IfStatementSyntax ifStatement, IReadOnlyList<InvocationExpressionSyntax> assertions)
@@ -270,7 +291,7 @@ public class NonValidatingTestAnalyzer : DiagnosticAnalyzer
 
     private static bool SwitchSectionGuaranteesAssertion(SwitchSectionSyntax section, IReadOnlyList<InvocationExpressionSyntax> assertions)
     {
-        return section.Statements.Any(s => StatementGuaranteesAssertion(s, assertions));
+        return StatementsGuaranteeAssertion(section.Statements, assertions);
     }
 
     private static bool IsDirectAssertionStatement(StatementSyntax statement, IReadOnlyList<InvocationExpressionSyntax> assertions)

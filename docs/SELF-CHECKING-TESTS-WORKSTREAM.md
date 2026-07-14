@@ -124,7 +124,7 @@ source project is stabilized and its revision fixed.
 #### Open blockers (from review 2026-07-14)
 
 - [x] SAE006–SAE009 not wired to test projects via `OutputItemType="Analyzer"`.
-- [x] Reachability still approximates with `Statements.Any` instead of CFG.
+- [x] Reachability uses `ControlFlowGraph` for normal flow and a statement-level fallback for `try/catch` exceptional paths.
 - [x] Assertions inside uncalled lambda/local functions are still counted.
 - [x] `Assert.That(1).IsEqualTo(2)` is still misclassified as tautology.
 - [x] Assertion recognition is still name-based and not configurable.

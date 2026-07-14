@@ -589,6 +589,55 @@ public class AnalyzerTests
     }
 
     [Test]
+    public async Task NonValidatingTestAnalyzer_FlagsTryCatchWithEarlyReturnInTry()
+    {
+        const string code = """
+            using System;
+
+            [AttributeUsage(AttributeTargets.Method)]
+            public class TestAttribute : Attribute { }
+
+            public static class Assert
+            {
+                public static AssertBuilder That(object? value) => new();
+                public class AssertBuilder
+                {
+                    public void IsEqualTo(object? expected) { }
+                    public void IsNotNull() { }
+                }
+            }
+
+            public class PaymentServiceTests
+            {
+                [Test]
+                public void PaymentReturnsAmount()
+                {
+                    var payment = new object();
+                    var condition = true;
+                    try
+                    {
+                        if (condition)
+                        {
+                            return;
+                        }
+                        Assert.That(payment).IsEqualTo(1);
+                    }
+                    catch (Exception)
+                    {
+                        Assert.That(payment).IsNotNull();
+                    }
+                }
+            }
+            """;
+
+        var diagnostics = await RunAnalyzerAsync<NonValidatingTestAnalyzer>(code);
+
+        await Assert.That(diagnostics)
+            .Contains(d => d.Id == NonValidatingTestAnalyzer.BypassedDiagnosticId)
+            .Because("An early return inside try creates a green path without assertion.");
+    }
+
+    [Test]
     public async Task NonValidatingTestAnalyzer_FlagsSwitchWithoutDefaultAssertion()
     {
         const string code = """
