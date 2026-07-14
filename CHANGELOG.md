@@ -51,6 +51,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `.github/pull_request_template.md` — pull request template with pre-PR checklist.
 
 ### Changed
+- Methodology revision 2026-07-14 (METH-001…METH-024): Engineering Assurance Levels model, normative glossary, unified skill contract (`SKILL-CONTRACT.md` + schema-lint), heuristic audits de-absolutized, single safe onboarding path, evidence model for quantitative claims, repo-quality CI checks, case studies. Plan document removed after full execution; outcomes live in the artifacts and git history.
+- Self-checking tests guardrails (SV-001…SV-003): constitution rule in `rules/AGENTS_TEMPLATE.md`, trap `docs/traps/non-validating-tests.md`, Test Validity section in test-audit, mutation-audit cross-link. Remaining work tracked in `docs/SELF-CHECKING-TESTS-WORKSTREAM.md` (remove after SV-004/SV-005).
 - `README.md` — restructured with language badges, DemoProject section, and links to CONTRIBUTING/LICENSE.
 - `AGENTS.md` — updated navigation table with `examples/DemoProject/`, `CONTRIBUTING.md`, and `LICENSE`.
 - `tests/conventions/TUnit_Guide.md` — added note about TUnit 1.x auto-generated entry point (no `Program.cs` required).

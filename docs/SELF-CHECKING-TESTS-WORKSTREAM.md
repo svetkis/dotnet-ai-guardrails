@@ -1,6 +1,7 @@
 # Self-Checking Tests — Behavior Checks hardening plan
 
-> Child workstream of [`METHODOLOGY-REVISION-PLAN.md`](METHODOLOGY-REVISION-PLAN.md).
+> Follow-up of the completed methodology revision 2026-07-14 (METH-001…METH-024;
+> the plan document was removed after full execution — see `CHANGELOG.md` and git history).
 > **Status:** partially done (SV-001…SV-003 done; SV-004, SV-005 — pending).
 > **Terminology:** the workstream uses **Self-Checking Test** (xUnit Test
 > Patterns, Meszaros) for the property level; **non-validating tests** remains

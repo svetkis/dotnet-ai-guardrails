@@ -151,7 +151,7 @@
 | [small-project-minimal-api.md](case-studies/small-project-minimal-api.md) | Малый проект (single-project MVP): risk profile, selected/rejected controls, false positives, стоимость |
 | [production-like-layered-service.md](case-studies/production-like-layered-service.md) | Production-like layered service: полный набор уровней, removed/rejected guardrails, maintenance cost |
 
-Активные планы: [METHODOLOGY-REVISION-PLAN.md](METHODOLOGY-REVISION-PLAN.md) (revision), [SELF-CHECKING-TESTS-WORKSTREAM.md](SELF-CHECKING-TESTS-WORKSTREAM.md) (self-checking tests).
+Активные планы: [SELF-CHECKING-TESTS-WORKSTREAM.md](SELF-CHECKING-TESTS-WORKSTREAM.md) (self-checking tests; удалить после SV-004/SV-005).
 
 ---
 
