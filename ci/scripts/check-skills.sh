@@ -6,18 +6,19 @@ set -u
 SKILLS_DIR="${1:-templates/skills}"
 FAIL=0
 
-# Canonical section headings (case-insensitive substring match on heading lines).
+# Canonical section headings (case-insensitive match on heading lines).
+# Full canonical names are required — see templates/skills/SKILL-CONTRACT.md.
 REQUIRED_SECTIONS=(
-  "purpose"
-  "applicability"
+  "purpose and non-goals"
+  "applicability and exclusions"
   "required inputs"
   "procedure"
   "evidence requirements"
   "finding schema"
-  "severity"
-  "outputs"
-  "trigger"
-  "limitations"
+  "severity and confidence"
+  "outputs and downstream consumer"
+  "trigger or schedule"
+  "limitations and expected false positives"
 )
 
 shopt -s nullglob
@@ -43,9 +44,12 @@ for skill_dir in "$SKILLS_DIR"/*/; do
     FAIL=1
   fi
 
-  # 1. YAML frontmatter with name and description.
+  # 1. YAML frontmatter with name and description (must be properly closed).
   if ! head -1 "$skill" | grep -q '^---$'; then
     echo "FAIL $name: YAML frontmatter missing"
+    FAIL=1
+  elif ! awk 'NR>1 && /^---$/{found=1; exit} END{exit !found}' "$skill"; then
+    echo "FAIL $name: YAML frontmatter not closed"
     FAIL=1
   else
     fm="$(awk 'NR==1 && /^---$/{f=1;next} f && /^---$/{exit} f' "$skill")"

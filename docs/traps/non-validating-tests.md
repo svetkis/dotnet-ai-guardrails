@@ -1,6 +1,6 @@
 # Non-Validating Tests — Green Without Verification
 
-> **Status:** in force — wired into `rules/AGENTS_TEMPLATE.md` (Tests), Test Audit and Mutation Audit skills. Part of the [Self-Validating Tests workstream](../SELF-VALIDATING-TESTS-WORKSTREAM.md) (SV-004/SV-005 demo patterns still pending).
+> **Status:** in force — wired into `rules/AGENTS_TEMPLATE.md` (Tests), Test Audit and Mutation Audit skills. Part of the [Self-Checking Tests workstream](../SELF-CHECKING-TESTS-WORKSTREAM.md) (SV-004/SV-005 demo patterns still pending).
 
 A test can be discovered, executed, and green while proving nothing about the
 behavior named by the test.
@@ -41,7 +41,7 @@ while allowing broken behavior through CI.
 ## Guardrails
 
 1. **Constitution rule** (`rules/AGENTS_TEMPLATE.md`): every test must be
-   self-validating — it must fail when the behavior promised by its name is
+   self-checking — it must fail when the behavior promised by its name is
    broken. Zero-assert, `IsNotNull()`-only, conditional, tautological, and
    negative-only tests are forbidden unless the weaker check *is* the contract
    and the reason is documented.

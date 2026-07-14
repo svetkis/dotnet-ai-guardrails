@@ -1,7 +1,8 @@
 # Skill Contract
 
 > Normative contract for every **installable** skill in `templates/skills/`.
-> Verified automatically by `ci/scripts/check-skills.sh`.
+> Verified automatically by `ci/scripts/check-skills.sh` (runs locally and in the
+> `repo-quality` CI job of `.github/workflows/demo-project-ci.yml`).
 
 ## Required Files
 

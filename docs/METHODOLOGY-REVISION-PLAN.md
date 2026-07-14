@@ -375,6 +375,12 @@ ADR описана явно.
   false positives и maintenance cost.
 - Показать удалённые и неприменимые guardrails, а не только успехи.
 
+## Follow-up workstreams
+
+- [`SELF-CHECKING-TESTS-WORKSTREAM.md`](SELF-CHECKING-TESTS-WORKSTREAM.md) —
+  усиление Behavior Checks против non-validating tests (SV-001…SV-003 done,
+  SV-004/SV-005 pending).
+
 ## Рекомендуемая последовательность
 
 1. Закрыть `METH-001`–`METH-004`.

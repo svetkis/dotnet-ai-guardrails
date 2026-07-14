@@ -107,7 +107,7 @@ When I tell you're a committer, add ✅ to STARTER_CHARACTER emojis. Make sure t
 - Run command — `[ADAPT]`: for TUnit use `dotnet run --project tests/...`; for another framework, define the exact command explicitly.
 - Every reproducible, automatable bug fix must include a test: `BUG###_DescriptiveName` (for configuration/documentation/operational/process defects, another regression control is allowed with an explicit rationale)
 - Failing test first → then fix → test passes
-- **Self-validating tests only** — every test must fail when the behavior its name promises is broken. Forbidden: tests without assertions, `IsNotNull()`-only assertions, conditional or tautological assertions (`if (...) assert`), `expect(true)` / `waitForTimeout` in UI tests, negative-only assertions without a positive control. A test whose assertions can pass while the promised behavior is broken is a defect, not a test. See `docs/traps/non-validating-tests.md` (adapt path to your repo).
+- **Self-checking tests only** — every test must fail when the behavior its name promises is broken. Forbidden: tests without assertions, `IsNotNull()`-only assertions, assertions that can be bypassed on the successful path (an assert inside an `if` that may not execute), tautological assertions (`x == x`, `expect(true)`), `waitForTimeout` in UI tests, negative-only assertions without a positive control. A test whose assertions can pass while the promised behavior is broken is a defect, not a test. See `docs/traps/non-validating-tests.md` (adapt path to your repo).
 
 ## Database Conventions
 
