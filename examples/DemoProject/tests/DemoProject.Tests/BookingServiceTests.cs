@@ -10,9 +10,11 @@ public class BookingServiceTests
     public async Task GetByIdAsync_ShouldReturnBooking()
     {
         var svc = new BookingService();
-        var result = await svc.GetByIdAsync(BookingId.New());
+        var id = BookingId.New();
+        var result = await svc.GetByIdAsync(id);
 
         await Assert.That(result).IsNotNull();
+        await Assert.That(result!.Id).IsEqualTo(id);
     }
 
     [Test]
@@ -22,5 +24,6 @@ public class BookingServiceTests
         var result = await svc.GetPendingAsync();
 
         await Assert.That(result).IsNotNull();
+        await Assert.That(result.Count).IsEqualTo(0);
     }
 }

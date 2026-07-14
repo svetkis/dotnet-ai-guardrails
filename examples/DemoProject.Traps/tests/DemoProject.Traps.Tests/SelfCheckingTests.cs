@@ -1,6 +1,7 @@
 // TRAP: Non-validating tests stay green while proving nothing. This test asserts
-// that the analyzer produces no diagnostics for a snippet that actually contains
-// zero-assert, null-only, bypassed and tautological tests — so the assertion
+// that the analyzer produces exactly the SAE006-SAE009 diagnostic set for a
+// snippet that contains zero-assert, null-only, bypassed and tautological tests.
+// If the analyzer misses one pattern or adds a false positive, the assertion
 // fails and the trap is caught at test time.
 // GUARDRAIL: SAE006-SAE009 (NonValidatingTestAnalyzer) detect these patterns
 // before the test run, not after a regression slips through.
@@ -17,7 +18,7 @@ namespace DemoProject.Traps.Tests;
 public class SelfCheckingTests
 {
     [Test]
-    public async Task NonValidatingTests_AreDetectedByAnalyzer()
+    public async Task NonValidatingTests_ProduceExactDiagnosticSet()
     {
         const string code = """
             using System;
@@ -75,13 +76,21 @@ public class SelfCheckingTests
             """;
 
         var diagnostics = await RunAnalyzerAsync<NonValidatingTestAnalyzer>(code);
+        var ids = diagnostics.Select(d => d.Id).OrderBy(id => id).ToArray();
 
-        // TRAP: this assertion is intentionally wrong. The snippet above contains
-        // non-validating tests, so the analyzer MUST produce diagnostics.
-        // If the test project is green here, the guardrail is broken.
-        await Assert.That(diagnostics)
-            .IsEmpty()
-            .Because("The analyzer should not report any diagnostics for valid tests.");
+        // TRAP: this assertion is intentionally strict. The snippet above contains
+        // exactly one SAE006, one SAE007, one SAE008 and two SAE009 diagnostics.
+        // If the analyzer implementation drifts, the test fails.
+        await Assert.That(ids)
+            .IsEquivalentTo(new[]
+            {
+                NonValidatingTestAnalyzer.MustAssertDiagnosticId,
+                NonValidatingTestAnalyzer.NullOnlyDiagnosticId,
+                NonValidatingTestAnalyzer.BypassedDiagnosticId,
+                NonValidatingTestAnalyzer.TautologicalDiagnosticId,
+                NonValidatingTestAnalyzer.TautologicalDiagnosticId,
+            })
+            .Because("The analyzer must report exactly the SAE006-SAE009 set for the trap fixture.");
     }
 
     private static async Task<IReadOnlyList<Diagnostic>> RunAnalyzerAsync<T>(string sourceCode)

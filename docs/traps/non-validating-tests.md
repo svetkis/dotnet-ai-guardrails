@@ -1,6 +1,6 @@
 # Non-Validating Tests — Green Without Verification
 
-> **Status:** in force — wired into `rules/AGENTS_TEMPLATE.md` (Tests), Test Audit, Mutation Audit and `frontend-code-review` skills. Self-Checking Tests guardrail set (SV-001..SV-006) completed.
+> **Status:** in force — wired into `rules/AGENTS_TEMPLATE.md` (Tests), Test Audit, Mutation Audit and `frontend-code-review` skills. Part of the [Self-Checking Tests workstream](../SELF-CHECKING-TESTS-WORKSTREAM.md) (SV-006 analyzer blockers still open).
 
 A test can be discovered, executed, and green while proving nothing about the
 behavior named by the test.

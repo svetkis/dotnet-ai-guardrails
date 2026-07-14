@@ -21,6 +21,7 @@
     <ProjectReference Include="..\..\src\DemoProject.Application\DemoProject.Application.csproj" />
     <ProjectReference Include="..\..\src\DemoProject.Infrastructure\DemoProject.Infrastructure.csproj" />
     <ProjectReference Include="..\..\src\DemoProject.Analyzers\DemoProject.Analyzers.csproj" />
+    <ProjectReference Include="..\..\src\DemoProject.Analyzers\DemoProject.Analyzers.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
 </Project>

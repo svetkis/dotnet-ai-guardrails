@@ -32,9 +32,14 @@ internal static class TestAssertionHelper
 #pragma warning disable S1541 // Semantic recognition of many frameworks is inherently branch-heavy.
     public static bool IsAssertionInvocation(InvocationExpressionSyntax invocation, SemanticModel semanticModel)
     {
+        return IsAssertionInvocation(invocation, semanticModel, Array.Empty<string>());
+    }
+
+    public static bool IsAssertionInvocation(InvocationExpressionSyntax invocation, SemanticModel semanticModel, IReadOnlyList<string> additionalPrefixes)
+    {
         if (invocation.Expression is not MemberAccessExpressionSyntax memberAccess)
         {
-            return invocation.Expression is IdentifierNameSyntax id && IsVerificationLikeName(id.Identifier.Text);
+            return invocation.Expression is IdentifierNameSyntax id && IsVerificationLikeName(id.Identifier.Text, additionalPrefixes);
         }
 
         var memberName = memberAccess.Name.Identifier.Text;
@@ -56,7 +61,7 @@ internal static class TestAssertionHelper
             return true;
 
         // Convention-based helpers.
-        return IsVerificationLikeName(memberName);
+        return IsVerificationLikeName(memberName, additionalPrefixes);
     }
 #pragma warning restore S1541
 
@@ -101,10 +106,17 @@ internal static class TestAssertionHelper
             return false;
 
         var args = invocation.ArgumentList.Arguments;
-        if (args.Count != 1)
-            return false;
+        if (args.Count == 1)
+            return semanticModel.GetConstantValue(args[0].Expression) is { HasValue: true, Value: true };
 
-        return semanticModel.GetConstantValue(args[0].Expression) is { HasValue: true, Value: true };
+        if (args.Count == 0 && chainNames.Overlaps(new[] { "IsTrue", "True" }))
+        {
+            var thatArgument = TryGetThatArgument(invocation);
+            return thatArgument is not null &&
+                   semanticModel.GetConstantValue(thatArgument) is { HasValue: true, Value: true };
+        }
+
+        return false;
     }
 
     private static bool IsSelfComparison(InvocationExpressionSyntax invocation, HashSet<string> chainNames)
@@ -130,11 +142,16 @@ internal static class TestAssertionHelper
         if (args.Count != 1)
             return false;
 
-        if (semanticModel.GetConstantValue(args[0].Expression) is not { HasValue: true })
+        var left = TryGetThatArgument(invocation);
+        if (left is null)
             return false;
 
-        var left = TryGetThatArgument(invocation);
-        return left is not null && semanticModel.GetConstantValue(left) is { HasValue: true };
+        var leftConstant = semanticModel.GetConstantValue(left);
+        var rightConstant = semanticModel.GetConstantValue(args[0].Expression);
+
+        return leftConstant is { HasValue: true } &&
+               rightConstant is { HasValue: true } &&
+               Equals(leftConstant.Value, rightConstant.Value);
     }
 
     public static bool IsVerificationLikeName(string name) =>
@@ -142,6 +159,29 @@ internal static class TestAssertionHelper
         name.StartsWith("Verify") ||
         name.StartsWith("Expect") ||
         name.StartsWith("Should");
+
+    public static bool IsVerificationLikeName(string name, IReadOnlyList<string> additionalPrefixes)
+    {
+        if (IsVerificationLikeName(name))
+            return true;
+
+        foreach (var prefix in additionalPrefixes)
+        {
+            if (!string.IsNullOrWhiteSpace(prefix) && name.StartsWith(prefix))
+                return true;
+        }
+
+        return false;
+    }
+
+    // True when the invocation sits inside a lambda, anonymous method or local
+    // function that is not guaranteed to execute on every test path.
+    public static bool IsInsideNestedFunction(SyntaxNode node)
+    {
+        return node.Ancestors().Any(a =>
+            a is AnonymousFunctionExpressionSyntax ||
+            a is LocalFunctionStatementSyntax);
+    }
 
     private static string? TryGetTypeName(ExpressionSyntax expression, SemanticModel semanticModel)
     {

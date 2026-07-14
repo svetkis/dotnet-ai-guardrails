@@ -397,6 +397,113 @@ public class AnalyzerTests
     }
 
     [Test]
+    public async Task NonValidatingTestAnalyzer_DoesNotFlagLiteralLiteralWhenValuesDiffer()
+    {
+        const string code = """
+            using System;
+
+            [AttributeUsage(AttributeTargets.Method)]
+            public class TestAttribute : Attribute { }
+
+            public static class Assert
+            {
+                public static AssertBuilder That(object? value) => new();
+                public class AssertBuilder
+                {
+                    public void IsEqualTo(object? expected) { }
+                }
+            }
+
+            public class PaymentServiceTests
+            {
+                [Test]
+                public void PaymentReturnsAmount()
+                {
+                    Assert.That(1).IsEqualTo(2);
+                }
+            }
+            """;
+
+        var diagnostics = await RunAnalyzerAsync<NonValidatingTestAnalyzer>(code);
+
+        await Assert.That(diagnostics)
+            .DoesNotContain(d => d.Id == NonValidatingTestAnalyzer.TautologicalDiagnosticId)
+            .Because("Assert.That(1).IsEqualTo(2) is a failing assertion, not a tautology.");
+    }
+
+    [Test]
+    public async Task NonValidatingTestAnalyzer_FlagsAssertionInsideUncalledLambda()
+    {
+        const string code = """
+            using System;
+
+            [AttributeUsage(AttributeTargets.Method)]
+            public class TestAttribute : Attribute { }
+
+            public static class Assert
+            {
+                public static AssertBuilder That(object? value) => new();
+                public class AssertBuilder
+                {
+                    public void IsEqualTo(object? expected) { }
+                }
+            }
+
+            public class PaymentServiceTests
+            {
+                [Test]
+                public void PaymentReturnsAmount()
+                {
+                    var payment = new object();
+                    Action check = () => Assert.That(payment).IsEqualTo(1);
+                }
+            }
+            """;
+
+        var diagnostics = await RunAnalyzerAsync<NonValidatingTestAnalyzer>(code);
+
+        await Assert.That(diagnostics)
+            .Contains(d => d.Id == NonValidatingTestAnalyzer.MustAssertDiagnosticId)
+            .Because("An assertion inside an uncalled lambda does not validate the test.");
+    }
+
+    [Test]
+    public async Task NonValidatingTestAnalyzer_FlagsAssertionInsideUncalledLocalFunction()
+    {
+        const string code = """
+            using System;
+
+            [AttributeUsage(AttributeTargets.Method)]
+            public class TestAttribute : Attribute { }
+
+            public static class Assert
+            {
+                public static AssertBuilder That(object? value) => new();
+                public class AssertBuilder
+                {
+                    public void IsEqualTo(object? expected) { }
+                }
+            }
+
+            public class PaymentServiceTests
+            {
+                [Test]
+                public void PaymentReturnsAmount()
+                {
+                    var payment = new object();
+                    void Check() => Assert.That(payment).IsEqualTo(1);
+                }
+            }
+            """;
+
+        var diagnostics = await RunAnalyzerAsync<NonValidatingTestAnalyzer>(code);
+
+        await Assert.That(diagnostics)
+            .Contains(d => d.Id == NonValidatingTestAnalyzer.MustAssertDiagnosticId)
+            .Because("An assertion inside an uncalled local function does not validate the test.");
+    }
+
+    [Test]
     public async Task NonValidatingTestAnalyzer_IgnoresNonTestMethod()
     {
         const string code = """
