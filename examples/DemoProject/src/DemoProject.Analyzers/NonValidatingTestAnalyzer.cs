@@ -147,8 +147,9 @@ public class NonValidatingTestAnalyzer : DiagnosticAnalyzer
         IReadOnlyList<InvocationExpressionSyntax> assertions)
     {
         // Roslyn CFG models exceptional edges (catch/finally) differently across
-        // versions; for methods with try/catch we use the syntax fallback to
-        // avoid missing bypasses on the exceptional path.
+        // versions; for methods with try/catch we use a documented heuristic
+        // fallback (not a full proof) to avoid missing bypasses on the
+        // exceptional path.
         if (method.DescendantNodes().OfType<TryStatementSyntax>().Any())
             return FallbackHasGuaranteedAssertion(method, assertions);
 
@@ -256,6 +257,11 @@ public class NonValidatingTestAnalyzer : DiagnosticAnalyzer
         return false;
     }
 
+    // Heuristic: detects statements that may end execution before a later
+    // assertion. Conservative — `throw` is always treated as an interruption,
+    // even when a catch block contains the mandatory assertion. `if/else`
+    // with a return in the `if` branch is not tracked (documented false
+    // negative).
     private static bool StatementCanInterruptFlow(StatementSyntax statement)
     {
         return statement switch

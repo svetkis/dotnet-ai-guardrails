@@ -135,6 +135,13 @@ source project is stabilized and its revision fixed.
 - Try/catch reachability uses the syntax fallback instead of CFG (Roslyn
   models exceptional edges differently across versions); catch blocks without
   assertions are still caught by the fallback.
+- The try/catch fallback is a **documented heuristic**, not a proof of
+  reachability for arbitrary control flow. Known false negatives/positives:
+  - `if/else` with an early `return` in the `if` branch and assertions after
+    the `if/else` block can be missed (the `else` branch continues to the
+    assertion).
+  - `throw` is always treated as an interruption, even when a `catch` block
+    contains the mandatory assertion.
 - SAE006–SAE009 are `Warning` severity by default; `DemoProject.Tests`
   promotes them to errors via `WarningsAsErrors` to keep the local Change
   Check mandatory.
