@@ -134,6 +134,10 @@ This skill targets **React 18+ / React 19 + TypeScript 4.8+**.
 - **Queries**: Prefer `getByRole`, `getByLabelText` over `getByTestId`.
 - **User events**: Use `@testing-library/user-event`, not fire-and-forget `fireEvent`.
 - **Async tests**: Use `waitFor` / `findBy*` correctly; assert after state updates.
+- **No tautological assertions**: `expect(true)`, `expect(true).toBe(true)`, `expect(1).toBe(1)` and other always-pass assertions are MAJOR — they do not verify the behavior named by the test.
+- **No body-only checks**: Playwright / E2E tests that parse the response body or query a DOM node without an explicit assertion on the postcondition are MAJOR. Example: `const body = await response.text();` with no subsequent `expect`; `page.locator('[data-testid="x"]')` with no assertion. A locator alone is not a behavior check.
+- **No `waitForTimeout` as a substitute for condition waits**: Fixed sleeps (`await page.waitForTimeout(1000)`, `cy.wait(1000)`) are MAJOR because they slow tests and still flake. Replace with explicit waits: `waitForSelector`, `waitForFunction`, `waitForResponse`, `findBy*`, or `waitFor(() => ...)` with a real assertion.
+- **E2E assertions verify observable postconditions**: Each E2E test must assert something the user can observe (UI text, URL, network outcome, absence/presence of an element) rather than "the code ran".
 
 ## Evidence Requirements
 

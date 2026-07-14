@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `templates/skills/release-readiness-audit/` — скилл аудита готовности к релизу.
 - `templates/skills/mutation-audit/` — скилл аудита mutation testing.
 - `templates/skills/analyzer-tests-audit/` — скилл аудита тестов кастомных анализаторов.
+- `templates/skills/frontend-code-review/` — SV-005: проверки непроверяющих frontend-тестов (`expect(true)`, body-only checks, `waitForTimeout`).
 - `examples/DemoProject/src/DemoProject.Analyzers/HotPathAnalyzer.cs` — Roslyn-анализатор SAE003/004/005 для `[HotPath]` методов.
 - `docs/solutions/ai-patterns.md` — паттерн #9: Attribute-driven PII redaction (compile-time + runtime).
 - `rules/AGENTS_TEMPLATE.md` — перевод на английский, добавлены Semantic Anchors, Permission to Push Back, Context Markers.
@@ -52,11 +53,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Methodology revision 2026-07-14 (METH-001…METH-024): Engineering Assurance Levels model, normative glossary, unified skill contract (`SKILL-CONTRACT.md` + schema-lint), heuristic audits de-absolutized, single safe onboarding path, evidence model for quantitative claims, repo-quality CI checks, case studies. Plan document removed after full execution; outcomes live in the artifacts and git history.
-- Self-checking tests guardrails (SV-001…SV-004, SV-006): constitution rule in `rules/AGENTS_TEMPLATE.md`, trap `docs/traps/non-validating-tests.md`, Test Validity section in test-audit, mutation-audit cross-link, and custom Roslyn analyzers SAE006-SAE009 (`DemoProject.Analyzers`) with positive/negative unit tests and a red demo in `DemoProject.Traps`. Remaining work tracked in `docs/SELF-CHECKING-TESTS-WORKSTREAM.md` (remove after SV-005).
+- Self-checking tests guardrails (SV-001…SV-006): constitution rule in `rules/AGENTS_TEMPLATE.md`, trap `docs/traps/non-validating-tests.md`, Test Validity section in test-audit, mutation-audit cross-link, custom Roslyn analyzers SAE006-SAE009 (`DemoProject.Analyzers`) with positive/negative unit tests and a red demo in `DemoProject.Traps`, and frontend test validity checks in `frontend-code-review` (SV-005).
 - `README.md` — restructured with language badges, DemoProject section, and links to CONTRIBUTING/LICENSE.
 - `AGENTS.md` — updated navigation table with `examples/DemoProject/`, `CONTRIBUTING.md`, and `LICENSE`.
 - `tests/conventions/TUnit_Guide.md` — added note about TUnit 1.x auto-generated entry point (no `Program.cs` required).
 - `README.md` and `README.en.md` — added badges (.NET 10, License, CI), author section, and community contacts.
+
+### Removed
+- `docs/SELF-CHECKING-TESTS-WORKSTREAM.md` — workstream completed (SV-005 done); outcomes recorded in `CHANGELOG.md` and git history.
 
 ## [0.1.0] - 2026-05-29
 

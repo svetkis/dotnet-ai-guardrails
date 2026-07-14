@@ -78,6 +78,10 @@
 - [ ] Prefer `getByRole`/`getByLabelText` over `getByTestId`
 - [ ] Uses `@testing-library/user-event`
 - [ ] Async tests correctly wait for state (`waitFor`, `findBy*`)
+- [ ] No tautological assertions (`expect(true)`, `expect(1).toBe(1)`, etc.)
+- [ ] No body-only checks: every response-body parse / DOM locator is followed by an explicit assertion on an observable postcondition
+- [ ] No fixed sleeps (`waitForTimeout`, `cy.wait(ms)`); explicit condition waits preferred
+- [ ] E2E assertions verify observable user-facing postconditions, not just code execution
 
 ## Report Format
 

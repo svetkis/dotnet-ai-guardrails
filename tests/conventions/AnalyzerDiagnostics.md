@@ -20,7 +20,7 @@ They are compile-time guardrails (Layer 1.1 — Compiler).
 SAE006-SAE009 detect **non-validating tests**: tests that are discovered,
 executed, and green while proving nothing about the behavior promised by their
 name. See [`docs/traps/non-validating-tests.md`](../docs/traps/non-validating-tests.md)
-and [`docs/SELF-CHECKING-TESTS-WORKSTREAM.md`](../docs/SELF-CHECKING-TESTS-WORKSTREAM.md).
+and the Self-Checking Tests guardrail set (SV-001..SV-006).
 
 - A test must be **self-checking** (automatic pass/fail), have **assertion
   reachability** (no green path bypasses the assertions), and be **fault

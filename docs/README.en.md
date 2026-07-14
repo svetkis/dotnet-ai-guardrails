@@ -154,8 +154,6 @@ Read before implementation — each trap explains **why** a guardrail exists.
 | [small-project-minimal-api.md](case-studies/small-project-minimal-api.md) | Small project (single-project MVP): risk profile, selected/rejected controls, false positives, cost |
 | [production-like-layered-service.md](case-studies/production-like-layered-service.md) | Production-like layered service: full level set, removed/rejected guardrails, maintenance cost |
 
-Active plans: [SELF-CHECKING-TESTS-WORKSTREAM.md](SELF-CHECKING-TESTS-WORKSTREAM.md) (self-checking tests; remove after SV-004..SV-006).
-
 ---
 
 ## Agent Integrations (docs/agents/)
